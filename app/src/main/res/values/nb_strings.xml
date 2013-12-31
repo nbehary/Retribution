@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Application name -->
+    <string name="application_name">Retribution Launcher</string>
+
+
+    <string name="dialog_pick_iconpack_title">Pick icon pack</string>
+    <string name="default_iconpack_title">Default</string>
+    <string name="no_iconpacks_summary">No icon packs installed</string>
+    <string name="descr_overflow_button">Folder Options</string>
+    <string name="folder_color_chooser">Choose Color</string>
+    <string name="help">Help</string>
+
+    <string name="pref_folder_colors_title">Folder Backround Color</string>
+    <string name="pref_folder_colors_default">1</string>
+
+    <string name="pref_folder_icon_title">Folder Icon</string>
+    <string name="pref_folder_icon_default">1</string>
+
+    <string name="action_settings">Settings</string>
+
+    <string name="pref_folder_colors_activity_name">Folder Colors</string>
+
+    <string name="about_button_text">About</string>
+
+    <string name="folder_button_text">Folders</string>
+
+    <string name="title_activity_folder_colors">FolderColorsActivity</string>
+    <string name="hello_world">Hello world!</string>
+
+    <string name="title_activity_about">AboutActivity</string>
+    <string name="about_version">Version: 0.0.0 (0000)</string>
+    <string name="noticeText">Android Open Source Project (Launcher3)\n
+        \n
+        Copyright © 2005–2013, The Android Open Source Project\n
+        \n
+        Licensed under the Apache License, Version 2.0 (the \"License\");    you may not use this file except in compliance with the License.\n
+        \n
+        Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+        \n
+        \n
+
+        Cyanogenmod (Trebuchet:  Icon Pack support)\n
+        \n
+        Copyright © 2011-2013 The CyanogenMod Project\n
+        \n
+        Licensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License.
+        You may obtain a copy of the License at\n
+        \n
+           http://www.apache.org/licenses/LICENSE-2.0\n
+        \n
+        Unless required by applicable law or agreed to in writing, software
+        distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and
+        limitations under the License.
+        \n\n
+        Holo Color Picker\n
+  \n
+        Copyright 2012 Lars Werkmann\n
+\n
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at\n
+\n
+       http://www.apache.org/licenses/LICENSE-2.0
+\n
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+
+
+
+    </string>
+
+    <string-array name="folder_colors_array">
+        <item>Background</item>
+        <item>Folder Name</item>
+        <item>Icon Labels</item>
+    </string-array>
+</resources>
