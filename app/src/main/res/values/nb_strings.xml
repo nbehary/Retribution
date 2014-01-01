@@ -30,7 +30,9 @@
 
     <string name="title_activity_about">AboutActivity</string>
     <string name="about_version">Version: 0.0.0 (0000)</string>
-    <string name="noticeText">Android Open Source Project (Launcher3)\n
+    <string name="noticeText">
+        -------------------------------------\n
+        Android Open Source Project (Launcher3)\n
         \n
         Copyright © 2005–2013, The Android Open Source Project\n
         \n
@@ -39,7 +41,7 @@
         Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
         \n
         \n
-
+        -------------------------------------\n
         Cyanogenmod (Trebuchet:  Icon Pack support)\n
         \n
         Copyright © 2011-2013 The CyanogenMod Project\n
@@ -55,7 +57,9 @@
         WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
         See the License for the specific language governing permissions and
         limitations under the License.
-        \n\n
+        \n
+        \n
+        -------------------------------------\n
         Holo Color Picker\n
   \n
         Copyright 2012 Lars Werkmann\n
@@ -75,6 +79,20 @@
 
 
     </string>
+
+    <string name="os_dialog_title">Open Source Licenses</string>
+    <string name="os_dialog_top_text">This program is based on or includes portions of software available under open source licenses.</string>
+    <string name="os_notice_header">Notices:</string>
+    <string name="os_dialog_header">Open Source</string>
+    <string name="nb_copyright">Copyright © 2013-2014 Nathan A. Behary</string>
+    <string name="about_credits">
+        Written and designed by:\n
+        Nathan A. Behary\n
+        \n
+        Testing:\n
+        Kyle Riedemann
+
+    </string><string name="os_button_text">Open Source Software</string>
 
     <string-array name="folder_colors_array">
         <item>Background</item>

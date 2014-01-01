@@ -2,6 +2,7 @@ package com.nbehary.retribution;
 
 import android.app.Activity;
 import android.app.ActionBar;
+import android.app.DialogFragment;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.os.Build;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.TextView;
 
 public class AboutActivity extends Activity {
@@ -38,7 +40,7 @@ public class AboutActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.about, menu);
+        //getMenuInflater().inflate(R.menu.about, menu);
         return true;
     }
 
@@ -65,33 +67,23 @@ public class AboutActivity extends Activity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
-            int orientation = getActivity().getRequestedOrientation();
-            int rotation = ((WindowManager) getActivity().getSystemService(
-                    Context.WINDOW_SERVICE)).getDefaultDisplay().getRotation();
-            switch (rotation) {
-                case Surface.ROTATION_0:
-                    orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
-                    break;
-                case Surface.ROTATION_90:
-                    orientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
-                    break;
-                case Surface.ROTATION_180:
-                    orientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT;
-                    break;
-                default:
-                    orientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE;
-                    break;
-            }
 
-            getActivity().setRequestedOrientation(orientation);
 
             View rootView = inflater.inflate(R.layout.fragment_about, container, false);
-            rootView.setBackgroundColor(Color.argb(128,0,0,0));
+            //rootView.setBackgroundColor(Color.argb(128,0,0,0));
             TextView versionText = (TextView) rootView.findViewById(R.id.about_version_text);
             LauncherAppState appState = LauncherAppState.getInstance();
             String versionName = appState.mVersionName;
             int versionCode = appState.mVersionCode;
             versionText.setText(String.format("Version: %s (%d)", versionName,versionCode));
+            final Button button = (Button) rootView.findViewById(R.id.os_button);
+            button.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    DialogFragment dialog = new OpenSourceDialog();
+                    dialog.show(getFragmentManager(), "NoticeDialogFragment");
+
+                }
+            });
             return rootView;
         }
     }

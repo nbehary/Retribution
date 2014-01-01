@@ -16,16 +16,19 @@
 <com.nbehary.retribution.Cling
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:launcher="http://schemas.android.com/apk/res-auto/com.nbehary.retribution"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     launcher:drawIdentifier="folder_large">
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginStart="@dimen/cling_text_block_offset_x"
-        android:layout_marginTop="@dimen/cling_text_block_offset_y">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+        android:layout_marginTop="@dimen/cling_text_block_offset_y"
+        android:orientation="vertical">
+        <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:orientation="vertical">-->
             <TextView
                 style="@style/ClingTitleText"
                 android:id="@+id/folder_cling_title"
@@ -40,7 +43,9 @@
                 style="@style/ClingButton"
                 android:id="@+id/cling_dismiss"
                 android:layout_marginTop="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:onClick="dismissFolderCling" />
         </LinearLayout>
-    </FrameLayout>
+    <!--</FrameLayout>-->
 </com.nbehary.retribution.Cling>

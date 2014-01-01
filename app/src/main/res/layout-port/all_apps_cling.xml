@@ -16,16 +16,19 @@
 <com.nbehary.retribution.Cling
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:launcher="http://schemas.android.com/apk/res-auto/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     launcher:drawIdentifier="all_apps_portrait">
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+        android:layout_marginTop="20dp"
+        android:orientation="vertical">
+        <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:orientation="vertical">-->
             <TextView
                 style="@style/ClingTitleText"
                 android:id="@+id/all_apps_cling_title"
@@ -37,12 +40,14 @@
                 android:layout_height="wrap_content"
                 android:text="@string/all_apps_cling_add_item" />
         </LinearLayout>
-    </FrameLayout>
+    <!--</FrameLayout>-->
     <Button
         style="@style/ClingButton"
         android:id="@+id/cling_dismiss"
         android:layout_marginBottom="15dp"
         android:layout_marginEnd="10dp"
         android:layout_gravity="bottom|end"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:onClick="dismissAllAppsCling" />
 </com.nbehary.retribution.Cling>

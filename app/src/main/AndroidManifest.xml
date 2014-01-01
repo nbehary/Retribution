@@ -20,8 +20,8 @@
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.nbehary.retribution"
-    android:versionCode="894"
-    android:versionName="0.9.9">
+    android:versionCode="969"
+    android:versionName="1.0-Beta1">
 
     <permission
         android:name="com.nbehary.retribution.permission.PRELOAD_WORKSPACE"
@@ -57,7 +57,7 @@
         android:protectionLevel="signature"
         />
 
-    <uses-permission android:name="android.permission.CALL_PHONE" />
+
     <uses-permission android:name="android.permission.SET_WALLPAPER" />
     <uses-permission android:name="android.permission.SET_WALLPAPER_HINTS" />
     <uses-permission android:name="android.permission.VIBRATE" />
@@ -85,7 +85,7 @@
             android:stateNotNeeded="true"
             android:theme="@style/Theme"
             android:windowSoftInputMode="adjustPan"
-            android:screenOrientation="nosensor">
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.HOME" />
@@ -147,7 +147,7 @@
             android:name="com.nbehary.retribution.AboutActivity"
             android:exported="false"
             android:label="About"
-            android:theme="@style/Theme.Transparent">
+            android:theme="@android:style/Theme.Holo">
         </activity>
 
 

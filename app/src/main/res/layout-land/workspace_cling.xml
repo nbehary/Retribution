@@ -19,18 +19,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     launcher:drawIdentifier="workspace_portrait">
-    <FrameLayout
+    <LinearLayout
         android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginStart="25dp"
         android:layout_marginEnd="25dp"
-        android:layout_marginTop="310dp">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top"
-            android:orientation="vertical">
+        android:layout_marginTop="310dp"
+        android:orientation="vertical">
+        <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="top"-->
+            <!--android:orientation="vertical">-->
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -57,7 +58,7 @@
                     android:text="@string/workspace_cling_move_item" />
             </LinearLayout>
         </LinearLayout>
-    </FrameLayout>
+    <!--</FrameLayout>-->
     <Button
         style="@style/ClingButton"
         android:layout_width="wrap_content"

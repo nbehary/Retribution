@@ -1359,6 +1359,7 @@ public class Launcher extends Activity
         aboutButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View arg0) {
+                //Toast.makeText(getBaseContext(), "Due to the recent Zombie Apocalypse, this feature is not available.", Toast.LENGTH_LONG).show();
                 startAbout();
             }
         });

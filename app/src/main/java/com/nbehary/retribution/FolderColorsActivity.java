@@ -63,6 +63,10 @@ public class FolderColorsActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+
+
         mBgColor = PreferencesProvider.Interface.General.getFolderBackColor();
         mIconColor = PreferencesProvider.Interface.General.getFolderIconColor();
         mNameColor = PreferencesProvider.Interface.General.getFolderNameColor();
@@ -177,7 +181,7 @@ public class FolderColorsActivity extends Activity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
 
-            int orientation = getActivity().getRequestedOrientation();
+ /*           int orientation = getActivity().getRequestedOrientation();
             int rotation = ((WindowManager) getActivity().getSystemService(
                     Context.WINDOW_SERVICE)).getDefaultDisplay().getRotation();
             switch (rotation) {
@@ -195,7 +199,7 @@ public class FolderColorsActivity extends Activity {
                     break;
             }
             getActivity().setRequestedOrientation(orientation);
-
+*/
             mContext = getActivity();
             mBgColor = PreferencesProvider.Interface.General.getFolderBackColor();
             mIconColor = PreferencesProvider.Interface.General.getFolderIconColor();

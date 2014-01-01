@@ -1352,7 +1352,8 @@ public class LauncherProvider extends ContentProvider {
 
                 // TODO: need to check return value
                 //TODO: ICS_FIX (the whole appWidget thing.....)
-                appWidgetManager.bindAppWidgetIdIfAllowed(appWidgetId, cn);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
+                    appWidgetManager.bindAppWidgetIdIfAllowed(appWidgetId, cn);
 
                 // Send a broadcast to configure the widget
                 if (extras != null && !extras.isEmpty()) {

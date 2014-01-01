@@ -64,8 +64,7 @@
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:text="Saturation/Value"
                     android:id="@+id/textView2"
-                    android:password="false"
-                    android:layout_alignParentLeft="true"
+
                     android:layout_alignParentStart="true"
                     android:layout_marginLeft="5dp" />
 
@@ -73,8 +72,6 @@
                     android:id="@+id/svbar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/textView2"
-                    android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true" />
             </LinearLayout>
 
@@ -90,8 +87,6 @@
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text="Change Color of:"
                     android:id="@+id/color_of"
-                    android:layout_below="@+id/linearLayout"
-                    android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
                     android:layout_marginLeft="5dp" />
 
@@ -118,13 +113,12 @@
             android:id="@+id/folder_color_preview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1.68"
             android:background="@drawable/portal_container_holo"
             android:layout_gravity="center_horizontal|bottom"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_marginLeft="613dp">>
+            android:layout_marginLeft="613dp">
             <ImageView
                 android:id="@+id/folder_color_preview_image"
                 android:layout_width="wrap_content"

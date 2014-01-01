@@ -74,7 +74,6 @@
                 android:orientation="vertical"
                 android:layout_width="169dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.27"
                 android:layout_gravity="left|top">
 
                 <TextView
@@ -105,8 +104,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/portal_container_holo"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true">>
+                android:layout_alignParentStart="true">
                 <ImageView
                     android:id="@+id/folder_color_preview_image"
                     android:layout_width="wrap_content"
