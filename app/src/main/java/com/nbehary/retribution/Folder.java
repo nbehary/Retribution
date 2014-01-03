@@ -222,9 +222,9 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         SharedPreferences preferences = getContext().getSharedPreferences("com.nbehary.retribution_preferences",0);
         //there
         if (!PreferencesProvider.Interface.General.getDefaultFolderBG()) {
-            Drawable myIcon = getResources().getDrawable( R.drawable.portal_container_holo );
+            Drawable myIcon = getResources().getDrawable( R.drawable.portal_container_custom );
             //myIcon.get
-            Bitmap bg1 = Bitmap.createBitmap(myIcon.getIntrinsicWidth(), myIcon.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+            //Bitmap bg1 = Bitmap.createBitmap(myIcon.getIntrinsicWidth(), myIcon.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
             if (!LauncherAppState.getInstance().getProVersion()) {
                 int color = Integer.parseInt(preferences.getString("pref_folder_color","1"));
                 switch (color) {
@@ -232,25 +232,29 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
                         break;
                     case 2:  //Grey (Transparent)
                         //folder.setBackgroundColor(Color.argb(128,84,84,84));
-                        bg1.eraseColor(Color.argb(128,84,84,84));
+                        //bg1.eraseColor(Color.argb(128,84,84,84));
+                        myIcon.setColorFilter(Color.argb(128,84,84,84), PorterDuff.Mode.MULTIPLY);
                         mFolderName.setHintTextColor(Color.rgb(255,255,255));
                         mFolderName.setTextColor(Color.rgb(255,255,255));
                         break;
                     case 3:  //Black (Transparent)
                         //folder.setBackgroundColor(Color.argb(128,0,0,0));
-                        bg1.eraseColor(Color.argb(128,0,0,0));
+                        //bg1.eraseColor(Color.argb(128,0,0,0));
+                        myIcon.setColorFilter(Color.argb(128,0,0,0), PorterDuff.Mode.MULTIPLY);
                         mFolderName.setHintTextColor(Color.rgb(255,255,255));
                         mFolderName.setTextColor(Color.rgb(255,255,255));
                         break;
                     case 4:  //Grey (Opaque)
                         //folder.setBackgroundColor(Color.argb(255,84,84,84));
-                        bg1.eraseColor(Color.argb(255,84,84,84));
+                        //bg1.eraseColor(Color.argb(255,84,84,84));
+                        myIcon.setColorFilter(Color.argb(255,84,84,84), PorterDuff.Mode.MULTIPLY);
                         mFolderName.setHintTextColor(Color.rgb(255,255,255));
                         mFolderName.setTextColor(Color.rgb(255,255,255));
                         break;
                     case 5:  //Black (Opaque)
                         //folder.setBackgroundColor(Color.argb(255,0,0,0));
-                        bg1.eraseColor(Color.argb(255,0,0,0));
+                        //bg1.eraseColor(Color.argb(255,0,0,0));
+                        myIcon.setColorFilter(Color.argb(255,0,0,0), PorterDuff.Mode.MULTIPLY);
                         mFolderName.setHintTextColor(Color.rgb(255,255,255));
                         mFolderName.setTextColor(Color.rgb(255,255,255));
                         break;
@@ -259,14 +263,21 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
                 Context ctx = getContext();
                 if (!PreferencesProvider.Interface.General.getDefaultFolderBG()){
                     //folder.setBackgroundColor(PreferencesProvider.Interface.General.getFolderBackColor());
-                    bg1.eraseColor(PreferencesProvider.Interface.General.getFolderBackColor());
+                   // bg1.eraseColor(PreferencesProvider.Interface.General.getFolderBackColor());
+                    myIcon.setColorFilter(PreferencesProvider.Interface.General.getFolderBackColor(), PorterDuff.Mode.MULTIPLY);
                     mFolderName.setHintTextColor(PreferencesProvider.Interface.General.getFolderNameColor());
                     mFolderName.setTextColor(PreferencesProvider.Interface.General.getFolderNameColor());
                 }
             }
-            Bitmap bg2 = getRoundedCornerBitmap(bg1,2);
+            //Bitmap bg2 = getRoundedCornerBitmap(bg1,2);
 
-            folder.setBackgroundDrawable(new BitmapDrawable(bg2));
+          //  folder.setBackgroundDrawable(new BitmapDrawable(bg2));
+           // Drawable test = getResources().getDrawable(R.drawable.portal_container_custom);
+           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+               folder.setBackground(myIcon);
+           } else {
+               folder.setBackgroundDrawable(myIcon);
+           }
 
 
 

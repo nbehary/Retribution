@@ -20,8 +20,8 @@
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.nbehary.retribution"
-    android:versionCode="969"
-    android:versionName="1.0-Beta1">
+    android:versionCode="1049"
+    android:versionName="1.0-Beta2">
 
     <permission
         android:name="com.nbehary.retribution.permission.PRELOAD_WORKSPACE"

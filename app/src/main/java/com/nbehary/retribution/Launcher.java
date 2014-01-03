@@ -207,7 +207,7 @@ public class Launcher extends Activity
     static final String SEARCH_WIDGET = "search_widget";
 
     /** The different states that Launcher can be in. */
-    private enum State { NONE, WORKSPACE, APPS_CUSTOMIZE, APPS_CUSTOMIZE_SPRING_LOADED, FOLDERS_CUSTOMIZE };
+    private enum State { NONE, WORKSPACE, APPS_CUSTOMIZE, APPS_CUSTOMIZE_SPRING_LOADED, WIDGETS_CUSTOMIZE, ICONPACKS_CUSTOMIZE,FOLDERS_CUSTOMIZE };
     private State mState = State.WORKSPACE;
     private AnimatorSet mStateAnimation;
 
@@ -420,7 +420,6 @@ public class Launcher extends Activity
         display.getMetrics(dm);
         DeviceProfile grid;
         // Lazy-initialize the dynamic grid
-        //This may be horribly wrong.
         if (Build.VERSION.SDK_INT >=16) {
                 display.getCurrentSizeRange(smallestSize, largestSize);//16
                 grid = app.initDynamicGrid(this,
@@ -465,6 +464,9 @@ public class Launcher extends Activity
         checkForLocaleChange();
         setContentView(R.layout.launcher);
 
+        if (mOnResumeState == State.FOLDERS_CUSTOMIZE) {
+            Log.d("nbehary444", "OnCreate in Folders Customize!");
+        }
         setupViews();
         grid.layout(this);
 
@@ -513,13 +515,7 @@ public class Launcher extends Activity
         unlockScreenOrientation(true);
 
         showFirstRunCling();
-        Log.d("nbehary198", app.getDynamicGrid().toString());
-        mPrefListen = new SharedPreferences.OnSharedPreferenceChangeListener() {
-            public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-                // Implementation
-                Log.d("nbehary444",key);
-            }
-        };
+
     }
 
     protected void onUserLeaveHint() {
@@ -562,6 +558,7 @@ public class Launcher extends Activity
     private void updateGlobalIcons() {
         boolean searchVisible = false;
         boolean voiceVisible = false;
+        Log.d("nbehary444","updateGlobal");
         // If we have a saved version of these external icons, we load them up immediately
         int coi = getCurrentOrientationIndexForGlobalIcons();
         if (sGlobalSearchIcon[coi] == null || sVoiceSearchIcon[coi] == null ||
@@ -781,9 +778,11 @@ public class Launcher extends Activity
                     //mWorkspace.enterOverviewMode();
                 }
                 //mWorkspace.exitOverviewMode(false);
-                mState = State.WORKSPACE;
-                showWorkspace();
-                mWorkspace.setVisibility(View.VISIBLE);
+                mOnResumeState = State.WORKSPACE;
+                onResume();
+                //mWorkspace.setVisibility(View.VISIBLE);
+                //showWorkspace();
+
                 //mOverviewPanel.setVisibility(View.VISIBLE);
 
             }
@@ -963,17 +962,22 @@ public class Launcher extends Activity
             showWorkspace(false);
         } else if (mOnResumeState == State.APPS_CUSTOMIZE) {
             showAllApps(false, AppsCustomizePagedView.ContentType.Applications, false);
+        } else if (mOnResumeState == State.WIDGETS_CUSTOMIZE){
+            showAllApps(false, AppsCustomizePagedView.ContentType.Widgets, false);
+        } else if (mOnResumeState == State.ICONPACKS_CUSTOMIZE){
+            showAllApps(false, AppsCustomizePagedView.ContentType.IconPacks, false);
         } else if (mOnResumeState == State.FOLDERS_CUSTOMIZE) {
-            Log.d("nbehary444","resume");
-            mState = State.WORKSPACE;
-            showWorkspace();
-            mWorkspace.setVisibility(View.VISIBLE);
+            Log.d("nbehary444","resume1234");
+            mState = State.FOLDERS_CUSTOMIZE;
+            hideHotseat(false);
+            mSearchDropTargetBar.setVisibility(View.INVISIBLE);
+            mWorkspace.setVisibility(View.INVISIBLE);
+
+            return;
 
         }
         mOnResumeState = State.NONE;
 
-        //Pressing Home in Folder Colors restores the Workspace w/o reloading the model.  This forces that.
-        //Also ensures the workspace is visible.  That is covered elsewhere though....
 
         // Background was set to gradient in onPause(), restore to black if in all apps.
         if (Build.VERSION.SDK_INT >=16) {
@@ -1118,7 +1122,7 @@ public class Launcher extends Activity
         mWorkspace.setVisibility(View.INVISIBLE);
         mOverviewPanel.setVisibility(View.INVISIBLE);
         mState = State.FOLDERS_CUSTOMIZE;
-
+        //mPaused = true;
         Intent myIntent = new Intent(Launcher.this, com.nbehary.retribution.FolderColorsActivity.class);
         Launcher.this.startActivityForResult(myIntent, REQUEST_SETTINGS);
 
@@ -1126,9 +1130,9 @@ public class Launcher extends Activity
     }
 
     protected void startAbout() {
-        mWorkspace.setVisibility(View.INVISIBLE);
-        mOverviewPanel.setVisibility(View.INVISIBLE);
-        mState = State.FOLDERS_CUSTOMIZE;
+       // mWorkspace.setVisibility(View.INVISIBLE);
+      //  mOverviewPanel.setVisibility(View.INVISIBLE);
+       // mState = State.FOLDERS_CUSTOMIZE;
 
 
         Intent myIntent = new Intent(Launcher.this, com.nbehary.retribution.AboutActivity.class);
@@ -1148,6 +1152,13 @@ public class Launcher extends Activity
     // The custom content needs to offset its content to account for the QSB
     public int getTopOffsetForCustomContent() {
         return mWorkspace.getPaddingTop();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+
+
+
     }
 
     @Override
@@ -1238,6 +1249,12 @@ public class Launcher extends Activity
         State state = intToState(savedState.getInt(RUNTIME_STATE, State.WORKSPACE.ordinal()));
         if (state == State.APPS_CUSTOMIZE) {
             mOnResumeState = State.APPS_CUSTOMIZE;
+        } else if (state == State.WIDGETS_CUSTOMIZE) {
+            mOnResumeState = State.WIDGETS_CUSTOMIZE;
+        } else if (state == State.ICONPACKS_CUSTOMIZE) {
+            mOnResumeState = State.ICONPACKS_CUSTOMIZE;
+        } else if (state == State.FOLDERS_CUSTOMIZE) {
+            mOnResumeState = State.FOLDERS_CUSTOMIZE;
         }
 
         int currentScreen = savedState.getInt(RUNTIME_STATE_CURRENT_SCREEN,
@@ -1288,7 +1305,8 @@ public class Launcher extends Activity
      */
     private void setupViews() {
         final DragController dragController = mDragController;
-
+        Log.d("nbehary444","setupViews");
+        //here!
         mLauncherView = findViewById(R.id.launcher);
         mDragLayer = (DragLayer) findViewById(R.id.drag_layer);
         mWorkspace = (Workspace) mDragLayer.findViewById(R.id.workspace);
@@ -1697,26 +1715,28 @@ public class Launcher extends Activity
         // The following code used to be in onResume, but it turns out onResume is called when
         // you're in All Apps and click home to go to the workspace. onWindowVisibilityChanged
         // is a more appropriate event to handle
-        if ((mVisible) && (Build.VERSION.SDK_INT >=16)) {
+
+        if (mVisible)  {
             mAppsCustomizeTabHost.onWindowVisible();
-            if (!mWorkspaceLoading)  {
-                final ViewTreeObserver observer = mWorkspace.getViewTreeObserver();
-                // We want to let Launcher draw itself at least once before we force it to build
-                // layers on all the workspace pages, so that transitioning to Launcher from other
-                // apps is nice and speedy.
-                observer.addOnDrawListener(new ViewTreeObserver.OnDrawListener() {
-                    private boolean mStarted = false;
-                    public void onDraw() {
-                        if (mStarted) return;
-                        mStarted = true;
-                        // We delay the layer building a bit in order to give
-                        // other message processing a time to run.  In particular
-                        // this avoids a delay in hiding the IME if it was
-                        // currently shown, because doing that may involve
-                        // some communication back with the app.
-                        mWorkspace.postDelayed(mBuildLayersRunnable, 500);
-                        final ViewTreeObserver.OnDrawListener listener = this;
-                        mWorkspace.post(new Runnable() {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                if (!mWorkspaceLoading)  {
+                    final ViewTreeObserver observer = mWorkspace.getViewTreeObserver();
+                    // We want to let Launcher draw itself at least once before we force it to build
+                    // layers on all the workspace pages, so that transitioning to Launcher from other
+                    // apps is nice and speedy.
+                    observer.addOnDrawListener(new ViewTreeObserver.OnDrawListener() {
+                        private boolean mStarted = false;
+                        public void onDraw() {
+                            if (mStarted) return;
+                            mStarted = true;
+                            // We delay the layer building a bit in order to give
+                            // other message processing a time to run.  In particular
+                            // this avoids a delay in hiding the IME if it was
+                            // currently shown, because doing that may involve
+                            // some communication back with the app.
+                            mWorkspace.postDelayed(mBuildLayersRunnable, 500);
+                            final ViewTreeObserver.OnDrawListener listener = this;
+                            mWorkspace.post(new Runnable() {
                                 public void run() {
                                     if (mWorkspace != null &&
                                             mWorkspace.getViewTreeObserver() != null) {
@@ -1725,9 +1745,10 @@ public class Launcher extends Activity
                                     }
                                 }
                             });
-                        return;
-                    }
-                });
+                            return;
+                        }
+                    });
+                }
             }
             // When Launcher comes back to foreground, a different Activity might be responsible for
             // the app market intent, so refresh the icon
@@ -2866,7 +2887,9 @@ public class Launcher extends Activity
     }
 
     public boolean isAllAppsVisible() {
-        return (mState == State.APPS_CUSTOMIZE) || (mOnResumeState == State.APPS_CUSTOMIZE);
+        return (mState == State.APPS_CUSTOMIZE) || (mOnResumeState == State.APPS_CUSTOMIZE) ||
+               (mState == State.WIDGETS_CUSTOMIZE) || (mOnResumeState == State.WIDGETS_CUSTOMIZE) ||
+               (mState == State.ICONPACKS_CUSTOMIZE) || (mOnResumeState == State.ICONPACKS_CUSTOMIZE) ;
     }
 
     /**
@@ -3138,7 +3161,6 @@ public class Launcher extends Activity
             mStateAnimation = null;
         }
         Resources res = getResources();
-
         final int duration = res.getInteger(R.integer.config_appsCustomizeZoomOutTime);
         final int fadeOutDuration =
                 res.getInteger(R.integer.config_appsCustomizeFadeOutTime);
@@ -3239,7 +3261,6 @@ public class Launcher extends Activity
     }
 
     void showWorkspace(boolean animated, Runnable onCompleteRunnable) {
-
         if (mWorkspace.isInOverviewMode()) {
             mWorkspace.exitOverviewMode(animated);
         }
@@ -3347,14 +3368,18 @@ public class Launcher extends Activity
             mAppsCustomizeTabHost.reset();
         }
 
-        //TODO:ICS_FIX.  Testing only.
-       // if (Build.VERSION.SDK_INT <16) animated = false;
-
         showAppsCustomizeHelper(animated, false, contentType);
         mAppsCustomizeTabHost.requestFocus();
 
         // Change the state *after* we've called all the transition code
-        mState = State.APPS_CUSTOMIZE;
+        if (contentType == AppsCustomizePagedView.ContentType.Widgets) {
+            mState = State.WIDGETS_CUSTOMIZE;
+        } else if (contentType == AppsCustomizePagedView.ContentType.IconPacks) {
+            mState = State.ICONPACKS_CUSTOMIZE;
+        } else {
+            mState = State.APPS_CUSTOMIZE;
+        }
+
 
         // Pause the auto-advance of widgets until we are out of AllApps
         mUserPresent = false;
@@ -3855,7 +3880,6 @@ public class Launcher extends Activity
         // the past (see waitUntilResume) -- we don't need them since we're starting binding
         // from scratch again
         mBindOnResumeCallbacks.clear();
-
         // Clear the workspace because it's going to be rebound
         mWorkspace.clearDropTargets();
         mWorkspace.removeAllWorkspaceScreens();

@@ -6,6 +6,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -108,6 +109,7 @@ public class FolderColorsActivity extends Activity {
                     .add(R.id.container, new PlaceholderFragment())
                     .commit();
         }
+
     }
 
     public void setmDefaultBG(boolean mDefaultBG) {
@@ -146,6 +148,7 @@ public class FolderColorsActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
+        Log.d("nbehary444", "onPause");
 
     }
 
@@ -156,6 +159,11 @@ public class FolderColorsActivity extends Activity {
         setResult(RESULT_OK, intent);
 
         super.finish();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+
     }
 
     /**
@@ -351,6 +359,7 @@ public class FolderColorsActivity extends Activity {
                         rGroup.check(R.id.radioBlackO);
                         break;
                 }
+
                 rGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
                 {
                     public void onCheckedChanged(RadioGroup rGroup, int checkedId)
@@ -423,7 +432,7 @@ public class FolderColorsActivity extends Activity {
 
         private static Bitmap generateFolderPreview(Resources resources, int back, int iconText, int nameText, boolean bg) {
 
-            Drawable previewDefaultBG = resources.getDrawable(R.drawable.portal_container_holo);
+            Drawable previewDefaultBG;
 
             LauncherAppState app = LauncherAppState.getInstance();
             DeviceProfile grid = app.getDynamicGrid().getDeviceProfile();
@@ -439,11 +448,14 @@ public class FolderColorsActivity extends Activity {
             Canvas canvas = new Canvas(previewBitmap);
             // new antialised Paint
             if (bg){
-                renderDrawableToBitmap(previewDefaultBG,previewBitmap ,0,0,folderWidth,folderHeight);
+                previewDefaultBG = resources.getDrawable(R.drawable.portal_container_holo);
+
             } else {
                 //canvas.drawColor(back);
-                previewBitmap.eraseColor(back);
+                previewDefaultBG = resources.getDrawable(R.drawable.portal_container_custom);
+                previewDefaultBG.setColorFilter(back, PorterDuff.Mode.MULTIPLY);
             }
+            renderDrawableToBitmap(previewDefaultBG,previewBitmap ,0,0,folderWidth,folderHeight);
             renderDrawableToBitmap(icon,previewBitmap,20,20,grid.iconSizePx,grid.iconSizePx);
 
             Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);

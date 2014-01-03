@@ -526,18 +526,23 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
                             loadAssociatedPages(0);
                             if (getCurrentPage() != 0){
                                 setCurrentPage(0);
+                                //mCurrentPage = 0;
                             }
                         } else if (x > v.getMeasuredWidth()){
                             loadAssociatedPages(mPages-1);
                             if (getCurrentPage() != mPages) {
                                 setCurrentPage(mPages);
+                                //mCurrentPage = mPages;
                             }
                         } else {
                             int page = (int) (x/mMarkerWidth);
                             loadAssociatedPages(page);
                             ((PageIndicator) v).setActiveMarker(page);
                             setCurrentPage(page);
+                            //here!
+                            //mCurrentPage = page;
                         }
+
                         return true;
 
                 }
