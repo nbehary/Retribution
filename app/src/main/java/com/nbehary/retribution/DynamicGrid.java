@@ -241,13 +241,20 @@ class DeviceProfile {
         int pageIndicatorOffset =
             resources.getDimensionPixelSize(R.dimen.apps_customize_page_indicator_offset);
         if (isLandscape) {
-            allAppsNumRows = (availableHeightPx - pageIndicatorOffset - 4 * edgeMarginPx) /
-                    (iconSizePx + iconTextSizePx + 2 * edgeMarginPx);
+  //          allAppsNumRows = (availableHeightPx - pageIndicatorOffset - 4 * edgeMarginPx) /
+ //                   (iconSizePx + iconTextSizePx + 2 * edgeMarginPx);
+            allAppsNumCols = (availableWidthPx - padding.left - padding.right - 2 * edgeMarginPx) /
+                    (iconSizePx + 2 * edgeMarginPx);
+            //Restrict AllApps columns to 7 or less
+            if (allAppsNumCols > 7) {
+                allAppsNumCols = 7;
+            }
+            allAppsNumRows = (allAppsNumCols/2) + 1;
         } else {
             allAppsNumRows = (int) numRows + 1;
+            allAppsNumCols = allAppsNumRows - 1;
         }
-        allAppsNumCols = (availableWidthPx - padding.left - padding.right - 2 * edgeMarginPx) /
-                (iconSizePx + 2 * edgeMarginPx);
+
     }
 
     private float dist(PointF p0, PointF p1) {

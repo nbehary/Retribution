@@ -17,7 +17,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/search_button_container"
+    android:layout_weight="1"
     android:orientation="vertical">
+
    <!-- Global search icon -->
    <com.nbehary.retribution.HolographicImageView
         style="@style/SearchButton"

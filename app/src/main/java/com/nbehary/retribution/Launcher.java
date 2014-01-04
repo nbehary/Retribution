@@ -569,7 +569,7 @@ public class Launcher extends Activity
             searchVisible = updateGlobalSearchIcon();
             voiceVisible = updateVoiceSearchIcon(searchVisible);
         }
-        if (sGlobalSearchIcon[coi] != null) {
+        if ((sGlobalSearchIcon[coi] != null) &&(!searchVisible)) {
              updateGlobalSearchIcon(sGlobalSearchIcon[coi]);
              searchVisible = true;
         }
@@ -986,7 +986,7 @@ public class Launcher extends Activity
 
         mPaused = false;
         sPausedFromUserAction = false;
-        Log.d("nbehary213","onResume");
+        Log.d("nbehary444","onResume");
         if (mRestoring || mOnResumeNeedsLoad) {
             mWorkspaceLoading = true;
             mModel.startLoader(true, -1);
@@ -1053,14 +1053,20 @@ public class Launcher extends Activity
             Log.d(TAG, "Time spent in onResume: " + (System.currentTimeMillis() - startTime));
         }
 
+
         if (mWorkspace.getCustomContentCallbacks() != null) {
             // If we are resuming and the custom content is the current page, we call onShow().
-            // It is also poassible that onShow will instead be called slightly after first layout
+            // It is also possible that onShow will instead be called slightly after first layout
             // if PagedView#setRestorePage was set to the custom content page in onCreate().
             if (mWorkspace.isOnOrMovingToCustomContent()) {
                 mWorkspace.getCustomContentCallbacks().onShow();
             }
         }
+        if (mSearchDropTargetBar != null) {
+            mSearchDropTargetBar.showSearchBar(false);
+        }
+
+
         mWorkspace.updateInteractionForState();
         mWorkspace.onResume();
     }
@@ -1330,7 +1336,7 @@ public class Launcher extends Activity
         widgetButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                     showAllApps(true, AppsCustomizePagedView.ContentType.Widgets, true);
                 } else {
                     pickappWidget();
@@ -3074,7 +3080,7 @@ public class Launcher extends Activity
 
                     // Hide the search bar
                     if (mSearchDropTargetBar != null) {
-                        mSearchDropTargetBar.hideSearchBar(false);
+                       mSearchDropTargetBar.hideSearchBar(false);
                     }
                 }
             });

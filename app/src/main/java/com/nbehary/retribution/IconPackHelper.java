@@ -83,7 +83,7 @@ public class IconPackHelper {
         Intent i = new Intent();
         Set packages = new HashSet <Object>();
         PackageManager packageManager = context.getPackageManager();
-        packages.add("Default");
+
         for (String action : sSupportedActions) {
 
             i.setAction(action);
@@ -99,7 +99,7 @@ public class IconPackHelper {
             }
             i.removeCategory(category);
         }
-
+        packages.add("Default");
         ArrayList<Object> packs = new ArrayList<Object>(packages);
         return packs;
     }

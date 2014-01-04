@@ -2638,9 +2638,9 @@ public class LauncherModel extends BroadcastReceiver {
     public static ArrayList<Object> getSortedIconPacks(Context context) {
         //Todo: This doesn't sort at all.
         ArrayList<Object> supportedPackages = IconPackHelper.getSupportedPackagesArrayList(context);
-        if (supportedPackages.isEmpty()) {
-            Toast.makeText(context, R.string.no_iconpacks_summary, Toast.LENGTH_SHORT).show();
-        }
+       // if (supportedPackages.isEmpty()) {
+       //     Toast.makeText(context, R.string.no_iconpacks_summary, Toast.LENGTH_SHORT).show();
+     //   }
         return supportedPackages;
     }
 

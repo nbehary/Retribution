@@ -791,10 +791,10 @@ public class FocusHelper {
             case KeyEvent.KEYCODE_MOVE_HOME:
                 if (handleKeyEvent) {
                     // Select the first icon on this page
-                    View newIcon = getIconInDirection(layout, parent, -1, 1);
-                    if (newIcon != null) {
-                        newIcon.requestFocus();
-                    }
+                   // View newIcon = getIconInDirection(layout, parent, -1, 1);
+                //    if (newIcon != null) {
+                //        newIcon.requestFocus();
+                //    }
                 }
                 wasHandled = true;
                 break;

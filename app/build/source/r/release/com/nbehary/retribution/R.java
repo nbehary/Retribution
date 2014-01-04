@@ -970,8 +970,8 @@ containing a value of this type.
         public static final int scroll_dialog_image=0x7f100013;
         public static final int scroll_view=0x7f100059;
         public static final int search_bar_hint=0x7f10001f;
-        public static final int search_button=0x7f100055;
-        public static final int search_button_container=0x7f100056;
+        public static final int search_button=0x7f100056;
+        public static final int search_button_container=0x7f100055;
         public static final int svbar=0x7f10002e;
         public static final int tabs_container=0x7f100009;
         public static final int textView=0x7f100025;
