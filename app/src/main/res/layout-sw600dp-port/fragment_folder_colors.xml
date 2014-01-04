@@ -23,7 +23,7 @@
             android:weightSum="1"
             android:id="@+id/linearLayout">
 
-        <FrameLayout
+        <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -32,10 +32,11 @@
             android:weightSum="1">
 
             <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="193dp"
-                android:layout_height="184dp"
-                android:layout_gravity="left|top">
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|top"
+                android:weightSum="1">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -47,10 +48,11 @@
                     android:layout_marginLeft="5dp" />
 
                 <Spinner
-                    android:layout_width="match_parent"
+                    android:layout_width="216dp"
                     android:layout_height="wrap_content"
                     android:id="@+id/folder_colors_item_spinner"
-                    android:layout_alignEnd="@+id/color_of" />
+                    android:layout_alignEnd="@+id/color_of"
+                    android:layout_weight="0.80" />
 
                 <Button
                     android:layout_width="wrap_content"
@@ -60,50 +62,20 @@
 
             </LinearLayout>
 
+            <com.nbehary.retribution.ColorPickerView
+                android:layout_width="521dp"
+                android:layout_height="417dp"
+                android:id="@+id/picker"
+                alphaSlider="true" />
+
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="374dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="right|top"
-                android:weightSum="1">
+                android:weightSum="1"></LinearLayout>
 
-                <com.larswerkman.holocolorpicker.ColorPicker
-                    android:id="@+id/picker"
-                    android:layout_width="match_parent"
-                    android:layout_height="320dp"
-                    android:layout_weight="0.47" />
-
-                <TextView
-                    android:layout_width="156dp"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="Opacity"
-                    android:id="@+id/textView"
-                    android:layout_marginLeft="5dp" />
-
-                <com.larswerkman.holocolorpicker.OpacityBar
-                    android:id="@+id/opacitybar"
-                    android:layout_width="183dp"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="Saturation/Value"
-                    android:id="@+id/textView2"
-                    android:layout_alignParentStart="true"
-                    android:layout_marginLeft="5dp" />
-
-                <com.larswerkman.holocolorpicker.SVBar
-                    android:id="@+id/svbar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true" />
-            </LinearLayout>
-
-        </FrameLayout>
+        </LinearLayout>
 
 
         </LinearLayout>
@@ -114,18 +86,13 @@
             android:layout_height="wrap_content"
             android:background="@drawable/portal_container_holo"
             android:layout_gravity="center_horizontal|bottom"
-            android:layout_below="@+id/linearLayout"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="49dp">
+            android:layout_below="@+id/linearLayout">
             <ImageView
                 android:id="@+id/folder_color_preview_image"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal|bottom"
-                />
+                android:layout_height="wrap_content" />
 
-            </FrameLayout>
+        </FrameLayout>
 
 
     <!--</FrameLayout>-->

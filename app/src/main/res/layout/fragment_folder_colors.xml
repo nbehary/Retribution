@@ -20,17 +20,18 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="left|top"
-            android:weightSum="1"
-            android:id="@+id/linearLayout">
 
-        <FrameLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="255dp"
-            android:layout_gravity="left|top"
-            android:id="@+id/folder_colors_ui"
+            android:id="@+id/linearLayout"
             android:weightSum="1">
 
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="321dp"
+            android:id="@+id/folder_colors_ui"
+            android:layout_weight="0.16">
+
+            <!--
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="158dp"
@@ -69,54 +70,71 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </LinearLayout>
+-->
 
             <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="169dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="left|top">
-
+                android:orientation="horizontal">
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:layout_width="72dp"
+                    android:layout_height="match_parent"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
                     android:text="Change Color of:"
                     android:id="@+id/color_of"
-                    android:layout_marginLeft="5sp" />
+                    android:layout_marginLeft="5sp"
+                    android:layout_weight="0.91" />
 
                 <Spinner
-                    android:layout_width="142dp"
+                    android:layout_width="168dp"
                     android:layout_height="wrap_content"
                     android:id="@+id/folder_colors_item_spinner" />
 
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Reset Default"
-                    android:id="@+id/folder_color_reset" />
-
             </LinearLayout>
+
+            <com.nbehary.retribution.ColorPickerView
+                android:layout_width="324dp"
+                android:layout_height="263dp"
+                android:id="@+id/picker"
+                alphaSlider="true"
+                android:layout_gravity="left|center_vertical" />
+
+        </LinearLayout>
+
+        </LinearLayout>
+
+    <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="114dp"
+    android:orientation="horizontal"
+
+        android:layout_alignBottom="@+id/linearLayout"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true">
+
+    <FrameLayout
+        android:id="@+id/folder_color_preview"
+        android:layout_width="172dp"
+        android:layout_height="136dp"
+        android:background="@drawable/portal_container_holo"
+        android:layout_alignParentStart="true">
+        <ImageView
+            android:id="@+id/folder_color_preview_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_gravity="center_horizontal|bottom"
+            />
 
         </FrameLayout>
 
-            <FrameLayout
-                android:id="@+id/folder_color_preview"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/portal_container_holo"
-                android:layout_alignParentStart="true">
-                <ImageView
-                    android:id="@+id/folder_color_preview_image"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-
-                    android:layout_gravity="center_horizontal|bottom"
-                    />
-
-                </FrameLayout>
-
-
-        </LinearLayout>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Reset Default"
+        android:id="@+id/folder_color_reset"
+        android:layout_weight="1.45" />
+</LinearLayout>
 
 
     <!--</FrameLayout>-->

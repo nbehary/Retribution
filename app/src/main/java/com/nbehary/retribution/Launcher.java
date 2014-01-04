@@ -105,6 +105,8 @@ import com.android.gallery3d.common.BitmapUtils;
 import com.nbehary.retribution.R;
 import com.nbehary.retribution.DropTarget.DragObject;
 import com.nbehary.retribution.preference.PreferencesProvider;
+import com.nbehary.retribution.util.IabHelper;
+import com.nbehary.retribution.util.IabResult;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -236,6 +238,8 @@ public class Launcher extends Activity
     private DragLayer mDragLayer;
     private DragController mDragController;
     private View mWeightWatcher;
+
+    private IabHelper mHelper;
 
     private AppWidgetManager mAppWidgetManager;
     private LauncherAppWidgetHost mAppWidgetHost;
@@ -400,6 +404,18 @@ public class Launcher extends Activity
         super.onCreate(savedInstanceState);
         Log.d("nbehary444","onCreate");
 
+        String base64EncodedPublicKey = getResources().getString(R.string.R2) + getResources().getString(R.string.C3PO);
+        mHelper = new IabHelper(this, base64EncodedPublicKey);
+
+        mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
+            public void onIabSetupFinished(IabResult result) {
+                if (!result.isSuccess()) {
+                    // Oh noes, there was a problem.
+                    Log.d(TAG, "Problem setting up In-app Billing: " + result);
+                }
+                // Hooray, IAB is fully set up!
+            }
+        });
 
         LauncherAppState.setApplicationContext(getApplicationContext());
         LauncherAppState app = LauncherAppState.getInstance();
@@ -1963,6 +1979,9 @@ public class Launcher extends Activity
     @Override
     public void onDestroy() {
         super.onDestroy();
+
+        if (mHelper != null) mHelper.dispose();
+        mHelper = null;
 
         // Remove all pending runnables
         mHandler.removeMessages(ADVANCE_MSG);

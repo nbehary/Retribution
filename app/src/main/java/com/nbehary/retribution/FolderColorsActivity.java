@@ -173,7 +173,7 @@ public class FolderColorsActivity extends Activity {
         String mChanging;
         ImageView mPreviewImage;
         Context mContext;
-        ColorPicker mPicker;
+        ColorPickerView mPicker;
 
         int mBgColor;
         int mIconColor;
@@ -225,7 +225,7 @@ public class FolderColorsActivity extends Activity {
             View rootView;
             if (LauncherAppState.getInstance().getProVersion()) {
                 rootView = inflater.inflate(R.layout.fragment_folder_colors, container, false);
-                FrameLayout ui_pane = (FrameLayout) rootView.findViewById(R.id.folder_colors_ui);
+                LinearLayout ui_pane = (LinearLayout) rootView.findViewById(R.id.folder_colors_ui);
                 ui_pane.setBackgroundColor(Color.argb(128, 0, 0, 0));
                 mPreviewImage = (ImageView) rootView.findViewById(R.id.folder_color_preview_image);
 
@@ -274,6 +274,9 @@ public class FolderColorsActivity extends Activity {
 
                 mPreviewImage.setImageBitmap(generateFolderPreview(getResources(),mBgColor,mIconColor,mNameColor,mDefaultBG));
 
+                mPicker = (ColorPickerView) rootView.findViewById(R.id.picker);
+                mPicker.setAlphaSliderVisible(true);
+/*
                 mPicker = (ColorPicker) rootView.findViewById(R.id.picker);
                 SVBar svBar = (SVBar) rootView.findViewById(R.id.svbar);
                 OpacityBar opacityBar = (OpacityBar) rootView.findViewById(R.id.opacitybar);
@@ -281,8 +284,8 @@ public class FolderColorsActivity extends Activity {
 
                 mPicker.addSVBar(svBar);
                 mPicker.addOpacityBar(opacityBar);
-
-                mPicker.setOnColorChangedListener(new ColorPicker.OnColorChangedListener() {
+*/
+                mPicker.setOnColorChangedListener(new ColorPickerView.OnColorChangedListener() {
                     @Override
                     public void onColorChanged(int i) {
                         FolderColorsActivity parent = (FolderColorsActivity) getActivity();
