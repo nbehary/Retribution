@@ -390,7 +390,14 @@ public class Workspace extends SmoothPagedView
     public void onDragEnd() {
         mIsDragOccuring = false;
         updateChildrenLayersEnabled(false);
-        mLauncher.unlockScreenOrientation(false);
+        if (getResources().getString(R.string.screen_type).equals("phone")) {
+            mLauncher.lockScreenOrientation();
+            Log.d("nbehary444","phone!");
+        }else {
+            Log.d("nbehary444","tablet!");
+            mLauncher.unlockScreenOrientation(false);
+        }
+
 
         // Re-enable any Un/InstallShortcutReceiver and now process any queued items
         InstallShortcutReceiver.disableAndFlushInstallQueue(getContext());
@@ -822,10 +829,11 @@ public class Workspace extends SmoothPagedView
                 return;
             }
         }
-        if (screenId == EXTRA_EMPTY_SCREEN_ID) {
+        //TODO: Possible ICS bug causes the below to happen.  (adding a widget to an empty screen)
+      //  if (screenId == EXTRA_EMPTY_SCREEN_ID) {
             // This should never happen
-            throw new RuntimeException("Screen id should not be EXTRA_EMPTY_SCREEN_ID");
-        }
+     //       throw new RuntimeException("Screen id should not be EXTRA_EMPTY_SCREEN_ID");
+      //  }
 
         final CellLayout layout;
         if (container == LauncherSettings.Favorites.CONTAINER_HOTSEAT) {
@@ -2697,7 +2705,7 @@ public class Workspace extends SmoothPagedView
     public void onDrop(final DragObject d) {
         mDragViewVisualCenter = getDragViewVisualCenter(d.x, d.y, d.xOffset, d.yOffset, d.dragView,
                 mDragViewVisualCenter);
-
+Log.d("nbehar456","onDrop");
         CellLayout dropTargetLayout = mDropToLayout;
 
         // We want the point to be mapped to the dragTarget.
@@ -3255,6 +3263,10 @@ public class Workspace extends SmoothPagedView
         ItemInfo item = (ItemInfo) d.dragInfo;
 
         // Ensure that we have proper spans for the item that we are dropping
+        if (item == null) {
+            Log.e(TAG, "invalid object passed in");
+            return;
+        }
         if (item.spanX < 0 || item.spanY < 0) throw new RuntimeException("Improper spans found");
         mDragViewVisualCenter = getDragViewVisualCenter(d.x, d.y, d.xOffset, d.yOffset,
             d.dragView, mDragViewVisualCenter);

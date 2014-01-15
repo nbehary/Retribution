@@ -65,7 +65,7 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.nbehary.retribution.R;
+
 import com.nbehary.retribution.FolderInfo.FolderListener;
 import com.nbehary.retribution.preference.PreferencesProvider;
 
@@ -217,10 +217,10 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
 
         //Get color for background from shared preferences and set it
         LinearLayout folder = (LinearLayout) findViewById(R.id.user_folder);
-        //here
+
 
         SharedPreferences preferences = getContext().getSharedPreferences("com.nbehary.retribution_preferences",0);
-        //there
+
         if (!PreferencesProvider.Interface.General.getDefaultFolderBG()) {
             Drawable myIcon = getResources().getDrawable( R.drawable.portal_container_custom );
             //myIcon.get

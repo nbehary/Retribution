@@ -25,6 +25,8 @@
 
     <string name="folder_button_text">Folders</string>
 
+    <string name="grid_button_text">Desktop Grid</string>
+
     <string name="title_activity_folder_colors">FolderColorsActivity</string>
     <string name="hello_world">Hello world!</string>
 
@@ -41,14 +43,21 @@
         Written and designed by:\n
         Nathan A. Behary\n
         \n
-        Testing:\n
+        Nexus 10 Support Testing:\n
         Kyle Riedemann
 
-    </string><string name="os_button_text">Open Source Software</string>
+    </string><string name="os_button_text">Open Source Software</string><string name="pitch_pro_colors">Full color choices available in the Pro Version!</string>
 
     <string-array name="folder_colors_array">
         <item>Background</item>
         <item>Folder Name</item>
         <item>Icon Labels</item>
     </string-array>
+
+    <string-array name="grid_choices_array">
+        <item>Desktop</item>
+        <item>Dock</item>
+    </string-array>
+
+    <string name="grid_instructions">Set Grid</string>
 </resources>

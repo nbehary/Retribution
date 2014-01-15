@@ -17,6 +17,7 @@
 package com.nbehary.retribution;
 
 import android.app.Application;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.util.Log;
@@ -31,13 +32,9 @@ public class LauncherApplication extends Application {
         PreferencesProvider.load(this);
         LauncherAppState.setApplicationContext(this);
         LauncherAppState.getInstance();
-        PackageInfo packageInfo = null;
-        try {
-            packageInfo = getPackageManager().getPackageInfo(this.getPackageName(), 0);
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        Log.d("nbehary546","blah");
+
+        boolean isDebuggable =  ( 0 != ( getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE ) );
+
 
     }
 

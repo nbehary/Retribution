@@ -846,6 +846,7 @@ public class LauncherModel extends BroadcastReceiver {
         item.container = container;
         item.cellX = cellX;
         item.cellY = cellY;
+        Log.d("nbehary456","addtoDB");
         // We store hotseat items in canonical form which is this orientation invariant position
         // in the hotseat
         if (context instanceof Launcher && screenId < 0 &&
@@ -891,6 +892,7 @@ public class LauncherModel extends BroadcastReceiver {
                             }
                             break;
                         case LauncherSettings.Favorites.ITEM_TYPE_APPWIDGET:
+                            Log.d("nbehary456","addtoDB");
                             sBgAppWidgets.add((LauncherAppWidgetInfo) item);
                             break;
                     }

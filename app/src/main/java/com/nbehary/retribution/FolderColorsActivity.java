@@ -41,14 +41,10 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 
-import com.larswerkman.holocolorpicker.ColorPicker;
-import com.larswerkman.holocolorpicker.OpacityBar;
-import com.larswerkman.holocolorpicker.SVBar;
-import com.larswerkman.holocolorpicker.SaturationBar;
-import com.larswerkman.holocolorpicker.ValueBar;
+
 import com.nbehary.retribution.preference.PreferencesProvider;
 
-import java.util.zip.Inflater;
+
 
 public class FolderColorsActivity extends Activity {
 

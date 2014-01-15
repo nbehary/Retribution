@@ -6,6 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -30,6 +31,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityOptions;
+import android.app.Dialog;
 import android.app.SearchManager;
 import android.appwidget.AppWidgetHostView;
 import android.appwidget.AppWidgetManager;
@@ -42,6 +44,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
@@ -64,6 +67,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.os.StrictMode;
 import android.os.SystemClock;
@@ -95,13 +99,19 @@ import android.view.accessibility.AccessibilityManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.Advanceable;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.NumberPicker;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.gallery3d.common.BitmapUtils;
+import com.android.vending.billing.IInAppBillingService;
 import com.nbehary.retribution.R;
 import com.nbehary.retribution.DropTarget.DragObject;
 import com.nbehary.retribution.preference.PreferencesProvider;
@@ -150,7 +160,8 @@ public class Launcher extends Activity
     static final int REQUEST_PICK_ICON = 13;
     private static final int REQUEST_SETTINGS = 14;
     private static final int REQUEST_PICK_APPWIDGET_ICS = 15;
-    private static final int REQUEST_ABOUT =16;
+    private static final int REQUEST_ABOUT = 16;
+    private static final int REQUEST_GRID = 17;
 
     /**
      * IntentStarter uses request codes starting with this. This must be greater than all activity
@@ -238,8 +249,6 @@ public class Launcher extends Activity
     private DragLayer mDragLayer;
     private DragController mDragController;
     private View mWeightWatcher;
-
-    private IabHelper mHelper;
 
     private AppWidgetManager mAppWidgetManager;
     private LauncherAppWidgetHost mAppWidgetHost;
@@ -402,23 +411,14 @@ public class Launcher extends Activity
         }
 
         super.onCreate(savedInstanceState);
-        Log.d("nbehary444","onCreate");
+        Log.d("nbehary444", "onCreate");
 
-        String base64EncodedPublicKey = getResources().getString(R.string.R2) + getResources().getString(R.string.C3PO);
-        mHelper = new IabHelper(this, base64EncodedPublicKey);
-
-        mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
-            public void onIabSetupFinished(IabResult result) {
-                if (!result.isSuccess()) {
-                    // Oh noes, there was a problem.
-                    Log.d(TAG, "Problem setting up In-app Billing: " + result);
-                }
-                // Hooray, IAB is fully set up!
-            }
-        });
+ 
 
         LauncherAppState.setApplicationContext(getApplicationContext());
         LauncherAppState app = LauncherAppState.getInstance();
+
+        app.checkProVersion();
 
         // Determine the dynamic grid properties
         Point smallestSize = new Point();
@@ -435,6 +435,7 @@ public class Launcher extends Activity
         DisplayMetrics dm = new DisplayMetrics();
         display.getMetrics(dm);
         DeviceProfile grid;
+
         // Lazy-initialize the dynamic grid
         if (Build.VERSION.SDK_INT >=16) {
                 display.getCurrentSizeRange(smallestSize, largestSize);//16
@@ -444,11 +445,12 @@ public class Launcher extends Activity
                     realSize.x, realSize.y,
                     dm.widthPixels, dm.heightPixels);
         }else {
+            //TODO:  This should account for soft-buttons.
             grid = app.initDynamicGrid(this,
-                    dm.widthPixels,
-                    dm.heightPixels,
+                    dm.widthPixels - getStatusBarHeight(),
+                    dm.heightPixels - getStatusBarHeight(),
                     realSize.x, realSize.y,
-                    dm.widthPixels, dm.heightPixels);
+                    dm.widthPixels - getStatusBarHeight(), dm.heightPixels - getStatusBarHeight());
         }
         // the LauncherApplication should call this, but in case of Instrumentation it might not be present yet
         mSharedPrefs = getSharedPreferences(LauncherAppState.getSharedPreferencesKey(),
@@ -485,6 +487,7 @@ public class Launcher extends Activity
         }
         setupViews();
         grid.layout(this);
+
 
         registerContentObservers();
 
@@ -527,11 +530,38 @@ public class Launcher extends Activity
 
         updateGlobalIcons();
 
-        // On large interfaces, we want the screen to auto-rotate based on the current orientation
-        unlockScreenOrientation(true);
+ /*       // On large interfaces, we want the screen to auto-rotate based on the current orientation
+        Configuration config = getResources().getConfiguration();
 
+        if (((config.screenLayout &
+                Configuration.SCREENLAYOUT_SIZE_MASK) ==
+        Configuration.SCREENLAYOUT_SIZE_LARGE) ||
+        ((config.screenLayout &
+                Configuration.SCREENLAYOUT_SIZE_MASK) ==
+                Configuration.SCREENLAYOUT_SIZE_XLARGE))
+        {
+           // lockScreenOrientation();
+            Log.d("nbehary444","tablet!");
+            unlockScreenOrientation(true);
+        }else {
+
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            Log.d("nbehary444","phone!");
+        }
+        */
+
+        unlockScreenOrientation(true);
         showFirstRunCling();
 
+    }
+
+    public int getStatusBarHeight() {
+        int result = 0;
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
     }
 
     protected void onUserLeaveHint() {
@@ -807,6 +837,13 @@ public class Launcher extends Activity
             //mWorkspace.exitOverviewMode(true);
             mOverviewPanel.setVisibility(View.VISIBLE);
             mWorkspace.setVisibility(View.VISIBLE);
+            //mState=State.WORKSPACE;
+
+
+        } else if (requestCode == REQUEST_GRID) {
+            Intent intent = getIntent();
+            finish();
+            startActivity(intent);
 
         } else if (requestCode == REQUEST_PICK_APPWIDGET_ICS) {
             addAppWidget(data);
@@ -1081,7 +1118,9 @@ public class Launcher extends Activity
         if (mSearchDropTargetBar != null) {
             mSearchDropTargetBar.showSearchBar(false);
         }
+        LauncherAppState app = LauncherAppState.getInstance();
 
+        app.checkProVersion();
 
         mWorkspace.updateInteractionForState();
         mWorkspace.onResume();
@@ -1159,6 +1198,99 @@ public class Launcher extends Activity
 
         Intent myIntent = new Intent(Launcher.this, com.nbehary.retribution.AboutActivity.class);
         Launcher.this.startActivityForResult(myIntent, REQUEST_ABOUT);
+    }
+
+    protected void startGrid() {
+        mWorkspace.setVisibility(View.INVISIBLE);
+        mOverviewPanel.setVisibility(View.INVISIBLE);
+        //mState = State.FOLDERS_CUSTOMIZE;
+        //mOverviewPanel.setVisibility(View.INVISIBLE);
+       // showWorkspace();
+        //DeviceProfile grid = LauncherAppState.getInstance().getDynamicGrid().getDeviceProfile();
+        Intent myIntent = new Intent(Launcher.this, com.nbehary.retribution.GridEditor.class);
+        Launcher.this.startActivityForResult(myIntent, REQUEST_GRID);
+/*
+        Dialog gridDialog = new Dialog(this);
+        gridDialog.setTitle("Desktop Grid");
+        gridDialog.setContentView(R.layout.grid_dialog);
+        NumberPicker colsPicker = (NumberPicker) gridDialog.findViewById(R.id.grid_cols_picker);
+        colsPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+        colsPicker.setMaxValue(10);
+        colsPicker.setMinValue(0);
+        int tempCols = PreferencesProvider.Interface.General.getWorkspaceColumns();
+        if (tempCols == 0) {
+            tempCols = (int) grid.numColumnsCalc;
+        }
+        colsPicker.setValue(tempCols);
+        colsPicker.setOnValueChangedListener( new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+                PreferencesProvider.Interface.General.setWorkspaceColumns(LauncherAppState.getInstance().getContext(),picker.getValue());
+
+                //grid.layout(Launcher.this);
+                //Launcher.this.onResume();
+                //Log.d("nbehary10x", String.format("Picked cols: %d", picker.getValue()));
+            }
+        });
+
+        NumberPicker rowsPicker = (NumberPicker) gridDialog.findViewById(R.id.grid_rows_picker);
+        rowsPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+        rowsPicker.setMaxValue(10);
+        rowsPicker.setMinValue(0);
+        int tempRows = PreferencesProvider.Interface.General.getWorkspaceRows();
+        if (tempRows == 0) {
+
+            tempRows = (int) grid.numRowsCalc;
+            Log.d("nbehary10x",String.format("arrrgh: %d",tempRows));
+        }
+        rowsPicker.setValue(tempRows);
+        Log.d("nbehary10x",String.format("arrrgh: %d",rowsPicker.getValue()));
+        rowsPicker.setValue(PreferencesProvider.Interface.General.getWorkspaceRows());
+        rowsPicker.setOnValueChangedListener( new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+                PreferencesProvider.Interface.General.setWorkspaceRows(LauncherAppState.getInstance().getContext(), picker.getValue());
+
+                //grid.numRows = picker.getValue();
+                //grid.layout(Launcher.this);
+                //Log.d("nbehary10x",String.format("Picked rows: %d",picker.getValue()));
+            }
+        });
+
+
+        Button okay = (Button) gridDialog.findViewById(R.id.grid_ok_button);
+        okay.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                /*Intent intent = getIntent();
+                finish();
+                startActivity(intent);
+                System.exit(0);
+
+            }
+        });
+
+        Integer[] items = new Integer[]{1,2,3,4,5,6,7,8,9,10};
+        ArrayAdapter<Integer> adapter = new ArrayAdapter<Integer>(this,android.R.layout.simple_spinner_item, items);
+       // adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        colsSpinner.setAdapter(adapter);
+        colsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Log.d("nbehary10x",String.format("Picked: %d",position));
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+
+        gridDialog.show();*/
+        //GridCustomize gridCustomize = (GridCustomize) findViewById(R.layout.grid_dialog);
+        //gridCustomize.setVisibility(View.VISIBLE);
+
+
+
     }
 
     public interface QSBScroller {
@@ -1404,6 +1536,16 @@ public class Launcher extends Activity
             }
         });
         aboutButton.setOnTouchListener(getHapticFeedbackTouchListener());
+
+        View gridButton = findViewById(R.id.grid_button);
+        gridButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                //Toast.makeText(getBaseContext(), "Due to the recent Zombie Apocalypse, this feature is not available.", Toast.LENGTH_LONG).show();
+                startGrid();
+            }
+        });
+        gridButton.setOnTouchListener(getHapticFeedbackTouchListener());
 
         mOverviewPanel.setAlpha(0f);
 
@@ -1980,8 +2122,7 @@ public class Launcher extends Activity
     public void onDestroy() {
         super.onDestroy();
 
-        if (mHelper != null) mHelper.dispose();
-        mHelper = null;
+
 
         // Remove all pending runnables
         mHandler.removeMessages(ADVANCE_MSG);
@@ -3358,17 +3499,24 @@ public class Launcher extends Activity
     void addAppWidget(Intent data) {
         Log.d("nbehary546","addAddWidget");
         CellLayout cellLayout =
-                (CellLayout) mWorkspace.getScreenWithId(-201);
+                (CellLayout) mWorkspace.getScreenWithId(mWorkspace.getScreenIdForPageIndex(mWorkspace.getCurrentPage()));
         int appWidgetId = data.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, -1);
         AppWidgetProviderInfo appWidget = mAppWidgetManager.getAppWidgetInfo(appWidgetId);
-
+        if (appWidget == null) {
+            return;
+        }
+        LauncherAppWidgetInfo info = new LauncherAppWidgetInfo(appWidgetId,
+                appWidget.provider);
         AppWidgetHostView hostView = mAppWidgetHost.createView(this, appWidgetId, appWidget);
         hostView.setAppWidget(appWidgetId, appWidget);
         // Add  it on the layout you want
 
         //cellLayout.addView(hostView);
-        long currentScreenId = mWorkspace.getScreenIdForPageIndex(mWorkspace.getNextPage());
-        completeAddAppWidget(appWidgetId, mWorkspace.getNextPage(), currentScreenId, null, null);
+        //mWorkspace.getC
+        long currentScreenId = mWorkspace.getScreenIdForPageIndex(mWorkspace.getCurrentPage());
+        long nextScreenId = mWorkspace.getScreenIdForPageIndex(mWorkspace.getCurrentPage());
+        completeAddAppWidget(appWidgetId,LauncherSettings.Favorites.CONTAINER_DESKTOP, currentScreenId, hostView, appWidget);
+        //completeTwoStageWidgetDrop(RESULT_OK,appWidgetId);
 
 
 /*        if (appWidget.configure != null) {
@@ -4720,6 +4868,38 @@ public class Launcher extends Activity
         Cling cling = (Cling) findViewById(R.id.folder_cling);
         dismissCling(cling, null, Cling.FOLDER_CLING_DISMISSED_KEY,
                 DISMISS_CLING_DURATION, true);
+    }
+
+    public boolean isTablet() {
+
+        try {
+
+            // Compute screen size
+
+            DisplayMetrics dm = this.getResources().getDisplayMetrics();
+
+            float screenWidth  = dm.widthPixels / dm.xdpi;
+
+            float screenHeight = dm.heightPixels / dm.ydpi;
+
+            double size = Math.sqrt(Math.pow(screenWidth, 2) +
+
+                    Math.pow(screenHeight, 2));
+
+            // Tablet devices should have a screen size greater than 6 inches
+
+            return size >= 6;
+
+        } catch(Throwable t) {
+
+            Log.e(TAG, "Failed to compute screen size", t);
+
+            return false;
+
+        }
+
+
+
     }
 
     /**

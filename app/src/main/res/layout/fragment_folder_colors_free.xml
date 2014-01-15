@@ -69,6 +69,18 @@
                     android:id="@+id/radioBlackO"
                     android:checked="false" />
 
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="41dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/pitch_pro_colors"
+                    android:id="@+id/textView"
+                    android:layout_gravity="center_horizontal" />
+
             </RadioGroup>
 
         </FrameLayout>

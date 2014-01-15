@@ -508,5 +508,10 @@ public class IconPackPreviewLoader {
         }
     }
 
+    private boolean isSystemPackage(PackageInfo pkgInfo) {
+        return ((pkgInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0) ? true
+                : false;
+    }
+
 }
 

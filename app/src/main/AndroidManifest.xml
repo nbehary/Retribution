@@ -20,25 +20,14 @@
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.nbehary.retribution"
-    android:versionCode="1183"
-    android:versionName="1.0-Beta4">
+    android:versionCode="1687"
+    android:versionName="1.0.0.6-Dev">
 
     <permission
         android:name="com.nbehary.retribution.permission.PRELOAD_WORKSPACE"
         android:permissionGroup="android.permission-group.SYSTEM_TOOLS"
         android:protectionLevel="system|signature" />
-    <permission
-        android:name="com.android.launcher.permission.INSTALL_SHORTCUT"
-        android:permissionGroup="android.permission-group.SYSTEM_TOOLS"
-        android:protectionLevel="dangerous"
-        android:label="@string/permlab_install_shortcut"
-        android:description="@string/permdesc_install_shortcut" />
-    <permission
-        android:name="com.android.launcher.permission.UNINSTALL_SHORTCUT"
-        android:permissionGroup="android.permission-group.SYSTEM_TOOLS"
-        android:protectionLevel="dangerous"
-        android:label="@string/permlab_uninstall_shortcut"
-        android:description="@string/permdesc_uninstall_shortcut"/>
+
     <permission
         android:name="com.nbehary.retribution.permission.READ_SETTINGS"
         android:permissionGroup="android.permission-group.SYSTEM_TOOLS"
@@ -57,7 +46,7 @@
         android:protectionLevel="signature"
         />
 
-
+ 
     <uses-permission android:name="android.permission.SET_WALLPAPER" />
     <uses-permission android:name="android.permission.SET_WALLPAPER_HINTS" />
     <uses-permission android:name="android.permission.VIBRATE" />
@@ -69,7 +58,7 @@
     <uses-permission android:name="com.nbehary.retribution.permission.READ_SETTINGS" />
     <uses-permission android:name="com.nbehary.retribution.permission.WRITE_SETTINGS" />
     <uses-permission android:name="com.nbehary.retribution.permission.RECEIVE_LAUNCH_BROADCASTS" />
-    <uses-permission android:name="com.android.vending.BILLING" />
+
     <uses-sdk android:targetSdkVersion="19" android:minSdkVersion="15"/>
 
     <application
@@ -145,10 +134,18 @@
         </activity>
 
         <activity
+            android:name="com.nbehary.retribution.GridEditor"
+            android:exported="false"
+            android:label="Grid Editor"
+            android:windowSoftInputMode="stateHidden"
+            android:theme="@style/Theme.GridEditor">
+        </activity>
+
+        <activity
             android:name="com.nbehary.retribution.AboutActivity"
             android:exported="false"
             android:label="About"
-            android:theme="@android:style/Theme.Holo">
+            android:theme="@android:style/Theme.Holo.Wallpaper.NoTitleBar">
         </activity>
 
 
@@ -185,7 +182,7 @@
         <!-- Intent received used to install shortcuts from other applications -->
         <receiver
             android:name="com.nbehary.retribution.InstallShortcutReceiver"
-            android:permission="com.nbehary.retribution.permission.INSTALL_SHORTCUT">
+            android:permission="com.android.launcher.permission.INSTALL_SHORTCUT">
             <intent-filter>
                 <action android:name="com.nbehary.retribution.action.INSTALL_SHORTCUT" />
             </intent-filter>
@@ -194,7 +191,7 @@
         <!-- Intent received used to uninstall shortcuts from other applications -->
         <receiver
             android:name="com.nbehary.retribution.UninstallShortcutReceiver"
-            android:permission="com.nbehary.retribution.permission.UNINSTALL_SHORTCUT">
+            android:permission="com.android.launcher.permission.UNINSTALL_SHORTCUT">
             <intent-filter>
                 <action android:name="com.nbehary.retribution.action.UNINSTALL_SHORTCUT" />
             </intent-filter>

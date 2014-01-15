@@ -5,10 +5,12 @@ import android.app.ActionBar;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -70,7 +72,7 @@ public class AboutActivity extends Activity {
 
 
             View rootView = inflater.inflate(R.layout.fragment_about, container, false);
-            //rootView.setBackgroundColor(Color.argb(128,0,0,0));
+            rootView.setBackgroundColor(Color.argb(128,0,0,0));
             TextView versionText = (TextView) rootView.findViewById(R.id.about_version_text);
             LauncherAppState appState = LauncherAppState.getInstance();
             String versionName = appState.mVersionName;
@@ -84,6 +86,17 @@ public class AboutActivity extends Activity {
 
                 }
             });
+            final Button playButton = (Button) rootView.findViewById(R.id.play_button);
+            appState.checkProVersion();
+            if (!appState.getProVersion()) {
+                playButton.setVisibility(View.VISIBLE);
+                playButton.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.nbehary.retribution.key.beta")));
+
+                    }
+                });
+            }
             return rootView;
         }
     }

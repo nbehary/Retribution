@@ -52,6 +52,19 @@ public final class PreferencesProvider {
         sKeyValues.put(key, value);
     }
 
+    private static float getFloat(String key, float def) {
+        return sKeyValues.containsKey(key) && sKeyValues.get(key) instanceof Float ?
+                (Float) sKeyValues.get(key) : def;
+    }
+
+    private static void setFloat(Context ctx, String key, float value) {
+        SharedPreferences preferences = ctx.getSharedPreferences(PREFERENCES_KEY, 0);
+        Editor editor = preferences.edit();
+        editor.putFloat(key, value);
+        editor.apply(); // For better performance
+        sKeyValues.put(key, value);
+    }
+
     private static boolean getBoolean(String key, boolean def) {
         return sKeyValues.containsKey(key) && sKeyValues.get(key) instanceof Boolean ?
                 (Boolean) sKeyValues.get(key) : def;
@@ -132,6 +145,54 @@ public final class PreferencesProvider {
 
             public static String getFolderColor() {
                 return getString("pref_folder_color", "1");
+            }
+
+            public static void setWorkspaceColumns(Context ctx, int cols){
+                setInt(ctx,"pref_workspace_cols",cols);
+            }
+
+            public static void setWorkspaceRows(Context ctx, int rows){
+                setInt(ctx,"pref_workspace_rows",rows);
+            }
+
+            public static int getWorkspaceColumns() {
+                return getInt("pref_workspace_cols",0);
+            }
+
+            public static int getWorkspaceRows() {
+                return getInt("pref_workspace_rows",0);
+            }
+
+            public static void setHotseatIcons(Context ctx, float icons){
+                setFloat(ctx, "pref_hotseat_icons", icons);
+            }
+
+            public static float getHotseatIcons() {
+                return getFloat("pref_hotseat_icons",0 );
+            }
+
+            public static void setIconSize(Context ctx, float size) {
+                setFloat(ctx,"pref_grid_icon_size",size);
+            }
+
+            public static float getIconSize() {
+                return getFloat("pref_grid_icon_size", 0);
+            }
+
+            public static void setIconTextSize(Context ctx, float size) {
+                setFloat(ctx,"pref_grid_icon_text_size",size);
+            }
+
+            public static float getIconTextSize() {
+                return getFloat("pref_grid_icon_text_size",0);
+            }
+
+            public static void setHotseatIconSize(Context ctx, float size) {
+                setFloat(ctx,"pref_hotseat_icon_size",size);
+            }
+
+            public static float getHotseatIconSize() {
+                return getFloat("pref_hotseat_icon_size",0);
             }
         }
     }

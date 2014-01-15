@@ -18,12 +18,15 @@ package com.nbehary.retribution;
 
 import android.app.SearchManager;
 import android.content.*;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.ContentObserver;
 import android.os.Handler;
+import android.os.IBinder;
+import android.os.RemoteException;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.Display;
@@ -31,6 +34,8 @@ import android.view.Display;
 import java.lang.ref.WeakReference;
 
 import com.nbehary.retribution.R;
+
+import com.nbehary.retribution.pro_key.IRemoteService;
 
 public class LauncherAppState {
     private static final String TAG = "LauncherAppState";
@@ -56,6 +61,8 @@ public class LauncherAppState {
     public int mVersionCode;
 
     private boolean mProVersion;
+
+    IRemoteService mRemoteService;
 
     public static LauncherAppState getInstance() {
         if (INSTANCE == null) {
@@ -134,9 +141,9 @@ public class LauncherAppState {
         }
         mVersionName = pInfo.versionName;
         mVersionCode = pInfo.versionCode;
+        mProVersion = false;
 
-        //TODO: Add Pro key check here probably.....
-        mProVersion = true;
+        checkProVersion();
 
     }
 
@@ -162,6 +169,8 @@ public class LauncherAppState {
             mModel.startLoaderFromBackground();
         }
     };
+
+
 
     LauncherModel setLauncher(Launcher launcher) {
         if (mModel == null) {
@@ -229,6 +238,64 @@ public class LauncherAppState {
     DynamicGrid getDynamicGrid() {
         return mDynamicGrid;
     }
+
+    public void checkProVersion() {
+        Log.d("nbehary446","checkPro");
+        PackageManager manager = sContext.getPackageManager();
+        mProVersion = false;
+        boolean isDebuggable =  ( 0 != ( sContext.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE ) );
+        if (isDebuggable) {
+            mProVersion= true;
+            Log.d("nbehary449","Debug");
+            return;
+        }
+
+        if ((manager.checkSignatures("com.nbehary.retribution", "com.nbehary.retribution.pro_key")
+                == PackageManager.SIGNATURE_MATCH) &&
+                (manager.getInstallerPackageName("com.nbehary.retribution.pro_key").equals("com.android.vending"))){
+            Intent serviceIntent=new Intent();
+            serviceIntent.setClassName("com.nbehary.retribution.pro_key", "com.nbehary.retribution.pro_key.LicenseCheckService");
+            mProVersion=sContext.bindService(serviceIntent, mServiceConnection,Context.BIND_AUTO_CREATE);
+
+        }
+
+        if ((mVersionName.contains("Beta"))||(mVersionName.contains("Dev")) || (mVersionName.contains("RC"))) {
+            if ((manager.checkSignatures("com.nbehary.retribution", "com.nbehary.retribution.key.beta")
+                    == PackageManager.SIGNATURE_MATCH) &&
+                    (manager.getInstallerPackageName("com.nbehary.retribution.key.beta").equals("com.android.vending"))){
+                mProVersion = true;
+            }
+        }
+
+
+
+
+    }
+
+    private ServiceConnection mServiceConnection=new ServiceConnection() {
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            // get instance of the aidl binder
+            mRemoteService = IRemoteService.Stub.asInterface(service);
+            try {
+                String message = "";
+                if (mRemoteService.checkLicense()) {
+                    message=mRemoteService.sayHello("Mina");
+                }
+                Log.v("nbehary445", message);
+            } catch (RemoteException e) {
+                Log.e("nbehary445", "RemoteException: "+e.toString());
+            }
+
+        }
+    };
 
     public boolean isScreenLarge() {
         return mIsScreenLarge;

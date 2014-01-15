@@ -39,6 +39,12 @@
                 android:layout_width="480dp"
                 android:layout_height="wrap_content"
                 android:text="@string/folder_cling_create_folder" />
+        <TextView
+            style="@style/ClingText"
+            android:id="@+id/folder_cling_custom_folder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/folder_cling_custom_text" />
             <Button
                 style="@style/ClingButton"
                 android:id="@+id/cling_dismiss"

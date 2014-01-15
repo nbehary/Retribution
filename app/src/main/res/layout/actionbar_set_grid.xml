@@ -2,7 +2,7 @@
 <!--
 /*
 **
-** Copyright 2013, Nathan A. Behary
+** Copyright 2014, Nathan A. Behary
 **
 
 */
@@ -20,5 +20,5 @@
         android:drawableLeft="@drawable/ic_actionbar_accept"
         android:drawablePadding="8dp"
         android:gravity="center_vertical"
-        android:text="@string/folder_colors_instructions" />
+        android:text="@string/grid_instructions" />
 </FrameLayout>

@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-        <string name="R2">MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjig9HZra/GfxGmkur7KxCQYhdur6uhDs88s2hpR3PnHB55YxyxjEeRJSykRx+lnp04T23lqBYjmnN42TosHdm6K0CKCLCtEiQQ0i8aSRpg5sqmYJ/fQPTbRnX9i6H3p
-        </string>
+
 
         <string name="noticeText">
         -------------------------------------\n
@@ -52,7 +51,5 @@
   limitations under the License.
 
     </string>
-
-    <string name="C3PO">GT2j7L2FqqSzk85hZ7F7Uk73m3pg5xVflwy1ZkOmnpCjauFGa6Saw8naaR/1SujC8KXLRb5xpHH89UgjN7UMGE7k7mcRCfNlKpAvoie4535NX/hAUQemc9tsVIhMfnAxPDPXwDHvrJNVPNukPJ2L61bL9/ASgmKa+4msK5M1+dpjBl8LP7aPFZS7BB21e2cin02pF7Occ4VZbKBMWpdP/wIDAQAB</string>
 
 </resources>

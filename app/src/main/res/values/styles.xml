@@ -164,14 +164,23 @@
 
 
     <style name="Theme.Transparent.Holo" parent="android:Theme.Holo">
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
+        <!--<item name="android:windowIsTranslucent">true</item>-->
+        <!--<item name="android:windowBackground">@android:color/transparent</item>-->
+
         <item name="android:actionBarStyle">@style/WallpaperCropperActionBar</item>
     </style>
 
-    <style name="Theme.Transparent" parent="android:Theme">
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
+    <style name="Theme.GridEditor" parent="android:Theme.Holo">
+        <!--<item name="android:windowIsTranslucent">true</item>-->
+        <!--<item name="android:windowBackground">@android:color/transparent</item>-->
+
+        <item name="android:actionBarStyle">@style/WallpaperCropperActionBar</item>
+    </style>
+
+    <style name="Theme.Transparent" parent="android:Theme.Holo.Wallpaper.NoTitleBar">
+        <!--<item name="android:windowIsTranslucent">true</item>-->
+        <item name="android:background">#88000000</item>
+        <!--<item name="android:windowBackground">@android:color/transparent</item>-->
     </style>
 
 
