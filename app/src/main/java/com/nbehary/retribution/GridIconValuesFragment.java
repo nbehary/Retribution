@@ -13,36 +13,32 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.NumberPicker;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import java.lang.ref.PhantomReference;
 import java.text.DecimalFormat;
 
 
 /**
  * A simple {@link android.support.v4.app.Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link GridIconFragment.OnFragmentInteractionListener} interface
+ * {@link GridIconValuesFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link GridIconFragment#newInstance} factory method to
+ * Use the {@link GridIconValuesFragment#newInstance} factory method to
  * create an instance of this fragment.
  *
  */
-public class GridIconFragment extends Fragment {
+public class GridIconValuesFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -63,36 +59,26 @@ public class GridIconFragment extends Fragment {
     Switch mUseCalculated;
     DecimalFormat df;
 
-    private static GridIconFragment instance;
-
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment GridIconFragment.
+     * @return A new instance of fragment GridIconValuesFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static GridIconFragment newInstance(String param1, String param2) {
-        GridIconFragment fragment = new GridIconFragment();
+    public static GridIconValuesFragment newInstance(String param1, String param2) {
+        GridIconValuesFragment fragment = new GridIconValuesFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
-    public GridIconFragment() {
+    public GridIconValuesFragment() {
         // Required empty public constructor
     }
-
-    public static GridIconFragment getInstance()
-    {
-        if (instance == null)
-            instance = new GridIconFragment();
-        return instance;
-    }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -245,28 +231,6 @@ public class GridIconFragment extends Fragment {
         });
 
 
-
-        mUseCalculated = (Switch) rootView.findViewById(R.id.grid_use_calc);
-        mUseCalculated.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked){
-
-                    //mUseCalculated.toggle();
-                    //DeviceProfile calculated = LauncherAppState.getInstance().getDynamicGrid().getCalculatedProfile();
-                /*    mTempProfile.iconSize =  mTempProfile.iconSizeCalc;
-                    mTempProfile.hotseatIconSize = mTempProfile.hotseatIconSizeCalc;
-                    mTempProfile.iconTextSize = mTempProfile.iconTextSizeCalc;
-                    mTempProfile.setCellHotSeatAndFolders();
-                    mFontSize.setText(df.format(mTempProfile.iconTextSize));
-                    mIconSize.setText(df.format(mTempProfile.iconSize));
-                    mChanging = "Desktop";
-
-                    mPreviewImage.setImageBitmap(generateIconPreview(getResources(), mTempProfile.iconSize, mTempProfile,true));
-                */
-                }
-            }
-        });
         return rootView;
     }
 
@@ -283,23 +247,15 @@ public class GridIconFragment extends Fragment {
         try {
             mListener = (OnFragmentInteractionListener) activity;
         } catch (ClassCastException e) {
-          //  throw new ClassCastException(activity.toString()
-          //          + " must implement OnFragmentInteractionListener");
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnFragmentInteractionListener");
         }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDetach();
-        Log.d("nbehary110", "GridIconFragment OnDestroyView");
-
-
+        mListener = null;
     }
 
     /**
@@ -315,15 +271,6 @@ public class GridIconFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
-    }
-
-    public void updateViews(DeviceProfile profile) {
-        mTempProfile = profile;
-        mFontSize.setText(df.format(mTempProfile.iconTextSize));
-        mIconSize.setText(df.format(mTempProfile.iconSize));
-        mChanging = "Desktop";
-        mPreviewImage.setImageBitmap(generateIconPreview(getResources(), mTempProfile.iconSize, mTempProfile,true));
-
     }
 
     private static Bitmap generateIconPreview(Resources res, float size, DeviceProfile grid, boolean showText) {

@@ -170,7 +170,7 @@
         <item name="android:actionBarStyle">@style/WallpaperCropperActionBar</item>
     </style>
 
-    <style name="Theme.GridEditor" parent="android:Theme.Holo">
+    <style name="Theme.GridEditor" parent="Theme.AppCompat">
         <!--<item name="android:windowIsTranslucent">true</item>-->
         <!--<item name="android:windowBackground">@android:color/transparent</item>-->
 

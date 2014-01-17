@@ -1,0 +1,50 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.nbehary.retribution.GridIconPercentFragment"
+    android:weightSum="1">
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.24"
+        android:weightSum="1">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:drawablePadding="5dp"
+            android:singleLine="true"
+            android:text="100%"
+            android:gravity="center"
+            android:id="@+id/icon_full" />
+
+        <Space
+            android:layout_width="25dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.38" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:drawablePadding="5dp"
+            android:singleLine="true"
+            android:text="90%"
+            android:gravity="center"
+            android:id="@+id/icon_current" />
+    </LinearLayout>
+
+    <SeekBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/icon_percent_bar"
+        android:progress="25"
+        android:max="50"
+        android:layout_weight="0.24" />
+</LinearLayout>

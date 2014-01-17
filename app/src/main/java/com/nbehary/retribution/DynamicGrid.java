@@ -184,6 +184,10 @@ class DeviceProfile {
         iconSize = invDistWeightedInterpolate(minWidth, minHeight, points);
         iconSizeCalc = iconSize;
         if (isProVersion) {
+            iconSizeCalc = PreferencesProvider.Interface.General.getIconSizeCalc();
+            if (iconSizeCalc == 0){
+                iconSizeCalc = iconSize;
+            }
             iconSize = PreferencesProvider.Interface.General.getIconSize();
         }
         if (iconSize==0) {
@@ -203,6 +207,10 @@ class DeviceProfile {
         iconTextSizeDevice = iconTextSize;
 
         if (isProVersion) {
+            iconTextSizeCalc = PreferencesProvider.Interface.General.getIconTextSizeCalc();
+            if (iconTextSizeCalc == 0){
+                iconTextSizeCalc = iconTextSize;
+            }
             iconTextSize = PreferencesProvider.Interface.General.getIconTextSize();
         }
         if  (iconTextSize==0) {
@@ -658,6 +666,9 @@ class DeviceProfile {
                 }
 
             }
+            iconSizeCalc = iconSize;
+            iconTextSizeCalc = iconTextSize;
+
             setCellHotSeatAndFolders();
     }
 }

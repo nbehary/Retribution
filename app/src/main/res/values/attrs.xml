@@ -140,8 +140,8 @@
         <attr name="y" format="string" />
         <attr name="spanX" format="string" />
         <attr name="spanY" format="string" />
-        <attr name="icon" format="reference" />  
-        <attr name="title" format="reference" />
+        <attr name="icon1" format="reference" />
+        <attr name="title1" format="reference" />
         <attr name="uri" format="string" />
     </declare-styleable>
     <declare-styleable name="Extra">

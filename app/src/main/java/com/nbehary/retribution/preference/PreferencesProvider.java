@@ -168,7 +168,7 @@ public final class PreferencesProvider {
             }
 
             public static float getHotseatIcons() {
-                return getFloat("pref_hotseat_icons",0 );
+                return getFloat("pref_hotseat_icons", 0);
             }
 
             public static void setIconSize(Context ctx, float size) {
@@ -179,12 +179,28 @@ public final class PreferencesProvider {
                 return getFloat("pref_grid_icon_size", 0);
             }
 
+            public static void setIconSizeCalc(Context ctx, float size) {
+                setFloat(ctx,"pref_grid_icon_size_calculated",size);
+            }
+
+            public static float getIconSizeCalc() {
+                return getFloat("pref_grid_icon_size_calculated", 0);
+            }
+
             public static void setIconTextSize(Context ctx, float size) {
                 setFloat(ctx,"pref_grid_icon_text_size",size);
             }
 
             public static float getIconTextSize() {
                 return getFloat("pref_grid_icon_text_size",0);
+            }
+
+            public static void setIconTextSizeCalc(Context ctx, float size) {
+                setFloat(ctx,"pref_grid_icon_text_size_calculated",size);
+            }
+
+            public static float getIconTextSizeCalc() {
+                return getFloat("pref_grid_icon_text_size_calculated",0);
             }
 
             public static void setHotseatIconSize(Context ctx, float size) {
