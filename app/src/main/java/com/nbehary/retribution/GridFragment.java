@@ -18,6 +18,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -38,11 +40,20 @@ public class GridFragment extends Fragment {
     NumberPicker mColsPicker, mRowsPicker, mDockPicker;
     DecimalFormat df;
     OnRowColDockChangedListener mCallback;
+    OnLandscapeListener mLandCallback;
+    boolean landscapeChanged;
+    CheckBox mHideHotseat;
+    TextView mHotseatNotice;
+    View mRootView;
 
     private static GridFragment instance;
 
     public interface OnRowColDockChangedListener {
         public void onRowColDockChanged(DeviceProfile profile);
+    }
+
+    public interface OnLandscapeListener {
+        public void onLandscapeChanged();
     }
 
     public GridFragment() {
@@ -72,24 +83,45 @@ public class GridFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+     //   if (mRootView != null){
+    //        return mRootView;
+     //   }
         df= new DecimalFormat("0.##");
         mTempProfile = ((GridEditor) getActivity()).getmProfile();
         mChanging = "Desktop";
+        landscapeChanged = false;
         mDisplayMetrics = getActivity().getResources().getDisplayMetrics();
-        View rootView = inflater.inflate(R.layout.fragment_grid_editor, container, false);
-        LinearLayout ui = (LinearLayout) rootView.findViewById(R.id.grid_editor_ui);
+        mRootView = inflater.inflate(R.layout.fragment_grid_editor, container, false);
+        LinearLayout ui = (LinearLayout) mRootView.findViewById(R.id.grid_editor_ui);
         //ui.setBackgroundColor(Color.argb(177, 0, 0, 0));
+        mHotseatNotice = (TextView) mRootView.findViewById(R.id.grid_auto_hotseat_notice);
 
-        mColsPicker = (NumberPicker) rootView.findViewById(R.id.grid_cols_picker);
+        mColsPicker = (NumberPicker) mRootView.findViewById(R.id.grid_cols_picker);
         mColsPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-        mColsPicker.setMaxValue(12);
-        mColsPicker.setMinValue(2);
+        if (LauncherAppState.getInstance().getProVersion()) {
+            mColsPicker.setMaxValue(12);
+            mColsPicker.setMinValue(2);
+        } else {
+            mColsPicker.setMinValue((int)mTempProfile.numColumnsDevice -1);
+            mColsPicker.setMaxValue((int)mTempProfile.numColumnsDevice +1);
+        }
         mColsPicker.setValue((int)mTempProfile.numColumns);
         mColsPicker.setOnValueChangedListener( new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
                 mTempProfile.numColumns = picker.getValue();
-                mTempProfile.adjustSizesAuto(getResources());
+                boolean hotseatChange = mTempProfile.adjustSizesAuto(getResources());
+                if ((hotseatChange) && mTempProfile.autoHotseat){
+                    //hotseat was hidden.
+                    mHideHotseat.setChecked(true);
+                    mHideHotseat.setVisibility(View.GONE);
+                    mHotseatNotice.setVisibility(View.VISIBLE);
+                } else if (hotseatChange){
+                    //hotseat unhidden.
+                    mHideHotseat.setVisibility(View.VISIBLE);
+                    mHideHotseat.setChecked(false);
+                    mHotseatNotice.setVisibility(View.GONE);
+                }
                 //mFontSize.setText(df.format(mTempProfile.iconTextSize));
                 //mIconSize.setText(df.format(mTempProfile.iconSize));
                 //mChanging = "Desktop";
@@ -98,25 +130,43 @@ public class GridFragment extends Fragment {
             }
         });
 
-        mRowsPicker = (NumberPicker) rootView.findViewById(R.id.grid_rows_picker);
+        mRowsPicker = (NumberPicker) mRootView.findViewById(R.id.grid_rows_picker);
         mRowsPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-        mRowsPicker.setMaxValue(12);
-        mRowsPicker.setMinValue(2);
+        if (LauncherAppState.getInstance().getProVersion()) {
+            mRowsPicker.setMaxValue(12);
+            mRowsPicker.setMinValue(2);
+        } else {
+            mRowsPicker.setMinValue((int)mTempProfile.numRowsDevice -1);
+            mRowsPicker.setMaxValue((int)mTempProfile.numRowsDevice +1);
+        }
         mRowsPicker.setValue((int)mTempProfile.numRows);
         mRowsPicker.setOnValueChangedListener( new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
                 mTempProfile.numRows = picker.getValue();
-                mTempProfile.adjustSizesAuto(getResources());
+                boolean hotseatChange = mTempProfile.adjustSizesAuto(getResources());
+                if ((hotseatChange) && mTempProfile.autoHotseat){
+                    //hotseat was hidden.
+                    mHideHotseat.setChecked(true);
+                    mHideHotseat.setVisibility(View.GONE);
+                    mHotseatNotice.setVisibility(View.VISIBLE);
+                } else if (hotseatChange){
+                    //hotseat unhidden.
+                    mHideHotseat.setVisibility(View.VISIBLE);
+                    mHideHotseat.setChecked(false);
+                    mHotseatNotice.setVisibility(View.GONE);
+                }
+
+
                 //mFontSize.setText(df.format(mTempProfile.iconTextSize));
                 //mIconSize.setText(df.format(mTempProfile.iconSize));
                // mChanging = "Desktop";
                // mPreviewImage.setImageBitmap(generateIconPreview(getResources(), mTempProfile.iconSize, mTempProfile,true));
-                mCallback.onRowColDockChanged(mTempProfile);
+               mCallback.onRowColDockChanged(mTempProfile);
             }
         });
 
-        mDockPicker = (NumberPicker) rootView.findViewById(R.id.grid_dock_picker);
+ /*       mDockPicker = (NumberPicker) mRootView.findViewById(R.id.grid_dock_picker);
         mDockPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
         String[] stringArray = new String[5];
         int n=1;
@@ -135,31 +185,99 @@ public class GridFragment extends Fragment {
                 Log.d("nbehary10x", String.format("num: %d,%d", (picker.getValue() * 2) + 1, newVal));
             }
         });
-
-        Button defaultButton = (Button) rootView.findViewById(R.id.grid_reset_button);
+*/
+        Button defaultButton = (Button) mRootView.findViewById(R.id.grid_reset_button);
         defaultButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d("nbehary10x","Reset!");
-                mTempProfile = new DeviceProfile(LauncherAppState.getInstance().getDynamicGrid().getCalculatedProfile());
+                //mTempProfile = new DeviceProfile(LauncherAppState.getInstance().getDynamicGrid().getCalculatedProfile());
+                mTempProfile.iconSize = mTempProfile.iconSizeDevice;
+                mTempProfile.iconSizeCalc = mTempProfile.iconSizeDevice;
+                mTempProfile.iconTextSize = mTempProfile.iconTextSizeDevice;
+                mTempProfile.iconTextSizeCalc = mTempProfile.iconTextSizeDevice;
+                mTempProfile.iconSizePx = mTempProfile.iconSizePxDevice;
+                mTempProfile.numRows = mTempProfile.numRowsDevice;
+                mTempProfile.numColumns = mTempProfile.numColumnsDevice;
                 //mProfile = mTempProfile;
                // mFontSize.setText(df.format(mTempProfile.iconTextSize));
               //  mIconSize.setText(df.format(mTempProfile.iconSize));
               //  mChanging = "Desktop";
               //  mPreviewImage.setImageBitmap(generateIconPreview(getResources(), mTempProfile.iconSize, mTempProfile,true));
                 mCallback.onRowColDockChanged(mTempProfile);
-                mDockPicker.setValue((int) mTempProfile.numHotseatIcons/2);
+                //mDockPicker.setValue((int) mTempProfile.numHotseatIcons/2);
                 mRowsPicker.setValue((int)mTempProfile.numRows);
                 mColsPicker.setValue((int)mTempProfile.numColumns);
-                Log.d("nbehary10x",String.format("R:%d,C:%d,D:%d",mRowsPicker.getValue(),mColsPicker.getValue(), mDockPicker.getValue()));
+                //The hotseat should never be invalid on default.
+                if (mHideHotseat.getVisibility() == View.GONE) {
+                    mHideHotseat.setChecked(false);
+                    mHideHotseat.setVisibility(View.VISIBLE);
+                    mHotseatNotice.setVisibility(View.GONE);
+                }
+                //Log.d("nbehary10x",String.format("R:%d,C:%d,D:%d",mRowsPicker.getValue(),mColsPicker.getValue(), mDockPicker.getValue()));
 
+            }
+        });
+
+        mHideHotseat = (CheckBox) mRootView.findViewById(R.id.grid_hide_hotseat);
+        mHideHotseat.setChecked(mTempProfile.hideHotseat);
+        mHideHotseat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    mTempProfile.hideHotseat = true;
+
+                } else {
+                    mTempProfile.hideHotseat = false;
+                }
+                mTempProfile.adjustSizesAuto(getResources());
+            }
+        });
+
+        if (mTempProfile.autoHotseat){
+            mHotseatNotice.setVisibility(View.VISIBLE);
+            mHideHotseat.setVisibility(View.GONE);
+        }
+
+        CheckBox hideQSB = (CheckBox) mRootView.findViewById(R.id.grid_hide_qsb);
+        hideQSB.setChecked(mTempProfile.hideQSB);
+        hideQSB.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    mTempProfile.hideQSB = true;
+
+                } else {
+                    mTempProfile.hideQSB = false;
+                }
+                mTempProfile.adjustSizesAuto(getResources());
+            }
+        });
+
+        CheckBox allowLand = (CheckBox) mRootView.findViewById(R.id.grid_allow_land);
+        allowLand.setChecked(mTempProfile.allowLandscape);
+        allowLand.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                if (isChecked) {
+                    mTempProfile.allowLandscape = true;
+
+                } else {
+                    mTempProfile.allowLandscape = false;
+                }
+                mLandCallback.onLandscapeChanged();
+                mTempProfile.adjustSizesAuto(getResources());
+                mCallback.onRowColDockChanged(mTempProfile);
+
+                //mTempProfile.setCellHotSeatAndFolders();
             }
         });
 
 
 
 
-        return rootView;
+        return mRootView;
     }
 
     @Override
@@ -170,6 +288,7 @@ public class GridFragment extends Fragment {
         // the callback interface. If not, it throws an exception
         try {
             mCallback = (OnRowColDockChangedListener) activity;
+            mLandCallback = (OnLandscapeListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnHeadlineSelectedListener");
@@ -177,68 +296,4 @@ public class GridFragment extends Fragment {
     }
 
 
-    private static Bitmap generateIconPreview(Resources res, float size, DeviceProfile grid, boolean showText) {
-
-        Drawable previewDefaultBG;
-
-        LauncherAppState app = LauncherAppState.getInstance();
-
-        DisplayMetrics dm = res.getDisplayMetrics();
-
-        Paint textPaint = new Paint();
-        textPaint.setTextSize(grid.iconTextSizePx);
-        Paint.FontMetrics fm = textPaint.getFontMetrics();
-        int iconSizePx;
-        if (showText){
-            iconSizePx = grid.iconSizePx;
-        } else{
-            iconSizePx = grid.hotseatIconSizePx;
-        }
-
-
-        // Drawable icon =  app.getIconCache().getFullResDefaultActivityIcon();
-        Drawable icon = res.getDrawable(R.drawable.ic_launcher);
-
-        int cellWidthPx = iconSizePx;
-        int cellHeightPx = iconSizePx + (int)(  Math.ceil(fm.bottom - fm.top));
-
-        Bitmap previewBitmap = Bitmap.createBitmap(cellWidthPx,cellHeightPx,
-                Bitmap.Config.ARGB_8888);
-        renderDrawableToBitmap(icon,previewBitmap,0,0,iconSizePx,iconSizePx);
-        if (showText) {
-            Canvas canvas = new Canvas(previewBitmap);
-            Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-            paint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,
-                    grid.iconTextSize, res.getDisplayMetrics()));
-            paint.setTypeface(Typeface.create("sans-serif-condensed", Typeface.NORMAL));
-            Rect bounds = new Rect();
-            paint.setColor(Color.WHITE);
-
-
-            paint.getTextBounds("Icon Text",0,9,bounds);
-            int width = bounds.width();
-            int x = ((cellWidthPx-width)/2 );
-            canvas.drawText("Icon Text", x, cellHeightPx, paint);
-        }
-        return previewBitmap;
-    }
-
-    public static void renderDrawableToBitmap(
-            Drawable d, Bitmap bitmap, int x, int y, int w, int h) {
-        renderDrawableToBitmap(d, bitmap, x, y, w, h, 1f);
-    }
-
-    private static void renderDrawableToBitmap(
-            Drawable d, Bitmap bitmap, int x, int y, int w, int h,
-            float scale) {
-        if (bitmap != null) {
-            Canvas c = new Canvas(bitmap);
-            c.scale(scale, scale);
-            Rect oldBounds = d.copyBounds();
-            d.setBounds(x, y, x + w, y + h);
-            d.draw(c);
-            d.setBounds(oldBounds); // Restore the bounds
-            c.setBitmap(null);
-        }
-    }
 }

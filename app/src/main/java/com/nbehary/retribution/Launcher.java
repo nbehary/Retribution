@@ -549,8 +549,15 @@ public class Launcher extends Activity
             Log.d("nbehary444","phone!");
         }
         */
+        if (grid.allowLandscape) {
+            unlockScreenOrientation(true);
+            Log.d("nbehary110","land! onCreate");
+        } else {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            Log.d("nbehary110","portrait! onCreate");
+        }
 
-        unlockScreenOrientation(true);
+
         showFirstRunCling();
 
     }
@@ -841,9 +848,12 @@ public class Launcher extends Activity
 
 
         } else if (requestCode == REQUEST_GRID) {
-            Intent intent = getIntent();
-            finish();
-            startActivity(intent);
+            if (resultCode == RESULT_OK) {
+                Intent intent = getIntent();
+                finish();
+                startActivity(intent);
+                System.exit(0);
+            }
 
         } else if (requestCode == REQUEST_PICK_APPWIDGET_ICS) {
             addAppWidget(data);
@@ -1201,95 +1211,9 @@ public class Launcher extends Activity
     }
 
     protected void startGrid() {
-        mWorkspace.setVisibility(View.INVISIBLE);
-        mOverviewPanel.setVisibility(View.INVISIBLE);
-        //mState = State.FOLDERS_CUSTOMIZE;
-        //mOverviewPanel.setVisibility(View.INVISIBLE);
-       // showWorkspace();
-        //DeviceProfile grid = LauncherAppState.getInstance().getDynamicGrid().getDeviceProfile();
+        mState = State.FOLDERS_CUSTOMIZE;
         Intent myIntent = new Intent(Launcher.this, com.nbehary.retribution.GridEditor.class);
         Launcher.this.startActivityForResult(myIntent, REQUEST_GRID);
-/*
-        Dialog gridDialog = new Dialog(this);
-        gridDialog.setTitle("Desktop Grid");
-        gridDialog.setContentView(R.layout.grid_dialog);
-        NumberPicker colsPicker = (NumberPicker) gridDialog.findViewById(R.id.grid_cols_picker);
-        colsPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-        colsPicker.setMaxValue(10);
-        colsPicker.setMinValue(0);
-        int tempCols = PreferencesProvider.Interface.General.getWorkspaceColumns();
-        if (tempCols == 0) {
-            tempCols = (int) grid.numColumnsCalc;
-        }
-        colsPicker.setValue(tempCols);
-        colsPicker.setOnValueChangedListener( new NumberPicker.OnValueChangeListener() {
-            @Override
-            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                PreferencesProvider.Interface.General.setWorkspaceColumns(LauncherAppState.getInstance().getContext(),picker.getValue());
-
-                //grid.layout(Launcher.this);
-                //Launcher.this.onResume();
-                //Log.d("nbehary10x", String.format("Picked cols: %d", picker.getValue()));
-            }
-        });
-
-        NumberPicker rowsPicker = (NumberPicker) gridDialog.findViewById(R.id.grid_rows_picker);
-        rowsPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-        rowsPicker.setMaxValue(10);
-        rowsPicker.setMinValue(0);
-        int tempRows = PreferencesProvider.Interface.General.getWorkspaceRows();
-        if (tempRows == 0) {
-
-            tempRows = (int) grid.numRowsCalc;
-            Log.d("nbehary10x",String.format("arrrgh: %d",tempRows));
-        }
-        rowsPicker.setValue(tempRows);
-        Log.d("nbehary10x",String.format("arrrgh: %d",rowsPicker.getValue()));
-        rowsPicker.setValue(PreferencesProvider.Interface.General.getWorkspaceRows());
-        rowsPicker.setOnValueChangedListener( new NumberPicker.OnValueChangeListener() {
-            @Override
-            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                PreferencesProvider.Interface.General.setWorkspaceRows(LauncherAppState.getInstance().getContext(), picker.getValue());
-
-                //grid.numRows = picker.getValue();
-                //grid.layout(Launcher.this);
-                //Log.d("nbehary10x",String.format("Picked rows: %d",picker.getValue()));
-            }
-        });
-
-
-        Button okay = (Button) gridDialog.findViewById(R.id.grid_ok_button);
-        okay.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                /*Intent intent = getIntent();
-                finish();
-                startActivity(intent);
-                System.exit(0);
-
-            }
-        });
-
-        Integer[] items = new Integer[]{1,2,3,4,5,6,7,8,9,10};
-        ArrayAdapter<Integer> adapter = new ArrayAdapter<Integer>(this,android.R.layout.simple_spinner_item, items);
-       // adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        colsSpinner.setAdapter(adapter);
-        colsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Log.d("nbehary10x",String.format("Picked: %d",position));
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
-
-        gridDialog.show();*/
-        //GridCustomize gridCustomize = (GridCustomize) findViewById(R.layout.grid_dialog);
-        //gridCustomize.setVisibility(View.VISIBLE);
-
-
 
     }
 
@@ -1492,6 +1416,19 @@ public class Launcher extends Activity
             }
         });
         widgetButton.setOnTouchListener(getHapticFeedbackTouchListener());
+
+        DeviceProfile grid = LauncherAppState.getInstance().getDynamicGrid().getDeviceProfile();
+        if (grid.hideHotseat) {
+            View appsButton = findViewById(R.id.apps_button);
+            appsButton.setVisibility(View.VISIBLE);
+            appsButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View arg0) {
+                    showAllApps(true, AppsCustomizePagedView.ContentType.Applications, true);
+                }
+            });
+            appsButton.setOnTouchListener(getHapticFeedbackTouchListener());
+        }
 
         View wallpaperButton = findViewById(R.id.wallpaper_button);
         wallpaperButton.setOnClickListener(new OnClickListener() {
@@ -2466,6 +2403,7 @@ public class Launcher extends Activity
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
             switch (event.getKeyCode()) {
                 case KeyEvent.KEYCODE_HOME:
+                    Log.d("nbehary110","Home!");
                     return true;
                 case KeyEvent.KEYCODE_VOLUME_DOWN:
                     if (isPropertyEnabled(DUMP_STATE_PROPERTY)) {

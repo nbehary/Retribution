@@ -39,6 +39,11 @@ public final class PreferencesProvider {
         sKeyValues = (Map<String, Object>)preferences.getAll();
     }
 
+    public static boolean checkKey(Context ctx, String key) {
+        SharedPreferences preferences = ctx.getSharedPreferences(PREFERENCES_KEY, 0);
+        return preferences.contains(key);
+    }
+
     private static int getInt(String key, int def) {
         return sKeyValues.containsKey(key) && sKeyValues.get(key) instanceof Integer ?
                 (Integer) sKeyValues.get(key) : def;
@@ -209,6 +214,46 @@ public final class PreferencesProvider {
 
             public static float getHotseatIconSize() {
                 return getFloat("pref_hotseat_icon_size",0);
+            }
+
+            public static void setHideHotSeat(Context ctx,boolean hideHotSeat) {
+                setBoolean(ctx,"pref_hide_hotseat",hideHotSeat);
+            }
+
+            public static boolean getHideHotSeat() {
+                return getBoolean("pref_hide_hotseat",false);
+            }
+
+            public static void setHideQSB(Context ctx,boolean hideQSB) {
+                setBoolean(ctx,"pref_hide_qsb",hideQSB);
+            }
+
+            public static boolean getHideQSB() {
+                return getBoolean("pref_hide_qsb",false);
+            }
+
+            public static void setHideLabels(Context ctx,boolean hideLabels) {
+                setBoolean(ctx,"pref_hide_labels",hideLabels);
+            }
+
+            public static boolean getHideLabels() {
+                return getBoolean("pref_hide_labels",false);
+            }
+
+            public static void setAllowLand(Context ctx,boolean allowLand) {
+                setBoolean(ctx,"pref_allow_land",allowLand);
+            }
+
+            public static boolean getAllowLand() {
+                return getBoolean("pref_allow_land",false);
+            }
+
+            public static void setAutoHotseat(Context ctx,boolean autoHotseat) {
+                setBoolean(ctx,"pref_auto_hotseat",autoHotseat);
+            }
+
+            public static boolean getAutoHotseat() {
+                return getBoolean("pref_auto_hotseat",false);
             }
         }
     }

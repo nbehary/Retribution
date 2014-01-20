@@ -7,6 +7,14 @@
     android:weightSum="1">
 
 
+    <SeekBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/icon_percent_bar"
+        android:progress="25"
+        android:max="50"
+        android:layout_weight="0.24" />
+
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
@@ -40,11 +48,4 @@
             android:id="@+id/icon_current" />
     </LinearLayout>
 
-    <SeekBar
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/icon_percent_bar"
-        android:progress="25"
-        android:max="50"
-        android:layout_weight="0.24" />
 </LinearLayout>

@@ -2,12 +2,132 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.nbehary.retribution.GridIconValuesFragment">
+    android:id="@+id/grid_icon_fragment"
+    tools:context="com.nbehary.retribution.GridIconFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:layout_weight="0.03">
 
+
+        <!--<ImageView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="99dp"-->
+            <!--android:id="@+id/grid_icon_preview"-->
+            <!--android:layout_weight="0.38"-->
+            <!--android:layout_gravity="left|center_vertical" />-->
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="1">
+
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="165dp"
+                android:orientation="vertical"
+                android:weightSum="1">
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="Icon"
+                    android:id="@+id/textView4"
+                    />
+
+
+
+                <ImageButton
+                    android:layout_width="96dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/grid_icon_up"
+                    android:src="@android:drawable/arrow_up_float"
+                    android:layout_weight="0.50" />
+
+
+
+                <ImageButton
+                    android:layout_width="96dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/grid_icon_down"
+                    android:src="@android:drawable/arrow_down_float"
+                    android:layout_weight="0.50" />
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="Small Text"
+                    android:id="@+id/grid_icon_size"
+                    />
+
+
+
+
+            </LinearLayout>
+            <Space
+                android:layout_width="15dp"
+                android:layout_height="wrap_content" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:weightSum="1">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="Font"
+                    android:id="@+id/grid_font_label"
+                    />
+
+                <ImageButton
+                    android:layout_width="96dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/grid_font_up"
+                    android:src="@android:drawable/arrow_up_float"
+                    android:layout_weight=".50" />
+
+                <ImageButton
+                    android:layout_width="96dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/grid_font_down"
+                    android:src="@android:drawable/arrow_down_float"
+                    android:layout_weight=".50" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="Small Text"
+                    android:id="@+id/grid_font_size"
+                    />
+            </LinearLayout>
+
+        </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:drawablePadding="5dp"
+            android:singleLine="true"
+            android:text="Icon Text"
+            android:gravity="center"
+            android:id="@+id/grid_icon_preview" />
+    </LinearLayout>
 </FrameLayout>
+

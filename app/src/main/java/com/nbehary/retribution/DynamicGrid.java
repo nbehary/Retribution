@@ -68,6 +68,7 @@ class DeviceProfile {
     float numColumnsDevice;
     float iconSize;
     float iconSizeCalc;
+    float iconSizeDevice;
     float iconTextSize;
     float iconTextSizeCalc;
     float iconTextSizeDevice;
@@ -111,6 +112,14 @@ class DeviceProfile {
     int searchBarSpaceHeightPx;
     int searchBarHeightPx;
     int pageIndicatorHeightPx;
+    boolean hideHotseat;
+    boolean hideQSB;
+    boolean hideLabels;
+    boolean allowLandscape;
+    boolean autoHotseat;
+
+    Resources mResources;
+    Context mContext;
 
     DeviceProfile(String n, float w, float h, float r, float c,
                   float is, float its, float hs, float his) {
@@ -144,6 +153,8 @@ class DeviceProfile {
                 resources.getBoolean(R.bool.hotseat_transpose_layout_with_orientation);
         minWidthDps = minWidth;
         minHeightDps = minHeight;
+        mResources = resources;
+        mContext = context;
 
         ComponentName cn = new ComponentName(context.getPackageName(),
                 this.getClass().getName());
@@ -183,42 +194,31 @@ class DeviceProfile {
 
         iconSize = invDistWeightedInterpolate(minWidth, minHeight, points);
         iconSizeCalc = iconSize;
-        if (isProVersion) {
+        iconSizeDevice = iconSize;
+
             iconSizeCalc = PreferencesProvider.Interface.General.getIconSizeCalc();
             if (iconSizeCalc == 0){
                 iconSizeCalc = iconSize;
             }
             iconSize = PreferencesProvider.Interface.General.getIconSize();
-        }
+
         if (iconSize==0) {
             iconSize = iconSizeCalc;
         }
         iconSizePx = DynamicGrid.pxFromDp(iconSize, dm);
-        iconSizePxDevice = DynamicGrid.pxFromDp(iconSizeCalc,dm);
+        iconSizePxDevice = DynamicGrid.pxFromDp(iconSizeDevice,dm);
 
-
-        // Interpolate the icon text size
         points.clear();
         for (DeviceProfile p : profiles) {
             points.add(new DeviceProfileQuery(p.minWidthDps, p.minHeightDps, p.iconTextSize));
         }
-        iconTextSize = invDistWeightedInterpolate(minWidth, minHeight, points);
-        iconTextSizeCalc = iconTextSize;
-        iconTextSizeDevice = iconTextSize;
+        iconTextSizeDevice = invDistWeightedInterpolate(minWidth, minHeight, points);
 
-        if (isProVersion) {
-            iconTextSizeCalc = PreferencesProvider.Interface.General.getIconTextSizeCalc();
-            if (iconTextSizeCalc == 0){
-                iconTextSizeCalc = iconTextSize;
-            }
-            iconTextSize = PreferencesProvider.Interface.General.getIconTextSize();
-        }
-        if  (iconTextSize==0) {
-            iconTextSize = iconTextSizeCalc;
-        }
-        iconTextSizePx = DynamicGrid.pxFromSp(iconTextSize, dm);
+        //hideLabels = PreferencesProvider.Interface.General.getHideLabels();
+        hideLabels = false;
+        setIconLabels();
 
-
+        hideHotseat = PreferencesProvider.Interface.General.getHideHotSeat();
         // Interpolate the hotseat size
         points.clear();
         for (DeviceProfile p : profiles) {
@@ -252,33 +252,38 @@ class DeviceProfile {
 
         // Search Bar
         searchBarSpaceMaxWidthPx = resources.getDimensionPixelSize(R.dimen.dynamic_grid_search_bar_max_width);
-        searchBarHeightPx = resources.getDimensionPixelSize(R.dimen.dynamic_grid_search_bar_height);
-        searchBarSpaceWidthPx = Math.min(searchBarSpaceMaxWidthPx, widthPx);
-        searchBarSpaceHeightPx = searchBarHeightPx + 2 * edgeMarginPx;
+        hideQSB = PreferencesProvider.Interface.General.getHideQSB();
+        if (hideQSB) {
+            searchBarHeightPx = 0;
+            searchBarSpaceWidthPx = 0;
+            searchBarSpaceHeightPx = 0;
+        } else {
+            searchBarHeightPx = mResources.getDimensionPixelSize(R.dimen.dynamic_grid_search_bar_height);
+            searchBarSpaceWidthPx = Math.min(searchBarSpaceMaxWidthPx, widthPx);
+            searchBarSpaceHeightPx = searchBarHeightPx + 2 * edgeMarginPx;
+        }
 
-        // Calculate the actual text height
-        Paint textPaint = new Paint();
-        textPaint.setTextSize(iconTextSizePx);
-        FontMetrics fm = textPaint.getFontMetrics();
-        cellWidthPx = iconSizePx;
-        cellWidthPxDevice = iconSizePxDevice;
-        cellHeightPx = iconSizePx + (int)(  Math.ceil(fm.bottom - fm.top)+5);
+        if (PreferencesProvider.checkKey(mContext,"pref_allow_land")) {
+            allowLandscape = PreferencesProvider.Interface.General.getAllowLand();
+        } else {
 
+            if (isTablet()) {
+                allowLandscape = true;
+                Log.d("nbehary110","Tablet!");
+            }else {
+                allowLandscape = false;
+                Log.d("nbehary110","Phone!");
+            }
 
+        }
 
-        // Hotseat
-        hotseatBarHeightPx = hotseatIconSizePx + 4 * edgeMarginPx;
-        hotseatCellWidthPx = hotseatIconSizePx;
-        hotseatCellHeightPx = hotseatIconSizePx;
-
-        // Folder
-        folderCellWidthPx = cellWidthPx + 3 * edgeMarginPx;
-        folderCellHeightPx = cellHeightPx + (int) ((3f/2f) * edgeMarginPx);
-        folderBackgroundOffset = -edgeMarginPx;
-        folderIconSizePx = iconSizePx + 2 * -folderBackgroundOffset;
-
+        autoHotseat = PreferencesProvider.Interface.General.getAutoHotseat();
+        setCellHotSeatAndFolders();
         //Shrink-Wrap!!
-        adjustSizesAuto(resources);
+        //Only if custom sizes not present. Already ran if they are.  (and it kills them)
+        if ((iconSize == iconSizeDevice) && (iconTextSize == iconTextSizeDevice)) {
+            adjustSizesAuto(resources);
+        }
     }
 
     public DeviceProfile(DeviceProfile profile) {
@@ -293,6 +298,7 @@ class DeviceProfile {
         this.numColumnsDevice = profile.numColumnsDevice;
         this.iconSize = profile.iconSize;
         this.iconSizeCalc = profile.iconSizeCalc;
+        this.iconSizeDevice = profile.iconSizeDevice;
         this.iconTextSize = profile.iconTextSize;
         this.iconTextSizeCalc = profile.iconTextSizeCalc;
         this.iconTextSizeDevice = profile.iconTextSizeDevice;
@@ -335,11 +341,18 @@ class DeviceProfile {
         this.searchBarSpaceHeightPx = profile.searchBarSpaceHeightPx;
         this.searchBarHeightPx = profile.searchBarHeightPx;
         this.pageIndicatorHeightPx = profile.pageIndicatorHeightPx;
+        this.hideHotseat = profile.hideHotseat;
+        this.hideQSB = profile.hideQSB;
+        this.hideLabels = profile.hideLabels;
+        this.mResources = profile.mResources;
+        this.mContext = profile.mContext;
+        this.allowLandscape = profile.allowLandscape;
+        this.autoHotseat = profile.autoHotseat;
     }
 
     void updateFromConfiguration(Resources resources, int wPx, int hPx,
                                  int awPx, int ahPx) {
-        DisplayMetrics dm = resources.getDisplayMetrics();
+
         isLandscape = (resources.getConfiguration().orientation ==
                 Configuration.ORIENTATION_LANDSCAPE);
         isTablet = resources.getBoolean(R.bool.is_tablet);
@@ -351,13 +364,20 @@ class DeviceProfile {
 
         Rect padding = getWorkspacePadding(isLandscape ?
                 CellLayout.LANDSCAPE : CellLayout.PORTRAIT);
-        int pageIndicatorOffset =
+/*        int pageIndicatorOffset =
             resources.getDimensionPixelSize(R.dimen.apps_customize_page_indicator_offset);
 
+        if (isLandscape) {
+            allAppsNumRows = (availableHeightPx - pageIndicatorOffset - 4 * edgeMarginPx) /
+                    (iconSizePx + iconTextSizePx + 2 * edgeMarginPx);
+        } else {
+            allAppsNumRows = (int) numRows + 1;
+        }
+        allAppsNumCols = (availableWidthPx - padding.left - padding.right - 2 * edgeMarginPx) /
+                (iconSizePx + 2 * edgeMarginPx);
 
 
-
-
+*/
         if (isLandscape) {
 
             allAppsNumCols = (availableWidthPx - padding.left - padding.right - 2 * edgeMarginPx) /
@@ -377,19 +397,63 @@ class DeviceProfile {
 
     }
 
+    void setIconLabels() {
+        DisplayMetrics dm = mResources.getDisplayMetrics();
+        if (!hideLabels) {
+            iconTextSize = iconTextSizeDevice;
+            iconTextSizeCalc = iconTextSize;
+
+
+
+            iconTextSizeCalc = PreferencesProvider.Interface.General.getIconTextSizeCalc();
+            if (iconTextSizeCalc == 0){
+                iconTextSizeCalc = iconTextSize;
+            }
+            iconTextSize = PreferencesProvider.Interface.General.getIconTextSize();
+
+            if  (iconTextSize==0) {
+                iconTextSize = iconTextSizeCalc;
+            }
+            iconTextSizePx = DynamicGrid.pxFromSp(iconTextSize, dm);
+        } else {
+            iconTextSize = 0.001f;
+            iconTextSizeCalc = 0;
+            iconTextSizePx = DynamicGrid.pxFromSp(iconTextSize, dm);
+
+        }
+    }
+
     void setCellHotSeatAndFolders() {
         // Calculate the actual text height
         Paint textPaint = new Paint();
         textPaint.setTextSize(iconTextSizePx);
         FontMetrics fm = textPaint.getFontMetrics();
         cellWidthPx = iconSizePx;
-        cellHeightPx = iconSizePx + (int)(  Math.ceil(fm.bottom - fm.top) +5);
+        cellHeightPx = iconSizePx + (int)(  Math.ceil(fm.bottom - fm.top) +10);
+        if (hideQSB) {
+            searchBarHeightPx = 0;
+            searchBarSpaceWidthPx = 0;
+            searchBarSpaceHeightPx = 0;
+        } else {
+            searchBarHeightPx = mResources.getDimensionPixelSize(R.dimen.dynamic_grid_search_bar_height);
+            searchBarSpaceWidthPx = Math.min(searchBarSpaceMaxWidthPx, widthPx);
+            searchBarSpaceHeightPx = searchBarHeightPx + 2 * edgeMarginPx;
+        }
         // Hotseat
+        if (hideHotseat) {
+            hotseatBarHeightPx = 0;
+            hotseatCellWidthPx = 0;
+            hotseatCellHeightPx = 0;
+            hotseatAllAppsRank = 0;
 
-        hotseatBarHeightPx = hotseatIconSizePx + 5 * edgeMarginPx;
-        hotseatCellWidthPx = hotseatIconSizePx;
-        hotseatCellHeightPx = hotseatIconSizePx;
-        hotseatAllAppsRank = (int) (numHotseatIcons / 2);
+        } else {
+
+            hotseatBarHeightPx = hotseatIconSizePx + 4 * edgeMarginPx;
+            hotseatCellWidthPx = hotseatIconSizePx;
+            hotseatCellHeightPx = hotseatIconSizePx;
+            hotseatAllAppsRank = (int) (numHotseatIcons / 2);
+
+        }
         // Folder
         folderCellWidthPx = cellWidthPx + 3 * edgeMarginPx;
         folderCellHeightPx = cellHeightPx + (int) ((3f/2f) * edgeMarginPx);
@@ -588,8 +652,8 @@ class DeviceProfile {
             //here!!
             // Pad the hotseat with the grid gap calculated above
             int gridGap = (int) ((widthPx - 2 * edgeMarginPx -
-                    (numColumnsDevice * cellWidthPx)) / (2 * (numColumnsDevice + 1)));
-            int gridWidth = (int) ((numColumnsDevice * cellWidthPxDevice) +
+                    (numColumnsDevice * cellWidthPx)) / (2 * (numColumns + 1)));
+            int gridWidth = (int) ((numColumns * cellWidthPx) +
                     ((numColumnsDevice - 1) * gridGap));
             int hotseatGap = (int) Math.max(0,
                     (gridWidth - (numHotseatIcons * hotseatCellWidthPx))
@@ -639,37 +703,61 @@ class DeviceProfile {
 
 
 
-    public void adjustSizesAuto(Resources res) {
+    public boolean adjustSizesAuto(Resources res) {
         DisplayMetrics dm = res.getDisplayMetrics();
         int minWidth = DynamicGrid.pxFromDp(minWidthDps,dm);
+        int minHeight = DynamicGrid.pxFromDp(minHeightDps,dm) - hotseatBarHeightPx - searchBarHeightPx;
       //  if (folderCellHeightPx*numRows > minWidth) {
+        int fontArea = 0;
+
+        Paint textPaint = new Paint();
+        //iconTextSizePx= DynamicGrid.pxFromSp(iconTextSizeDevice,dm); //get default text size for device.
+        textPaint.setTextSize(iconTextSizePx);
+        FontMetrics fm = textPaint.getFontMetrics();
+        fontArea = (int)(  Math.ceil(fm.bottom - fm.top))+10;
+        int maxCellHeight = 0;
+        if (allowLandscape) {
             //too high
-            int maxCellHeight = (int) minWidth/(int)numRows;
-            float overUnderRows = numRows - numRowsDevice;
-            //get iconTextSize reduced by 5%.
-            iconTextSize = iconTextSizeDevice - (iconTextSizeDevice * 0.05f)*overUnderRows;
-            iconTextSizePx = DynamicGrid.pxFromSp(iconTextSize,dm);
-            Paint textPaint = new Paint();
-            //iconTextSizePx= DynamicGrid.pxFromSp(iconTextSizeDevice,dm); //get default text size for device.
-            textPaint.setTextSize(iconTextSizePx);
-            FontMetrics fm = textPaint.getFontMetrics();
-            int fontArea = (int)(  Math.ceil(fm.bottom - fm.top));
-            iconSizePx = maxCellHeight - fontArea - (int) ((3f/2f) * edgeMarginPx);
-            iconSize = DynamicGrid.dpiFromPx(iconSizePx,dm);
-            cellWidthPx = iconSizePx;
-            folderCellWidthPx = cellWidthPx + 3 * edgeMarginPx;
-            if(folderCellWidthPx*numColumns > minWidth) {
-                int iconSizePxTemp = minWidth/(int)numColumns;
-                if (!(iconSizePxTemp > iconSizePx)) {
-                    iconSizePx = iconSizePxTemp;
-                    iconSize = DynamicGrid.dpiFromPx(iconSizePx,dm);
-                }
+            maxCellHeight = minWidth/(int)numRows;
+        } else {
+
+            maxCellHeight = minHeight/(int)numRows;
+        }
+        float overUnderRows = numRows - numRowsDevice;
+
+        iconSizePx = maxCellHeight - fontArea - (int) ((3f/2f) * edgeMarginPx);
+        iconSize = DynamicGrid.dpiFromPx(iconSizePx,dm);
+        cellWidthPx = iconSizePx;
+        folderCellWidthPx = cellWidthPx + 3 * edgeMarginPx;
+        if(folderCellWidthPx*numColumns > minWidth) {
+            //Here!!
+            int iconSizePxTemp = (minWidth/(int)numColumns) - (int) ((2f/3f) * edgeMarginPx);
+            if (!(iconSizePxTemp > iconSizePx)) {
+                iconSizePx = iconSizePxTemp;
+                iconSize = DynamicGrid.dpiFromPx(iconSizePx,dm);
 
             }
-            iconSizeCalc = iconSize;
-            iconTextSizeCalc = iconTextSize;
 
-            setCellHotSeatAndFolders();
+        }
+
+        iconSizeCalc = iconSize;
+        setCellHotSeatAndFolders();
+        if ((iconSize < 48) ) {
+            //Don't allow the hotseat at icon sizes lower than 48dp.
+            autoHotseat = true;
+            PreferencesProvider.Interface.General.setAutoHotseat(mContext,autoHotseat);
+            hideHotseat = true;
+            return true;
+        }
+        if (((iconSize >= 48) && PreferencesProvider.Interface.General.getAutoHotseat())) {
+            //Hotseat valid and was hidden automatically.
+            autoHotseat = false;
+            hideHotseat = false;
+            PreferencesProvider.Interface.General.setAutoHotseat(mContext,autoHotseat);
+            return true;
+        }
+
+        return false;
     }
 }
 

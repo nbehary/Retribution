@@ -12,22 +12,18 @@
         android:layout_height="wrap_content"
         android:layout_weight="0.03">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Adjust Icon Size On:"
-            android:id="@+id/textView5" />
-        <Spinner
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/grid_change_spinner"
-            />
-    </LinearLayout>
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/icon_fragment_header"
+            android:id="@+id/textView"
+            android:layout_gravity="center_vertical" />
+
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="15dp" />
 
         <Switch
             android:layout_width="wrap_content"
@@ -36,109 +32,53 @@
             android:id="@+id/grid_use_calc"
             android:checked="true" />
 
-        <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="99dp"
-        android:id="@+id/grid_icon_preview"
-        android:layout_weight="0.38"
-        android:layout_gravity="left|center_vertical" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/grid_folder_warning"
+            android:id="@+id/folder_warning"
+            android:textColor="@android:color/holo_red_dark"
+            android:visibility="gone" />
 
-        <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="1">
-
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/grid_dock_warning"
+            android:id="@+id/dock_warning"
+            android:textColor="@android:color/holo_red_dark"
+            android:visibility="gone" />
 
         <Space
+            android:layout_width="match_parent"
+            android:layout_height="15dp" />
+
+        <!--<CheckBox-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="@string/grid_hide_labels_text"-->
+            <!--android:id="@+id/grid_hide_labels"-->
+            <!--android:checked="false" />-->
+
+        <Switch
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:text="Adjust Values"
+            android:id="@+id/icon_percent_values"
+            android:checked="false" />
 
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="165dp"
-            android:orientation="vertical"
-            android:weightSum="1">
-
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Icon"
-                android:id="@+id/textView4"
-                />
-
-
-
-            <ImageButton
-                android:layout_width="154dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/grid_icon_up"
-                android:src="@android:drawable/arrow_up_float"
-                android:layout_weight="0.50" />
-
-
-
-            <ImageButton
-                android:layout_width="154dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/grid_icon_down"
-                android:src="@android:drawable/arrow_down_float"
-                android:layout_weight="0.36" />
-
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Small Text"
-                android:id="@+id/grid_icon_size"
-                />
-
-
-        </LinearLayout>
         <Space
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:weightSum="1">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Font"
-                android:id="@+id/grid_font_label"
-                />
+            android:layout_width="match_parent"
+            android:layout_height="15dp" />
 
-            <ImageButton
-                android:layout_width="154dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/grid_font_up"
-                android:src="@android:drawable/arrow_up_float"
-                android:layout_weight=".50" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
 
-            <ImageButton
-                android:layout_width="154dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/grid_font_down"
-                android:src="@android:drawable/arrow_down_float"
-                android:layout_weight=".36" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Small Text"
-                android:id="@+id/grid_font_size"
-                />
-        </LinearLayout>
+            android:id="@+id/icon_fragment_container"
+             />
 
     </LinearLayout>
 
-    </LinearLayout>
 </FrameLayout>

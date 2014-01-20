@@ -8,6 +8,14 @@
     android:weightSum="1">
 
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/grid_fragment_header"
+        android:id="@+id/textView4"
+        android:layout_weight="0.03" />
+
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="wrap_content"
@@ -36,7 +44,7 @@
         </LinearLayout>
 
         <Space
-            android:layout_width="wrap_content"
+            android:layout_width="15dp"
             android:layout_height="match_parent"
             android:layout_weight="0.12" />
 
@@ -63,48 +71,42 @@
             android:layout_width="15dp"
             android:layout_height="match_parent" />
 
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Dock Size"
-                android:id="@+id/textView3"
-                android:layout_gravity="center_vertical" />
-
-            <NumberPicker
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/grid_dock_picker" />
-        </LinearLayout>
-        <Space
-            android:layout_width="16dp"
-            android:layout_height="140dp" />
-
 
     </LinearLayout>
 
     <LinearLayout
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/grid_auto_hotseat_notice_text"
+            android:id="@+id/grid_auto_hotseat_notice"
+            android:textColor="#aa8c13"
+            android:visibility="gone" />
 
         <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Hide Dock"
-            android:id="@+id/checkBox2"
+            android:id="@+id/grid_hide_hotseat"
             android:checked="false" />
 
         <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Hide Search Bar"
-            android:id="@+id/checkBox3"
+            android:id="@+id/grid_hide_qsb"
+            android:checked="false" />
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/grid_allow_landscape"
+            android:id="@+id/grid_allow_land"
             android:checked="false" />
     </LinearLayout>
 

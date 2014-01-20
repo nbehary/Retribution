@@ -24,6 +24,8 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.PackageInfo;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -126,7 +128,13 @@ class ShortcutInfo extends ItemInfo {
     }
 
     public void updateIcon(IconCache iconCache) {
-        mIcon = iconCache.getIcon(intent);
+        //.resolveActivity(intent, 0);
+        Drawable drawable = iconCache.getFullResIcon(intent);
+        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+        mIcon = bitmap;
         usingFallbackIcon = iconCache.isDefaultIcon(mIcon);
     }
 

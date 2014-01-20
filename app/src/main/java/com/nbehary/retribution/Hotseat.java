@@ -116,6 +116,9 @@ public class Hotseat extends FrameLayout {
         // Center the icon
         int cWidth = mContent.getShortcutsAndWidgets().getCellContentWidth();
         int cHeight = mContent.getShortcutsAndWidgets().getCellContentHeight();
+      //  DeviceProfile grid = LauncherAppState.getInstance().getDynamicGrid().getDeviceProfile();
+     //   int cWidth = grid.hotseatCellWidthPx;
+     //   int cHeight = grid.hotseatCellHeightPx;
         int cellPaddingX = (int) Math.max(0, ((coords.width() - cWidth) / 2f));
         int cellPaddingY = (int) Math.max(0, ((coords.height() - cHeight) / 2f));
         coords.offset(cellPaddingX, cellPaddingY);
@@ -152,7 +155,7 @@ public class Hotseat extends FrameLayout {
             TextView allAppsButton = (TextView)
                     inflater.inflate(R.layout.all_apps_button, mContent, false);
             Drawable d = context.getResources().getDrawable(R.drawable.all_apps_button_icon);
-            Utilities.resizeIconDrawable(d);
+            Utilities.resizeHotseatIconDrawable(d);
             allAppsButton.setCompoundDrawables(null, d, null, null);
 
             allAppsButton.setContentDescription(context.getString(R.string.all_apps_button_label));

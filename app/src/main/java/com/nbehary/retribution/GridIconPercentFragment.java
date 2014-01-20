@@ -19,7 +19,7 @@ import android.widget.TextView;
 /**
  * A simple {@link android.support.v4.app.Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link GridIconPercentFragment.OnFragmentInteractionListener} interface
+ * {@link GridIconPercentFragment.OnPercentInteractionListener} interface
  * to handle interaction events.
  * Use the {@link GridIconPercentFragment#newInstance} factory method to
  * create an instance of this fragment.
@@ -43,7 +43,7 @@ public class GridIconPercentFragment extends Fragment {
 
     private static GridIconPercentFragment instance;
 
-    private OnFragmentInteractionListener mListener;
+    private OnPercentInteractionListener mListener;
 
     /**
      * Use this factory method to create a new instance of
@@ -104,7 +104,7 @@ public class GridIconPercentFragment extends Fragment {
         icon2.setBounds(0,0,mTempProfile.iconSizePx,mTempProfile.iconSizePx);
         mIconCurrent.setCompoundDrawables(null,icon2,null,null);
 
-        int percent = (int)(mTempProfile.iconSizeCalc/mTempProfile.iconSize*100f);
+        int percent = (int)(mTempProfile.iconSize/mTempProfile.iconSizeCalc*100f);
         mIconCurrent.setText(String.format("%d",percent)+'%');
         mPercentBar = (SeekBar) mRootView.findViewById(R.id.icon_percent_bar);
         mPercentBar.setProgress(percent-75);
@@ -122,6 +122,7 @@ public class GridIconPercentFragment extends Fragment {
                 mIconCurrent.setCompoundDrawables(null,icon,null,null);
                 mIconCurrent.setText(String.format("%d",progress+75)+'%');
                 mTempProfile.setCellHotSeatAndFolders();
+                mListener.onPercentInteraction();
 
             }
 
@@ -139,18 +140,13 @@ public class GridIconPercentFragment extends Fragment {
         return mRootView;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
+
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mListener = (OnFragmentInteractionListener) activity;
+            mListener = (OnPercentInteractionListener) activity;
         } catch (ClassCastException e) {
            // throw new ClassCastException(activity.toString()
              //       + " must implement OnFragmentInteractionListener");
@@ -174,15 +170,15 @@ public class GridIconPercentFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnFragmentInteractionListener {
+    public interface OnPercentInteractionListener {
         // TODO: Update argument type and name
-        public void onFragmentInteraction(Uri uri);
+        public void onPercentInteraction();
     }
 
     public void updateViews(DeviceProfile profile) {
         mTempProfile = profile;
-        int percent = (int)(mTempProfile.iconTextSizeCalc/mTempProfile.iconSize*100f);
-        mIconCurrent.setText(String.format("%d",percent+'%'));
+        int percent = (int)(mTempProfile.iconSize/mTempProfile.iconSizeCalc*100f);
+        mIconCurrent.setText(String.format("%d",percent)+'%');
         mPercentBar.setProgress(percent-75);
 
         Drawable icon = getResources().getDrawable(R.drawable.ic_launcher);

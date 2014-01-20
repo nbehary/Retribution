@@ -149,7 +149,7 @@ public class Cling extends FrameLayout implements Insettable, View.OnClickListen
                     pos.left + Utilities.sIconTextureWidth,
                     pos.top + Utilities.sIconTextureHeight);
             Utilities.scaleRectAboutCenter(mFocusedHotseatAppBounds,
-                    (grid.hotseatIconSize / grid.iconSize));
+                    (grid.hotseatIconSize / grid.iconSizeCalc));
 
             // Set the title
             TextView v = (TextView) findViewById(R.id.focused_hotseat_app_title);

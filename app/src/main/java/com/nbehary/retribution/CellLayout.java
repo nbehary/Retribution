@@ -33,6 +33,7 @@ import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.NinePatchDrawable;
@@ -47,6 +48,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LayoutAnimationController;
+import android.widget.ImageView;
 
 import com.nbehary.retribution.R;
 import com.nbehary.retribution.FolderIcon.FolderRingAnimator;
@@ -214,7 +216,7 @@ public class CellLayout extends ViewGroup {
         setAlwaysDrawnWithCacheEnabled(false);
 
         final Resources res = getResources();
-        mHotseatScale = (float) grid.hotseatIconSize / grid.iconSize;
+        mHotseatScale = (float) grid.hotseatIconSizePx / grid.folderIconSizePx;// grid.iconSize;
 
         mNormalBackground = res.getDrawable(R.drawable.screenpanel);
         mActiveGlowBackground = res.getDrawable(R.drawable.screenpanel_hover);
@@ -609,10 +611,22 @@ public class CellLayout extends ViewGroup {
         if (child instanceof BubbleTextView) {
             BubbleTextView bubbleChild = (BubbleTextView) child;
             bubbleChild.setTextVisibility(!mIsHotseat);
+            bubbleChild.setHotseatItem(mIsHotseat);
+            //TODO:1.1.1 - HIDE TEXT HERE??
         }
+        child.setScaleX(1);//getChildrenScale());
+        child.setScaleY(1);//getChildrenScale());
+        if (child instanceof FolderIcon) {
+       /*     ImageView iv = ((FolderIcon)child).getPreviewBackground();
+            Drawable d = iv.getDrawable();
+            Bitmap b = ((BitmapDrawable)d).getBitmap();
+            int size = LauncherAppState.getInstance().getDynamicGrid().getDeviceProfile().hotseatIconSizePx;
 
-        child.setScaleX(getChildrenScale());
-        child.setScaleY(getChildrenScale());
+            iv.setImageBitmap(Bitmap.createScaledBitmap(b,size , size, false));
+            ((FolderIcon)child).setPreviewBackground(iv);*/
+         //   child.setScaleX(getChildrenScale());
+         //   child.setScaleY(getChildrenScale());
+         }
 
         // Generate an id for each view, this assumes we have at most 256x256 cells
         // per workspace screen

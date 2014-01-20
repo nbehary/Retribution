@@ -230,6 +230,7 @@ public class LauncherAppState {
 
         // Update the icon size
         DeviceProfile grid = mDynamicGrid.getDeviceProfile();
+
         Utilities.setIconSize(grid.iconSizePx);
         grid.updateFromConfiguration(context.getResources(), width, height,
                 availableWidth, availableHeight);

@@ -1,5 +1,7 @@
 package com.nbehary.retribution;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.app.ActionBar;
 
 import android.support.v4.app.Fragment;
@@ -15,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.support.v4.view.ViewPager;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 
 import com.nbehary.retribution.preference.PreferencesProvider;
@@ -24,16 +27,25 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class GridEditor extends ActionBarActivity implements GridFragment.OnRowColDockChangedListener{
+public class GridEditor extends ActionBarActivity
+        implements GridFragment.OnRowColDockChangedListener,
+        GridFragment.OnLandscapeListener,
+        GridIconFragment.OnCalculatedChangeListener,
+        GridIconValuesFragment.OnValuesInteractionListener,
+        GridIconPercentFragment.OnPercentInteractionListener{
     DeviceProfile mProfile;
     Context mContext;
 
-    private ViewPager mViewPager,mIconPager;
+    private ViewPager mViewPager;
+    private LinearLayout mFrame;
+
     private GridPagerAdapter mPagerAdapter;
-    private IconPagerAdapter mIconPagerAdapter;
+
     private static int NUM_VIEWS = 20;
     private ActionBar mActionBar;
     private GridIconFragment mIconFrag;
+    private String mChanging;
+    private boolean landscapeChanged;
 
 
 
@@ -43,12 +55,15 @@ public class GridEditor extends ActionBarActivity implements GridFragment.OnRowC
         setContentView(R.layout.activity_grid_editor);
         mProfile = new DeviceProfile(LauncherAppState.getInstance().getDynamicGrid().getDeviceProfile());
         mContext = this;
+        mChanging = "Desktop";
+        landscapeChanged = false;
         mActionBar = getSupportActionBar();
         mActionBar.setCustomView(R.layout.actionbar_set_grid);
         mActionBar.getCustomView().setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+
                         LauncherAppState.getInstance().getDynamicGrid().setDeviceProfile(mProfile);
                         PreferencesProvider.Interface.General.setIconSize(mContext, mProfile.iconSize);
                         PreferencesProvider.Interface.General.setIconSizeCalc(mContext, mProfile.iconSizeCalc);
@@ -57,15 +72,27 @@ public class GridEditor extends ActionBarActivity implements GridFragment.OnRowC
                         PreferencesProvider.Interface.General.setHotseatIcons(mContext, mProfile.numHotseatIcons);
                         PreferencesProvider.Interface.General.setWorkspaceColumns(mContext, (int) mProfile.numColumns);
                         PreferencesProvider.Interface.General.setWorkspaceRows(mContext, (int) mProfile.numRows);
+                        PreferencesProvider.Interface.General.setHideHotSeat(mContext, mProfile.hideHotseat);
+                        PreferencesProvider.Interface.General.setHideQSB(mContext, mProfile.hideQSB);
+                        //PreferencesProvider.Interface.General.setHideLabels(mContext, mProfile.hideLabels);
+                        if (landscapeChanged){
+                            PreferencesProvider.Interface.General.setAllowLand(mContext, mProfile.allowLandscape);
+                        }
+                        Intent resultIntent = new Intent();
+// TODO Add extras or a data URI to this intent as appropriate.
+                        setResult(Activity.RESULT_OK, resultIntent);
                         finish();
                     }
                 });
         if (savedInstanceState == null) {
+            Log.d("nbehary110", "No Saved instance");
             if (findViewById(R.id.grid_editor) instanceof ViewPager) {
                 setupPager();
             } else {
                 setupFrames();
             }
+        } else {
+            Log.d("nbehary110", "Saved instance");
         }
 
     }
@@ -94,16 +121,16 @@ public class GridEditor extends ActionBarActivity implements GridFragment.OnRowC
 
 
     private void setupFrames(){
-        Fragment gridFragment = GridFragment.getInstance();
-
-
+        Fragment gridFragment = GridFragment.newInstance("grid_frgment");
+        Fragment iconFragment = GridIconFragment.newInstance("icon_fragment", "");
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.add(R.id.grid_grid_frame, gridFragment,"grid_fragment").commit();
+        ft.add(R.id.grid_grid_frame, gridFragment,"grid_fragment")
+                .add(R.id.grid_icon_frame, iconFragment, "icon_fragment").commit();
            // .add(R.id.grid_icon_frame, mIconFrag, "icon_fragment")
            // .add(R.id.grid_icon_percent_frame,percentFragment,"percent_fragment").commit();
-        mIconPager = (ViewPager) findViewById(R.id.grid_icon_frame);
-        mIconPagerAdapter = new IconPagerAdapter(getSupportFragmentManager());
-        mIconPager.setAdapter(mIconPagerAdapter);
+      //  mIconPager = (ViewPager) findViewById(R.id.grid_icon_frame);
+     //   mIconPagerAdapter = new IconPagerAdapter(getSupportFragmentManager());
+     //   mIconPager.setAdapter(mIconPagerAdapter);
     }
 
     private void setupPager() {
@@ -142,34 +169,72 @@ public class GridEditor extends ActionBarActivity implements GridFragment.OnRowC
         mActionBar.addTab(mActionBar.newTab()
                 .setText("Icons Values")
                 .setTabListener(tabListener));
-        mActionBar.addTab(mActionBar.newTab()
-                .setText("Icons Percent")
-                .setTabListener(tabListener));
 
+
+    }
+
+    public void onLandscapeChanged() {
+        landscapeChanged = true;
     }
 
     public void onRowColDockChanged(DeviceProfile profile) {
         Log.d("nbehary10x", "Something changed.");
-        GridIconFragment iconFrag;
+        GridIconValuesFragment iconFrag;
         GridIconPercentFragment percentFragment;
+        GridIconFragment iconContainer;
         if (mViewPager == null) {
-            iconFrag = (GridIconFragment) getSupportFragmentManager().findFragmentByTag("icon_fragment");
+            iconFrag = (GridIconValuesFragment) getSupportFragmentManager().findFragmentByTag("values_fragment");
             percentFragment = (GridIconPercentFragment)getSupportFragmentManager().findFragmentByTag("percent_fragment");
+            iconContainer = (GridIconFragment) getSupportFragmentManager().findFragmentByTag("icon_fragment");
         }else {
-            iconFrag = (GridIconFragment) mPagerAdapter.getFragment("icon_fragment");
-            percentFragment = (GridIconPercentFragment) mPagerAdapter.getFragment("percent_fragment");
+            //iconFrag = (GridIconValuesFragment) mPagerAdapter.getFragment("values_fragment");
+            //percentFragment = (GridIconPercentFragment) mPagerAdapter.getFragment("percent_fragment");
+            iconFrag = (GridIconValuesFragment) getSupportFragmentManager().findFragmentByTag("values_fragment");
+            percentFragment = (GridIconPercentFragment)getSupportFragmentManager().findFragmentByTag("percent_fragment");
+            iconContainer = (GridIconFragment) getSupportFragmentManager().findFragmentByTag("icon_fragment");
         }
 
         if (iconFrag != null) {
             iconFrag.updateViews(profile);
+            iconContainer.updateCalculated();
+        }
+
+        if (percentFragment != null) {
             percentFragment.updateViews(profile);
         }
 
     }
 
+    public void onCalculatedChangedInteraction(DeviceProfile profile) {
+        onRowColDockChanged(profile);
+    }
+
+    public void onValuesInteraction() {
+        GridIconFragment iconFrag;
+        if (mViewPager == null) {
+            iconFrag = (GridIconFragment) getSupportFragmentManager().findFragmentByTag("icon_fragment");
+        }else {
+            iconFrag = (GridIconFragment) mPagerAdapter.getFragment("icon_fragment");
+            //percentFragment = (GridIconPercentFragment) mPagerAdapter.getFragment("percent_fragment");
+            //iconFrag = (GridIconFragment) getSupportFragmentManager().findFragmentByTag("icon_fragment");
+        }
+
+        if (iconFrag != null) {
+            iconFrag.updateCalculated();
+        }
+    }
+
+    public void onPercentInteraction() {
+        onValuesInteraction();
+    }
+
 
 
     public DeviceProfile getmProfile() {return mProfile;}
+
+    public String getmChanging() {return mChanging;}
+
+    public void setmChanging(String changing) {mChanging = changing;}
 
     private class IconPagerAdapter extends FragmentPagerAdapter {
         private Map<String, WeakReference<Fragment>> mPageReferenceMap = new HashMap<String, WeakReference<Fragment>>();
@@ -242,10 +307,7 @@ public class GridEditor extends ActionBarActivity implements GridFragment.OnRowC
                     fragment = GridIconFragment.newInstance("icon_fragment","");
                     mPageReferenceMap.put("icon_fragment", new WeakReference<Fragment>(fragment));
                     return fragment;
-                case 2:
-                    fragment = GridIconPercentFragment.newInstance("percent_fragment","");
-                    mPageReferenceMap.put("percent_fragment", new WeakReference<Fragment>(fragment));
-                    return fragment;
+
                 default:
                     fragment = GridFragment.newInstance("grid_fragment");
                     mPageReferenceMap.put("grid_fragment", new WeakReference<Fragment>(fragment));
@@ -255,7 +317,7 @@ public class GridEditor extends ActionBarActivity implements GridFragment.OnRowC
 
         @Override
         public int getCount() {
-            return 3;
+            return 2;
         }
 
         public Fragment getFragment(String key) {

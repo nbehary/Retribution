@@ -52,6 +52,7 @@ final class Utilities {
     private static int sIconHeight = -1;
     public static int sIconTextureWidth = -1;
     public static int sIconTextureHeight = -1;
+    public static int sHotseatIconSize = -1;
 
     private static final Paint sBlurPaint = new Paint();
     private static final Paint sGlowColorPressedPaint = new Paint();
@@ -77,11 +78,26 @@ final class Utilities {
         return d;
     }
 
+    static Drawable createHotseatIconDrawable(Bitmap icon) {
+        //LauncherAppState.getInstance().getIconCache()
+        FastBitmapDrawable d = new FastBitmapDrawable(icon);
+        d.setFilterBitmap(true);
+
+        d.setBounds(0, 0, sHotseatIconSize, sHotseatIconSize);
+        //resizeIconDrawable(d);
+        //Here!!!
+        return d;
+    }
+
     /**
      * Resizes an icon drawable to the correct icon size.
      */
     static void resizeIconDrawable(Drawable icon) {
         icon.setBounds(0, 0, sIconTextureWidth, sIconTextureHeight);
+    }
+
+    static void resizeHotseatIconDrawable(Drawable icon) {
+        icon.setBounds(0, 0, sHotseatIconSize, sHotseatIconSize);
     }
 
 	/**
@@ -312,6 +328,10 @@ final class Utilities {
     public static void setIconSize(int widthPx) {
         sIconWidth = sIconHeight = widthPx;
         sIconTextureWidth = sIconTextureHeight = widthPx;
+        //TODO: maybe not do this here.
+        DeviceProfile grid = LauncherAppState.getInstance().getDynamicGrid().getDeviceProfile();
+        sHotseatIconSize = grid.hotseatIconSizePx;
+
     }
 
     public static void scaleRect(Rect r, float scale) {

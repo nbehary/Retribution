@@ -2705,7 +2705,7 @@ public class Workspace extends SmoothPagedView
     public void onDrop(final DragObject d) {
         mDragViewVisualCenter = getDragViewVisualCenter(d.x, d.y, d.xOffset, d.yOffset, d.dragView,
                 mDragViewVisualCenter);
-Log.d("nbehar456","onDrop");
+Log.d("nbehary110","onDrop");
         CellLayout dropTargetLayout = mDropToLayout;
 
         // We want the point to be mapped to the dragTarget.

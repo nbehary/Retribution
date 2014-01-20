@@ -60,4 +60,12 @@
     </string-array>
 
     <string name="grid_instructions">Set Grid</string>
+    <string name="icon_fragment_header">Icon Sizes</string>
+    <string name="grid_fragment_header">Desktop Grid</string>
+    <string name="grid_hide_labels_text">Hide Labels</string>
+    <string name="grid_allow_landscape">Allow Landscape</string>
+    <string name="apps_overview_text">Apps</string>
+    <string name="grid_auto_hotseat_notice_text">Dock is always hidden in this configuration.</string>
+    <string name="grid_folder_warning">Folders are not supported in the Dock at this size.</string>
+    <string name="grid_dock_warning">Dock icons may appear distorted at this size.</string>
 </resources>

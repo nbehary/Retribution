@@ -203,6 +203,15 @@ public class IconCache {
         }
     }
 
+    public Drawable getFullResIcon(Intent intent) {
+        synchronized (mCache) {
+
+
+            final ResolveInfo resolveInfo = mPackageManager.resolveActivity(intent, 0);
+            return getFullResIcon(resolveInfo);
+        }
+    }
+
     public Bitmap getIcon(Intent intent) {
         synchronized (mCache) {
             if (intent == null) {

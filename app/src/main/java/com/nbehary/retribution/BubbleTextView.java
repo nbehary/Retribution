@@ -28,6 +28,7 @@ import android.graphics.Region;
 import android.graphics.Region.Op;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.widget.TextView;
@@ -57,6 +58,8 @@ public class BubbleTextView extends TextView {
     private int mFocusedGlowColor;
     private int mPressedOutlineColor;
     private int mPressedGlowColor;
+    private Bitmap mIconBitmap;
+    private ShortcutInfo mInfo;
 
     private int mTextColor;
     private boolean mShadowsEnabled = true;
@@ -67,6 +70,8 @@ public class BubbleTextView extends TextView {
 
     private boolean mStayPressed;
     private CheckLongPressHelper mLongPressHelper;
+
+    private boolean isHotseatItem;
 
     public BubbleTextView(Context context) {
         super(context);
@@ -116,6 +121,17 @@ public class BubbleTextView extends TextView {
         setCompoundDrawablePadding((int) ((grid.folderIconSizePx - grid.iconSizePx) / 2f));
         setText(info.title);
         setTag(info);
+        mIconBitmap = b;
+        mInfo = info;
+    }
+
+    public void setHotseatItem(boolean flag) {
+        if (flag) {
+            Log.d("nbehary110","blerg!!!!!!!!!!!!!!"+getText());
+            Bitmap b = mInfo.getIcon(LauncherAppState.getInstance().getIconCache());
+            setCompoundDrawables(null,
+                Utilities.createHotseatIconDrawable(b), null, null);
+        }
     }
 
     @Override
@@ -368,6 +384,8 @@ public class BubbleTextView extends TextView {
             super.setTextColor(mTextColor);
         } else {
             super.setTextColor(res.getColor(android.R.color.transparent));
+
+
         }
         mIsTextVisible = visible;
     }

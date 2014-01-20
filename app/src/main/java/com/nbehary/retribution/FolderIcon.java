@@ -131,6 +131,14 @@ public class FolderIcon extends LinearLayout implements FolderListener {
         return !workspace.isSmall();
     }
 
+    public void setPreviewBackground(ImageView back) {
+        mPreviewBackground = back;
+    }
+
+    public ImageView getPreviewBackground() {
+        return mPreviewBackground;
+    }
+
     static FolderIcon fromXml(int resId, Launcher launcher, ViewGroup group,
             FolderInfo folderInfo, IconCache iconCache) {
         @SuppressWarnings("all") // suppress dead code warning
@@ -151,7 +159,8 @@ public class FolderIcon extends LinearLayout implements FolderListener {
 
         SharedPreferences preferences = mContext.getSharedPreferences("com.nbehary.retribution_preferences",0);
         int icon_type = Integer.parseInt(preferences.getString("pref_folder_icon","1"));
-        Drawable myIcon;
+
+
         if (icon_type == 2){
             icon.mPreviewBackground.setImageResource(R.drawable.portal_ring_inner_holo_old);
             //icon.mPreviewBackground.setBackgroundResource( R.drawable.portal_ring_inner_holo_old);
@@ -656,7 +665,7 @@ public class FolderIcon extends LinearLayout implements FolderListener {
         if (visible) {
             mFolderName.setVisibility(VISIBLE);
         } else {
-            mFolderName.setVisibility(INVISIBLE);
+            mFolderName.setVisibility(GONE);
         }
     }
 

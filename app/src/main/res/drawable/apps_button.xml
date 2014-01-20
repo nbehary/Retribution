@@ -14,8 +14,8 @@
      limitations under the License.
 -->
 
-<resources>
-    <!-- Drag padding to add to the bottom of drop targets -->
-    <dimen name="drop_target_drag_padding">20dp</dimen>
-    <dimen name="overview_panel_buttonSpacing">15dp</dimen>
-</resources>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_focused="true" android:drawable="@drawable/allapps_pressed" />
+    <item android:state_pressed="true" android:drawable="@drawable/allapps_pressed" />
+    <item android:drawable="@drawable/allapps" />
+</selector>
