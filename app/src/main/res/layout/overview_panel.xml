@@ -127,10 +127,11 @@
             android:text="@string/grid_button_text"
             android:drawablePadding="4dp"
             android:gravity="center_horizontal"
-            android:drawableTop="@drawable/setting_button"
+            android:drawableTop="@drawable/grid_button"
             android:fontFamily="sans-serif-condensed"
             android:textAllCaps="true"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            android:editable="true" />
 
         <Space
             android:layout_width="@dimen/overview_panel_buttonSpacing"

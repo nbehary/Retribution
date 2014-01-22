@@ -255,6 +255,14 @@ public final class PreferencesProvider {
             public static boolean getAutoHotseat() {
                 return getBoolean("pref_auto_hotseat",false);
             }
+
+            public static void setGridFirstRun(Context ctx,boolean gridFirst) {
+                setBoolean(ctx,"pref_grid_first_run",gridFirst);
+            }
+
+            public static boolean getGridFirstRun() {
+                return getBoolean("pref_grid_first_run",false);
+            }
         }
     }
 

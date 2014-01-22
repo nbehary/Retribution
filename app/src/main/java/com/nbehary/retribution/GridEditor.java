@@ -1,6 +1,8 @@
 package com.nbehary.retribution;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.ActionBar;
 
@@ -79,7 +81,6 @@ public class GridEditor extends ActionBarActivity
                             PreferencesProvider.Interface.General.setAllowLand(mContext, mProfile.allowLandscape);
                         }
                         Intent resultIntent = new Intent();
-// TODO Add extras or a data URI to this intent as appropriate.
                         setResult(Activity.RESULT_OK, resultIntent);
                         finish();
                     }
@@ -95,6 +96,11 @@ public class GridEditor extends ActionBarActivity
             Log.d("nbehary110", "Saved instance");
         }
 
+        if (!PreferencesProvider.Interface.General.getGridFirstRun()) {
+            showHelp();
+            PreferencesProvider.Interface.General.setGridFirstRun(this,true);
+        }
+
     }
 
 
@@ -102,7 +108,7 @@ public class GridEditor extends ActionBarActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         
         // Inflate the menu; this adds items to the action bar if it is present.
-        //getMenuInflater().inflate(R.menu.grid_editor, menu);
+        getMenuInflater().inflate(R.menu.grid_editor, menu);
         return true;
     }
 
@@ -112,13 +118,33 @@ public class GridEditor extends ActionBarActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_help) {
+            showHelp();
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
+    private void showHelp() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
+        if (LauncherAppState.getInstance().getProVersion()) {
+            builder.setMessage(R.string.grid_help_pro);
+        } else {
+            builder.setMessage(R.string.grid_help_pro);
+        }
+
+
+        builder.setTitle(R.string.grid_about_dialog_title);
+        builder.setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked OK button
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
 
     private void setupFrames(){
         Fragment gridFragment = GridFragment.newInstance("grid_frgment");
@@ -196,6 +222,10 @@ public class GridEditor extends ActionBarActivity
 
         if (iconFrag != null) {
             iconFrag.updateViews(profile);
+
+        }
+
+        if (iconContainer != null) {
             iconContainer.updateCalculated();
         }
 

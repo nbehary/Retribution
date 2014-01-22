@@ -1211,7 +1211,7 @@ public class Launcher extends Activity
     }
 
     protected void startGrid() {
-        mState = State.FOLDERS_CUSTOMIZE;
+        //mState = State.FOLDERS_CUSTOMIZE;
         Intent myIntent = new Intent(Launcher.this, com.nbehary.retribution.GridEditor.class);
         Launcher.this.startActivityForResult(myIntent, REQUEST_GRID);
 

@@ -254,10 +254,10 @@ public class LauncherAppState {
         if ((manager.checkSignatures("com.nbehary.retribution", "com.nbehary.retribution.pro_key")
                 == PackageManager.SIGNATURE_MATCH) &&
                 (manager.getInstallerPackageName("com.nbehary.retribution.pro_key").equals("com.android.vending"))){
-            Intent serviceIntent=new Intent();
-            serviceIntent.setClassName("com.nbehary.retribution.pro_key", "com.nbehary.retribution.pro_key.LicenseCheckService");
-            mProVersion=sContext.bindService(serviceIntent, mServiceConnection,Context.BIND_AUTO_CREATE);
-
+          //  Intent serviceIntent=new Intent();
+          //  serviceIntent.setClassName("com.nbehary.retribution.pro_key", "com.nbehary.retribution.pro_key.LicenseCheckService");
+          //  mProVersion=sContext.bindService(serviceIntent, mServiceConnection,Context.BIND_AUTO_CREATE);
+                mProVersion = true;
         }
 
         if ((mVersionName.contains("Beta"))||(mVersionName.contains("Dev")) || (mVersionName.contains("RC"))) {

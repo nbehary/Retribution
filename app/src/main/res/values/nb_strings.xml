@@ -68,4 +68,9 @@
     <string name="grid_auto_hotseat_notice_text">Dock is always hidden in this configuration.</string>
     <string name="grid_folder_warning">Folders are not supported in the Dock at this size.</string>
     <string name="grid_dock_warning">Dock icons may appear distorted at this size.</string>
+    <string name="landscape_warning">Landscape may not work correctly on Phones.</string>
+    <string name="grid_search_warning">Search Bar required in Landscape.</string>
+    <string name="dialog_ok">Ok</string>
+    <string name="grid_about_dialog_title">About the Grid Editor</string>
+    <string name="action_help">Help</string>
 </resources>

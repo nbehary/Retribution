@@ -252,7 +252,8 @@ class DeviceProfile {
 
         // Search Bar
         searchBarSpaceMaxWidthPx = resources.getDimensionPixelSize(R.dimen.dynamic_grid_search_bar_max_width);
-        hideQSB = PreferencesProvider.Interface.General.getHideQSB();
+        //hideQSB = PreferencesProvider.Interface.General.getHideQSB();
+        hideQSB = false;
         if (hideQSB) {
             searchBarHeightPx = 0;
             searchBarSpaceWidthPx = 0;
@@ -269,20 +270,23 @@ class DeviceProfile {
 
             if (isTablet()) {
                 allowLandscape = true;
-                Log.d("nbehary110","Tablet!");
             }else {
                 allowLandscape = false;
-                Log.d("nbehary110","Phone!");
             }
 
         }
 
         autoHotseat = PreferencesProvider.Interface.General.getAutoHotseat();
         setCellHotSeatAndFolders();
-        //Shrink-Wrap!!
-        //Only if custom sizes not present. Already ran if they are.  (and it kills them)
-        if ((iconSize == iconSizeDevice) && (iconTextSize == iconTextSizeDevice)) {
-            adjustSizesAuto(resources);
+        if (iconSizeDevice > 72) {
+            //Restrict icon sizes to <72, and don't shrink wrap if they were.....
+            iconSize = iconSizeDevice = iconSizeCalc = 71.5f;
+        } else {
+            //Shrink-Wrap!!
+            //Only if custom sizes not present. Already ran if they are.  (and it kills them)
+            if ((iconSize == iconSizeDevice) && (iconTextSize == iconTextSizeDevice)) {
+                adjustSizesAuto(resources);
+            }
         }
     }
 
@@ -433,7 +437,7 @@ class DeviceProfile {
         if (hideQSB) {
             searchBarHeightPx = 0;
             searchBarSpaceWidthPx = 0;
-            searchBarSpaceHeightPx = 0;
+            searchBarSpaceHeightPx = 0;//2 * edgeMarginPx;
         } else {
             searchBarHeightPx = mResources.getDimensionPixelSize(R.dimen.dynamic_grid_search_bar_height);
             searchBarSpaceWidthPx = Math.min(searchBarSpaceMaxWidthPx, widthPx);
@@ -520,6 +524,8 @@ class DeviceProfile {
             // Pad the left and right of the workspace with search/hotseat bar sizes
             padding.set(searchBarSpaceHeightPx, edgeMarginPx,
                     hotseatBarHeightPx, edgeMarginPx);
+            Log.d("","");
+
         } else {
             if (isTablet()) {
                 // Pad the left and right of the workspace to ensure consistent spacing
@@ -591,9 +597,13 @@ class DeviceProfile {
             lp.gravity = Gravity.TOP | Gravity.LEFT;
             lp.width = searchBarSpaceHeightPx;
             lp.height = LayoutParams.MATCH_PARENT;
-            searchBar.setPadding(
+            if (!hideQSB) {
+                searchBar.setPadding(
                     0, 2 * edgeMarginPx, 0,
                     2 * edgeMarginPx);
+            } else {
+                searchBar.setPadding(0,0,0,0);
+            }
         } else {
             // Horizontal search bar
             lp.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
@@ -652,8 +662,8 @@ class DeviceProfile {
             //here!!
             // Pad the hotseat with the grid gap calculated above
             int gridGap = (int) ((widthPx - 2 * edgeMarginPx -
-                    (numColumnsDevice * cellWidthPx)) / (2 * (numColumns + 1)));
-            int gridWidth = (int) ((numColumns * cellWidthPx) +
+                    (numColumnsDevice * cellWidthPx)) / (2 * (numColumnsDevice + 1)));
+            int gridWidth = (int) ((numColumnsDevice * cellWidthPx) +
                     ((numColumnsDevice - 1) * gridGap));
             int hotseatGap = (int) Math.max(0,
                     (gridWidth - (numHotseatIcons * hotseatCellWidthPx))
@@ -742,14 +752,14 @@ class DeviceProfile {
 
         iconSizeCalc = iconSize;
         setCellHotSeatAndFolders();
-        if ((iconSize < 48) ) {
+        if ((iconSize < 28) ) {
             //Don't allow the hotseat at icon sizes lower than 48dp.
             autoHotseat = true;
             PreferencesProvider.Interface.General.setAutoHotseat(mContext,autoHotseat);
             hideHotseat = true;
             return true;
         }
-        if (((iconSize >= 48) && PreferencesProvider.Interface.General.getAutoHotseat())) {
+        if (((iconSize >= 28) && PreferencesProvider.Interface.General.getAutoHotseat())) {
             //Hotseat valid and was hidden automatically.
             autoHotseat = false;
             hideHotseat = false;
@@ -832,7 +842,7 @@ public class DynamicGrid {
                 awPx, ahPx,
                 resources);
         mCalculatedProfile = new DeviceProfile(mProfile);
-        Log.d("nbehary10x", toString());
+
     }
 
     DeviceProfile getDeviceProfile() {

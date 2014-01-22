@@ -42,8 +42,8 @@ public class GridFragment extends Fragment {
     OnRowColDockChangedListener mCallback;
     OnLandscapeListener mLandCallback;
     boolean landscapeChanged;
-    CheckBox mHideHotseat;
-    TextView mHotseatNotice;
+    CheckBox mHideHotseat, mHideQSB;
+    TextView mHotseatNotice,mLandscapeNotice,mSearchNotice;
     View mRootView;
 
     private static GridFragment instance;
@@ -95,6 +95,11 @@ public class GridFragment extends Fragment {
         LinearLayout ui = (LinearLayout) mRootView.findViewById(R.id.grid_editor_ui);
         //ui.setBackgroundColor(Color.argb(177, 0, 0, 0));
         mHotseatNotice = (TextView) mRootView.findViewById(R.id.grid_auto_hotseat_notice);
+        mLandscapeNotice = (TextView) mRootView.findViewById(R.id.grid_landscape_notice);
+        if (!mTempProfile.isTablet() && mTempProfile.allowLandscape) {
+            mLandscapeNotice.setVisibility(View.VISIBLE);
+        }
+        mSearchNotice = (TextView) mRootView.findViewById(R.id.grid_search_notice);
 
         mColsPicker = (NumberPicker) mRootView.findViewById(R.id.grid_cols_picker);
         mColsPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
@@ -239,9 +244,9 @@ public class GridFragment extends Fragment {
             mHideHotseat.setVisibility(View.GONE);
         }
 
-        CheckBox hideQSB = (CheckBox) mRootView.findViewById(R.id.grid_hide_qsb);
-        hideQSB.setChecked(mTempProfile.hideQSB);
-        hideQSB.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        mHideQSB = (CheckBox) mRootView.findViewById(R.id.grid_hide_qsb);
+        mHideQSB.setChecked(mTempProfile.hideQSB);
+        mHideQSB.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
@@ -253,6 +258,15 @@ public class GridFragment extends Fragment {
                 mTempProfile.adjustSizesAuto(getResources());
             }
         });
+/*        if (!mTempProfile.allowLandscape){
+            mHideQSB.setVisibility(View.VISIBLE);
+            mSearchNotice.setVisibility(View.GONE);
+        } else {
+            mHideQSB.setVisibility(View.GONE);
+            mSearchNotice.setVisibility(View.VISIBLE);
+        }
+*/
+
 
         CheckBox allowLand = (CheckBox) mRootView.findViewById(R.id.grid_allow_land);
         allowLand.setChecked(mTempProfile.allowLandscape);
@@ -262,9 +276,25 @@ public class GridFragment extends Fragment {
 
                 if (isChecked) {
                     mTempProfile.allowLandscape = true;
+                    if (!mTempProfile.isTablet()) {
+                        mLandscapeNotice.setVisibility(View.VISIBLE);
+                    }
+                  //  mHideQSB.setVisibility(View.GONE);
+                  //  mSearchNotice.setVisibility(View.VISIBLE);
+                  //  mHideQSB.setChecked(false);
+                  //  mTempProfile.hideQSB = false;
+                  //  mTempProfile.adjustSizesAuto(getResources());
+
 
                 } else {
                     mTempProfile.allowLandscape = false;
+                    if (!mTempProfile.isTablet()) {
+                        mLandscapeNotice.setVisibility(View.GONE);
+                    }
+                  //  mHideQSB.setVisibility(View.VISIBLE);
+                  //  mSearchNotice.setVisibility(View.GONE);
+
+
                 }
                 mLandCallback.onLandscapeChanged();
                 mTempProfile.adjustSizesAuto(getResources());

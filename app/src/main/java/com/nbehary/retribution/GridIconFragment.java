@@ -170,14 +170,14 @@ public class GridIconFragment extends Fragment {
         }
 
         mFolderWarning = (TextView) mRootView.findViewById(R.id.folder_warning);
-        if (mTempProfile.iconSize > 72) {
+        if ((mTempProfile.iconSize > 72 && !mTempProfile.hideHotseat)) {
             mFolderWarning.setVisibility(View.VISIBLE);
         } else {
             mFolderWarning.setVisibility(View.GONE);
         }
 
         mDockWarning = (TextView) mRootView.findViewById(R.id.dock_warning);
-        if (mTempProfile.iconSize < 48) {
+        if ((mTempProfile.iconSize < 30) && ((!mTempProfile.autoHotseat) || mTempProfile.hideHotseat))  {
             mDockWarning.setVisibility(View.VISIBLE);
         } else {
             mDockWarning.setVisibility(View.GONE);
@@ -210,13 +210,13 @@ public class GridIconFragment extends Fragment {
         if ((mTempProfile.iconSize != mTempProfile.iconSizeCalc) || (mTempProfile.iconTextSize != mTempProfile.iconTextSizeCalc)){
             mUseCalculated.setChecked(false);
         }
-        if ((mTempProfile.iconSize > 72)  && (!mTempProfile.autoHotseat)) {
+        if ((mTempProfile.iconSize > 72 && !mTempProfile.hideHotseat)) {
             mFolderWarning.setVisibility(View.VISIBLE);
         } else {
             mFolderWarning.setVisibility(View.GONE);
         }
 
-        if ((mTempProfile.iconSize < 48) && (!mTempProfile.autoHotseat)) {
+        if ((mTempProfile.iconSize < 30) && ((!mTempProfile.autoHotseat)|| mTempProfile.hideHotseat)) {
             mDockWarning.setVisibility(View.VISIBLE);
         } else {
             mDockWarning.setVisibility(View.GONE);

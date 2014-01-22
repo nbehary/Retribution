@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+
+    <string name="grid_help_free">
+        Desktop Grid\n\n
+        - Rows/Columns:  Sets the number of Rows and Columns on the Desktop.  (this is restricted to +/- 1 from the device
+        default in the Free version.  Pro allows selecting 2-12 for each.)\n
+        - Hide Dock: Hides the Dock.  This option is always set for configurations with icons smaller than 28dp.\n
+        - Allow Landscape: Allows the Launcher to rotate into Landscape.  This is the default on Tablets.  It can be set on Phones
+        but doing so may not work well and is not supported.\n
+        - Reset Default: Sets all values, including Icon Sizes, to the Device Default.\n
+        \n\n
+        Icon Sizes\n\n
+        - Use Calculated Sizes:  Resets just the Icon and Icon Text sizes to the Device Default.\n
+        - Percent slider:  Allows changing the icon size.  Text does not change using this.  Note that 100% is the calculated ideal
+        size for the device.  Settings over 100% may result in truncated icons and is not supported.  (Values up to 110% may be fine
+        in most configurations, especially if you don\'t use folders.)\n
+         - (Pro Only) Adjust Values: Swaps the Percent Slider for a UI allowing more fine tuned icon and text values.  (not restricted to 75-125%)\n
+        \n
+        (This Dialog will only appear once.  You can access it again from Help in the Menu.)\n
+    </string>
+
+     <string name="grid_help_pro">
+        Desktop Grid\n\n
+        - Rows/Columns:  Sets the number of Rows and Columns on the Desktop.  Values can be set between 2 and 12 of each.\n
+        - Hide Dock: Hides the Dock.  This option is always set for configurations with icons smaller than 28dp.\n
+        - Allow Landscape: Allows the Launcher to rotate into Landscape.  This is the default on Tablets.  It can be set on Phones
+        but doing so may not work well and is not supported.\n
+        - Reset Default: Sets all values, including Icon Sizes, to the Device Default.\n
+        \n\n
+        Icon Sizes\n\n
+        - Use Calculated Sizes:  Resets just the Icon and Icon Text sizes to the Device Default.\n
+        - Percent slider:  Allows changing the icon size.  Text does not change using this.  Note that 100% is the calculated ideal
+        size for the device.  Settings over 100% may result in truncated icons and is not supported.  (Values up to 110% may be fine
+        in most configurations, especially if you don\'t use folders.)\n
+         - Adjust Values: Swaps the Percent Slider for a UI allowing more fine tuned icon and text values.  (not restricted to 75-125%)\n
+         \n
+         (This Dialog will only appear once.  You can access it again from Help in the Menu.)\n
+    </string>
+
+
+</resources>

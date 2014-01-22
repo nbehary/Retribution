@@ -95,12 +95,22 @@
             android:id="@+id/grid_hide_hotseat"
             android:checked="false" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/grid_search_warning"
+            android:id="@+id/grid_search_notice"
+            android:textColor="#aa8c13"
+            android:visibility="gone" />
+
         <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Hide Search Bar"
             android:id="@+id/grid_hide_qsb"
-            android:checked="false" />
+            android:checked="false"
+            android:visibility="gone" />
 
         <CheckBox
             android:layout_width="wrap_content"
@@ -109,6 +119,16 @@
             android:id="@+id/grid_allow_land"
             android:checked="false" />
     </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/landscape_warning"
+        android:id="@+id/grid_landscape_notice"
+        android:layout_weight="0.03"
+        android:textColor="#aa8c13"
+        android:visibility="gone" />
 
     <Button
         android:layout_width="wrap_content"

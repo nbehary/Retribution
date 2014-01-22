@@ -616,17 +616,7 @@ public class CellLayout extends ViewGroup {
         }
         child.setScaleX(1);//getChildrenScale());
         child.setScaleY(1);//getChildrenScale());
-        if (child instanceof FolderIcon) {
-       /*     ImageView iv = ((FolderIcon)child).getPreviewBackground();
-            Drawable d = iv.getDrawable();
-            Bitmap b = ((BitmapDrawable)d).getBitmap();
-            int size = LauncherAppState.getInstance().getDynamicGrid().getDeviceProfile().hotseatIconSizePx;
 
-            iv.setImageBitmap(Bitmap.createScaledBitmap(b,size , size, false));
-            ((FolderIcon)child).setPreviewBackground(iv);*/
-         //   child.setScaleX(getChildrenScale());
-         //   child.setScaleY(getChildrenScale());
-         }
 
         // Generate an id for each view, this assumes we have at most 256x256 cells
         // per workspace screen

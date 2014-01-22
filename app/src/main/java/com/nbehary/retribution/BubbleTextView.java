@@ -126,11 +126,16 @@ public class BubbleTextView extends TextView {
     }
 
     public void setHotseatItem(boolean flag) {
+        if (mInfo == null){
+            return;
+        }
+        Bitmap b = mInfo.getIcon(LauncherAppState.getInstance().getIconCache());
         if (flag) {
-            Log.d("nbehary110","blerg!!!!!!!!!!!!!!"+getText());
-            Bitmap b = mInfo.getIcon(LauncherAppState.getInstance().getIconCache());
             setCompoundDrawables(null,
                 Utilities.createHotseatIconDrawable(b), null, null);
+        } else {
+            setCompoundDrawables(null,
+                    Utilities.createIconDrawable(b), null, null);
         }
     }
 
