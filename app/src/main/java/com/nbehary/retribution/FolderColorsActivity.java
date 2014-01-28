@@ -11,6 +11,8 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.LightingColorFilter;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
@@ -34,6 +36,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -54,6 +57,8 @@ public class FolderColorsActivity extends Activity {
     boolean mDefaultBG;
     Context mContext;
     String mFreeColor;
+    boolean mTintIcon;
+    int mFolderType;
 
 
 
@@ -69,6 +74,8 @@ public class FolderColorsActivity extends Activity {
         mNameColor = PreferencesProvider.Interface.General.getFolderNameColor();
         mDefaultBG = PreferencesProvider.Interface.General.getDefaultFolderBG();
         mFreeColor = PreferencesProvider.Interface.General.getFolderColor();
+        mTintIcon = PreferencesProvider.Interface.General.getFolderIconTint();
+        mFolderType = PreferencesProvider.Interface.General.getFolderType();
         mContext = this;
         //No colors set.  Default to black text on white.  (sort of, but not the default)
         if (mBgColor==0 && mIconColor==0 && mNameColor==0) {
@@ -93,6 +100,8 @@ public class FolderColorsActivity extends Activity {
                         PreferencesProvider.Interface.General.setFolderIconColor(mContext, mIconColor);
                         PreferencesProvider.Interface.General.setDefaultFolderBG(mContext, mDefaultBG);
                         PreferencesProvider.Interface.General.setFolderColor(mContext, mFreeColor);
+                        PreferencesProvider.Interface.General.setFolderIconTint(mContext, mTintIcon);
+                        PreferencesProvider.Interface.General.setFolderType(mContext,mFolderType);
                         LauncherAppState.getInstance().getModel().startLoader(true, -1);
                         finish();
                         //do stuff
@@ -127,6 +136,11 @@ public class FolderColorsActivity extends Activity {
     public void setmFreeColor(String mFreeColor) {
         this.mFreeColor = mFreeColor;
     }
+
+    public void setmTintIcon(boolean mTintIcon) {
+        this.mTintIcon = mTintIcon;
+    } 
+    public void setmFolderType(int mFolderType) { this.mFolderType = mFolderType;}
 
 
 
@@ -176,6 +190,8 @@ public class FolderColorsActivity extends Activity {
         int mNameColor;
         String mFreeColor;
         boolean mDefaultBG;
+        boolean mTintIcon;
+        int mFolderType;
 
 
         public PlaceholderFragment() {
@@ -185,30 +201,14 @@ public class FolderColorsActivity extends Activity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
 
- /*           int orientation = getActivity().getRequestedOrientation();
-            int rotation = ((WindowManager) getActivity().getSystemService(
-                    Context.WINDOW_SERVICE)).getDefaultDisplay().getRotation();
-            switch (rotation) {
-                case Surface.ROTATION_0:
-                    orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
-                    break;
-                case Surface.ROTATION_90:
-                    orientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
-                    break;
-                case Surface.ROTATION_180:
-                    orientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT;
-                    break;
-                default:
-                    orientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE;
-                    break;
-            }
-            getActivity().setRequestedOrientation(orientation);
-*/
+
             mContext = getActivity();
             mBgColor = PreferencesProvider.Interface.General.getFolderBackColor();
             mIconColor = PreferencesProvider.Interface.General.getFolderIconColor();
             mNameColor = PreferencesProvider.Interface.General.getFolderNameColor();
             mDefaultBG = PreferencesProvider.Interface.General.getDefaultFolderBG();
+            mTintIcon = PreferencesProvider.Interface.General.getFolderIconTint();
+            mFolderType = PreferencesProvider.Interface.General.getFolderType();
 
             mChanging = "Background";
             //No colors set.  Default to black text on white.  (sort of, but not the default)
@@ -271,16 +271,8 @@ public class FolderColorsActivity extends Activity {
                 mPreviewImage.setImageBitmap(generateFolderPreview(getResources(),mBgColor,mIconColor,mNameColor,mDefaultBG));
 
                 mPicker = (ColorPickerView) rootView.findViewById(R.id.picker);
-                mPicker.setAlphaSliderVisible(true);
-/*
-                mPicker = (ColorPicker) rootView.findViewById(R.id.picker);
-                SVBar svBar = (SVBar) rootView.findViewById(R.id.svbar);
-                OpacityBar opacityBar = (OpacityBar) rootView.findViewById(R.id.opacitybar);
+                mPicker.setAlphaSliderVisible(false);
 
-
-                mPicker.addSVBar(svBar);
-                mPicker.addOpacityBar(opacityBar);
-*/
                 mPicker.setOnColorChangedListener(new ColorPickerView.OnColorChangedListener() {
                     @Override
                     public void onColorChanged(int i) {
@@ -304,6 +296,68 @@ public class FolderColorsActivity extends Activity {
                     }
                 });
                 mPicker.setColor(mBgColor);
+
+/*                CheckBox allowLand = (CheckBox) rootView.findViewById(R.id.folder_tint_icon);
+                allowLand.setChecked(mTintIcon);
+                allowLand.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        FolderColorsActivity parent = (FolderColorsActivity) getActivity();
+                        if (isChecked) {
+                            mTintIcon = true;
+                            parent.setmTintIcon(true);
+                        } else {
+                            mTintIcon = false;
+                            parent.setmTintIcon(false);
+                        }
+
+                    }
+                });
+
+                */
+
+                Spinner iconSpinner = (Spinner) rootView.findViewById(R.id.folder_colors_icon_spinner);
+                ArrayAdapter<CharSequence> iconAdapter = ArrayAdapter.createFromResource(mContext,
+                        R.array.folder_icons_array_pro, android.R.layout.simple_spinner_item);
+                iconAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                iconSpinner.setAdapter(iconAdapter);
+                if (!mTintIcon && (mFolderType!=2)) {
+                    iconSpinner.setSelection(0);
+                } else if (mTintIcon) {
+                    iconSpinner.setSelection(1);
+                } else {
+                    iconSpinner.setSelection(2);
+                }
+                iconSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        String iconType = (String) parent.getItemAtPosition(position);
+                        FolderColorsActivity activity = (FolderColorsActivity) getActivity();
+                        if (iconType.equals("Default (White)")) {
+                            mTintIcon = false;
+                            activity.setmTintIcon(false);
+                            mFolderType = 0;
+                            activity.setmFolderType(0);
+                        } else if (iconType.equals("Tint with Background")) {
+                            mTintIcon = true;
+                            activity.setmTintIcon(true);
+                            mFolderType = 0;
+                            activity.setmFolderType(0);
+
+                        } else {
+                            mTintIcon = false;
+                            activity.setmTintIcon(false);
+                            mFolderType = 2;
+                            activity.setmFolderType(2);
+
+                        }
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+
+                    }
+                });
             } else {
                 rootView = inflater.inflate(R.layout.fragment_folder_colors_free, container, false);
                 FrameLayout ui_pane = (FrameLayout) rootView.findViewById(R.id.folder_colors_ui_free);
@@ -423,6 +477,41 @@ public class FolderColorsActivity extends Activity {
                         }
                     }
                 });
+
+                Spinner iconSpinner = (Spinner) rootView.findViewById(R.id.folder_colors_icon_spinner_free);
+                ArrayAdapter<CharSequence> iconAdapter = ArrayAdapter.createFromResource(mContext,
+                        R.array.folder_icons_array_free, android.R.layout.simple_spinner_item);
+                iconAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                iconSpinner.setAdapter(iconAdapter);
+                if (mFolderType!=2) {
+                    iconSpinner.setSelection(0);
+                } else  {
+                    iconSpinner.setSelection(1);
+                }
+                iconSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        String iconType = (String) parent.getItemAtPosition(position);
+                        FolderColorsActivity activity = (FolderColorsActivity) getActivity();
+                        if (iconType.equals("Default (White)")) {
+                            mTintIcon = false;
+                            activity.setmTintIcon(false);
+                            mFolderType = 0;
+                            activity.setmFolderType(0);
+                        }  else {
+                            mTintIcon = false;
+                            activity.setmTintIcon(false);
+                            mFolderType = 2;
+                            activity.setmFolderType(2);
+
+                        }
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+
+                    }
+                });
             }
 
             return rootView;
@@ -446,14 +535,18 @@ public class FolderColorsActivity extends Activity {
 
             Canvas canvas = new Canvas(previewBitmap);
             // new antialised Paint
-            if (bg){
-                previewDefaultBG = resources.getDrawable(R.drawable.portal_container_holo);
-
-            } else {
-                //canvas.drawColor(back);
-                previewDefaultBG = resources.getDrawable(R.drawable.portal_container_custom);
-                previewDefaultBG.setColorFilter(back, PorterDuff.Mode.MULTIPLY);
+            previewDefaultBG = resources.getDrawable(R.drawable.portal_container_holo);
+            if (!bg){
+                ColorFilter filter = new LightingColorFilter( back, back);
+                previewDefaultBG.setColorFilter(filter);
             }
+          //      previewDefaultBG.setColorFilter(back, PorterDuff.Mode.MULTIPLY);
+
+          //  } else {
+                //canvas.drawColor(back);
+            //    previewDefaultBG = resources.getDrawable(R.drawable.portal_container_custom);
+          //      ;
+           // }
             renderDrawableToBitmap(previewDefaultBG,previewBitmap ,0,0,folderWidth,folderHeight);
             renderDrawableToBitmap(icon,previewBitmap,20,20,grid.iconSizePx,grid.iconSizePx);
 

@@ -86,14 +86,15 @@ public class DeleteDropTarget extends ButtonDropTarget {
 
         // The current drawable is set to either the remove drawable or the uninstall drawable 
         // and is initially set to the remove drawable, as set in the layout xml.
-        //TODO:ICS_FIX
-        if (Build.VERSION.SDK_INT >=17)
-            mCurrentDrawable = (TransitionDrawable) getCurrentDrawable();
+        mCurrentDrawable = (TransitionDrawable) getCurrentDrawable();
+
 
         // Remove the text in the Phone UI in landscape
         int orientation = getResources().getConfiguration().orientation;
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            if (!LauncherAppState.getInstance().isScreenLarge()) {
+            LauncherAppState app = LauncherAppState.getInstance();
+            DeviceProfile grid = app.getDynamicGrid().getDeviceProfile();
+            if ((!app.isScreenLarge()) && (!grid.hideQSB)){
                 setText("");
             }
         }
@@ -187,14 +188,19 @@ public class DeleteDropTarget extends ButtonDropTarget {
         if (!willAcceptDrop(info) || isAllAppsWidget(source, info)) {
             isVisible = false;
         }
-        //TODO: ICS_FIX
+
         if (Build.VERSION.SDK_INT >=17) {
            if (useUninstallLabel) {
                 setCompoundDrawablesRelativeWithIntrinsicBounds(mUninstallDrawable, null, null, null);
             } else {
                 setCompoundDrawablesRelativeWithIntrinsicBounds(mRemoveDrawable, null, null, null);
             }
-
+        } else {
+            if (useUninstallLabel) {
+                setCompoundDrawables(mUninstallDrawable, null, null, null);
+            } else {
+                setCompoundDrawables(mRemoveDrawable, null, null, null);
+            }
         }
         mCurrentDrawable = (TransitionDrawable) getCurrentDrawable();
         mActive = isVisible;

@@ -56,7 +56,7 @@ public class ButtonDropTarget extends TextView implements DropTarget, DragContro
 
         Resources r = getResources();
         mTransitionDuration = r.getInteger(R.integer.config_dropTargetBgTransitionDuration);
-        mBottomDragPadding = r.getDimensionPixelSize(R.dimen.drop_target_drag_padding);
+        mBottomDragPadding = 0;//r.getDimensionPixelSize(R.dimen.drop_target_drag_padding);
     }
 
     void setLauncher(Launcher launcher) {
@@ -72,7 +72,12 @@ public class ButtonDropTarget extends TextView implements DropTarget, DragContro
     }
 
     protected Drawable getCurrentDrawable() {
-        Drawable[] drawables = getCompoundDrawablesRelative();
+        Drawable[] drawables;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            drawables = getCompoundDrawablesRelative();
+        }else {
+            drawables = getCompoundDrawables();
+        }
         for (int i = 0; i < drawables.length; ++i) {
             if (drawables[i] != null) {
                 return drawables[i];

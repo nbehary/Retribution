@@ -26,7 +26,9 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.FrameLayout;
 
@@ -116,9 +118,12 @@ public class SearchDropTargetBar extends FrameLayout implements DragController.D
 
         // Create the various fade animations
         if (mEnableDropDownDropTargets) {
+
             LauncherAppState app = LauncherAppState.getInstance();
+
             DeviceProfile grid = app.getDynamicGrid().getDeviceProfile();
-            mBarHeight = grid.searchBarSpaceHeightPx;
+
+            mBarHeight = grid.searchBarSpaceHeightPxDefault;
             mDropTargetBar.setTranslationY(-mBarHeight);
             mDropTargetBarAnim = LauncherAnimUtils.ofFloat(mDropTargetBar, "translationY",
                     -mBarHeight, 0f);
@@ -189,11 +194,24 @@ public class SearchDropTargetBar extends FrameLayout implements DragController.D
     @Override
     public void onDragStart(DragSource source, Object info, int dragAction) {
         // Animate out the QSB search bar, and animate in the drop target bar
-        prepareStartAnimation(mDropTargetBar);
-        mDropTargetBarAnim.start();
-        if (!mIsSearchBarHidden) {
-            prepareStartAnimation(mQSBSearchBar);
-            mQSBSearchBarAnim.start();
+        DeviceProfile grid = LauncherAppState.getInstance().getDynamicGrid().getDeviceProfile();
+        if (grid.hideQSB) {
+            mQSBSearchBar.setAlpha(1f);
+            mQSBSearchBar.setTranslationY(+mBarHeight);
+            //mQSBSearchBar.setVisibility(GONE);
+            mQSBSearchBar.setVisibility(INVISIBLE);
+            mDropTargetBar.setVisibility(VISIBLE);
+            setVisibility(VISIBLE);
+            prepareStartAnimation(mDropTargetBar);
+            mDropTargetBarAnim.start();
+        } else {
+
+            prepareStartAnimation(mDropTargetBar);
+            mDropTargetBarAnim.start();
+            if (!mIsSearchBarHidden) {
+                prepareStartAnimation(mQSBSearchBar);
+                mQSBSearchBarAnim.start();
+            }
         }
     }
 
@@ -205,6 +223,7 @@ public class SearchDropTargetBar extends FrameLayout implements DragController.D
     public void onDragEnd() {
         if (!mDeferOnDragEnd) {
             // Restore the QSB search bar, and animate out the drop target bar
+
             prepareStartAnimation(mDropTargetBar);
             mDropTargetBarAnim.reverse();
             if (!mIsSearchBarHidden) {
@@ -213,6 +232,11 @@ public class SearchDropTargetBar extends FrameLayout implements DragController.D
             }
         } else {
             mDeferOnDragEnd = false;
+        }
+        DeviceProfile grid = LauncherAppState.getInstance().getDynamicGrid().getDeviceProfile();
+        if (grid.hideQSB) {
+
+            setVisibility(INVISIBLE);
         }
     }
 

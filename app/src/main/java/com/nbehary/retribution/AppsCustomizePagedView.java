@@ -537,7 +537,13 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
                         } else {
                             int page = (int) (x/mMarkerWidth);
                             loadAssociatedPages(page);
-                            ((PageIndicator) v).setActiveMarker(page);
+                            try {
+                                Thread.sleep(80);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+
+                            //((PageIndicator) v).setActiveMarker(page);
                             setCurrentPage(page);
                             //here!
                             //mCurrentPage = page;
@@ -709,7 +715,7 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
 
     private void beginDraggingApplication(View v) {
         mLauncher.getWorkspace().onDragStartedWithItem(v);
-        mLauncher.getWorkspace().beginDragShared(v, this);
+        mLauncher.getWorkspace().beginDragShared(v, this,false);
     }
 
     Bundle getDefaultOptionsForWidget(Launcher launcher, PendingAddWidgetInfo info) {

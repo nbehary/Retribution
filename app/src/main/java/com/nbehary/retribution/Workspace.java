@@ -32,6 +32,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -167,6 +168,7 @@ public class Workspace extends SmoothPagedView
     private Launcher mLauncher;
     private IconCache mIconCache;
     private DragController mDragController;
+    private Context mContext;
 
     // These are temporary variables to prevent having to allocate a new object just to
     // return an (x, y) value from helper functions. Do NOT use them to maintain other state.
@@ -296,6 +298,7 @@ public class Workspace extends SmoothPagedView
      */
     public Workspace(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        mContext = context;
         mContentIsRefreshable = false;
 
         mOutlineHelper = HolographicOutlineHelper.obtain(context);
@@ -1913,7 +1916,17 @@ public class Workspace extends SmoothPagedView
         State finalState = Workspace.State.OVERVIEW;
         if (!enable) {
             finalState = Workspace.State.NORMAL;
+            PageIndicator pi = getPageIndicator();
+            if (mContext.getResources().getConfiguration().orientation ==
+                    Configuration.ORIENTATION_LANDSCAPE) {
+                pi.setVisibility(INVISIBLE);
+            }
+
+
+
+
         }
+
 
         Animator workspaceAnim = getChangeStateAnimation(finalState, animated, 0, snapPage);
         if (workspaceAnim != null) {
@@ -2340,6 +2353,7 @@ public class Workspace extends SmoothPagedView
         Bitmap b;
 
         if (v instanceof TextView) {
+            Drawable[] e = ((TextView) v).getCompoundDrawables();
             Drawable d = ((TextView) v).getCompoundDrawables()[1];
             b = Bitmap.createBitmap(d.getIntrinsicWidth() + padding,
                     d.getIntrinsicHeight() + padding, Bitmap.Config.ARGB_8888);
@@ -2399,7 +2413,7 @@ public class Workspace extends SmoothPagedView
         return b;
     }
 
-    void startDrag(CellLayout.CellInfo cellInfo) {
+    void startDrag(CellLayout.CellInfo cellInfo,boolean isHot) {
         View child = cellInfo.cell;
 
         // Make sure the drag was started by a long press as opposed to a long click.
@@ -2419,11 +2433,17 @@ public class Workspace extends SmoothPagedView
 
         // The outline is used to visualize where the item will land if dropped
         mDragOutline = createDragOutline(child, canvas, DRAG_BITMAP_PADDING);
-        beginDragShared(child, this);
+        beginDragShared(child, this,isHot);
     }
 
-    public void beginDragShared(View child, DragSource source) {
+    public void beginDragShared(View child, DragSource source,boolean isHot) {
         // The drag bitmap follows the touch point around on the screen
+        if (mState == State.SMALL) {
+            exitOverviewMode(true);
+        }
+        if (child instanceof BubbleTextView && isHot) {
+            ((BubbleTextView) child).setHotseatItem(false);
+        }
         final Bitmap b = createDragBitmap(child, new Canvas(), DRAG_BITMAP_PADDING);
 
         final int bmpWidth = b.getWidth();
@@ -2440,6 +2460,7 @@ public class Workspace extends SmoothPagedView
         DeviceProfile grid = app.getDynamicGrid().getDeviceProfile();
         Point dragVisualizeOffset = null;
         Rect dragRect = null;
+
         if (child instanceof BubbleTextView || child instanceof PagedViewIcon) {
             int iconSize = grid.iconSizePx;
             int top = child.getPaddingTop();

@@ -136,12 +136,28 @@ public final class PreferencesProvider {
                 setInt(ctx,"pref_folder_name_color",color);
             }
 
+            public static int getFolderType() {
+                return getInt("pref_folder_icon", 0);
+            }
+
+            public static void setFolderType(Context ctx, int type) {
+                setInt(ctx,"pref_folder_icon",type);
+            }
+
             public static boolean getDefaultFolderBG() {
                 return getBoolean("pref_folder_default_bg", true);
             }
 
             public static void setDefaultFolderBG(Context ctx, boolean defBG){
                 setBoolean(ctx,"pref_folder_default_bg",defBG);
+            }
+
+            public static void setFolderIconTint(Context ctx,boolean tintIcon) {
+                setBoolean(ctx,"pref_folder_icon_tint",tintIcon);
+            }
+
+            public static boolean getFolderIconTint() {
+                return getBoolean("pref_folder_icon_tint",false);
             }
 
             public static void setFolderColor(Context ctx, String color) {

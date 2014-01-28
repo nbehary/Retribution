@@ -448,7 +448,9 @@ public class WidgetPreviewLoader {
 
         Drawable drawable = null;
         if (previewImage != 0) {
+            Log.d("nbehary111","before getDrawable");
             drawable = mPackageManager.getDrawable(packageName, previewImage, null);
+            Log.d("nbehary111","after getDrawable");
             if (drawable == null) {
                 Log.w(TAG, "Can't load widget preview drawable 0x" +
                         Integer.toHexString(previewImage) + " for provider: " + provider);

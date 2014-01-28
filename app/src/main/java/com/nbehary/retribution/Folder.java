@@ -26,6 +26,8 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.LightingColorFilter;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.PorterDuff;
@@ -222,7 +224,8 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         SharedPreferences preferences = getContext().getSharedPreferences("com.nbehary.retribution_preferences",0);
 
         if (!PreferencesProvider.Interface.General.getDefaultFolderBG()) {
-            Drawable myIcon = getResources().getDrawable( R.drawable.portal_container_custom );
+            //Drawable myIcon = getResources().getDrawable( R.drawable.portal_container_custom );
+            Drawable myIcon = getResources().getDrawable( R.drawable.portal_container_holo);
             //myIcon.get
             //Bitmap bg1 = Bitmap.createBitmap(myIcon.getIntrinsicWidth(), myIcon.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
             if (!LauncherAppState.getInstance().getProVersion()) {
@@ -264,9 +267,13 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
                 if (!PreferencesProvider.Interface.General.getDefaultFolderBG()){
                     //folder.setBackgroundColor(PreferencesProvider.Interface.General.getFolderBackColor());
                    // bg1.eraseColor(PreferencesProvider.Interface.General.getFolderBackColor());
-                    myIcon.setColorFilter(PreferencesProvider.Interface.General.getFolderBackColor(), PorterDuff.Mode.MULTIPLY);
+                    //myIcon.setColorFilter(PreferencesProvider.Interface.General.getFolderBackColor(), PorterDuff.Mode.MULTIPLY);
+                    int color = PreferencesProvider.Interface.General.getFolderBackColor();
+                    ColorFilter filter = new LightingColorFilter( color, color);
+                    myIcon.setColorFilter(filter);
                     mFolderName.setHintTextColor(PreferencesProvider.Interface.General.getFolderNameColor());
                     mFolderName.setTextColor(PreferencesProvider.Interface.General.getFolderNameColor());
+
                 }
             }
             //Bitmap bg2 = getRoundedCornerBitmap(bg1,2);
@@ -330,7 +337,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
             mLauncher.dismissFolderCling(null);
 
             mLauncher.getWorkspace().onDragStartedWithItem(v);
-            mLauncher.getWorkspace().beginDragShared(v, this);
+            mLauncher.getWorkspace().beginDragShared(v, this,false);
             mIconDrawable = ((TextView) v).getCompoundDrawables()[1];
 
             mCurrentDragInfo = item;
@@ -410,6 +417,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
 
     void setFolderIcon(FolderIcon icon) {
         mFolderIcon = icon;
+        mFolderIcon.setBackground();
     }
 
     @Override

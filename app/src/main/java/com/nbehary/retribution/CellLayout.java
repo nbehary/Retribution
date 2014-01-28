@@ -2924,6 +2924,11 @@ public class CellLayout extends ViewGroup {
      * @param child The child that is being dropped
      */
     void onDropChild(View child) {
+        if (child instanceof BubbleTextView) {
+            BubbleTextView bubbleChild = (BubbleTextView) child;
+            bubbleChild.setTextVisibility(!mIsHotseat);
+            bubbleChild.setHotseatItem(mIsHotseat);
+        }
         if (child != null) {
             LayoutParams lp = (LayoutParams) child.getLayoutParams();
             lp.dropped = true;

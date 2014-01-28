@@ -65,6 +65,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Debug;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
@@ -148,6 +149,8 @@ public class Launcher extends Activity
     static final boolean DEBUG_STRICT_MODE = false;
     static final boolean DEBUG_RESUME_TIME = false;
     static final boolean DEBUG_DUMP_LOG = false;
+
+    static final boolean DEBUG_SHOW_APPS_TIME = false;
 
     private static final int REQUEST_CREATE_SHORTCUT = 1;
     private static final int REQUEST_CREATE_APPWIDGET = 5;
@@ -1125,10 +1128,14 @@ public class Launcher extends Activity
                 mWorkspace.getCustomContentCallbacks().onShow();
             }
         }
-        if (mSearchDropTargetBar != null) {
-            mSearchDropTargetBar.showSearchBar(false);
-        }
         LauncherAppState app = LauncherAppState.getInstance();
+        DeviceProfile grid = app.getDynamicGrid().getDeviceProfile();
+        if ((mSearchDropTargetBar != null) && (!grid.hideQSB)){
+            mSearchDropTargetBar.showSearchBar(true);
+        }else {
+            mSearchDropTargetBar.hideSearchBar(false);
+        }
+
 
         app.checkProVersion();
 
@@ -1494,6 +1501,9 @@ public class Launcher extends Activity
 
         // Get the search/delete bar
         mSearchDropTargetBar = (SearchDropTargetBar) mDragLayer.findViewById(R.id.qsb_bar);
+        if (grid.hideQSB) {
+            mSearchDropTargetBar.setVisibility(View.INVISIBLE);
+        }
 
         // Setup AppsCustomize
         mAppsCustomizeTabHost = (AppsCustomizeTabHost) findViewById(R.id.apps_customize_pane);
@@ -2193,7 +2203,7 @@ public class Launcher extends Activity
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        if (!mWorkspace.isInOverviewMode()) {
+        if (!mWorkspace.isInOverviewMode() && !isAllAppsVisible()) {
             mWorkspace.enterOverviewMode();
         }
         return false;
@@ -2935,7 +2945,8 @@ public class Launcher extends Activity
         // The hotseat touch handling does not go through Workspace, and we always allow long press
         // on hotseat items.
         final View itemUnderLongClick = longClickCellInfo.cell;
-        boolean allowLongPress = isHotseatLayout(v) || mWorkspace.allowLongPress();
+        boolean isHot = isHotseatLayout(v);
+        boolean allowLongPress = isHot || mWorkspace.allowLongPress();
         if (allowLongPress && !mDragController.isDragging()) {
             if (itemUnderLongClick == null) {
                 // User long pressed on empty space
@@ -2950,7 +2961,7 @@ public class Launcher extends Activity
             } else {
                 if (!(itemUnderLongClick instanceof Folder)) {
                     // User long pressed on an item
-                    mWorkspace.startDrag(longClickCellInfo);
+                    mWorkspace.startDrag(longClickCellInfo,isHot);
                 }
             }
         }
@@ -3104,6 +3115,11 @@ public class Launcher extends Activity
     }
     private void showAppsCustomizeHelper(final boolean animated, final boolean springLoaded,
                                          final AppsCustomizePagedView.ContentType contentType) {
+        long startTime =0;
+        if (DEBUG_SHOW_APPS_TIME) {
+            startTime = System.currentTimeMillis();
+            Debug.startMethodTracing("showApps");
+        }
         if (mStateAnimation != null) {
             mStateAnimation.setDuration(0);
             mStateAnimation.cancel();
@@ -3239,7 +3255,7 @@ public class Launcher extends Activity
             if (!springLoaded && !LauncherAppState.getInstance().isScreenLarge()) {
                 // Hide the search bar
                 if (mSearchDropTargetBar != null) {
-                    mSearchDropTargetBar.hideSearchBar(false);
+                   // mSearchDropTargetBar.hideSearchBar(false);
                 }
             }
             dispatchOnLauncherTransitionPrepare(fromView, animated, false);
@@ -3248,6 +3264,10 @@ public class Launcher extends Activity
             dispatchOnLauncherTransitionPrepare(toView, animated, false);
             dispatchOnLauncherTransitionStart(toView, animated, false);
             dispatchOnLauncherTransitionEnd(toView, animated, false);
+        }
+        if (DEBUG_SHOW_APPS_TIME) {
+            Log.d(TAG, "Time spent in showAppsCustomizeHelper: " + (System.currentTimeMillis() - startTime));
+            Debug.stopMethodTracing();
         }
     }
 
@@ -3346,6 +3366,10 @@ public class Launcher extends Activity
             dispatchOnLauncherTransitionStart(toView, animated, true);
             dispatchOnLauncherTransitionEnd(toView, animated, true);
         }
+        DeviceProfile grid = LauncherAppState.getInstance().getDynamicGrid().getDeviceProfile();
+        if(grid.hideQSB) {
+            mSearchDropTargetBar.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
@@ -3376,7 +3400,7 @@ public class Launcher extends Activity
             // Show the search bar (only animate if we were showing the drop target bar in spring
             // loaded mode)
             if (mSearchDropTargetBar != null) {
-                mSearchDropTargetBar.showSearchBar(animated && wasInSpringLoadedMode);
+                mSearchDropTargetBar.showSearchBar(animated);// && wasInSpringLoadedMode);
             }
 
             // Set focus to the AppsCustomize button
@@ -3504,7 +3528,10 @@ public class Launcher extends Activity
 
     void enterSpringLoadedDragMode() {
         if (isAllAppsVisible()) {
+
             hideAppsCustomizeHelper(Workspace.State.SPRING_LOADED, true, true, null);
+            //showWorkspace();
+            mSearchDropTargetBar.setVisibility(View.VISIBLE);
             mState = State.APPS_CUSTOMIZE_SPRING_LOADED;
         }
     }
@@ -3738,6 +3765,10 @@ public class Launcher extends Activity
             if (searchButtonContainer != null) searchButtonContainer.setVisibility(View.VISIBLE);
             searchButton.setVisibility(View.VISIBLE);
             invalidatePressedFocusedStates(searchButtonContainer, searchButton);
+            DeviceProfile grid = LauncherAppState.getInstance().getDynamicGrid().getDeviceProfile();
+         //   if(grid.hideQSB) {
+         //       mSearchDropTargetBar.setVisibility(View.INVISIBLE);
+        //    }
             return true;
         } else {
             // We disable both search and voice search when there is no global search provider
@@ -3748,6 +3779,9 @@ public class Launcher extends Activity
             updateVoiceButtonProxyVisible(false);
             return false;
         }
+
+
+
     }
 
     protected void updateGlobalSearchIcon(Drawable.ConstantState d) {
@@ -3800,6 +3834,10 @@ public class Launcher extends Activity
             voiceButton.setVisibility(View.VISIBLE);
             updateVoiceButtonProxyVisible(false);
             invalidatePressedFocusedStates(voiceButtonContainer, voiceButton);
+            DeviceProfile grid = LauncherAppState.getInstance().getDynamicGrid().getDeviceProfile();
+            if(grid.hideQSB) {
+                mSearchDropTargetBar.setVisibility(View.INVISIBLE);
+            }
             return true;
         } else {
             if (voiceButtonContainer != null) voiceButtonContainer.setVisibility(View.GONE);

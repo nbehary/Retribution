@@ -25,6 +25,8 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.LightingColorFilter;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -46,6 +48,7 @@ import android.widget.TextView;
 import com.nbehary.retribution.R;
 import com.nbehary.retribution.DropTarget.DragObject;
 import com.nbehary.retribution.FolderInfo.FolderListener;
+import com.nbehary.retribution.preference.PreferencesProvider;
 
 import java.util.ArrayList;
 
@@ -157,13 +160,21 @@ public class FolderIcon extends LinearLayout implements FolderListener {
         icon.mFolderName.setText(folderInfo.title);
         icon.mPreviewBackground = (ImageView) icon.findViewById(R.id.preview_background);
 
-        SharedPreferences preferences = mContext.getSharedPreferences("com.nbehary.retribution_preferences",0);
-        int icon_type = Integer.parseInt(preferences.getString("pref_folder_icon","1"));
 
+
+        int icon_type = PreferencesProvider.Interface.General.getFolderType();
+        if (LauncherAppState.getInstance().getProVersion() && PreferencesProvider.Interface.General.getFolderIconTint()){
+            int color = PreferencesProvider.Interface.General.getFolderBackColor();
+            if (color !=0) {
+                Drawable myIcon = mContext.getResources().getDrawable(R.drawable.portal_ring_inner_holo);
+                ColorFilter filter = new LightingColorFilter( color, color);
+                myIcon.setColorFilter(filter);
+                icon.mPreviewBackground.setImageDrawable(myIcon);
+            }
+        }
 
         if (icon_type == 2){
             icon.mPreviewBackground.setImageResource(R.drawable.portal_ring_inner_holo_old);
-            //icon.mPreviewBackground.setBackgroundResource( R.drawable.portal_ring_inner_holo_old);
         }
 
         LauncherAppState app = LauncherAppState.getInstance();
@@ -191,6 +202,26 @@ public class FolderIcon extends LinearLayout implements FolderListener {
         folderInfo.addListener(icon);
 
         return icon;
+    }
+
+    public void setBackground() {
+        int icon_type = PreferencesProvider.Interface.General.getFolderType();
+        if (LauncherAppState.getInstance().getProVersion() && PreferencesProvider.Interface.General.getFolderIconTint()){
+            int color = PreferencesProvider.Interface.General.getFolderBackColor();
+            if (color !=0) {
+                Drawable myIcon = mContext.getResources().getDrawable(R.drawable.portal_ring_inner_holo);
+                ColorFilter filter = new LightingColorFilter( color, color);
+                myIcon.setColorFilter(filter);
+                mPreviewBackground.setImageDrawable(myIcon);
+            }
+        } else if (PreferencesProvider.Interface.General.getFolderType() == 2){
+            mPreviewBackground.setImageResource(R.drawable.portal_ring_inner_holo_old);
+        }else {
+            Drawable myIcon = mContext.getResources().getDrawable(R.drawable.portal_ring_inner_holo);
+            ColorFilter filter = new LightingColorFilter( Color.WHITE, Color.WHITE);
+            myIcon.setColorFilter(filter);
+            mPreviewBackground.setImageDrawable(myIcon);
+        }
     }
 
     @Override
@@ -232,13 +263,22 @@ public class FolderIcon extends LinearLayout implements FolderListener {
                 sPreviewSize = grid.folderIconSizePx;
                 sPreviewPadding = res.getDimensionPixelSize(R.dimen.folder_preview_padding);
                 //SharedPreferences preferences = mContext.getSharedPreferences("com.nbehary.retribution_preferences",0);
-                int icon_type = Integer.parseInt(prefs.getString("pref_folder_icon", "1"));
-                if (icon_type == 1) {
+                int icon_type = PreferencesProvider.Interface.General.getFolderType();
+                if (icon_type != 2) {
+                    int color = PreferencesProvider.Interface.General.getFolderBackColor();
+                    ColorFilter filter;
+                    if (PreferencesProvider.Interface.General.getFolderIconTint()) {
+                        filter = new LightingColorFilter( color, color);
+                    } else {
+                        filter = new LightingColorFilter( Color.WHITE, Color.WHITE);
+                    }
                     sSharedOuterRingDrawable = res.getDrawable(R.drawable.portal_ring_outer_holo);
+                    sSharedOuterRingDrawable.setColorFilter(filter);
                     sSharedInnerRingDrawable = res.getDrawable(R.drawable.portal_ring_inner_nolip_holo);
+                    sSharedInnerRingDrawable.setColorFilter(filter);
                     sSharedFolderLeaveBehind = res.getDrawable(R.drawable.portal_ring_rest);
+                    sSharedFolderLeaveBehind.setColorFilter(filter);
                 } else {
-                    Log.d("nbehary", "alt icon");
                     sSharedOuterRingDrawable = res.getDrawable(R.drawable.portal_ring_outer_holo_old);
                     sSharedInnerRingDrawable = res.getDrawable(R.drawable.portal_ring_inner_nolip_holo_old);
                     sSharedFolderLeaveBehind = res.getDrawable(R.drawable.portal_ring_rest_old);

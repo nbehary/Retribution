@@ -26,6 +26,7 @@ import android.graphics.Paint.FontMetrics;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.util.DisplayMetrics;
+import android.util.LayoutDirection;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -104,6 +105,7 @@ class DeviceProfile {
     int hotseatCellHeightPx;
     int hotseatIconSizePx;
     int hotseatBarHeightPx;
+    int hotseatBarHeightPxDefault;
     int hotseatAllAppsRank;
     int allAppsNumRows;
     int allAppsNumCols;
@@ -111,12 +113,19 @@ class DeviceProfile {
     int searchBarSpaceMaxWidthPx;
     int searchBarSpaceHeightPx;
     int searchBarHeightPx;
+    int searchBarSpaceWidthPxDefault;
+    int searchBarSpaceMaxWidthPxDefault;
+    int searchBarSpaceHeightPxDefault;
+    int searchBarHeightPxDefault;
     int pageIndicatorHeightPx;
     boolean hideHotseat;
     boolean hideQSB;
     boolean hideLabels;
     boolean allowLandscape;
     boolean autoHotseat;
+
+
+    FrameLayout.LayoutParams mSearchBarLayoutForDrag;
 
     Resources mResources;
     Context mContext;
@@ -171,7 +180,7 @@ class DeviceProfile {
         numRowsDevice = numRows;
         numRowsCalc= numRows;
         numRows = PreferencesProvider.Interface.General.getWorkspaceRows();
-        if ( (numRows==0) || (!isProVersion && ( numRows > numRowsCalc+1) || (numRows < numRowsCalc-1)) ) {
+        if ( (numRows==0)|| ((!isProVersion) && (( numRows > numRowsCalc+1) || (numRows < numRowsCalc-1))) ) {
             numRows = numRowsCalc;
         }
 
@@ -183,7 +192,7 @@ class DeviceProfile {
         numColumns = Math.round(invDistWeightedInterpolate(minWidth, minHeight, points));
         numColumnsDevice = numColumnsCalc = numColumns;
         numColumns = PreferencesProvider.Interface.General.getWorkspaceColumns();
-        if ( (numColumns==0) || (!isProVersion && ( numColumns > numColumnsCalc+1) || (numColumns < numColumnsCalc-1)) ) {
+        if ( (numColumns==0) || ((!isProVersion) && (( numColumns > numColumnsCalc+1) || (numColumns < numColumnsCalc-1))) ) {
             numColumns = numColumnsCalc;
         }
         // Interpolate the icon size
@@ -245,6 +254,7 @@ class DeviceProfile {
             hotseatIconSize = hotseatIconSizeCalc;
         }
         hotseatIconSizePx = DynamicGrid.pxFromDp(hotseatIconSize, dm);
+        hotseatBarHeightPxDefault = DynamicGrid.pxFromDp(hotseatIconSizeCalc,dm);
         hotseatAllAppsRank = (int) (numHotseatIcons / 2);
 
         // Calculate other vars based on Configuration
@@ -252,8 +262,8 @@ class DeviceProfile {
 
         // Search Bar
         searchBarSpaceMaxWidthPx = resources.getDimensionPixelSize(R.dimen.dynamic_grid_search_bar_max_width);
-        //hideQSB = PreferencesProvider.Interface.General.getHideQSB();
-        hideQSB = false;
+        hideQSB = PreferencesProvider.Interface.General.getHideQSB();
+        //hideQSB = false;
         if (hideQSB) {
             searchBarHeightPx = 0;
             searchBarSpaceWidthPx = 0;
@@ -263,6 +273,11 @@ class DeviceProfile {
             searchBarSpaceWidthPx = Math.min(searchBarSpaceMaxWidthPx, widthPx);
             searchBarSpaceHeightPx = searchBarHeightPx + 2 * edgeMarginPx;
         }
+        searchBarSpaceMaxWidthPxDefault = resources.getDimensionPixelSize(R.dimen.dynamic_grid_search_bar_max_width);
+        searchBarHeightPxDefault = mResources.getDimensionPixelSize(R.dimen.dynamic_grid_search_bar_height);
+        searchBarSpaceWidthPxDefault = Math.min(searchBarSpaceMaxWidthPxDefault, widthPx);
+        searchBarSpaceHeightPxDefault = searchBarHeightPxDefault + 2 * edgeMarginPx;
+
 
         if (PreferencesProvider.checkKey(mContext,"pref_allow_land")) {
             allowLandscape = PreferencesProvider.Interface.General.getAllowLand();
@@ -337,6 +352,7 @@ class DeviceProfile {
         this.hotseatCellHeightPx = profile.hotseatCellHeightPx;
         this.hotseatIconSizePx = profile.hotseatIconSizePx;
         this.hotseatBarHeightPx = profile.hotseatBarHeightPx;
+        this.hotseatBarHeightPxDefault = profile.hotseatBarHeightPxDefault;
         this.hotseatAllAppsRank = profile.hotseatAllAppsRank;
         this.allAppsNumRows = profile.allAppsNumCols;
         this.allAppsNumCols = profile.allAppsNumRows;
@@ -344,6 +360,10 @@ class DeviceProfile {
         this.searchBarSpaceMaxWidthPx = profile.searchBarSpaceMaxWidthPx;
         this.searchBarSpaceHeightPx = profile.searchBarSpaceHeightPx;
         this.searchBarHeightPx = profile.searchBarHeightPx;
+        this.searchBarSpaceWidthPxDefault = profile.searchBarSpaceWidthPxDefault;
+        this.searchBarSpaceMaxWidthPxDefault = profile.searchBarSpaceMaxWidthPxDefault;
+        this.searchBarSpaceHeightPxDefault = profile.searchBarSpaceHeightPxDefault;
+        this.searchBarHeightPxDefault = profile.searchBarHeightPxDefault;
         this.pageIndicatorHeightPx = profile.pageIndicatorHeightPx;
         this.hideHotseat = profile.hideHotseat;
         this.hideQSB = profile.hideQSB;
@@ -428,6 +448,7 @@ class DeviceProfile {
     }
 
     void setCellHotSeatAndFolders() {
+
         // Calculate the actual text height
         Paint textPaint = new Paint();
         textPaint.setTextSize(iconTextSizePx);
@@ -446,6 +467,7 @@ class DeviceProfile {
         // Hotseat
         if (hideHotseat) {
             hotseatBarHeightPx = 0;
+
             hotseatCellWidthPx = 0;
             hotseatCellHeightPx = 0;
             hotseatAllAppsRank = 0;
@@ -454,7 +476,7 @@ class DeviceProfile {
 
             hotseatBarHeightPx = hotseatIconSizePx + 4 * edgeMarginPx;
             hotseatCellWidthPx = hotseatIconSizePx;
-            hotseatCellHeightPx = hotseatIconSizePx;
+            hotseatCellHeightPx =  hotseatIconSizePx;
             hotseatAllAppsRank = (int) (numHotseatIcons / 2);
 
         }
@@ -499,7 +521,6 @@ class DeviceProfile {
             if (i < kNearestNeighbors) {
                 float w = weight(xy, p.dimens, pow);
                 if (w == Float.POSITIVE_INFINITY) {
-                    Log.d("nbehary10x","To Infinity!");
                     return p.value;
                 }
                 weights += w;
@@ -519,11 +540,22 @@ class DeviceProfile {
 
     Rect getWorkspacePadding(int orientation) {
         Rect padding = new Rect();
+        int left = mResources.getDimensionPixelSize(R.dimen.dynamic_grid_search_bar_height);
         if (orientation == CellLayout.LANDSCAPE &&
                 transposeLayoutWithOrientation) {
             // Pad the left and right of the workspace with search/hotseat bar sizes
-            padding.set(searchBarSpaceHeightPx, edgeMarginPx,
-                    hotseatBarHeightPx, edgeMarginPx);
+            if ((hideHotseat) && (hideQSB)) {
+                padding.set(0,edgeMarginPx,0,edgeMarginPx);
+
+            } else if (hideHotseat) {
+                padding.set(left, edgeMarginPx,
+                        hotseatBarHeightPxDefault, edgeMarginPx);
+            }
+            else {
+
+                padding.set(left, edgeMarginPx,
+                        hotseatBarHeightPx, edgeMarginPx);
+            }
             Log.d("","");
 
         } else {
@@ -584,13 +616,9 @@ class DeviceProfile {
         return isLandscape && transposeLayoutWithOrientation;
     }
 
-    public void layout(Launcher launcher) {
+    public FrameLayout.LayoutParams getSearchBarLayoutAfterDrag(View searchBar) {
         FrameLayout.LayoutParams lp;
-        //Resources res = launcher.getResources();
         boolean hasVerticalBarLayout = isVerticalBarLayout();
-
-        // Layout the search bar space
-        View searchBar = launcher.getSearchBar();
         lp = (FrameLayout.LayoutParams) searchBar.getLayoutParams();
         if (hasVerticalBarLayout) {
             // Vertical search bar
@@ -599,8 +627,8 @@ class DeviceProfile {
             lp.height = LayoutParams.MATCH_PARENT;
             if (!hideQSB) {
                 searchBar.setPadding(
-                    0, 2 * edgeMarginPx, 0,
-                    2 * edgeMarginPx);
+                        0, 2 * edgeMarginPx, 0,
+                        2 * edgeMarginPx);
             } else {
                 searchBar.setPadding(0,0,0,0);
             }
@@ -614,7 +642,73 @@ class DeviceProfile {
                     2 * edgeMarginPx,
                     2 * edgeMarginPx, 0);
         }
+        return lp;
+
+    }
+
+    public FrameLayout.LayoutParams getSearchBarLayoutForDrag(View searchBar) {
+        FrameLayout.LayoutParams lp;
+        boolean hasVerticalBarLayout = isVerticalBarLayout();
+        lp = (FrameLayout.LayoutParams) searchBar.getLayoutParams();
+        if (hasVerticalBarLayout) {
+            // Vertical search bar
+            lp.gravity = Gravity.TOP | Gravity.LEFT;
+            lp.width = searchBarSpaceHeightPxDefault;
+            lp.height = LayoutParams.MATCH_PARENT;
+            if (!hideQSB) {
+                searchBar.setPadding(
+                        0, 2 * edgeMarginPx, 0,
+                        2 * edgeMarginPx);
+            } else {
+                searchBar.setPadding(0,0,0,0);
+            }
+        } else {
+            // Horizontal search bar
+            lp.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
+            lp.width = searchBarSpaceWidthPxDefault;
+            lp.height = searchBarSpaceHeightPxDefault;
+            searchBar.setPadding(
+                    2 * edgeMarginPx,
+                    2 * edgeMarginPx,
+                    2 * edgeMarginPx, 0);
+        }
+        return lp;
+
+    }
+
+    public void layout(Launcher launcher) {
+        FrameLayout.LayoutParams lp;
+        //Resources res = launcher.getResources();
+        boolean hasVerticalBarLayout = isVerticalBarLayout();
+
+        // Layout the search bar space
+        View searchBar = launcher.getSearchBar();
+        lp = (FrameLayout.LayoutParams) searchBar.getLayoutParams();
+        if ((hasVerticalBarLayout) ) {//&& (!hideQSB)) {
+            // Vertical search bar
+            lp.gravity =  Gravity.LEFT;
+            lp.width = searchBarSpaceHeightPxDefault;
+            lp.height = LayoutParams.MATCH_PARENT;
+            if (!hideQSB) {
+                searchBar.setPadding(
+                    0, 2 * edgeMarginPx, 0,
+                    2 * edgeMarginPx);
+            } else {
+                searchBar.setPadding(0,0,0,0);
+            }
+        } else {
+            // Horizontal search bar
+            lp.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
+            lp.width = searchBarSpaceWidthPxDefault;
+            lp.height = searchBarSpaceHeightPxDefault;
+
+            searchBar.setPadding(
+                    2 * edgeMarginPx,
+                    2 * edgeMarginPx,
+                    2 * edgeMarginPx, 0);
+        }
         searchBar.setLayoutParams(lp);
+        searchBar.setVisibility(View.VISIBLE);
 
         // Layout the search bar
         View qsbBar = launcher.getQsbBar();
@@ -690,7 +784,7 @@ class DeviceProfile {
         if (pageIndicator != null) {
             if (hasVerticalBarLayout) {
                 // Hide the page indicators when we have vertical search/hotseat
-                pageIndicator.setVisibility(View.GONE);
+                //pageIndicator.setVisibility(View.GONE);
             } else {
                 // Put the page indicators above the hotseat
                 lp = (FrameLayout.LayoutParams) pageIndicator.getLayoutParams();
@@ -765,6 +859,13 @@ class DeviceProfile {
             hideHotseat = false;
             PreferencesProvider.Interface.General.setAutoHotseat(mContext,autoHotseat);
             return true;
+        }
+
+        //Cap the calculated icon size at 72dp
+        if (iconSize >72) {
+            iconSize  = 72;
+            iconSizeCalc = iconSize;
+            iconSizePx = DynamicGrid.pxFromDp(iconSize,dm);
         }
 
         return false;

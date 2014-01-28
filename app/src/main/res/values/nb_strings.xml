@@ -59,6 +59,17 @@
         <item>Dock</item>
     </string-array>
 
+    <string-array name="folder_icons_array_pro">
+        <item>Default (White)</item>
+        <item>Tint with Background</item>
+        <item>Old style (Black/Holo)</item>
+    </string-array>
+
+    <string-array name="folder_icons_array_free">
+        <item>Default (White)</item>
+        <item>Old style (Black/Holo Blue)</item>
+    </string-array>
+
     <string name="grid_instructions">Set Grid</string>
     <string name="icon_fragment_header">Icon Sizes</string>
     <string name="grid_fragment_header">Desktop Grid</string>
@@ -72,5 +83,6 @@
     <string name="grid_search_warning">Search Bar required in Landscape.</string>
     <string name="dialog_ok">Ok</string>
     <string name="grid_about_dialog_title">About the Grid Editor</string>
-    <string name="action_help">Help</string>
+    <string name="action_help">Help</string><string name="folder_tint_icon_text">Tint folder icons with the Background Color.</string>
+    <string name="folder_icon_spinner_text">Icon Style</string>
 </resources>
