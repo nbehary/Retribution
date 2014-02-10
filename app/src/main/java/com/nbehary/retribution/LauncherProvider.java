@@ -68,7 +68,7 @@ public class LauncherProvider extends ContentProvider {
 
     private static final String DATABASE_NAME = "launcher.db";
 
-    private static final int DATABASE_VERSION = 15;
+    private static final int DATABASE_VERSION = 16;
 
     static final String OLD_AUTHORITY = "com.android.launcher2.settings";
     static final String AUTHORITY = ProviderConfig.AUTHORITY;
@@ -359,7 +359,14 @@ public class LauncherProvider extends ContentProvider {
                     "displayMode INTEGER," +
                     "appWidgetProvider TEXT," +
                     "modified INTEGER NOT NULL DEFAULT 0," +
-                    "customIcon TEXT" +
+                    "customIcon TEXT," +
+                    "folderCustomColors INTEGER," +
+                    "folderNameColor INTEGER," +
+                    "folderLabelColor INTEGER," +
+                    "folderIconColor INTEGER," +
+                    "folderBackColor INTEGER," +
+                    "folderSort INTEGER," +
+                    "folderSortType INTEGER" +
                     ");");
             addWorkspacesTable(db);
 
@@ -671,6 +678,34 @@ public class LauncherProvider extends ContentProvider {
                             "ADD COLUMN modified INTEGER NOT NULL DEFAULT 0;");
                     db.setTransactionSuccessful();
                     version = 15;
+                } catch (SQLException ex) {
+                    // Old version remains, which means we wipe old data
+                    Log.e(TAG, ex.getMessage(), ex);
+                } finally {
+                    db.endTransaction();
+                }
+            }
+
+            if (version < 16) {
+                db.beginTransaction();
+                try {
+                    // Insert new column for holding update timestamp
+                    db.execSQL("ALTER TABLE favorites " +
+                            "ADD COLUMN folderCustomColors INTEGER NOT NULL DEFAULT 0;");
+                    db.execSQL("ALTER TABLE favorites " +
+                            "ADD COLUMN folderNameColor INTEGER NOT NULL DEFAULT 0;");
+                    db.execSQL("ALTER TABLE favorites " +
+                            "ADD COLUMN folderLabelColor INTEGER NOT NULL DEFAULT 0;");
+                    db.execSQL("ALTER TABLE favorites " +
+                            "ADD COLUMN folderIconColor INTEGER NOT NULL DEFAULT 0;");
+                    db.execSQL("ALTER TABLE favorites " +
+                            "ADD COLUMN folderBackColor INTEGER NOT NULL DEFAULT 0;");
+                    db.execSQL("ALTER TABLE favorites " +
+                            "ADD COLUMN folderSort INTEGER NOT NULL DEFAULT 0;");
+                    db.execSQL("ALTER TABLE favorites " +
+                            "ADD COLUMN folderSortType INTEGER NOT NULL DEFAULT 0;");
+                    db.setTransactionSuccessful();
+                    version = 16;
                 } catch (SQLException ex) {
                     // Old version remains, which means we wipe old data
                     Log.e(TAG, ex.getMessage(), ex);
@@ -1352,7 +1387,7 @@ public class LauncherProvider extends ContentProvider {
 
                 // TODO: need to check return value
                 //TODO: ICS_FIX (the whole appWidget thing.....)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
                     appWidgetManager.bindAppWidgetIdIfAllowed(appWidgetId, cn);
 
                 // Send a broadcast to configure the widget

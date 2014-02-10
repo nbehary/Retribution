@@ -13,6 +13,108 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
+
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_gravity="center_horizontal|top"
+    android:paddingTop="@dimen/overview_panel_top_padding">
+
+
+
+
+
+    <!--<Space-->
+        <!--android:layout_width="@dimen/overview_panel_buttonSpacing"-->
+        <!--android:layout_height="wrap_content"/>-->
+
+    <TextView
+        android:id="@+id/folders_button"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/overview_panel_button_spacing"
+        android:paddingRight="@dimen/overview_panel_button_spacing"
+        android:text="@string/folder_button_text"
+        android:drawablePadding="4dp"
+        android:gravity="center_horizontal"
+        android:drawableTop="@drawable/folders_button"
+        android:fontFamily="sans-serif-condensed"
+        android:textAllCaps="true"
+        android:textSize="@dimen/overview_panel_text_size" />
+
+    <TextView
+        android:id="@+id/transition_effect_button"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/overview_panel_button_spacing"
+        android:paddingRight="@dimen/overview_panel_button_spacing"
+        android:text="@string/transition_effect_button_text"
+        android:drawablePadding="4dp"
+        android:drawableTop="@drawable/wallpaper_button"
+        android:gravity="center_horizontal"
+        android:fontFamily="sans-serif-condensed"
+        android:textAllCaps="true"
+        android:textSize="@dimen/overview_panel_text_size"  />
+
+    <!--<Space-->
+        <!--android:layout_width="@dimen/overview_panel_buttonSpacing"-->
+        <!--android:layout_height="wrap_content"/>-->
+
+
+    <TextView
+        android:id="@+id/grid_button"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/overview_panel_button_spacing"
+        android:paddingRight="@dimen/overview_panel_button_spacing"
+        android:text="@string/grid_button_text"
+        android:drawablePadding="4dp"
+        android:gravity="center_horizontal"
+        android:drawableTop="@drawable/grid_button"
+        android:fontFamily="sans-serif-condensed"
+        android:textAllCaps="true"
+        android:textSize="@dimen/overview_panel_text_size"
+
+        />
+
+    <!--<Space-->
+        <!--android:layout_width="@dimen/overview_panel_buttonSpacing"-->
+        <!--android:layout_height="wrap_content"/>-->
+
+    <TextView
+        android:id="@+id/icon_pack_button"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/overview_panel_button_spacing"
+        android:paddingRight="@dimen/overview_panel_button_spacing"
+        android:text="@string/icon_pack_button_text"
+        android:drawablePadding="4dp"
+        android:gravity="center_horizontal"
+        android:drawableTop="@drawable/icon_pack_button"
+        android:fontFamily="sans-serif-condensed"
+        android:textAllCaps="true"
+        android:textSize="@dimen/overview_panel_text_size"
+        />
+
+
+    <!--android:paddingLeft="@dimen/overview_panel_button_spacing"-->
+    <!--android:paddingRight="@dimen/overview_panel_button_spacing"-->
+
+</LinearLayout>
+
+
+
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
@@ -30,125 +132,80 @@
 
         <TextView
             android:id="@+id/apps_button"
-            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/overview_panel_button_spacing"
+            android:paddingRight="@dimen/overview_panel_button_spacing"
             android:text="@string/apps_overview_text"
             android:drawablePadding="4dp"
             android:gravity="center_horizontal"
             android:drawableTop="@drawable/apps_button"
             android:fontFamily="sans-serif-condensed"
             android:textAllCaps="true"
-            android:textSize="12sp"
-            android:editable="true"
+            android:textSize="@dimen/overview_panel_text_size"
             android:visibility="gone" />
 
-        <Space
-            android:layout_width="@dimen/overview_panel_buttonSpacing"
-            android:layout_height="match_parent"
-            android:id="@+id/space" />
+        <!--<Space-->
+            <!--android:layout_width="@dimen/overview_panel_buttonSpacing"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:id="@+id/space" />-->
 
         <TextView
         android:id="@+id/widget_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/overview_panel_button_spacing"
+            android:paddingRight="@dimen/overview_panel_button_spacing"
         android:text="@string/widget_button_text"
         android:drawablePadding="4dp"
         android:gravity="center_horizontal"
         android:drawableTop="@drawable/widget_button"
         android:fontFamily="sans-serif-condensed"
         android:textAllCaps="true"
-        android:textSize="12sp"/>
+            android:textSize="@dimen/overview_panel_text_size" />
 
-        <Space
-        android:layout_width="@dimen/overview_panel_buttonSpacing"
-        android:layout_height="wrap_content"/>
+        <!--<Space-->
+        <!--android:layout_width="@dimen/overview_panel_buttonSpacing"-->
+        <!--android:layout_height="wrap_content"/>-->
 
         <TextView
             android:id="@+id/wallpaper_button"
-            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/overview_panel_button_spacing"
+            android:paddingRight="@dimen/overview_panel_button_spacing"
             android:text="@string/wallpaper_button_text"
             android:drawablePadding="4dp"
             android:drawableTop="@drawable/wallpaper_button"
             android:gravity="center_horizontal"
             android:fontFamily="sans-serif-condensed"
             android:textAllCaps="true"
-            android:textSize="12sp" />
-
-        <Space
-        android:layout_width="@dimen/overview_panel_buttonSpacing"
-        android:layout_height="wrap_content"/>
-    <TextView
-        android:id="@+id/icon_pack_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/icon_pack_button_text"
-        android:drawablePadding="4dp"
-        android:gravity="center_horizontal"
-        android:drawableTop="@drawable/icon_pack_button"
-        android:fontFamily="sans-serif-condensed"
-        android:textAllCaps="true"
-        android:textSize="12sp" />
-    </LinearLayout>
-
-    <Space
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/overview_panel_buttonSpacing"/>
-
-    <LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:layout_gravity="center_horizontal">
+            android:textSize="@dimen/overview_panel_text_size"  />
 
 
-    <TextView
-        android:id="@+id/folders_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/folder_button_text"
-        android:drawablePadding="4dp"
-        android:gravity="center_horizontal"
-        android:drawableTop="@drawable/folders_button"
-       android:fontFamily="sans-serif-condensed"
-       android:textAllCaps="true"
-       android:textSize="12sp" />
 
-        <Space
-            android:layout_width="@dimen/overview_panel_buttonSpacing"
-            android:layout_height="wrap_content"/>
-
-
-        <TextView
-            android:id="@+id/grid_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/grid_button_text"
-            android:drawablePadding="4dp"
-            android:gravity="center_horizontal"
-            android:drawableTop="@drawable/grid_button"
-            android:fontFamily="sans-serif-condensed"
-            android:textAllCaps="true"
-            android:textSize="12sp"
-            android:editable="true" />
-
-        <Space
-            android:layout_width="@dimen/overview_panel_buttonSpacing"
-            android:layout_height="wrap_content"/>
-
+    <!--<Space-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="@dimen/overview_panel_buttonSpacing"/>-->
 
     <TextView
             android:id="@+id/about_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/overview_panel_button_spacing"
+        android:paddingRight="@dimen/overview_panel_button_spacing"
             android:text="@string/about_button_text"
             android:drawablePadding="4dp"
             android:gravity="center_horizontal"
             android:drawableTop="@drawable/about_button"
             android:fontFamily="sans-serif-condensed"
             android:textAllCaps="true"
-            android:textSize="12sp" />
+        android:textSize="@dimen/overview_panel_text_size"  />
 
-    </LinearLayout>
 </LinearLayout>
+</LinearLayout>
+    </FrameLayout>

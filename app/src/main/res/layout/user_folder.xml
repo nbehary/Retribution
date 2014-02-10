@@ -29,11 +29,14 @@
         <!--android:layout_height="match_parent"-->
         <!--android:orientation="horizontal"-->
         <!--android:layout_weight="1">-->
+
+
+
     <ScrollView
         android:id="@+id/scroll_view"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_weight="1"
-        android:layout_height="match_parent">
+        android:layout_height="0dp">
       <com.nbehary.retribution.CellLayout
           android:id="@+id/folder_content"
           android:layout_width="wrap_content"
@@ -44,19 +47,21 @@
     </ScrollView>
 
 
-    <!--</LinearLayout>
+    <!--</LinearLayout>-->
 
-    <FrameLayout
-        android:id="@+id/linear_layout"
+    <LinearLayout
+        android:id="@+id/folder_name_and_button"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >-->
+        android:layout_weight="1"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        android:visibility="visible">
 
         <com.nbehary.retribution.FolderEditText
             android:id="@+id/folder_name"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
             android:paddingTop="@dimen/folder_name_padding"
             android:paddingBottom="@dimen/folder_name_padding"
             android:background="#00000000"
@@ -65,22 +70,27 @@
             android:textColor="#ff777777"
             android:textColorHighlight="#ffCCCCCC"
             android:textCursorDrawable="@null"
-            android:gravity="center"
+
             android:singleLine="true"
             android:imeOptions="flagNoExtractUi"
             android:fontFamily="sans-serif-condensed"
-            android:layout_gravity="left" />
-        <!--
+            android:layout_weight="1" />
+            <!--android:layout_gravity="left" />-->
+
               <com.nbehary.retribution.FolderCustomize
                   android:id="@+id/folder_customize"
-                  android:layout_width="match_parent"
+                  android:layout_width="wrap_content"
                   android:layout_height="match_parent"
                   android:gravity="right"
-                  android:src="@drawable/ic_menu_moreoverflow_normal_holo_light"
+                  android:src="@drawable/ic_menu_moreoverflow_holo_light"
                   android:contentDescription="@string/descr_overflow_button"
-                  android:layout_gravity="right" />
-            android:onClick="showPopup"-->
-
-    <!--</FrameLayout>-->
+                  android:layout_weight=".10"
+                  android:background="#00000000"
+                  android:theme="@style/Theme.FolderCustomize"/>
+                  <!--android:onClick="FolderCustomize.showPopup"/>-->
+                  <!--android:layout_gravity="right" />-->
+<!---->
+<!---->
+    </LinearLayout>
 
     </com.nbehary.retribution.Folder>

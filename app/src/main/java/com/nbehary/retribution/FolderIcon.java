@@ -142,6 +142,8 @@ public class FolderIcon extends LinearLayout implements FolderListener {
         return mPreviewBackground;
     }
 
+    public BubbleTextView getmFolderName() {return mFolderName;}
+
     static FolderIcon fromXml(int resId, Launcher launcher, ViewGroup group,
             FolderInfo folderInfo, IconCache iconCache) {
         @SuppressWarnings("all") // suppress dead code warning
@@ -162,20 +164,6 @@ public class FolderIcon extends LinearLayout implements FolderListener {
 
 
 
-        int icon_type = PreferencesProvider.Interface.General.getFolderType();
-        if (LauncherAppState.getInstance().getProVersion() && PreferencesProvider.Interface.General.getFolderIconTint()){
-            int color = PreferencesProvider.Interface.General.getFolderBackColor();
-            if (color !=0) {
-                Drawable myIcon = mContext.getResources().getDrawable(R.drawable.portal_ring_inner_holo);
-                ColorFilter filter = new LightingColorFilter( color, color);
-                myIcon.setColorFilter(filter);
-                icon.mPreviewBackground.setImageDrawable(myIcon);
-            }
-        }
-
-        if (icon_type == 2){
-            icon.mPreviewBackground.setImageResource(R.drawable.portal_ring_inner_holo_old);
-        }
 
         LauncherAppState app = LauncherAppState.getInstance();
         DeviceProfile grid = app.getDynamicGrid().getDeviceProfile();
@@ -201,26 +189,32 @@ public class FolderIcon extends LinearLayout implements FolderListener {
         icon.mFolderRingAnimator = new FolderRingAnimator(launcher, icon);
         folderInfo.addListener(icon);
 
+
         return icon;
     }
 
     public void setBackground() {
+        Drawable myIcon = getBackground();
+
         int icon_type = PreferencesProvider.Interface.General.getFolderType();
         if (LauncherAppState.getInstance().getProVersion() && PreferencesProvider.Interface.General.getFolderIconTint()){
-            int color = PreferencesProvider.Interface.General.getFolderBackColor();
-            if (color !=0) {
-                Drawable myIcon = mContext.getResources().getDrawable(R.drawable.portal_ring_inner_holo);
-                ColorFilter filter = new LightingColorFilter( color, color);
-                myIcon.setColorFilter(filter);
-                mPreviewBackground.setImageDrawable(myIcon);
+            int color = Color.WHITE;
+            boolean tint = PreferencesProvider.Interface.General.getFolderIconTint();
+            if (tint) {
+                color = PreferencesProvider.Interface.General.getFolderBackColor();
             }
-        } else if (PreferencesProvider.Interface.General.getFolderType() == 2){
-            mPreviewBackground.setImageResource(R.drawable.portal_ring_inner_holo_old);
-        }else {
-            Drawable myIcon = mContext.getResources().getDrawable(R.drawable.portal_ring_inner_holo);
-            ColorFilter filter = new LightingColorFilter( Color.WHITE, Color.WHITE);
+
+
+            //Drawable myIcon = mContext.getResources().getDrawable(R.drawable.portal_ring_inner_holo);
+            //Drawable myIcon = icon.mPreviewBackground.getDrawable();
+            ColorFilter filter = new LightingColorFilter( color, color);
             myIcon.setColorFilter(filter);
-            mPreviewBackground.setImageDrawable(myIcon);
+            //icon.mPreviewBackground.setImageDrawable(myIcon);
+
+        }
+
+        if (icon_type == 2){
+            getPreviewBackground().setImageResource(R.drawable.portal_ring_inner_holo_old);
         }
     }
 

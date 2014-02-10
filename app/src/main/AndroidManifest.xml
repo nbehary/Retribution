@@ -20,8 +20,8 @@
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.nbehary.retribution"
-    android:versionCode="2177"
-    android:versionName="1.1.1.0-Dev">
+    android:versionCode="2194"
+    android:versionName="1.1.9.3-Dev">
 
     <permission
         android:name="com.nbehary.retribution.permission.PRELOAD_WORKSPACE"
@@ -59,7 +59,7 @@
     <uses-permission android:name="com.nbehary.retribution.permission.WRITE_SETTINGS" />
     <uses-permission android:name="com.nbehary.retribution.permission.RECEIVE_LAUNCH_BROADCASTS" />
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!--<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />-->
 
     <uses-sdk android:targetSdkVersion="19" android:minSdkVersion="15"/>
 

@@ -813,6 +813,20 @@ public class LauncherModel extends BroadcastReceiver {
                 final int screenIndex = c.getColumnIndexOrThrow(LauncherSettings.Favorites.SCREEN);
                 final int cellXIndex = c.getColumnIndexOrThrow(LauncherSettings.Favorites.CELLX);
                 final int cellYIndex = c.getColumnIndexOrThrow(LauncherSettings.Favorites.CELLY);
+                final int folderCustomColors = c.getColumnIndexOrThrow(
+                        LauncherSettings.Favorites.FOLDER_CUSTOM_COLORS);
+                final int folderNameColor = c.getColumnIndexOrThrow(
+                        LauncherSettings.Favorites.FOLDER_NAME_COLOR);
+                final int folderLabelColor = c.getColumnIndexOrThrow(
+                        LauncherSettings.Favorites.FOLDER_LABEL_COLOR);
+                final int folderIconColor = c.getColumnIndexOrThrow(
+                        LauncherSettings.Favorites.FOLDER_ICON_COLOR);
+                final int folderBackColor = c.getColumnIndexOrThrow(
+                        LauncherSettings.Favorites.FOLDER_BACK_COLOR);
+                final int folderSort = c.getColumnIndexOrThrow(
+                        LauncherSettings.Favorites.FOLDER_SORT);
+                final int folderSortType = c.getColumnIndexOrThrow(
+                        LauncherSettings.Favorites.FOLDER_SORT_TYPE);
 
                 FolderInfo folderInfo = null;
                 switch (c.getInt(itemTypeIndex)) {
@@ -827,6 +841,13 @@ public class LauncherModel extends BroadcastReceiver {
                 folderInfo.screenId = c.getInt(screenIndex);
                 folderInfo.cellX = c.getInt(cellXIndex);
                 folderInfo.cellY = c.getInt(cellYIndex);
+                folderInfo.customColors = c.getInt(folderCustomColors);
+                folderInfo.nameColor = c.getInt(folderNameColor);
+                folderInfo.labelColor = c.getInt(folderLabelColor);
+                folderInfo.iconColor = c.getInt(folderIconColor);
+                folderInfo.backColor = c.getInt(folderBackColor);
+                folderInfo.sortItems = c.getInt(folderSort);
+                folderInfo.sortType = c.getInt(folderSortType);
 
                 return folderInfo;
             }
@@ -1603,7 +1624,7 @@ public class LauncherModel extends BroadcastReceiver {
             }
         }
 
-        /** Returns whether this is an upgradge path */
+        /** Returns whether this is an upgrade path */
         private boolean loadWorkspace() {
             final long t = DEBUG_LOADERS ? SystemClock.uptimeMillis() : 0;
 
@@ -1670,6 +1691,21 @@ public class LauncherModel extends BroadcastReceiver {
                             LauncherSettings.Favorites.SPANY);
                     final int customIconIndex = c.getColumnIndexOrThrow(
                             LauncherSettings.Favorites.CUSTOM_ICON);
+                    final int folderCustomColors = c.getColumnIndexOrThrow(
+                            LauncherSettings.Favorites.FOLDER_CUSTOM_COLORS);
+                    final int folderNameColor = c.getColumnIndexOrThrow(
+                            LauncherSettings.Favorites.FOLDER_NAME_COLOR);
+                    final int folderLabelColor = c.getColumnIndexOrThrow(
+                            LauncherSettings.Favorites.FOLDER_LABEL_COLOR);
+                    final int folderIconColor = c.getColumnIndexOrThrow(
+                            LauncherSettings.Favorites.FOLDER_ICON_COLOR);
+                    final int folderBackColor = c.getColumnIndexOrThrow(
+                            LauncherSettings.Favorites.FOLDER_BACK_COLOR);
+                    final int folderSort = c.getColumnIndexOrThrow(
+                            LauncherSettings.Favorites.FOLDER_SORT);
+                    final int folderSortType = c.getColumnIndexOrThrow(
+                            LauncherSettings.Favorites.FOLDER_SORT_TYPE);
+
                     //final int uriIndex = c.getColumnIndexOrThrow(LauncherSettings.Favorites.URI);
                     //final int displayModeIndex = c.getColumnIndexOrThrow(
                     //        LauncherSettings.Favorites.DISPLAY_MODE);
@@ -1795,6 +1831,14 @@ public class LauncherModel extends BroadcastReceiver {
                                 folderInfo.cellY = c.getInt(cellYIndex);
                                 folderInfo.spanX = 1;
                                 folderInfo.spanY = 1;
+
+                                folderInfo.customColors = c.getInt(folderCustomColors);
+                                folderInfo.nameColor = c.getInt(folderNameColor);
+                                folderInfo.labelColor = c.getInt(folderLabelColor);
+                                folderInfo.iconColor = c.getInt(folderIconColor);
+                                folderInfo.backColor = c.getInt(folderBackColor);
+                                folderInfo.sortItems = c.getInt(folderSort);
+                                folderInfo.sortType = c.getInt(folderSortType);
 
                                 // Skip loading items that are out of bounds
                                 if (container == LauncherSettings.Favorites.CONTAINER_DESKTOP) {
@@ -3200,14 +3244,40 @@ public class LauncherModel extends BroadcastReceiver {
             }
         };
     }
-    public static final Comparator<AppInfo> APP_INSTALL_TIME_COMPARATOR
-            = new Comparator<AppInfo>() {
-        public final int compare(AppInfo a, AppInfo b) {
-            if (a.firstInstallTime < b.firstInstallTime) return 1;
-            if (a.firstInstallTime > b.firstInstallTime) return -1;
-            return 0;
-        }
-    };
+
+    public static final Comparator<AppInfo> getAppLaunchCountComparator(final Stats stats) {
+        final Collator collator = Collator.getInstance();
+        return new Comparator<AppInfo>() {
+            public final int compare(AppInfo a, AppInfo b) {
+                int result = stats.launchCount(b.intent) - stats.launchCount(a.intent);
+                if (result == 0) {
+                    result = collator.compare(a.title.toString().trim(),
+                            b.title.toString().trim());
+                    if (result == 0) {
+                        result = a.componentName.compareTo(b.componentName);
+                    }
+                }
+                return result;
+            }
+        };
+    }
+
+    public static final Comparator<AppInfo> getAppInstallTimeComparator() {
+        final Collator collator = Collator.getInstance();
+        return new Comparator<AppInfo>() {
+            public final int compare(AppInfo a, AppInfo b) {
+                if (a.firstInstallTime < b.firstInstallTime) return 1;
+                if (a.firstInstallTime > b.firstInstallTime) return -1;
+                int result = collator.compare(a.title.toString().trim(),
+                        b.title.toString().trim());
+                if (result == 0) {
+                    result = a.componentName.compareTo(b.componentName);
+                }
+                return result;
+            }
+        };
+    }
+
     public static final Comparator<AppWidgetProviderInfo> getWidgetNameComparator() {
         final Collator collator = Collator.getInstance();
         return new Comparator<AppWidgetProviderInfo>() {

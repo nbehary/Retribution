@@ -99,6 +99,20 @@ class LauncherSettings {
         static final String ICON = "icon";
 
         static final String CUSTOM_ICON = "customIcon";
+
+        static final String FOLDER_CUSTOM_COLORS = "folderCustomColors";
+
+        static final String FOLDER_NAME_COLOR = "folderNameColor";
+
+        static final String FOLDER_LABEL_COLOR = "folderLabelColor";
+
+        static final String FOLDER_ICON_COLOR = "folderIconColor";
+
+        static final String FOLDER_BACK_COLOR = "folderBackColor";
+
+        static final String FOLDER_SORT = "folderSort";
+
+        static final String FOLDER_SORT_TYPE = "folderSortType";
     }
 
     /**

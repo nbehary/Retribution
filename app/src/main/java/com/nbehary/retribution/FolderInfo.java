@@ -37,6 +37,19 @@ class FolderInfo extends ItemInfo {
 
     ArrayList<FolderListener> listeners = new ArrayList<FolderListener>();
 
+    /**
+     * Colors and sorting
+     */
+
+    int customColors;
+    int nameColor;
+    int labelColor;
+    int iconColor;
+    int backColor;
+
+    int sortItems;
+    int sortType;
+
     FolderInfo() {
         itemType = LauncherSettings.Favorites.ITEM_TYPE_FOLDER;
     }
@@ -78,6 +91,13 @@ class FolderInfo extends ItemInfo {
     void onAddToDatabase(ContentValues values) {
         super.onAddToDatabase(values);
         values.put(LauncherSettings.Favorites.TITLE, title.toString());
+        values.put(LauncherSettings.Favorites.FOLDER_CUSTOM_COLORS,customColors);
+        values.put(LauncherSettings.Favorites.FOLDER_NAME_COLOR,nameColor);
+        values.put(LauncherSettings.Favorites.FOLDER_ICON_COLOR,iconColor);
+        values.put(LauncherSettings.Favorites.FOLDER_LABEL_COLOR,labelColor);
+        values.put(LauncherSettings.Favorites.FOLDER_BACK_COLOR,backColor);
+        values.put(LauncherSettings.Favorites.FOLDER_SORT,sortItems);
+        values.put(LauncherSettings.Favorites.FOLDER_SORT_TYPE,sortType);
     }
 
     void addListener(FolderListener listener) {

@@ -32,8 +32,38 @@
             android:layout_width="wrap_content"
             android:layout_height="@dimen/apps_customize_tab_bar_height"
             android:layout_marginTop="@dimen/apps_customize_tab_bar_margin_top"
-            android:layout_gravity="center_horizontal"
-            android:visibility="gone">
+
+            android:visibility="visible">
+            <!--android:layout_gravity="center_horizontal"-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                >
+
+            <Spinner
+                android:id="@+id/filter_spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="start"/>
+            <Button
+                android:id="@+id/app_drawer_sort_button"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="end"
+                android:text="Sort"
+
+                android:background="#00000000"/>
+
+                <Button
+                    android:id="@+id/app_drawer_effect_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="end"
+                    android:text="Scroll Effect"
+
+                    android:background="#00000000"/>
+            </LinearLayout>
             <com.nbehary.retribution.FocusOnlyTabWidget
                 android:id="@android:id/tabs"
                 android:layout_width="match_parent"
@@ -42,13 +72,15 @@
                 android:gravity="start"
                 android:background="@drawable/tab_unselected_holo"
                 android:tabStripEnabled="false"
-                android:divider="@null" />
+                android:divider="@null"
+                android:visibility="gone"/>
             <include
                 android:id="@+id/market_button"
                 layout="@layout/market_button"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_gravity="end" />
+                android:layout_gravity="end"
+                />
         </FrameLayout>
         <FrameLayout
             android:id="@android:id/tabcontent"

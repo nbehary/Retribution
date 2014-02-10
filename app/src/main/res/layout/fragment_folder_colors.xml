@@ -172,7 +172,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Reset Default"
+        android:text="@string/reset_default_button_text"
         android:id="@+id/folder_color_reset"
         android:layout_weight="1.45" />
 </LinearLayout>

@@ -68,6 +68,7 @@ import com.nbehary.retribution.R;
 import com.nbehary.retribution.FolderIcon.FolderRingAnimator;
 import com.nbehary.retribution.Launcher.CustomContentCallbacks;
 import com.nbehary.retribution.LauncherSettings.Favorites;
+import com.nbehary.retribution.settings.SettingsProvider;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -306,6 +307,10 @@ public class Workspace extends SmoothPagedView
         mDragEnforcer = new DropTarget.DragEnforcer(context);
         // With workspace, data is available straight from the get-go
         setDataIsReady();
+
+        TransitionEffect.setFromString(this, SettingsProvider.getString(context,
+                SettingsProvider.SETTINGS_UI_HOMESCREEN_SCROLLING_TRANSITION_EFFECT,
+                R.string.preferences_interface_homescreen_scrolling_transition_effect));
 
         mLauncher = (Launcher) context;
         final Resources res = getResources();
@@ -1914,6 +1919,7 @@ public class Workspace extends SmoothPagedView
 
     private void enableOverviewMode(boolean enable, int snapPage, boolean animated) {
         State finalState = Workspace.State.OVERVIEW;
+        //mLauncher.updateOverviewPanel();
         if (!enable) {
             finalState = Workspace.State.NORMAL;
             PageIndicator pi = getPageIndicator();

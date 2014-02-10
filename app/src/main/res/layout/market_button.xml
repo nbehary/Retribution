@@ -27,4 +27,5 @@
     android:shadowDy="0.0"
     android:shadowRadius="2.0"
     android:focusable="true"
-    android:clickable="true" />
+    android:clickable="true"
+    android:visibility="gone"/>

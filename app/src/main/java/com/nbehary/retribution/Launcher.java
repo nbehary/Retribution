@@ -31,6 +31,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityOptions;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.SearchManager;
 import android.appwidget.AppWidgetHostView;
@@ -42,6 +43,7 @@ import android.content.ComponentCallbacks2;
 import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
@@ -86,6 +88,7 @@ import android.view.HapticFeedbackConstants;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
@@ -107,6 +110,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.NumberPicker;
+import android.widget.PopupMenu;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -116,6 +120,7 @@ import com.android.vending.billing.IInAppBillingService;
 import com.nbehary.retribution.R;
 import com.nbehary.retribution.DropTarget.DragObject;
 import com.nbehary.retribution.preference.PreferencesProvider;
+import com.nbehary.retribution.settings.SettingsProvider;
 import com.nbehary.retribution.util.IabHelper;
 import com.nbehary.retribution.util.IabResult;
 
@@ -297,6 +302,8 @@ public class Launcher extends Activity
     private static boolean sPausedFromUserAction = false;
 
     private Bundle mSavedInstanceState;
+
+    private Dialog mTransitionEffectDialog;
 
     private LauncherModel mModel;
     private IconCache mIconCache;
@@ -562,6 +569,7 @@ public class Launcher extends Activity
 
 
         showFirstRunCling();
+        //PagedView.TransitionEffect.setFromString(mWorkspace,"cube-in");
 
     }
 
@@ -1224,6 +1232,170 @@ public class Launcher extends Activity
 
     }
 
+    public void onClickSortModeButton(View v) {
+        final PopupMenu popupMenu = new PopupMenu(this, v);
+        final Menu menu = popupMenu.getMenu();
+        popupMenu.inflate(R.menu.apps_customize_sort_mode);
+        AppsCustomizePagedView.SortMode sortMode = mAppsCustomizeContent.getSortMode();
+        menu.findItem(R.id.sort_mode_title).setChecked(sortMode == AppsCustomizePagedView.SortMode.Title);
+        menu.findItem(R.id.sort_mode_launch_count).setChecked(sortMode == AppsCustomizePagedView.SortMode.LaunchCount);
+        menu.findItem(R.id.sort_mode_install_time).setChecked(sortMode == AppsCustomizePagedView.SortMode.InstallTime);
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.sort_mode_title:
+                        mAppsCustomizeContent.setSortMode(AppsCustomizePagedView.SortMode.Title);
+                        break;
+                    case R.id.sort_mode_install_time:
+                        mAppsCustomizeContent.setSortMode(AppsCustomizePagedView.SortMode.InstallTime);
+                        break;
+                    case R.id.sort_mode_launch_count:
+                        mAppsCustomizeContent.setSortMode(AppsCustomizePagedView.SortMode.LaunchCount);
+                        break;
+                }
+                return true;
+            }
+        });
+        popupMenu.show();
+    }
+
+    public void onClickTransitionEffectButton(View v) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        // Load values
+        final PagedView pagedView = isAllAppsVisible() ? mAppsCustomizeContent : mWorkspace;
+        final PagedView.TransitionEffect oldEffect = pagedView.getTransitionEffect();
+        final String oldEffectName = oldEffect != null ? oldEffect.getName() :
+                PagedView.TransitionEffect.TRANSITION_EFFECT_NONE;
+
+        final String[] titles = getResources().getStringArray(R.array.transition_effect_entries);
+        final String[] values = getResources().getStringArray(R.array.transition_effect_values);
+
+        int selected = -1;
+        for (int i = values.length - 1; i >= 0; i--) {
+            if (values[i].equals(oldEffectName)) {
+                selected = i;
+                break;
+            }
+        }
+
+        // Create title view with overflow menu
+        View customTitle = getLayoutInflater().inflate(R.layout.dialog_title_overflow_menu, null);
+        TextView title = (TextView) customTitle.findViewById(android.R.id.title);
+        title.setText(R.string.transition_effect_button_text);
+
+        View overflowMenu = customTitle.findViewById(R.id.overflow_menu_button);
+        overflowMenu.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //onClickTransitionEffectOverflowMenuButton(v);
+            }
+        });
+
+        builder.setCustomTitle(customTitle);
+
+        builder.setSingleChoiceItems(titles, selected, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String effect = values[which];
+                PagedView.TransitionEffect.setFromString(pagedView, effect);
+
+                // Show the changes immediately
+                final int currentPage = pagedView.getNextPage();
+                final int nextPage = currentPage + (currentPage != pagedView.getPageCount() - 1 ? 1 : -1);
+                pagedView.snapToPageImmediately(currentPage);
+                pagedView.snapToPage(nextPage, new Runnable() {
+                    @Override
+                    public void run() {
+                        pagedView.snapToPage(currentPage);
+                    }
+                });
+
+                SettingsProvider.get(Launcher.this).edit()
+                        .putString(!isAllAppsVisible() ?
+                                SettingsProvider.SETTINGS_UI_HOMESCREEN_SCROLLING_TRANSITION_EFFECT :
+                                SettingsProvider.SETTINGS_UI_DRAWER_SCROLLING_TRANSITION_EFFECT, effect)
+                        .commit();
+            }
+        });
+        mWorkspace.exitOverviewMode(true);
+
+
+        //if (isAllAppsVisible()) {
+      //      mAppsCustomizeContent.exitOverviewMode(true);
+     //   } else {
+      //      mWorkspace.exitOverviewMode(true);
+      //  }
+
+        builder.setPositiveButton(android.R.string.ok, null);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                           mTransitionEffectDialog = null;
+                       }
+                });
+        }
+        mTransitionEffectDialog = builder.create();
+        mTransitionEffectDialog.show();
+        mTransitionEffectDialog.setCanceledOnTouchOutside(true);
+        mTransitionEffectDialog.getWindow().getDecorView().setAlpha(0.6f);
+    }
+/*
+    public void onClickTransitionEffectOverflowMenuButton(View v) {
+        final PopupMenu popupMenu = new PopupMenu(this, v);
+
+        final Menu menu = popupMenu.getMenu();
+        popupMenu.inflate(R.menu.scrolling_settings);
+        MenuItem pageOutlines = menu.findItem(R.id.scrolling_page_outlines);
+        MenuItem fadeAdjacent = menu.findItem(R.id.scrolling_fade_adjacent);
+
+        pageOutlines.setVisible(!isAllAppsVisible());
+        pageOutlines.setChecked(SettingsProvider.getBoolean(this,
+                SettingsProvider.SETTINGS_UI_HOMESCREEN_SCROLLING_PAGE_OUTLINES,
+                R.bool.preferences_interface_homescreen_scrolling_page_outlines_default
+        ));
+
+        fadeAdjacent.setChecked(SettingsProvider.getBoolean(this,
+                !isAllAppsVisible() ?
+                        SettingsProvider.SETTINGS_UI_HOMESCREEN_SCROLLING_FADE_ADJACENT :
+                        SettingsProvider.SETTINGS_UI_DRAWER_SCROLLING_FADE_ADJACENT,
+                !isAllAppsVisible() ?
+                        R.bool.preferences_interface_homescreen_scrolling_fade_adjacent_default :
+                        R.bool.preferences_interface_drawer_scrolling_fade_adjacent_default
+        ));
+
+        final PagedView pagedView = !isAllAppsVisible() ? mWorkspace : mAppsCustomizeContent;
+
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.scrolling_page_outlines:
+                        SettingsProvider.get(Launcher.this).edit()
+                                .putBoolean(SettingsProvider.SETTINGS_UI_HOMESCREEN_SCROLLING_PAGE_OUTLINES, !item.isChecked()).commit();
+                        mWorkspace.setShowOutlines(!item.isChecked());
+                        break;
+                    case R.id.scrolling_fade_adjacent:
+                        SettingsProvider.get(Launcher.this).edit()
+                                .putBoolean(!isAllAppsVisible() ?
+                                        SettingsProvider.SETTINGS_UI_HOMESCREEN_SCROLLING_FADE_ADJACENT :
+                                        SettingsProvider.SETTINGS_UI_DRAWER_SCROLLING_FADE_ADJACENT, !item.isChecked()).commit();
+                        pagedView.setFadeInAdjacentScreens(!item.isChecked());
+                        break;
+                    default:
+                        return false;
+                }
+
+                return true;
+            }
+        });
+
+        popupMenu.show();
+    }
+
+*/
+
     public interface QSBScroller {
         public void setScrollY(int scrollY);
     }
@@ -1478,6 +1650,7 @@ public class Launcher extends Activity
                 //Toast.makeText(getBaseContext(), "Due to the recent Zombie Apocalypse, this feature is not available.", Toast.LENGTH_LONG).show();
                 startAbout();
             }
+
         });
         aboutButton.setOnTouchListener(getHapticFeedbackTouchListener());
 
@@ -1490,6 +1663,31 @@ public class Launcher extends Activity
             }
         });
         gridButton.setOnTouchListener(getHapticFeedbackTouchListener());
+
+        View transitionEffectButton = findViewById(R.id.transition_effect_button);
+        transitionEffectButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                onClickTransitionEffectButton(arg0);
+            }
+        });
+        transitionEffectButton.setOnTouchListener(getHapticFeedbackTouchListener());
+
+        Button appEffectButton = (Button) findViewById(R.id.app_drawer_effect_button);
+        appEffectButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                onClickTransitionEffectButton(arg0);
+            }
+        });
+
+        Button appSortButton = (Button) findViewById(R.id.app_drawer_sort_button);
+        appSortButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                onClickSortModeButton(arg0);
+            }
+        });
 
         mOverviewPanel.setAlpha(0f);
 
@@ -1510,6 +1708,13 @@ public class Launcher extends Activity
         mAppsCustomizeContent = (AppsCustomizePagedView)
                 mAppsCustomizeTabHost.findViewById(R.id.apps_customize_pane_content);
         mAppsCustomizeContent.setup(this, dragController);
+
+        Spinner testSpinner = (Spinner) findViewById(R.id.filter_spinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.folder_colors_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        testSpinner.setAdapter(adapter);
+
 
         // Setup the drag controller (drop targets have to be added in reverse order in priority)
         dragController.setDragScoller(mWorkspace);
@@ -3001,6 +3206,39 @@ public class Launcher extends Activity
         return mWorkspace;
     }
 
+    public void updateOverviewPanel() {
+
+        View transitionEffectButton = mOverviewPanel.findViewById(R.id.transition_effect_button);
+        View widgetButton = mOverviewPanel.findViewById(R.id.widget_button);
+        View wallpaperButton = mOverviewPanel.findViewById(R.id.wallpaper_button);
+//        View sortButton = mOverviewPanel.findViewById(R.id.sort_button);
+//        View filterButton = mOverviewPanel.findViewById(R.id.filter_button);
+        View iconPackButton = findViewById(R.id.icon_pack_button);
+
+        PagedView pagedView = !isAllAppsVisible() ? mWorkspace : mAppsCustomizeContent;
+
+//        defaultScreenButton.setVisibility((!isAllAppsVisible() && pagedView.getPageCount() > 1) ? View.VISIBLE : View.GONE);
+        //transitionEffectButton.setVisibility(pagedView.getPageCount() > 1 ? View.VISIBLE : View.GONE);
+        widgetButton.setVisibility(!isAllAppsVisible() ? View.VISIBLE : View.GONE);
+        wallpaperButton.setVisibility(!isAllAppsVisible() ? View.VISIBLE : View.GONE);
+//        sortButton.setVisibility(isAllAppsVisible() ? View.VISIBLE : View.GONE);
+        // TODO: implement filtering
+        // filterButton.setVisibility(isAllAppsVisible() ? View.VISIBLE : View.GONE);
+//        filterButton.setVisibility(View.GONE);
+
+        boolean isVisible = !isAllAppsVisible();
+        if (isVisible) {
+            int numIconPacks = IconPackHelper.getSupportedPackages(this).size();
+            isVisible = numIconPacks > 0;
+        }
+        iconPackButton.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+
+        // Make sure overview panel is drawn above apps customize
+        mOverviewPanel.bringToFront();
+    }
+
+
+
     public boolean isAllAppsVisible() {
         return (mState == State.APPS_CUSTOMIZE) || (mOnResumeState == State.APPS_CUSTOMIZE) ||
                (mState == State.WIDGETS_CUSTOMIZE) || (mOnResumeState == State.WIDGETS_CUSTOMIZE) ||
@@ -3505,14 +3743,17 @@ public class Launcher extends Activity
 
         showAppsCustomizeHelper(animated, false, contentType);
         mAppsCustomizeTabHost.requestFocus();
-
+        View tabsContainer = findViewById(R.id.tabs_container);
         // Change the state *after* we've called all the transition code
         if (contentType == AppsCustomizePagedView.ContentType.Widgets) {
             mState = State.WIDGETS_CUSTOMIZE;
+            tabsContainer.setVisibility(View.GONE);
         } else if (contentType == AppsCustomizePagedView.ContentType.IconPacks) {
             mState = State.ICONPACKS_CUSTOMIZE;
+            tabsContainer.setVisibility(View.GONE);
         } else {
             mState = State.APPS_CUSTOMIZE;
+            tabsContainer.setVisibility(View.VISIBLE);
         }
 
 

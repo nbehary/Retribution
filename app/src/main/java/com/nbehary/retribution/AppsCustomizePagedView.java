@@ -64,9 +64,11 @@ import android.widget.Toast;
 import com.nbehary.retribution.R;
 import com.nbehary.retribution.DropTarget.DragObject;
 import com.nbehary.retribution.preference.PreferencesProvider;
+import com.nbehary.retribution.settings.SettingsProvider;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -188,6 +190,16 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
     }
     private ContentType mContentType = ContentType.Applications;
 
+    /**
+     * The different sort modes than can be used to order items.
+     */
+    public enum SortMode {
+        Title,
+        LaunchCount,
+        InstallTime
+    }
+    private SortMode mSortMode = SortMode.Title;
+
     // Refs
     private Launcher mLauncher;
     private DragController mDragController;
@@ -227,14 +239,21 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
 
 
     // Relating to the scroll and overscroll effects
-    Workspace.ZInterpolator mZInterpolator = new Workspace.ZInterpolator(0.5f);
-    private static float CAMERA_DISTANCE = 6500;
-    private static float TRANSITION_SCALE_FACTOR = 0.74f;
-    private static float TRANSITION_PIVOT = 0.65f;
+//    Workspace.ZInterpolator mZInterpolator = new Workspace.ZInterpolator(0.5f);
+//    private static float CAMERA_DISTANCE = 6500;
+//    private static float TRANSITION_SCALE_FACTOR = 0.74f;
+//    private static float TRANSITION_PIVOT = 0.65f;
+//    private static float TRANSITION_MAX_ROTATION = 22;
+//    private static final boolean PERFORM_OVERSCROLL_ROTATION = true;
+//    private AccelerateInterpolator mAlphaInterpolator = new AccelerateInterpolator(0.9f);
+//    private DecelerateInterpolator mLeftScreenAlphaInterpolator = new DecelerateInterpolator(4);
+
     private static float TRANSITION_MAX_ROTATION = 22;
-    private static final boolean PERFORM_OVERSCROLL_ROTATION = true;
-    private AccelerateInterpolator mAlphaInterpolator = new AccelerateInterpolator(0.9f);
-    private DecelerateInterpolator mLeftScreenAlphaInterpolator = new DecelerateInterpolator(4);
+    private static final float ALPHA_CUTOFF_THRESHOLD = 0.01f;
+    private boolean mOverscrollTransformsSet;
+    private float mLastOverscrollPivotX;
+
+    private boolean mAppsCustomizeFadeInAdjacentScreens;
 
     public static boolean DISABLE_ALL_APPS = false;
 
@@ -324,6 +343,15 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         // The padding on the non-matched dimension for the default widget preview icons
         // (top + bottom)
         mFadeInAdjacentScreens = false;
+
+        // The padding on the non-matched dimension for the default widget preview icons
+        // (top + bottom)
+        mAppsCustomizeFadeInAdjacentScreens = SettingsProvider.getBoolean(context,                SettingsProvider.SETTINGS_UI_DRAWER_SCROLLING_FADE_ADJACENT,
+                R.bool.preferences_interface_drawer_scrolling_fade_adjacent_default);
+
+        TransitionEffect.setFromString(this, SettingsProvider.getString(context,
+                SettingsProvider.SETTINGS_UI_DRAWER_SCROLLING_TRANSITION_EFFECT,
+                R.string.preferences_interface_drawer_scrolling_transition_effect));
 
         if (Build.VERSION.SDK_INT >=16) {
             // Unless otherwise specified this view is important for accessibility.
@@ -498,6 +526,7 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         return new OnTouchListener() {
             int mMarkerWidth;
             int mPages;
+            int mLastPage;
 
 
             @Override
@@ -518,6 +547,7 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
                                 break;
                         }
                         mMarkerWidth = v.getMeasuredWidth()/mPages;
+                        //loadAllPages();
                         return true;
                     }
                     case MotionEvent.ACTION_MOVE:
@@ -536,17 +566,20 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
                             }
                         } else {
                             int page = (int) (x/mMarkerWidth);
-                            loadAssociatedPages(page);
-                            try {
-                                Thread.sleep(80);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
+                            if (page == (mLastPage+1)) {
+                                loadAssociatedPages(page+1);
+                            } else if (page == (mLastPage-1)) {
+                                loadAssociatedPages(page-1);
+                            } else if (page != mLastPage) {
+                                loadAssociatedPages(page);
                             }
+
 
                             //((PageIndicator) v).setActiveMarker(page);
                             setCurrentPage(page);
+                            //snapToPage(page);
                             //here!
-                            //mCurrentPage = page;
+                            mLastPage = page;
                         }
 
                         return true;
@@ -1777,90 +1810,64 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         return getChildCount() - index - 1;
     }
 
+    @Override
+    public void setFadeInAdjacentScreens(boolean fade) {
+        mAppsCustomizeFadeInAdjacentScreens = fade;
+    }
+
     // In apps customize, we have a scrolling effect which emulates pulling cards off of a stack.
     @Override
     protected void screenScrolled(int screenCenter) {
         final boolean isRtl = isLayoutRtl();
+        mUseTransitionEffect = true;
+
+        updatePageAlphaValues(screenCenter);
+
         super.screenScrolled(screenCenter);
 
-        for (int i = 0; i < getChildCount(); i++) {
-            View v = getPageAt(i);
-            if (v != null) {
-                float scrollProgress = getScrollProgress(screenCenter, v, i);
+        enableHwLayersOnVisiblePages();
 
-                float interpolatedProgress;
-                float translationX;
-                float maxScrollProgress = Math.max(0, scrollProgress);
-                float minScrollProgress = Math.min(0, scrollProgress);
+        boolean isInOverscroll = mOverScrollX < 0 || mOverScrollX > mMaxScrollX;
 
-                if (isRtl) {
-                    translationX = maxScrollProgress * v.getMeasuredWidth();
-                    interpolatedProgress = mZInterpolator.getInterpolation(Math.abs(maxScrollProgress));
-                } else {
-                    translationX = minScrollProgress * v.getMeasuredWidth();
-                    interpolatedProgress = mZInterpolator.getInterpolation(Math.abs(minScrollProgress));
-                }
-                float scale = (1 - interpolatedProgress) +
-                        interpolatedProgress * TRANSITION_SCALE_FACTOR;
+        if (isInOverscroll) {
+            int index = 0;
+            float pivotX = 0f;
+            final float leftBiasedPivot = 0.35f;
+            final float rightBiasedPivot = 0.65f;
+            final int lowerIndex = 0;
+            final int upperIndex = getChildCount() - 1;
 
-                float alpha;
-                if (isRtl && (scrollProgress > 0)) {
-                    alpha = mAlphaInterpolator.getInterpolation(1 - Math.abs(maxScrollProgress));
-                } else if (!isRtl && (scrollProgress < 0)) {
-                    alpha = mAlphaInterpolator.getInterpolation(1 - Math.abs(scrollProgress));
-                } else {
-                    //  On large screens we need to fade the page as it nears its leftmost position
-                    alpha = mLeftScreenAlphaInterpolator.getInterpolation(1 - scrollProgress);
-                }
+            final boolean isLeftPage = mOverScrollX < 0;
+            index = (!isRtl && isLeftPage) || (isRtl && !isLeftPage) ? lowerIndex : upperIndex;
+            pivotX = isLeftPage ? rightBiasedPivot : leftBiasedPivot;
 
-                v.setCameraDistance(mDensity * CAMERA_DISTANCE);
-                int pageWidth = v.getMeasuredWidth();
-                int pageHeight = v.getMeasuredHeight();
+            View v = getPageAt(index);
 
-                if (PERFORM_OVERSCROLL_ROTATION) {
-                    float xPivot = isRtl ? 1f - TRANSITION_PIVOT : TRANSITION_PIVOT;
-                    boolean isOverscrollingFirstPage = isRtl ? scrollProgress > 0 : scrollProgress < 0;
-                    boolean isOverscrollingLastPage = isRtl ? scrollProgress < 0 : scrollProgress > 0;
+            if (!mOverscrollTransformsSet || Float.compare(mLastOverscrollPivotX, pivotX) != 0) {
+                mOverscrollTransformsSet = true;
+                mLastOverscrollPivotX = pivotX;
+                v.setCameraDistance(mDensity * mCameraDistance);
+                v.setPivotX(v.getMeasuredWidth() * pivotX);
+            }
 
-                    if (i == 0 && isOverscrollingFirstPage) {
-                        // Overscroll to the left
-                        v.setPivotX(xPivot * pageWidth);
-                        v.setRotationY(-TRANSITION_MAX_ROTATION * scrollProgress);
-                        scale = 1.0f;
-                        alpha = 1.0f;
-                        // On the first page, we don't want the page to have any lateral motion
-                        translationX = 0;
-                    } else if (i == getChildCount() - 1 && isOverscrollingLastPage) {
-                        // Overscroll to the right
-                        v.setPivotX((1 - xPivot) * pageWidth);
-                        v.setRotationY(-TRANSITION_MAX_ROTATION * scrollProgress);
-                        scale = 1.0f;
-                        alpha = 1.0f;
-                        // On the last page, we don't want the page to have any lateral motion.
-                        translationX = 0;
-                    } else {
-                        v.setPivotY(pageHeight / 2.0f);
-                        v.setPivotX(pageWidth / 2.0f);
-                        v.setRotationY(0f);
-                    }
-                }
-
-                v.setTranslationX(translationX);
-                v.setScaleX(scale);
-                v.setScaleY(scale);
-                v.setAlpha(alpha);
-
-                // If the view has 0 alpha, we set it to be invisible so as to prevent
-                // it from accepting touches
-                if (alpha == 0) {
-                    v.setVisibility(INVISIBLE);
-                } else if (v.getVisibility() != VISIBLE) {
-                    v.setVisibility(VISIBLE);
-                }
+            float scrollProgress = getScrollProgress(screenCenter, v, index);
+            float rotation = -TRANSITION_MAX_ROTATION * scrollProgress;
+            v.setRotationY(rotation);
+        } else {
+            if (mOverscrollTransformsSet) {
+                mOverscrollTransformsSet = false;
+                View v0 = getPageAt(0);
+                View v1 = getPageAt(getChildCount() - 1);
+                v0.setRotationY(0);
+                v1.setRotationY(0);
+                v0.setCameraDistance(mDensity * mCameraDistance);
+                v1.setCameraDistance(mDensity * mCameraDistance);
+                v0.setPivotX(v0.getMeasuredWidth() / 2);
+                v1.setPivotX(v1.getMeasuredWidth() / 2);
+                v0.setPivotY(v0.getMeasuredHeight() / 2);
+                v1.setPivotY(v1.getMeasuredHeight() / 2);
             }
         }
-
-        enableHwLayersOnVisiblePages();
     }
 
     private void enableHwLayersOnVisiblePages() {
@@ -1907,6 +1914,23 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         acceleratedOverScroll(amount);
     }
 
+    private void updatePageAlphaValues(int screenCenter) {
+        boolean isInOverscroll = mOverScrollX < 0 || mOverScrollX > mMaxScrollX;
+        if (mAppsCustomizeFadeInAdjacentScreens &&
+
+
+                !isInOverscroll) {
+            for (int i = 0; i < getChildCount(); i++) {
+                View child = getPageAt(i);
+                if (child != null) {
+                    float scrollProgress = getScrollProgress(screenCenter, child, i);
+                    float alpha = 1 - Math.abs(scrollProgress);
+                    setChildAlpha(child, alpha);
+                }
+            }
+        }
+    }
+
     /**
      * Used by the parent to get the content width to set the tab bar to
      * @return
@@ -1923,6 +1947,38 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         // rotation
         mSaveInstanceStateItemIndex = -1;
     }
+
+
+    public Comparator<AppInfo> getComparatorForSortMode() {
+        switch (mSortMode) {
+            case Title:
+                return LauncherModel.getAppNameComparator();
+            case LaunchCount:
+                return LauncherModel.getAppLaunchCountComparator(mLauncher.getStats());
+            case InstallTime:
+                return LauncherModel.getAppInstallTimeComparator();
+        }
+        return LauncherModel.getAppNameComparator();
+    }
+
+    public void setSortMode(SortMode sortMode) {
+        if (mSortMode == sortMode) return;
+
+        mSortMode = sortMode;
+
+        Collections.sort(mApps, getComparatorForSortMode());
+
+        if (mContentType == ContentType.Applications) {
+            for (int i = 0; i < getChildCount(); i++) {
+                syncAppsPageItems(i, true);
+            }
+        }
+    }
+
+    public SortMode getSortMode() {
+        return mSortMode;
+    }
+
 
     /*
      * AllAppsView implementation

@@ -259,9 +259,16 @@ public class LauncherAppState {
           //  mProVersion=sContext.bindService(serviceIntent, mServiceConnection,Context.BIND_AUTO_CREATE);
                 mProVersion = true;
         }
+/*
+        if ((mVersionName.contains("Beta"))||(mVersionName.contains("Dev")) || (mVersionName.contains("RC"))) {
+            if ((manager.checkSignatures("com.nbehary.retribution", "com.nbehary.retribution.key.beta")
+                    == PackageManager.SIGNATURE_MATCH) &&
+                    (manager.getInstallerPackageName("com.nbehary.retribution.key.beta").equals("com.android.vending"))){
+                mProVersion = true;
+            }
+        }
 
-
-
+*/
 
 
 
