@@ -20,6 +20,7 @@ package com.nbehary.retribution;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.accounts.AccountManagerFuture;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
@@ -76,6 +77,7 @@ import android.os.StrictMode;
 import android.os.SystemClock;
 import android.provider.Settings;
 import android.speech.RecognizerIntent;
+import android.app.FragmentTransaction;
 import android.text.Selection;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -88,6 +90,7 @@ import android.view.HapticFeedbackConstants;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.Surface;
@@ -107,6 +110,8 @@ import android.widget.AdapterView;
 import android.widget.Advanceable;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.NumberPicker;
@@ -135,6 +140,8 @@ import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -145,7 +152,7 @@ import java.net.URISyntaxException;
  */
 public class Launcher extends Activity
         implements View.OnClickListener, OnLongClickListener, LauncherModel.Callbacks,
-                   View.OnTouchListener {
+                   View.OnTouchListener,GroupsDialogFragment.OnGroupsChangeListener {
     static final String TAG = "Launcher";
     static final boolean LOGD = false;
 
@@ -273,11 +280,17 @@ public class Launcher extends Activity
 
     private View mAllAppsButton;
 
+    private String mAllAppsGroup;
+
     private SearchDropTargetBar mSearchDropTargetBar;
     private AppsCustomizeTabHost mAppsCustomizeTabHost;
     private AppsCustomizePagedView mAppsCustomizeContent;
     private boolean mAutoAdvanceRunning = false;
     private View mQsbBar;
+
+    private Spinner mGroupsSpinner;
+    private ArrayAdapter<String> mGroupsAdapter;
+    private ArrayList<String> mGroupsList;
 
     private Bundle mSavedState;
     // We set the state in both onCreate and then onNewIntent in some cases, which causes both
@@ -465,6 +478,7 @@ public class Launcher extends Activity
         // the LauncherApplication should call this, but in case of Instrumentation it might not be present yet
         mSharedPrefs = getSharedPreferences(LauncherAppState.getSharedPreferencesKey(),
                 Context.MODE_PRIVATE);
+
         mModel = app.setLauncher(this);
         mIconCache = app.getIconCache();
         mIconCache.flushInvalidIcons(grid);
@@ -516,6 +530,8 @@ public class Launcher extends Activity
         if (PROFILE_STARTUP) {
             android.os.Debug.stopMethodTracing();
         }
+
+        //mModel.setAuthToken(updateToken(false));
 
         if (!mRestoring) {
             if (sPausedFromUserAction) {
@@ -569,9 +585,38 @@ public class Launcher extends Activity
 
 
         showFirstRunCling();
+        showWhatsNew();
         //PagedView.TransitionEffect.setFromString(mWorkspace,"cube-in");
 
     }
+
+    private String updateToken(boolean invalidateToken) {
+        String authToken = "null";
+        Context ctx = getApplicationContext();
+
+        Activity activity = (Activity) this;
+        try {
+            AccountManager am = AccountManager.get(ctx);
+            Account[] accounts = am.getAccountsByType("com.google");
+            AccountManagerFuture<Bundle> accountManagerFuture;
+//                accountManagerFuture = am.getAuthToken(accounts[0], "android", false, null, null);
+            if(activity == null){//this is used when calling from an interval thread
+                accountManagerFuture = am.getAuthToken(accounts[0], "android", false, null, null);
+            } else {
+                accountManagerFuture = am.getAuthToken(accounts[0], "android", null, activity, null, null);
+            }
+            Bundle authTokenBundle = accountManagerFuture.getResult();
+            authToken = authTokenBundle.getString(AccountManager.KEY_AUTHTOKEN).toString();
+            if(invalidateToken) {
+                am.invalidateAuthToken("com.google", authToken);
+                authToken = updateToken(false);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return authToken;
+    }
+
 
     public int getStatusBarHeight() {
         int result = 0;
@@ -581,6 +626,8 @@ public class Launcher extends Activity
         }
         return result;
     }
+
+    public String getAllAppsGroup() {return mAllAppsGroup;}
 
     protected void onUserLeaveHint() {
         super.onUserLeaveHint();
@@ -1259,7 +1306,7 @@ public class Launcher extends Activity
         popupMenu.show();
     }
 
-    public void onClickTransitionEffectButton(View v) {
+    public void onClickTransitionEffectButton() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         // Load values
@@ -1668,26 +1715,29 @@ public class Launcher extends Activity
         transitionEffectButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                onClickTransitionEffectButton(arg0);
+                onClickTransitionEffectButton();
             }
         });
         transitionEffectButton.setOnTouchListener(getHapticFeedbackTouchListener());
 
-        Button appEffectButton = (Button) findViewById(R.id.app_drawer_effect_button);
-        appEffectButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View arg0) {
-                onClickTransitionEffectButton(arg0);
-            }
-        });
 
-        Button appSortButton = (Button) findViewById(R.id.app_drawer_sort_button);
-        appSortButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View arg0) {
-                onClickSortModeButton(arg0);
-            }
-        });
+
+
+//        Button appEffectButton = (Button) findViewById(R.id.app_drawer_effect_button);
+//        appEffectButton.setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View arg0) {
+//                onClickTransitionEffectButton(arg0);
+//            }
+//        });
+//
+//        Button appSortButton = (Button) findViewById(R.id.app_drawer_sort_button);
+//        appSortButton.setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View arg0) {
+//                onClickSortModeButton(arg0);
+//            }
+//        });
 
         mOverviewPanel.setAlpha(0f);
 
@@ -1708,12 +1758,6 @@ public class Launcher extends Activity
         mAppsCustomizeContent = (AppsCustomizePagedView)
                 mAppsCustomizeTabHost.findViewById(R.id.apps_customize_pane_content);
         mAppsCustomizeContent.setup(this, dragController);
-
-        Spinner testSpinner = (Spinner) findViewById(R.id.filter_spinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.folder_colors_array, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        testSpinner.setAdapter(adapter);
 
 
         // Setup the drag controller (drop targets have to be added in reverse order in priority)
@@ -2061,7 +2105,6 @@ public class Launcher extends Activity
                                     }
                                 }
                             });
-                            return;
                         }
                     });
                 }
@@ -3755,6 +3798,85 @@ public class Launcher extends Activity
             mState = State.APPS_CUSTOMIZE;
             tabsContainer.setVisibility(View.VISIBLE);
         }
+        View appsCustomizeMenuButton = findViewById(R.id.apps_customize_menu_button);
+
+        appsCustomizeMenuButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                final PopupMenu popup = new PopupMenu(LauncherAppState.getInstance().getContext(), v);
+                MenuInflater inflater = popup.getMenuInflater();
+                if (LauncherAppState.getInstance().getProVersion()) {
+                    inflater.inflate(R.menu.apps_customize_menu, popup.getMenu());
+                } else {
+                    inflater.inflate(R.menu.apps_customize_menu_free, popup.getMenu());
+                }
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.apps_customize_menu_groups:
+                                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                                GroupsDialogFragment groupsDialogFragment = new GroupsDialogFragment();
+                                groupsDialogFragment.show(ft,"groupDialog");
+                                return true;
+                            case R.id.apps_customize_menu_sort:
+                                onClickSortModeButton(v);
+
+                                return true;
+                            case R.id.apps_customize_menu_effect:
+                                onClickTransitionEffectButton();
+                                return true;
+
+
+                        }
+                        return false;
+                    }
+                });
+                popup.show();
+            }
+        });
+
+
+        mGroupsSpinner = (Spinner) findViewById(R.id.filter_spinner);
+        if (LauncherAppState.getInstance().getProVersion()) {
+            mGroupsList = new ArrayList<String>();
+            mGroupsList.add("All Apps");
+            ArrayList<String> catList = mModel.getCategories().getCategories();
+            Collections.sort(catList,new Comparator<String>() {
+                @Override
+                public int compare(String o1, String o2) {
+                    return o1.compareToIgnoreCase(o2);
+                }
+            });
+            mGroupsList.addAll(catList);
+
+            mGroupsAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
+                    mGroupsList);
+
+            final Context ctx = this;
+            mGroupsSpinner.setAdapter(mGroupsAdapter);
+            mGroupsSpinner.setSelection(mGroupsAdapter.getPosition("All Apps"));
+            mAllAppsGroup = "All Apps";
+            mGroupsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    String selected = (String) parent.getItemAtPosition(position);
+                    mAllAppsGroup = selected;
+                    if (!mGroupsList.contains(selected) || selected.equals("All Apps")) {
+                        mAppsCustomizeContent.setApps( (mModel.getAllApps()).data);
+                    } else {
+                        mAppsCustomizeContent.setApps( mModel.getCategories().getCategoryList(selected).added);
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+        } else {
+            mGroupsSpinner.setVisibility(View.INVISIBLE);
+        }
 
 
         // Pause the auto-advance of widgets until we are out of AllApps
@@ -4785,6 +4907,26 @@ public class Launcher extends Activity
         showWorkspace();
     }
 
+    public void onGroupsChange(String category,boolean newCat) {
+        if (newCat) {
+            mGroupsAdapter.remove("All Apps");
+            mGroupsAdapter.add(category);
+            mGroupsAdapter.sort(new Comparator<String>() {
+                @Override
+                public int compare(String o1, String o2) {
+                    return o1.compareToIgnoreCase(o2);
+                }
+            });
+            mGroupsAdapter.insert("All Apps",0);
+            mGroupsAdapter.notifyDataSetChanged();
+        }
+
+
+        mGroupsSpinner.setSelection(mGroupsAdapter.getPosition(category));
+        mAppsCustomizeContent.setApps(mModel.getCategories().getCategoryList(category).added);
+
+    }
+
     /* Cling related */
     private boolean isClingsEnabled() {
         if (DISABLE_CLINGS) {
@@ -4952,6 +5094,66 @@ public class Launcher extends Activity
                 }
             }
         }
+    }
+
+    public void showWhatsNew(){
+        String stringName = "ver" + LauncherAppState.getInstance().internalVersion;
+        Log.d("nbehary120",stringName);
+        boolean seenThisVersion = (LauncherAppState.getInstance().getVersionCode() == PreferencesProvider.Interface.General.getLastWhatsNewCode());
+        boolean show = true;
+        if (LauncherAppState.getInstance().getProVersion() && !PreferencesProvider.Interface.General.getShowWhatsNew()){
+            show = false;
+        }
+        int stringId = this.getResources().getIdentifier(stringName, "string", this.getPackageName());
+        if ((stringId != 0) && !seenThisVersion && show){
+            String text = this.getResources().getString(stringId);
+            Log.d("nbehary120",text);
+            View whatsNewDialog = getLayoutInflater().inflate(R.layout.whats_new_dialog,null);
+            TextView textView = (TextView) whatsNewDialog.findViewById(R.id.whats_new_text);
+            textView.setText(text);
+            Button playButton = (Button) whatsNewDialog.findViewById(R.id.play_button2);
+            if (LauncherAppState.getInstance().getProVersion()) {
+                TextView notice = (TextView) whatsNewDialog.findViewById(R.id.noticeText);
+                notice.setVisibility(View.GONE);
+
+
+                playButton.setVisibility(View.GONE);
+                CheckBox checkbox = (CheckBox) whatsNewDialog.findViewById(R.id.always_show_checkbox);
+                checkbox.setVisibility(View.VISIBLE);
+                final Context ctx = this;
+                checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        if (isChecked) {
+                            PreferencesProvider.Interface.General.setShowWhatsNew(ctx,true);
+                        } else {
+                            PreferencesProvider.Interface.General.setShowWhatsNew(ctx,false);
+                        }
+                    }
+                });
+            } else {
+                playButton.setVisibility(View.VISIBLE);
+                playButton.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.nbehary.retribution.pro_key")));
+
+                    }
+                });
+            }
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setView(whatsNewDialog);
+            builder.setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+
+                }
+            });
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
+
+
+        PreferencesProvider.Interface.General.setLastWhatsNewCode(this,LauncherAppState.getInstance().getVersionCode());
+
     }
 
     public void showFirstRunCling() {

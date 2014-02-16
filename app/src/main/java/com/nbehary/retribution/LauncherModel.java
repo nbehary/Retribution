@@ -16,12 +16,17 @@
 
 package com.nbehary.retribution;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.accounts.AccountManagerFuture;
+import android.app.Activity;
 import android.app.SearchManager;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProviderInfo;
 import android.content.*;
 import android.content.Intent.ShortcutIconResource;
 import android.content.pm.ActivityInfo;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -29,10 +34,12 @@ import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -40,12 +47,16 @@ import android.os.Parcelable;
 import android.os.Process;
 import android.os.RemoteException;
 import android.os.SystemClock;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.provider.BaseColumns;
+import android.util.ArrayMap;
 import android.util.Log;
 import android.util.Pair;
 import android.widget.Toast;
 
+import com.gc.android.market.api.MarketSession;
+import com.gc.android.market.api.model.Market;
 import com.nbehary.retribution.InstallWidgetReceiver.WidgetMimeTypeHandlerData;
 
 import java.lang.ref.WeakReference;
@@ -116,6 +127,17 @@ public class LauncherModel extends BroadcastReceiver {
     // < only access in worker thread >
     AllAppsList mBgAllAppsList;
 
+    //TODO: Experiment in AppsCustomize Filtering  (so, not like this)
+    AllAppsList mNonSystem;
+    AllAppsList mSystem;
+    AllAppsList mAll;
+    AppCategories mCategories;
+
+    ArrayMap<String, String > mCats;
+
+    String mAuthToken;
+    Launcher mLauncher;
+
     // The lock that must be acquired before referencing any static bg data structures.  Unlike
     // other locks, this one can generally be held long-term because we never expect any of these
     // static data structures to be referenced outside of the worker thread except on the first
@@ -144,9 +166,12 @@ public class LauncherModel extends BroadcastReceiver {
     // sBgWorkspaceScreens is the ordered set of workspace screens.
     static final ArrayList<Long> sBgWorkspaceScreens = new ArrayList<Long>();
 
+    static final HashMap<String,String> sCategories = new HashMap<String, String>();
+
     // </ only access in worker thread >
 
-    private IconCache mIconCache;
+    private static IconCache mIconCache;
+    private static AppFilter mAppFilter;
     private Bitmap mDefaultIcon;
 
     protected int mPreviousConfigMcc;
@@ -188,7 +213,12 @@ public class LauncherModel extends BroadcastReceiver {
         mAppsCanBeOnRemoveableStorage = Environment.isExternalStorageRemovable();
         mApp = app;
         mBgAllAppsList = new AllAppsList(iconCache, appFilter);
+        mSystem = new AllAppsList(iconCache, appFilter);
+        mNonSystem = new AllAppsList(iconCache, appFilter);
+        mAll = new AllAppsList(iconCache, appFilter);
+        mCategories = new AppCategories(iconCache,appFilter);
         mIconCache = iconCache;
+        mAppFilter = appFilter;
 
         mDefaultIcon = Utilities.createIconBitmap(
                 mIconCache.getFullResDefaultActivityIcon(), context);
@@ -283,6 +313,18 @@ public class LauncherModel extends BroadcastReceiver {
         }
         return null;
     }
+
+    public AllAppsList getNonSystemApps() { return mNonSystem;}
+
+    public AllAppsList getSystemApps() { return mSystem;}
+
+    public AllAppsList getAllApps() {return mBgAllAppsList;}
+
+    public AppCategories getCategories() {return mCategories;}
+
+    public void setAuthToken(String authToken) {mAuthToken = authToken;}
+
+    public void setLauncher(Launcher launcher) {mLauncher = launcher;}
 
     public void addAndBindAddedApps(final Context context, final ArrayList<ItemInfo> workspaceApps,
                                     final ArrayList<AppInfo> allAppsApps) {
@@ -517,6 +559,95 @@ public class LauncherModel extends BroadcastReceiver {
         runOnWorkerThread(r);
     }
 
+    //TODO:  update categories routine.....
+    //
+    public void updateCategoryInDatabase(Context context, String appName, String appCategory){
+        final Uri uri = LauncherSettings.Categories.CONTENT_URI;
+        final ContentResolver cr = context.getContentResolver();
+        final ContentValues values = new ContentValues();
+        values.put(LauncherSettings.Categories.APP_NAME,appName);
+        values.put(LauncherSettings.Categories.APP_CATEGORY,appCategory);
+
+//        Strin?g[] projection = new String[]{LauncherSettings.Categories._ID,LauncherSettings.Categories.APP_NAME};
+//        final String selection = LauncherSettings.Categories.APP_NAME + "='" +appName+"'";
+        //try {
+//            Cursor cursor = cr.query(uri,projection,selection,null,null);
+//            if(cursor.moveToFirst()){
+//                values.put(LauncherSettings.Categories._ID,cursor.getLong(0));
+//
+//                Runnable r = new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        cr.delete(uri,selection,null);
+//
+//                        cr.insert(uri, values);
+//                    }
+//                };
+//                runOnWorkerThread(r);
+//            } else {//catch (SQLiteException e) {
+            values.put(LauncherSettings.Categories._ID,LauncherAppState.getLauncherProvider().generateNewCategoryId());
+
+            Runnable r = new Runnable() {
+                @Override
+                public void run() {
+                    cr.insert(uri,values);
+                }
+            };
+            runOnWorkerThread(r);
+//        }
+
+    }
+
+    public void deleteCategoryFromAppInDatabse(Context context, String appName, String appCategory){
+        final Uri uri = LauncherSettings.Categories.CONTENT_URI;
+        final ContentResolver cr = context.getContentResolver();
+        final ContentValues values = new ContentValues();
+        values.put(LauncherSettings.Categories.APP_NAME,appName);
+        values.put(LauncherSettings.Categories.APP_CATEGORY,appCategory);
+
+        String[] projection = new String[]{LauncherSettings.Categories._ID,LauncherSettings.Categories.APP_NAME};
+        final String selection = LauncherSettings.Categories.APP_NAME + "='" +appName+"'";
+        //try {
+        Cursor cursor = cr.query(uri,projection,selection,null,null);
+        if(cursor.moveToFirst()){
+            values.put(LauncherSettings.Categories._ID,cursor.getLong(0));
+
+            Runnable r = new Runnable() {
+                @Override
+                public void run() {
+                    cr.delete(uri, selection, null);
+
+                    //cr.insert(uri, values);
+                }
+            };
+            runOnWorkerThread(r);
+        }
+    }
+
+    public void deleteCategoryInDatabase(Context context, String appCategory){
+        final Uri uri = LauncherSettings.Categories.CONTENT_URI;
+        final ContentResolver cr = context.getContentResolver();
+        final ContentValues values = new ContentValues();
+
+
+        String[] projection = new String[]{LauncherSettings.Categories._ID,LauncherSettings.Categories.APP_CATEGORY};
+        final String selection = LauncherSettings.Categories.APP_CATEGORY + "='" +appCategory+"'";
+        Cursor cursor = cr.query(uri,projection,selection,null,null);
+        if(cursor.moveToFirst()){
+            values.put(LauncherSettings.Categories._ID,cursor.getLong(0));
+
+            Runnable r = new Runnable() {
+                @Override
+                public void run() {
+                    cr.delete(uri,selection,null);
+
+                    //cr.insert(uri, values);
+                }
+            };
+            runOnWorkerThread(r);
+        }
+    }
+
     static void updateItemInDatabaseHelper(Context context, final ContentValues values,
             final ItemInfo item, final String callingFunction) {
         final long itemId = item.id;
@@ -562,6 +693,8 @@ public class LauncherModel extends BroadcastReceiver {
         };
         runOnWorkerThread(r);
     }
+
+
 
     static void updateItemArrays(ItemInfo item, long itemId, StackTraceElement[] stackTrace) {
         // Lock on mBgLock *after* the db operation
@@ -1180,6 +1313,8 @@ public class LauncherModel extends BroadcastReceiver {
         }
     }
 
+
+
     // If there is already a loader task running, tell it to stop.
     // returns true if isLaunching() was true on the old task
     private boolean stopLoaderLocked() {
@@ -1238,6 +1373,75 @@ public class LauncherModel extends BroadcastReceiver {
         }
     }
 
+    private static ArrayList<String> getAppCatgoriesDb(Context context,String name) {
+        ArrayList<String> list = new ArrayList<String>();
+        final ContentResolver cr = context.getContentResolver();
+        final Uri uri = LauncherSettings.Categories.CONTENT_URI;
+
+        String[] projection = new String[]{LauncherSettings.Categories._ID,LauncherSettings.Categories.APP_CATEGORY};
+        final String selection = LauncherSettings.Categories.APP_NAME + "='" +name+"'";
+        Cursor cursor = cr.query(uri,projection,selection,null,null);
+        final int categoryIndex = cursor.getColumnIndexOrThrow(
+                LauncherSettings.Categories.APP_CATEGORY);
+        while (cursor.moveToNext()) {
+            list.add(cursor.getString(categoryIndex));
+        }
+        cursor.close();
+        return list;
+
+    }
+
+    private static ArrayList<String> getAppsWithCatsDB(Context context) {
+        ArrayList<String> list = new ArrayList<String>();
+        final ContentResolver cr = context.getContentResolver();
+        final Uri uri = LauncherSettings.Categories.CONTENT_URI;
+
+        String[] projection = new String[]{LauncherSettings.Categories._ID,LauncherSettings.Categories.APP_NAME};
+        Cursor cursor = cr.query(uri,projection,null,null,null);
+        try {
+
+            final int nameIndex = cursor.getColumnIndexOrThrow(
+                    LauncherSettings.Categories.APP_NAME);
+            while (cursor.moveToNext()) {
+                String name = cursor.getString(nameIndex);
+                if (!list.contains(name)) {
+                    list.add(name);
+                }
+            }
+        } finally {
+            cursor.close();
+        }
+
+        return list;
+    }
+
+    private static ArrayMap<String,String> loadCategoriesDb(Context context) {
+        final ContentResolver contentResolver = context.getContentResolver();
+        final Uri screensUri = LauncherSettings.Categories.CONTENT_URI;
+        final Cursor sc = contentResolver.query(screensUri, null, null, null, null);
+        //HashMap<String, String> categories = new HashMap<String, String>();
+        ArrayMap<String,String> categories = new ArrayMap<String, String>();
+        AppCategories cats = new AppCategories(mIconCache,mAppFilter);
+
+        try {
+            final int nameIndex = sc.getColumnIndexOrThrow(
+                    LauncherSettings.Categories.APP_NAME);
+            final int categoryIndex = sc.getColumnIndexOrThrow(
+                    LauncherSettings.Categories.APP_CATEGORY);
+            while (sc.moveToNext()) {
+                String name = sc.getString(nameIndex);
+                String category = sc.getString(categoryIndex);
+                //cats.addAppToCategory(name,category);
+                categories.put(name,category);
+            }
+
+        } finally {
+            sc.close();
+        }
+
+        return categories;
+    }
+
     /** Loads the workspace screens db into a map of Rank -> ScreenId */
     private static TreeMap<Integer, Long> loadWorkspaceScreensDb(Context context) {
         final ContentResolver contentResolver = context.getContentResolver();
@@ -1268,6 +1472,8 @@ public class LauncherModel extends BroadcastReceiver {
     public boolean isAllAppsLoaded() {
         return mAllAppsLoaded;
     }
+
+
 
     boolean isLoadingWorkspace() {
         synchronized (mLock) {
@@ -1987,6 +2193,7 @@ public class LauncherModel extends BroadcastReceiver {
                     Collections.sort(sBgWorkspaceScreens);
 
                     LauncherAppState.getLauncherProvider().updateMaxScreenId(maxScreenId);
+//                    LauncherAppState.getLauncherProvider().updateMaxCategoryId(m);
                     updateWorkspaceScreenOrder(context, sBgWorkspaceScreens);
 
                     // Update the max item id after we load an old db
@@ -2426,6 +2633,19 @@ public class LauncherModel extends BroadcastReceiver {
 
             // Clear the list of apps
             mBgAllAppsList.clear();
+            mNonSystem.clear();
+            mSystem.clear();
+            mAll.clear();
+
+            ArrayList<String> appsWithCats = new ArrayList<String>();
+            if (LauncherAppState.getInstance().getProVersion()) {
+                appsWithCats = getAppsWithCatsDB(mContext);
+            }
+
+
+
+            //mCats = loadCategoriesDb(mContext);
+            //TODO: load Categories here!
 
             // Query for the set of apps
             final long qiaTime = DEBUG_LOADERS ? SystemClock.uptimeMillis() : 0;
@@ -2452,8 +2672,20 @@ public class LauncherModel extends BroadcastReceiver {
             for (int i = 0; i < apps.size(); i++) {
                 ResolveInfo app = apps.get(i);
                 // This builds the icon bitmaps.
-                mBgAllAppsList.add(new AppInfo(packageManager, app,
-                        mIconCache, mLabelCache));
+
+                AppInfo info = new AppInfo(packageManager, app,
+                        mIconCache, mLabelCache);
+                mBgAllAppsList.add(info);
+                mAll.add(info);
+                String appName = info.componentName.getPackageName();
+                if (appsWithCats.contains(appName)) {
+                    Log.d("nbehary120", appName + " is in Groups....");
+
+                    ArrayList<String> cats = getAppCatgoriesDb(mContext,appName);
+                    for (String cat: cats){
+                        mCategories.addAppToCategory(info,cat);
+                    }
+                }
             }
 
             // Huh? Shouldn't this be inside the Runnable below?
@@ -2482,6 +2714,82 @@ public class LauncherModel extends BroadcastReceiver {
                         + (SystemClock.uptimeMillis() - loadTime) + "ms");
             }
         }
+
+        private String getAppCategory(ResolveInfo ri) {
+            MarketSession session = new MarketSession();
+            String authToken = updateToken(false);
+            session.setAuthSubToken(authToken);
+            //session.login(email,password);
+//            String androidID = Settings.Secure.getString(mLauncher.getContentResolver(), Settings.Secure.ANDROID_ID);
+//            session.getContext().setAndroidId(androidID);
+
+            String query = "retribution";//ri.activityInfo.applicationInfo.packageName;
+            Log.d("nbehary120",query);
+            if (query == null) {
+                return "None";
+            }
+            Market.AppsRequest appsRequest = Market.AppsRequest.newBuilder()
+                    .setQuery(query)
+                    .setStartIndex(0).setEntriesCount(10)
+                    .setWithExtendedInfo(true)
+                    .build();
+//
+//            Market.CategoriesRequest appsRequest = Market.CategoriesRequest.newBuilder()
+//                   .setQuery(query)
+//                   .setStartIndex(0).setEntriesCount(10)
+//                   .setWithExtendedInfo(true)
+//                   .build();
+
+            session.append(appsRequest, new MarketSession.Callback<Market.AppsResponse>() {
+                @Override
+                public void onResult(Market.ResponseContext context, Market.AppsResponse response) {
+                    List<Market.App> entries =response.getAppList();
+                    Log.d("nbehary120","GotResult1");
+                    if (entries.size() > 0) {
+                        Log.d("nbehary120","GotResult2");
+                    }
+                    // Your code here
+                    // response.getApp(0).getCreator() ...
+                    // see AppsResponse class definition for more infos
+                }
+            });
+           session.flush();
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return "None"; //TODO:NO!!!!!!!
+
+        }
+
+        private String updateToken(boolean invalidateToken) {
+            String authToken = "null";
+            Context ctx = mApp.getContext();
+            Activity activity = mLauncher;
+            try {
+                AccountManager am = AccountManager.get(ctx);
+                Account[] accounts = am.getAccountsByType("com.google");
+                AccountManagerFuture<Bundle> accountManagerFuture;
+//                accountManagerFuture = am.getAuthToken(accounts[0], "android", false, null, null);
+                if(activity == null){//this is used when calling from an interval thread
+                    accountManagerFuture = am.getAuthToken(accounts[0], "android", false, null, null);
+                } else {
+                    accountManagerFuture = am.getAuthToken(accounts[0], "android", null, activity, null, null);
+                }
+                Bundle authTokenBundle = accountManagerFuture.getResult();
+                authToken = authTokenBundle.getString(AccountManager.KEY_AUTHTOKEN).toString();
+                if(invalidateToken) {
+                    am.invalidateAuthToken("com.google", authToken);
+                    authToken = updateToken(false);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return authToken;
+        }
+
+
 
         public void dumpState() {
             synchronized (sBgLock) {
@@ -2689,6 +2997,8 @@ public class LauncherModel extends BroadcastReceiver {
      //   }
         return supportedPackages;
     }
+
+
 
     private boolean isValidPackageComponent(PackageManager pm, ComponentName cn) {
         if (cn == null) {

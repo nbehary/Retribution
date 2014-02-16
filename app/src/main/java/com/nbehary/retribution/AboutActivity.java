@@ -76,6 +76,7 @@ public class AboutActivity extends Activity {
             TextView versionText = (TextView) rootView.findViewById(R.id.about_version_text);
             LauncherAppState appState = LauncherAppState.getInstance();
             String versionName = appState.mVersionName;
+            //String versionName = appState.internalVersion;
             int versionCode = appState.mVersionCode;
             versionText.setText(String.format("Version: %s (%d)", versionName,versionCode));
             final Button button = (Button) rootView.findViewById(R.id.os_button);
@@ -92,8 +93,7 @@ public class AboutActivity extends Activity {
                 playButton.setVisibility(View.VISIBLE);
                 playButton.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.nbehary.retribution.key.beta")));
-
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.nbehary.retribution.pro_key")));
                     }
                 });
             }

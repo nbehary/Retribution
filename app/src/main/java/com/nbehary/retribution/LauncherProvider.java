@@ -68,13 +68,15 @@ public class LauncherProvider extends ContentProvider {
 
     private static final String DATABASE_NAME = "launcher.db";
 
-    private static final int DATABASE_VERSION = 16;
+    private static final int DATABASE_VERSION = 18;
 
     static final String OLD_AUTHORITY = "com.android.launcher2.settings";
     static final String AUTHORITY = ProviderConfig.AUTHORITY;
 
     static final String TABLE_FAVORITES = "favorites";
     static final String TABLE_WORKSPACE_SCREENS = "workspaceScreens";
+    static final String TABLE_CATEGORIES= "categories";
+
     static final String PARAMETER_NOTIFY = "notify";
     static final String UPGRADED_FROM_OLD_DATABASE =
             "UPGRADED_FROM_OLD_DATABASE";
@@ -237,6 +239,16 @@ public class LauncherProvider extends ContentProvider {
         mOpenHelper.updateMaxScreenId(maxScreenId);
     }
 
+    public long generateNewCategoryId() {
+        return mOpenHelper.generateNewCategoryId();
+    }
+
+    // This is only required one time while loading the workspace during the
+    // upgrade path, and should never be called from anywhere else.
+    public void updateMaxCategoryId(long maxScreenId) {
+        mOpenHelper.updateMaxCategoryId(maxScreenId);
+    }
+
     /**
      * @param Should we load the old db for upgrade? first run only.
      */
@@ -304,6 +316,7 @@ public class LauncherProvider extends ContentProvider {
         private final AppWidgetHost mAppWidgetHost;
         private long mMaxItemId = -1;
         private long mMaxScreenId = -1;
+        private long mMaxCategoryId = -1;
 
         DatabaseHelper(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -317,6 +330,9 @@ public class LauncherProvider extends ContentProvider {
             }
             if (mMaxScreenId == -1) {
                 mMaxScreenId = initializeMaxScreenId(getWritableDatabase());
+            }
+            if (mMaxCategoryId == -1) {
+                mMaxCategoryId = initializeMaxCategoryId(getWritableDatabase());
             }
         }
 
@@ -370,6 +386,10 @@ public class LauncherProvider extends ContentProvider {
                     ");");
             addWorkspacesTable(db);
 
+            addCategoriesTable(db);
+            db.beginTransaction();
+
+
             // Database was just created, so wipe any previous widgets
             if (mAppWidgetHost != null) {
                 mAppWidgetHost.deleteHost();
@@ -408,6 +428,15 @@ public class LauncherProvider extends ContentProvider {
             db.execSQL("CREATE TABLE " + TABLE_WORKSPACE_SCREENS + " (" +
                     LauncherSettings.WorkspaceScreens._ID + " INTEGER," +
                     LauncherSettings.WorkspaceScreens.SCREEN_RANK + " INTEGER," +
+                    LauncherSettings.ChangeLogColumns.MODIFIED + " INTEGER NOT NULL DEFAULT 0" +
+                    ");");
+        }
+
+        private void addCategoriesTable(SQLiteDatabase db) {
+            db.execSQL("CREATE TABLE categories (" +
+                    LauncherSettings.Categories._ID + " INTEGER PRIMARY KEY," +
+                    LauncherSettings.Categories.APP_NAME + " TEXT," +
+                    LauncherSettings.Categories.APP_CATEGORY + " TEXT," +
                     LauncherSettings.ChangeLogColumns.MODIFIED + " INTEGER NOT NULL DEFAULT 0" +
                     ");");
         }
@@ -714,6 +743,22 @@ public class LauncherProvider extends ContentProvider {
                 }
             }
 
+            if (version <17) {
+                mMaxCategoryId = 0;
+                addCategoriesTable(db);
+
+                version = 17;
+            }
+
+            if (version < 18){
+                db.execSQL("DROP TABLE IF EXISTS " + TABLE_CATEGORIES);
+                mMaxCategoryId = 0;
+                addCategoriesTable(db);
+
+                version = 18;
+
+            }
+
             if (version != DATABASE_VERSION) {
                 Log.w(TAG, "Destroying all old data.");
                 db.execSQL("DROP TABLE IF EXISTS " + TABLE_FAVORITES);
@@ -915,6 +960,38 @@ public class LauncherProvider extends ContentProvider {
 
         private long initializeMaxScreenId(SQLiteDatabase db) {
             Cursor c = db.rawQuery("SELECT MAX(" + LauncherSettings.WorkspaceScreens._ID + ") FROM " + TABLE_WORKSPACE_SCREENS, null);
+
+            // get the result
+            final int maxIdIndex = 0;
+            long id = -1;
+            if (c != null && c.moveToNext()) {
+                id = c.getLong(maxIdIndex);
+            }
+            if (c != null) {
+                c.close();
+            }
+
+            if (id == -1) {
+                throw new RuntimeException("Error: could not query max screen id");
+            }
+
+            return id;
+        }
+
+        public long generateNewCategoryId() {
+            if (mMaxCategoryId < 0) {
+                throw new RuntimeException("Error: max screen id was not initialized");
+            }
+            mMaxCategoryId += 1;
+            return mMaxCategoryId;
+        }
+
+        public void updateMaxCategoryId(long maxScreenId) {
+            mMaxCategoryId = maxScreenId;
+        }
+
+        private long initializeMaxCategoryId(SQLiteDatabase db) {
+            Cursor c = db.rawQuery("SELECT MAX(" + LauncherSettings.Categories._ID + ") FROM " + TABLE_CATEGORIES, null);
 
             // get the result
             final int maxIdIndex = 0;

@@ -20,6 +20,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -365,6 +366,13 @@ public class FolderColorsActivity extends Activity {
                 mPreviewImage = (ImageView) rootView.findViewById(R.id.folder_color_preview_image_free);
                 RadioGroup rGroup = (RadioGroup)rootView.findViewById(R.id.radioGroup1);
 
+                final Button playButton = (Button) rootView.findViewById(R.id.play_button3);
+                playButton.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.nbehary.retribution.pro_key")));
+                    }
+                });
+
                 int color = Integer.parseInt(PreferencesProvider.Interface.General.getFolderColor());
                 switch (color) {
                     case 1:  //White(Default)
@@ -411,6 +419,9 @@ public class FolderColorsActivity extends Activity {
                                 false));
                         rGroup.check(R.id.radioBlackO);
                         break;
+
+
+
                 }
 
                 rGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()

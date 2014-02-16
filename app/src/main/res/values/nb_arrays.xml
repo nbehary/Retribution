@@ -35,4 +35,10 @@
         <item>overview</item>
     </string-array>
 
+    <string-array name="stock_filter_options" >
+        <item>All Apps</item>
+        <item>Non-system Apps</item>
+        <item>System Apps</item>
+    </string-array>
+
 </resources>

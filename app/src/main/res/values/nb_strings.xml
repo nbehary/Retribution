@@ -7,7 +7,7 @@
     <string name="dialog_pick_iconpack_title">Pick icon pack</string>
     <string name="default_iconpack_title">Default</string>
     <string name="no_iconpacks_summary">No icon packs installed</string>
-    <string name="descr_overflow_button">Folder Options</string>
+    <string name="descr_overflow_button">Options</string>
     <string name="folder_color_chooser">Choose Color</string>
     <string name="help">Help</string>
 
@@ -100,4 +100,19 @@
     <string name="sort_mode_title">Title</string>
     <string name="sort_mode_launch_count">Launch Count</string>
     <string name="sort_mode_install_time">Install Time</string>
+    <string name="group_select_label">Setup Group:</string>
+    <string name="groups_select_all_label">Select All</string>
+    <string name="groups_new_name_hint">New Group</string>
+    <string name="groups_new_name_label">Category Name:</string>
+    <string name="dialod_done">Done</string>
+
+    <string name="apps_customize_menu_effect_label">Scroll Effect</string>
+    <string name="apps_customize_menu_sort_label">Sort</string>
+    <string name="apps_customize_menu_groups_label">Manage Groups</string>
+    <string name="groups_new_button_label">New Group</string>
+
+    <string name="whats_new_title">What\'s New!</string>
+    <string name="what_new_free_notice">You can choose not to see this dialog with every update in the Pro Version.
+    Also, check out the cool new stuff up there you aren\'t getting.  You should consider upgrading.</string>
+    <string name="whats_new_checkbox_text">Always Show</string>
 </resources>

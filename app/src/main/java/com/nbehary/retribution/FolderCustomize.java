@@ -40,11 +40,12 @@ public class FolderCustomize extends ImageButton implements PopupMenu.OnMenuItem
 
 
     public void showPopup(View v) {
-        PopupMenu popup = new PopupMenu(this.getContext(), v);
-        MenuInflater inflater = popup.getMenuInflater();
-        inflater.inflate(R.menu.customize_folder, popup.getMenu());
-        popup.setOnMenuItemClickListener(this);
-        popup.show();
+//        PopupMenu popup = new PopupMenu(this.getContext(), v);
+//        MenuInflater inflater = popup.getMenuInflater();
+//        inflater.inflate(R.menu.customize_folder, popup.getMenu());
+//        popup.setOnMenuItemClickListener(this);
+//        popup.show();
+        chooseColor();
     }
 
     @Override

@@ -680,6 +680,7 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         if (mInBulkBind) {
             mNeedToUpdatePageCountsAndInvalidateData = true;
         } else {
+            setCurrentPage(0);
             updatePageCounts();
             invalidateOnDataChange();
             mNeedToUpdatePageCountsAndInvalidateData = false;
@@ -2008,7 +2009,7 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
     public void setApps(ArrayList<AppInfo> list) {
         if (!DISABLE_ALL_APPS) {
             mApps = list;
-            Collections.sort(mApps, LauncherModel.getAppNameComparator());
+            Collections.sort(mApps, getComparatorForSortMode());
             updatePageCountsAndInvalidateData();
         }
     }

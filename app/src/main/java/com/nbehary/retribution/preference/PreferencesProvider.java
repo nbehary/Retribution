@@ -279,6 +279,23 @@ public final class PreferencesProvider {
             public static boolean getGridFirstRun() {
                 return getBoolean("pref_grid_first_run",false);
             }
+
+            public static void setLastWhatsNewCode(Context ctx,int code){
+                setInt(ctx,"pref_last_whats_new_code",code);
+            }
+
+            public static int getLastWhatsNewCode(){
+                return getInt("pref_last_whats_new_code",0);
+            }
+
+            public static void setShowWhatsNew(Context ctx,boolean show){
+                setBoolean(ctx,"pref_show_whats_new",show);
+            }
+
+            public static boolean getShowWhatsNew() {
+                return getBoolean("pref_show_whats_new",true);
+            }
+
         }
     }
 

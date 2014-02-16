@@ -60,6 +60,8 @@ public class LauncherAppState {
     public String mVersionName;
     public int mVersionCode;
 
+    public String internalVersion = "1.2.0";
+
     private boolean mProVersion;
 
     IRemoteService mRemoteService;
@@ -177,6 +179,7 @@ public class LauncherAppState {
             throw new IllegalStateException("setLauncher() called before init()");
         }
         mModel.initialize(launcher);
+        mModel.setLauncher(launcher);
         return mModel;
     }
 
@@ -259,7 +262,7 @@ public class LauncherAppState {
           //  mProVersion=sContext.bindService(serviceIntent, mServiceConnection,Context.BIND_AUTO_CREATE);
                 mProVersion = true;
         }
-/*
+
         if ((mVersionName.contains("Beta"))||(mVersionName.contains("Dev")) || (mVersionName.contains("RC"))) {
             if ((manager.checkSignatures("com.nbehary.retribution", "com.nbehary.retribution.key.beta")
                     == PackageManager.SIGNATURE_MATCH) &&
@@ -268,7 +271,7 @@ public class LauncherAppState {
             }
         }
 
-*/
+
 
 
 

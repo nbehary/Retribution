@@ -16,6 +16,9 @@
 
 package com.nbehary.retribution;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.accounts.AccountManagerFuture;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -23,6 +26,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.PackageInfo;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
+import android.os.Bundle;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -50,6 +54,8 @@ class AppInfo extends ItemInfo {
     long firstInstallTime;
 
     ComponentName componentName;
+
+    String appCategory;
 
     static final int DOWNLOADED_FLAG = 1;
     static final int UPDATED_SYSTEM_APP_FLAG = 2;
@@ -99,6 +105,7 @@ class AppInfo extends ItemInfo {
         }
         return flags;
     }
+
 
     public static long initFirstInstallTime(PackageInfo pi) {
         return pi.firstInstallTime;

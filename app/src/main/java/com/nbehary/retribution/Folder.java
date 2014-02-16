@@ -194,6 +194,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         mContent = (CellLayout) findViewById(R.id.folder_content);
         mFolderCustomize = (FolderCustomize) findViewById(R.id.folder_customize);
 
+
         LauncherAppState app = LauncherAppState.getInstance();
         DeviceProfile grid = app.getDynamicGrid().getDeviceProfile();
 
@@ -218,13 +219,18 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         mFolderName.setInputType(mFolderName.getInputType() |
                 InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
         final Folder thisFolder = this;
-        mFolderCustomize.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mFolderCustomize.setFolder(thisFolder);
-                mFolderCustomize.showPopup(v);
-            }
-        });
+        if (!LauncherAppState.getInstance().getProVersion()){
+            mFolderCustomize.setVisibility(GONE);
+        } else{
+            mFolderCustomize.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mFolderCustomize.setFolder(thisFolder);
+                    mFolderCustomize.showPopup(v);
+                }
+            });
+        }
+
 
         //Get color for background from shared preferences and set it
         LinearLayout folder = (LinearLayout) findViewById(R.id.user_folder);
@@ -273,6 +279,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
                 }
             } else {
                 Context ctx = getContext();
+
                 if (!PreferencesProvider.Interface.General.getDefaultFolderBG()){
                     //folder.setBackgroundColor(PreferencesProvider.Interface.General.getFolderBackColor());
                    // bg1.eraseColor(PreferencesProvider.Interface.General.getFolderBackColor());

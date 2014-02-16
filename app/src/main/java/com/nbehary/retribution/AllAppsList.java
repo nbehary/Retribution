@@ -89,6 +89,10 @@ class AllAppsList {
         return data.get(index);
     }
 
+    public void setData(ArrayList<AppInfo> data) {
+        this.data = data;
+    }
+
     /**
      * Add the icons for the supplied apk called packageName.
      */

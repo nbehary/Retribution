@@ -556,7 +556,7 @@ class DeviceProfile {
                 padding.set(left, edgeMarginPx,
                         hotseatBarHeightPx, edgeMarginPx);
             }
-            Log.d("","");
+
 
         } else {
             if (isTablet()) {

@@ -32,6 +32,8 @@ class LauncherSettings {
         static final String MODIFIED = "modified";
     }
 
+
+
     static interface BaseLauncherColumns extends ChangeLogColumns {
         /**
          * Descriptive name of the gesture that can be displayed to the user.
@@ -113,6 +115,19 @@ class LauncherSettings {
         static final String FOLDER_SORT = "folderSort";
 
         static final String FOLDER_SORT_TYPE = "folderSortType";
+    }
+
+    static final class Categories implements ChangeLogColumns {
+
+        static final Uri CONTENT_URI = Uri.parse("content://" +
+                LauncherProvider.AUTHORITY + "/" + LauncherProvider.TABLE_CATEGORIES +
+                "?" + LauncherProvider.PARAMETER_NOTIFY + "=true");
+
+        static final String APP_NAME = "appName";
+
+        static final String APP_CATEGORY = "appCategory";
+
+
     }
 
     /**

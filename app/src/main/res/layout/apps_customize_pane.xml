@@ -29,7 +29,7 @@
              with the text in the tabs in AppsCustomizeTabHost. -->
         <FrameLayout
             android:id="@+id/tabs_container"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="@dimen/apps_customize_tab_bar_height"
             android:layout_marginTop="@dimen/apps_customize_tab_bar_margin_top"
 
@@ -39,30 +39,43 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
+
                 >
 
             <Spinner
                 android:id="@+id/filter_spinner"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:layout_weight="4"
                 android:layout_gravity="start"/>
-            <Button
-                android:id="@+id/app_drawer_sort_button"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="end"
-                android:text="Sort"
+            <!--<Button-->
+                <!--android:id="@+id/app_drawer_sort_button"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_gravity="end"-->
+                <!--android:text="Sort"-->
+<!---->
+                <!--android:background="#00000000"/>-->
+<!---->
+                <!--<Button-->
+                    <!--android:id="@+id/app_drawer_effect_button"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:layout_gravity="end"-->
+                    <!--android:text="Scroll Effect"-->
+<!---->
+                    <!--android:background="#00000000"/>-->
 
-                android:background="#00000000"/>
-
-                <Button
-                    android:id="@+id/app_drawer_effect_button"
-                    android:layout_width="wrap_content"
+                <ImageButton
+                    android:id="@+id/apps_customize_menu_button"
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_gravity="end"
-                    android:text="Scroll Effect"
-
+                    android:layout_weight="1"
+                    android:gravity="right"
+                    android:src="@drawable/ic_menu_overflow_normal"
+                    android:contentDescription="@string/descr_overflow_button"
                     android:background="#00000000"/>
+
             </LinearLayout>
             <com.nbehary.retribution.FocusOnlyTabWidget
                 android:id="@android:id/tabs"

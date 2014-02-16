@@ -3914,7 +3914,7 @@ Log.d("nbehary110","onDrop");
                 // be done post drop animation.
                 stripEmptyScreens();
             }
-        } else if (mDragInfo != null) {
+        } else if (mDragInfo != null && (!(target instanceof InfoDropTarget))) {
             CellLayout cellLayout;
             if (mLauncher.isHotseatLayout(target)) {
                 cellLayout = mLauncher.getHotseat().getLayout();
