@@ -66,6 +66,7 @@ import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.nbehary.retribution.FolderInfo.FolderListener;
@@ -165,8 +166,8 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         mIconCache = app.getIconCache();
 
         Resources res = getResources();
-        mMaxCountX = (int) grid.numColumns;
-        mMaxCountY = (int) grid.numRows;
+        mMaxCountX = (int) grid.numColumns-1;
+        mMaxCountY = 50;//(int) grid.numRows;
         mMaxNumItems = mMaxCountX * mMaxCountY;
 
         mInputMethodManager = (InputMethodManager)
@@ -1094,7 +1095,8 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
                 bounds.left + bounds.width() - width);
         int top = Math.min(Math.max(bounds.top, centeredTop),
                 bounds.top + bounds.height() - height);
-        if (grid.isPhone() && (grid.availableWidthPx - width) < grid.iconSizePx) {
+        //if (grid.isPhone() && (grid.availableWidthPx - width) < grid.iconSizePx) {
+        if ((grid.availableWidthPx - width) < grid.iconSizePx) {
             // Center the folder if it is full (on phones only)
             left = (grid.availableWidthPx - width) / 2;
         } else if (width >= bounds.width()) {
@@ -1350,9 +1352,13 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
             setupContentForNumItems(getItemCount() + 1);
             findAndSetEmptyCells(item);
         }
-        createAndAddShortcut(item);
-        LauncherModel.addOrMoveItemInDatabase(
-                mLauncher, item, mInfo.id, 0, item.cellX, item.cellY);
+        if (createAndAddShortcut(item)) {
+            LauncherModel.addOrMoveItemInDatabase(
+                    mLauncher, item, mInfo.id, 0, item.cellX, item.cellY);
+        } else {
+            Toast toast = Toast.makeText(this.getContext(), "No more room.", Toast.LENGTH_SHORT);
+            toast.show();
+        }
     }
 
     public void onRemove(ShortcutInfo item) {

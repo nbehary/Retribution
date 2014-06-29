@@ -37,6 +37,8 @@ class FolderInfo extends ItemInfo {
 
     ArrayList<FolderListener> listeners = new ArrayList<FolderListener>();
 
+    ArrayList<CharSequence> titles = new ArrayList<CharSequence>();
+
     /**
      * Colors and sorting
      */
@@ -61,6 +63,7 @@ class FolderInfo extends ItemInfo {
      */
     public void add(ShortcutInfo item) {
         contents.add(item);
+        titles.add(item.title);
         for (int i = 0; i < listeners.size(); i++) {
             listeners.get(i).onAdd(item);
         }
@@ -74,6 +77,7 @@ class FolderInfo extends ItemInfo {
      */
     public void remove(ShortcutInfo item) {
         contents.remove(item);
+        titles.remove(item.title);
         for (int i = 0; i < listeners.size(); i++) {
             listeners.get(i).onRemove(item);
         }

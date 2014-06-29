@@ -20,13 +20,13 @@
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.nbehary.retribution"
-    android:versionCode="2208"
-    android:versionName="1.2.0-RC">
+    android:versionCode="2238"
+    android:versionName="1.3.1L">
 
     <permission
         android:name="com.nbehary.retribution.permission.PRELOAD_WORKSPACE"
         android:permissionGroup="android.permission-group.SYSTEM_TOOLS"
-        android:protectionLevel="system|signature" />
+        android:protectionLevel="signatureOrSystem" />
 
     <permission
         android:name="com.nbehary.retribution.permission.READ_SETTINGS"

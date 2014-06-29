@@ -171,31 +171,11 @@ public class GridFragment extends Fragment {
             }
         });
 
- /*       mDockPicker = (NumberPicker) mRootView.findViewById(R.id.grid_dock_picker);
-        mDockPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-        String[] stringArray = new String[5];
-        int n=1;
-        for(int i=0; i<5; i++){
-            stringArray[i] = Integer.toString(n);
-            n+=2;
-        }
-        mDockPicker.setMaxValue(stringArray.length-1);
-        mDockPicker.setMinValue(1);
-        mDockPicker.setValue((int) mTempProfile.numHotseatIcons/2);
-        mDockPicker.setDisplayedValues(stringArray);
-        mDockPicker.setOnValueChangedListener( new NumberPicker.OnValueChangeListener() {
-            @Override
-            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                mTempProfile.numHotseatIcons = (picker.getValue()*2)+1;
-                Log.d("nbehary10x", String.format("num: %d,%d", (picker.getValue() * 2) + 1, newVal));
-            }
-        });
-*/
+
         Button defaultButton = (Button) mRootView.findViewById(R.id.grid_reset_button);
         defaultButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("nbehary10x","Reset!");
                 //mTempProfile = new DeviceProfile(LauncherAppState.getInstance().getDynamicGrid().getCalculatedProfile());
                 mTempProfile.iconSize = mTempProfile.iconSizeDevice;
                 mTempProfile.iconSizeCalc = mTempProfile.iconSizeDevice;
@@ -219,7 +199,6 @@ public class GridFragment extends Fragment {
                     mHideHotseat.setVisibility(View.VISIBLE);
                     mHotseatNotice.setVisibility(View.GONE);
                 }
-                //Log.d("nbehary10x",String.format("R:%d,C:%d,D:%d",mRowsPicker.getValue(),mColsPicker.getValue(), mDockPicker.getValue()));
 
             }
         });

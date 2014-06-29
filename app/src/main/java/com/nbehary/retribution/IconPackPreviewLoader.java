@@ -106,7 +106,6 @@ public class IconPackPreviewLoader {
     public Bitmap getPreview(final Object o) {
         final String name = getObjectName(o);
         final String packageName = getObjectPackage(o);
-        Log.d("nbehary","getPreview");
         // check if the package is valid
         boolean packageValid = true;
         synchronized(sInvalidPackages) {
@@ -119,7 +118,6 @@ public class IconPackPreviewLoader {
             synchronized(mLoadedPreviews) {
                 // check if it exists in our existing cache
                 if (mLoadedPreviews.containsKey(name) && mLoadedPreviews.get(name).get() != null) {
-                    Log.d("nbehary","Ron's your grandma");
                     return mLoadedPreviews.get(name).get();
                 }
             }
@@ -280,7 +278,6 @@ public class IconPackPreviewLoader {
 
     private void writeToDb(Object o, Bitmap preview) {
         String name = getObjectName(o);
-        Log.d("nbehary987",name);
         SQLiteDatabase db = mDb.getWritableDatabase();
         ContentValues values = new ContentValues();
 

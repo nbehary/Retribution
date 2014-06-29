@@ -62,7 +62,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LauncherProvider extends ContentProvider {
+public class  LauncherProvider extends ContentProvider {
     private static final String TAG = "Launcher.LauncherProvider";
     private static final boolean LOGD = false;
 
@@ -387,7 +387,7 @@ public class LauncherProvider extends ContentProvider {
             addWorkspacesTable(db);
 
             addCategoriesTable(db);
-            db.beginTransaction();
+         //   db.beginTransaction();
 
 
             // Database was just created, so wipe any previous widgets

@@ -159,8 +159,6 @@ public class FolderColorsActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d("nbehary444", "onPause");
-
     }
 
     @Override
@@ -443,7 +441,6 @@ public class FolderColorsActivity extends Activity {
                             // Changes the textview's text to "Checked: example radiobutton text"
                             switch (checkedId) {
                                 case R.id.radioWhite:
-                                    Log.d("nbehary999","White");
                                     parent.setmFreeColor("1");
                                     mPreviewImage.setImageBitmap(generateFolderPreview(getResources(),
                                             Color.argb(255, 84, 84, 84),
@@ -476,7 +473,6 @@ public class FolderColorsActivity extends Activity {
                                             false));
                                     break;
                                 case R.id.radioBlackT:
-                                    Log.d("nbehary999","BlackT");
                                     parent.setmFreeColor("3");
                                     mPreviewImage.setImageBitmap(generateFolderPreview(getResources(),
                                             Color.argb(128, 0, 0, 0),

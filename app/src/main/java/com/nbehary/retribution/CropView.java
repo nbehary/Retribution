@@ -156,8 +156,6 @@ public class CropView extends TiledImageView implements OnScaleGestureListener {
 
     public void setScale(float scale) {
         synchronized (mLock) {
-
-            Log.d("nbehary354",mRenderer.toString());
             mRenderer.scale = scale;
         }
     }

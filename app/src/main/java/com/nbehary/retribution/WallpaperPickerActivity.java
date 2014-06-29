@@ -658,7 +658,6 @@ public class WallpaperPickerActivity extends WallpaperCropActivity {
                 }else {// if (child.getTag() instanceof FrameLayout) {
                     //subList = (FrameLayout) child;
 
-                    Log.d("nbehary765","grrr");
                     continue;
                 }
 

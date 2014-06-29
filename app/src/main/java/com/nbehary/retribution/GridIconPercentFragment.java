@@ -97,7 +97,6 @@ public class GridIconPercentFragment extends Fragment {
         DisplayMetrics dm = getResources().getDisplayMetrics();
         int size = DynamicGrid.pxFromDp(mTempProfile.iconSizeCalc,dm);
         icon.setBounds(0,0,size,size);
-        Log.d("nbehary110", String.format("IconSizeCalc: %f. IconSize:%f",mTempProfile.iconSizeCalc,mTempProfile.iconSize));
         mIconFull.setCompoundDrawables(null,icon,null,null);
         mIconCurrent = (TextView) mRootView.findViewById(R.id.icon_current);
         Drawable icon2 = getResources().getDrawable(R.drawable.ic_launcher);
@@ -114,8 +113,6 @@ public class GridIconPercentFragment extends Fragment {
 
                 DisplayMetrics dm = getResources().getDisplayMetrics();
                 mTempProfile.iconSize = mTempProfile.iconSizeCalc * (float)((progress+75)/100f);
-
-                Log.d("nbehary110", String.format("IconSize: %f, progress: %d",mTempProfile.iconSize,progress));
                 mTempProfile.iconSizePx = DynamicGrid.pxFromDp(mTempProfile.iconSize,dm);
                 Drawable icon = getResources().getDrawable(R.drawable.ic_launcher);
                 icon.setBounds(0,0,mTempProfile.iconSizePx,mTempProfile.iconSizePx);

@@ -247,8 +247,7 @@ public class WallpaperCropActivity extends Activity {
             Resources res, int resId, final boolean finishActivityWhenDone) {
         // crop this image and scale it down to the default wallpaper size for
         // this device
-        Log.d("nbehary","cropAndset1");
-        int rotation = getRotationFromExif(res, resId);
+         int rotation = getRotationFromExif(res, resId);
         Point inSize = mCropView.getSourceDimensions();
         Point outSize = getDefaultWallpaperSize(getResources(),
                 getWindowManager());
@@ -278,14 +277,13 @@ public class WallpaperCropActivity extends Activity {
     protected void cropImageAndSetWallpaper(Uri uri,
             OnBitmapCroppedHandler onBitmapCroppedHandler, final boolean finishActivityWhenDone) {
         // Get the crop
-        Log.d("nbehary","cropAndset2");
         boolean ltr;
         if (Build.VERSION.SDK_INT >=17){
             ltr= mCropView.getLayoutDirection() == View.LAYOUT_DIRECTION_LTR;
         } else {
             ltr = false;
         }
-        mCropView.getLayoutDirection();
+        //mCropView.getLayoutDirection();
         Point minDims = new Point();
         Point maxDims = new Point();
         Display d = getWindowManager().getDefaultDisplay();
@@ -298,13 +296,11 @@ public class WallpaperCropActivity extends Activity {
             minDims = maxDims; // Point(0,0);
         }
         //d.getCurrentSizeRange(minDims, maxDims);
-        Log.d("nbehary765",String.format("maxDims: %d,%d",maxDims.x,maxDims.y));
         Point displaySize = new Point();
         d.getSize(displaySize);
 
         int maxDim = Math.max(maxDims.x, maxDims.y);
         final int minDim = Math.min(minDims.x, minDims.y);
-        Log.d("nbehary765",String.format("maxDim/minDim: %d,%d",maxDim,minDim));
         int defaultWallpaperWidth;
         if (isScreenLarge(getResources())) {
             defaultWallpaperWidth = (int) (maxDim *
@@ -313,7 +309,6 @@ public class WallpaperCropActivity extends Activity {
             defaultWallpaperWidth = Math.max((int)
                     (minDim * WALLPAPER_SCREENS_SPAN), maxDim);
         }
-        Log.d("nbehary765",String.format("defaultWallpaperWidth: %d",defaultWallpaperWidth));
         boolean isPortrait = displaySize.x < displaySize.y;
         int portraitHeight;
         if (isPortrait) {
@@ -329,7 +324,6 @@ public class WallpaperCropActivity extends Activity {
             d.getRealSize(realSize);
             portraitHeight = Math.max(realSize.x, realSize.y);
         }
-        Log.d("nbehary765",String.format("portraitHeight: %d",portraitHeight));
         // Get the crop
         RectF cropRect = mCropView.getCrop();
         int cropRotation = mCropView.getImageRotation();
@@ -375,7 +369,6 @@ public class WallpaperCropActivity extends Activity {
         Runnable onEndCrop = new Runnable() {
             public void run() {
                 updateWallpaperDimensions(outWidth, outHeight);
-                Log.d("nbehary765","onEndCrop");
                 if (finishActivityWhenDone) {
                     setResult(Activity.RESULT_OK);
                     finish();
@@ -520,7 +513,6 @@ public class WallpaperCropActivity extends Activity {
         }
         public boolean cropBitmap() {
             boolean failure = false;
-            Log.d("nbehary765","stuff");
             regenerateInputStream();
 
             WallpaperManager wallpaperManager = null;

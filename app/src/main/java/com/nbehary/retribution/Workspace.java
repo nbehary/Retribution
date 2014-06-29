@@ -400,9 +400,7 @@ public class Workspace extends SmoothPagedView
         updateChildrenLayersEnabled(false);
         if (getResources().getString(R.string.screen_type).equals("phone")) {
             mLauncher.lockScreenOrientation();
-            Log.d("nbehary444","phone!");
         }else {
-            Log.d("nbehary444","tablet!");
             mLauncher.unlockScreenOrientation(false);
         }
 

@@ -90,7 +90,7 @@ class ShortcutInfo extends ItemInfo {
                 getPackageInfo(context, intent.getComponent().getPackageName()));
     }
 
-    /** TODO: Remove this.  It's only called by ApplicationInfo.makeShortcut. */
+
     public ShortcutInfo(AppInfo info) {
         super(info);
         title = info.title.toString();

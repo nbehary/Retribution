@@ -33,6 +33,7 @@ public final class SettingsProvider {
     public static final String SETTINGS_UI_DRAWER_SCROLLING_TRANSITION_EFFECT = "ui_drawer_scrolling_transition_effect";
     public static final String SETTINGS_UI_DRAWER_SCROLLING_FADE_ADJACENT = "ui_drawer_scrolling_fade_adjacent";
     public static final String SETTINGS_UI_GENERAL_ICONS_LARGE = "ui_general_icons_large";
+    public static final String SETTINGS_UI_DRAWER_SORT = "ui_drawer_sort";
     public static final String SETTINGS_UI_GENERAL_ICONS_TEXT_FONT_FAMILY = "ui_general_icons_text_font";
     public static final String SETTINGS_UI_GENERAL_ICONS_TEXT_FONT_STYLE = "ui_general_icons_text_font_style";
     public static final String SETTINGS_UI_GENERAL_ICONS_ICON_PACK = "ui_general_iconpack";

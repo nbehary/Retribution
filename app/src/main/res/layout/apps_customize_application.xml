@@ -16,7 +16,7 @@
 
 <com.nbehary.retribution.PagedViewIcon
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:launcher="http://schemas.android.com/apk/res-auto/com.nbehary.retribution"
+
 
     style="@style/WorkspaceIcon.AppsCustomize"
 

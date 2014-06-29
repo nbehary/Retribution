@@ -17,13 +17,16 @@
 */
  -->
 
-<resources xmlns:android="http://schemas.android.com/apk/res/android"
+<resources
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="ExtraTranslation"
+
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="application_name" msgid="8424725141379931883">"Käivitaja"</string>
     <string name="home" msgid="5921706419368316758">"Kodu"</string>
     <string name="uid_name" msgid="3371120195364560632">"Androidi tuumrakendused"</string>
     <string name="folder_name" msgid="8551881338202938211"></string>
-    <string name="chooser_wallpaper" msgid="6063168087625352235">"Taustapildi valimiskoht:"</string>
+
     <string name="wallpaper_instructions" msgid="4215640646180727542">"Määra taustapilt"</string>
     <string name="pick_wallpaper" msgid="5630222540525626723">"Taustapildid"</string>
     <string name="activity_not_found" msgid="217823393239365967">"Rakendus pole installitud."</string>
@@ -41,7 +44,6 @@
     <string name="group_applications" msgid="2103752818818161976">"Rakendused"</string>
     <string name="group_shortcuts" msgid="9133529424900391877">"Otseteed"</string>
     <string name="group_widgets" msgid="6704978494073105844">"Vidinad"</string>
-    <string name="group_wallpapers" msgid="1568191644272224858">"Taustapildid"</string>
     <string name="completely_out_of_space" msgid="1759078539443491182">"Teie avakuvadel ei ole enam ruumi."</string>
     <string name="out_of_space" msgid="8365249326091984698">"Sellel avalehel pole enam ruumi."</string>
     <string name="hotseat_out_of_space" msgid="6304886797358479361">"Kohandataval dokialal pole rohkem ruumi."</string>
@@ -63,7 +65,6 @@
     <string name="accessibility_all_apps_button" msgid="8803738611398979849">"Rakendused"</string>
     <string name="accessibility_delete_button" msgid="3628162007991023603">"Eemalda"</string>
     <string name="delete_zone_label_all_apps_system_app" msgid="3683920959591819044">"Desinstalli värskendus"</string>
-    <string name="menu_add" msgid="3065046628354640854">"Lisa"</string>
     <string name="menu_manage_apps" msgid="2308685199463588895">"Rakenduste haldamine"</string>
     <string name="menu_wallpaper" msgid="5837429080911269832">"Taustapilt"</string>
     <string name="menu_search" msgid="4826514464423239041">"Otsing"</string>

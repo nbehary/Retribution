@@ -107,13 +107,11 @@ public class SettingsActivity extends Activity implements AdapterView.OnItemSele
 
     @Override
     public void finish() {
-        Log.d("nbehary213", "Left settings");
         String folderColor = PreferenceManager.getDefaultSharedPreferences(this).getString("pref_folder_color", "1");
         String folderIcon = PreferenceManager.getDefaultSharedPreferences(this).getString("pref_folder_icon", "1");
 
         Intent intent = new Intent();
         if ((folderColor != mFolderColorStart) || (folderIcon != mFolderIconStart)) {
-            Log.d("nbehary213", "resWorkTrue");
             intent.putExtra("resetWorkspace", true);
         } else {
             intent.putExtra("resetWorkspace", false);
@@ -128,7 +126,6 @@ public class SettingsActivity extends Activity implements AdapterView.OnItemSele
         // An item was selected. You can retrieve the selected item using
         // parent.getItemAtPosition(pos)
         String item = (String) parent.getItemAtPosition(pos);
-        Log.d("nbehary546","Chose: "+item);
     }
 
     @Override

@@ -227,7 +227,6 @@ public class TiledImageView extends FrameLayout {
 
     //@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private void invalOnVsync() {
-        Log.d("nbehary354", "yep!!!!");
         if ((!mInvalPending) && (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)){
             mInvalPending = true;
             if (mFrameCallback == null) {

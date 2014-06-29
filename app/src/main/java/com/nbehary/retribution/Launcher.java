@@ -50,6 +50,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -152,7 +153,8 @@ import java.net.URISyntaxException;
  */
 public class Launcher extends Activity
         implements View.OnClickListener, OnLongClickListener, LauncherModel.Callbacks,
-                   View.OnTouchListener,GroupsDialogFragment.OnGroupsChangeListener {
+                   View.OnTouchListener,GroupsDialogFragment.OnGroupsChangeListener,
+                    FolderAddDialogFragment.OnFolderShortcutsAddedListener{
     static final String TAG = "Launcher";
     static final boolean LOGD = false;
 
@@ -434,9 +436,6 @@ public class Launcher extends Activity
         }
 
         super.onCreate(savedInstanceState);
-        Log.d("nbehary444", "onCreate");
-
- 
 
         LauncherAppState.setApplicationContext(getApplicationContext());
         LauncherAppState app = LauncherAppState.getInstance();
@@ -506,9 +505,6 @@ public class Launcher extends Activity
         checkForLocaleChange();
         setContentView(R.layout.launcher);
 
-        if (mOnResumeState == State.FOLDERS_CUSTOMIZE) {
-            Log.d("nbehary444", "OnCreate in Folders Customize!");
-        }
         setupViews();
         grid.layout(this);
 
@@ -537,12 +533,10 @@ public class Launcher extends Activity
             if (sPausedFromUserAction) {
                 // If the user leaves launcher, then we should just load items asynchronously when
                 // they return.
-                Log.d("nbehary213","Async");
                 mModel.startLoader(true, -1);
             } else {
                 // We only load the page synchronously if the user rotates (or triggers a
                 // configuration change) while launcher is in the foreground
-                Log.d("nbehary213","Sync");
                 mModel.startLoader(true, mWorkspace.getCurrentPage());
             }
         }
@@ -556,37 +550,20 @@ public class Launcher extends Activity
 
         updateGlobalIcons();
 
- /*       // On large interfaces, we want the screen to auto-rotate based on the current orientation
-        Configuration config = getResources().getConfiguration();
 
-        if (((config.screenLayout &
-                Configuration.SCREENLAYOUT_SIZE_MASK) ==
-        Configuration.SCREENLAYOUT_SIZE_LARGE) ||
-        ((config.screenLayout &
-                Configuration.SCREENLAYOUT_SIZE_MASK) ==
-                Configuration.SCREENLAYOUT_SIZE_XLARGE))
-        {
-           // lockScreenOrientation();
-            Log.d("nbehary444","tablet!");
-            unlockScreenOrientation(true);
-        }else {
-
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            Log.d("nbehary444","phone!");
-        }
-        */
         if (grid.allowLandscape) {
             unlockScreenOrientation(true);
-            Log.d("nbehary110","land! onCreate");
         } else {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            Log.d("nbehary110","portrait! onCreate");
         }
 
 
         showFirstRunCling();
+        String versionName = LauncherAppState.getInstance().getVersionName();
+        if (!(versionName.contains("Beta")||versionName.contains("Dev") || versionName.contains("RC"))) {
+            showWhatsNew();
+        }
         showWhatsNew();
-        //PagedView.TransitionEffect.setFromString(mWorkspace,"cube-in");
 
     }
 
@@ -669,7 +646,6 @@ public class Launcher extends Activity
     private void updateGlobalIcons() {
         boolean searchVisible = false;
         boolean voiceVisible = false;
-        Log.d("nbehary444","updateGlobal");
         // If we have a saved version of these external icons, we load them up immediately
         int coi = getCurrentOrientationIndexForGlobalIcons();
         if (sGlobalSearchIcon[coi] == null || sVoiceSearchIcon[coi] == null ||
@@ -907,8 +883,14 @@ public class Launcher extends Activity
 
         } else if (requestCode == REQUEST_GRID) {
             if (resultCode == RESULT_OK) {
+                Log.d("nbehary121","RequestGrid Ok");
                 Intent intent = getIntent();
-                finish();
+                //finish();
+                try {
+                    Thread.sleep(250);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 startActivity(intent);
                 System.exit(0);
             }
@@ -1077,7 +1059,6 @@ public class Launcher extends Activity
             Log.v(TAG, "Launcher.onResume()");
         }
         super.onResume();
-        //Log.d("nbehary444",String.format("State: %d",mState));
         // Restore the previous launcher state
         if (mOnResumeState == State.WORKSPACE) {
             showWorkspace(false);
@@ -1088,7 +1069,6 @@ public class Launcher extends Activity
         } else if (mOnResumeState == State.ICONPACKS_CUSTOMIZE){
             showAllApps(false, AppsCustomizePagedView.ContentType.IconPacks, false);
         } else if (mOnResumeState == State.FOLDERS_CUSTOMIZE) {
-            Log.d("nbehary444","resume1234");
             mState = State.FOLDERS_CUSTOMIZE;
             hideHotseat(false);
             mSearchDropTargetBar.setVisibility(View.INVISIBLE);
@@ -1107,7 +1087,6 @@ public class Launcher extends Activity
 
         mPaused = false;
         sPausedFromUserAction = false;
-        Log.d("nbehary444","onResume");
         if (mRestoring || mOnResumeNeedsLoad) {
             mWorkspaceLoading = true;
             mModel.startLoader(true, -1);
@@ -1284,9 +1263,15 @@ public class Launcher extends Activity
         final Menu menu = popupMenu.getMenu();
         popupMenu.inflate(R.menu.apps_customize_sort_mode);
         AppsCustomizePagedView.SortMode sortMode = mAppsCustomizeContent.getSortMode();
-        menu.findItem(R.id.sort_mode_title).setChecked(sortMode == AppsCustomizePagedView.SortMode.Title);
-        menu.findItem(R.id.sort_mode_launch_count).setChecked(sortMode == AppsCustomizePagedView.SortMode.LaunchCount);
-        menu.findItem(R.id.sort_mode_install_time).setChecked(sortMode == AppsCustomizePagedView.SortMode.InstallTime);
+        boolean test = (sortMode == AppsCustomizePagedView.SortMode.Title);
+        test = (sortMode == AppsCustomizePagedView.SortMode.InstallTime);
+        test = (sortMode == AppsCustomizePagedView.SortMode.LaunchCount);
+        menu.findItem(R.id.sort_mode_title).setCheckable(true)
+                .setChecked((sortMode == AppsCustomizePagedView.SortMode.Title));
+        menu.findItem(R.id.sort_mode_launch_count).setCheckable(true)
+                .setChecked((sortMode == AppsCustomizePagedView.SortMode.LaunchCount));
+        menu.findItem(R.id.sort_mode_install_time).setCheckable(true)
+                .setChecked((sortMode == AppsCustomizePagedView.SortMode.InstallTime));
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
@@ -1305,6 +1290,23 @@ public class Launcher extends Activity
         });
         popupMenu.show();
     }
+
+	public void onClickFolderButton() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setView(getLayoutInflater().inflate(R.layout.new_folder_dialog,null));
+		Dialog dialog = builder.create();
+		dialog.show();
+//		CellLayout layout = (CellLayout) mWorkspace.getChildAt(0);
+//		int[] coords = layout.getEmptyCell();
+//		PackageManager pm = getPackageManager();
+//		Log.d("nbehary121",String.format("%d,%d",coords[0],coords[1]));
+//		long id = addGroupFolder("A Folder",2,coords[0],coords[1]);
+//		Intent intent = pm.getLaunchIntentForPackage("com.android.settings");
+//		intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT,intent);
+//		mModel.addShortcut((Context)Launcher.this, intent, id, 0, 0, 0, false);
+//		mModel.startLoader(true, -1);
+//here!!
+	}
 
     public void onClickTransitionEffectButton() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -1460,6 +1462,7 @@ public class Launcher extends Activity
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
 
 
 
@@ -1609,7 +1612,6 @@ public class Launcher extends Activity
      */
     private void setupViews() {
         final DragController dragController = mDragController;
-        Log.d("nbehary444","setupViews");
         //here!
         mLauncherView = findViewById(R.id.launcher);
         mDragLayer = (DragLayer) findViewById(R.id.drag_layer);
@@ -2280,7 +2282,6 @@ public class Launcher extends Activity
             outState.putInt(RUNTIME_STATE_CURRENT_SCREEN, mWorkspace.getRestorePage());
         }
         super.onSaveInstanceState(outState);
-        Log.d("nbehary444","onSaveInstance");
         outState.putInt(RUNTIME_STATE, mState.ordinal());
         // We close any open folder since it will not be re-opened, and we need to make sure
         // this state is reflected.
@@ -2610,6 +2611,15 @@ public class Launcher extends Activity
     void processWallpaper(Intent intent) {
         startActivityForResult(intent, REQUEST_PICK_WALLPAPER);
     }
+//1.2.1
+	long addGroupFolder(String title, final long screenId, int cellX, int cellY) {
+		final FolderInfo folderInfo = new FolderInfo();
+		folderInfo.title = title;
+		LauncherModel.addItemToDatabase(Launcher.this,folderInfo, -100, screenId, cellX, cellY,false);
+		sFolders.put(folderInfo.id, folderInfo);
+		return folderInfo.id;
+
+	}	
 
     FolderIcon addFolder(CellLayout layout, long container, final long screenId, int cellX,
             int cellY) {
@@ -2661,7 +2671,6 @@ public class Launcher extends Activity
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
             switch (event.getKeyCode()) {
                 case KeyEvent.KEYCODE_HOME:
-                    Log.d("nbehary110","Home!");
                     return true;
                 case KeyEvent.KEYCODE_VOLUME_DOWN:
                     if (isPropertyEnabled(DUMP_STATE_PROPERTY)) {
@@ -3209,7 +3218,12 @@ public class Launcher extends Activity
             } else {
                 if (!(itemUnderLongClick instanceof Folder)) {
                     // User long pressed on an item
-                    mWorkspace.startDrag(longClickCellInfo,isHot);
+                    if (itemUnderLongClick.getTag() != null) {
+                        mWorkspace.startDrag(longClickCellInfo, isHot);
+                    }
+
+
+                   // mWorkspace.startDrag(longClickCellInfo,isHot);
                 }
             }
         }
@@ -3740,7 +3754,6 @@ public class Launcher extends Activity
     }
 
     void addAppWidget(Intent data) {
-        Log.d("nbehary546","addAddWidget");
         CellLayout cellLayout =
                 (CellLayout) mWorkspace.getScreenWithId(mWorkspace.getScreenIdForPageIndex(mWorkspace.getCurrentPage()));
         int appWidgetId = data.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, -1);
@@ -3826,6 +3839,10 @@ public class Launcher extends Activity
                             case R.id.apps_customize_menu_effect:
                                 onClickTransitionEffectButton();
                                 return true;
+//							case R.id.apps_customize_temp_folder:
+//								onClickFolderButton();
+//								Log.d("nbehary121","Test Folder");
+//								return true;
 
 
                         }
@@ -4901,11 +4918,15 @@ public class Launcher extends Activity
         (Icon Pack and Folder Color changes, possibly others later.)
      */
     public void resetWorkspace() {
-        Log.d("nbehary213","resetWork");
         mModel.resetLoadedState(true, true);
         recreate();
         showWorkspace();
     }
+
+    public void onFolderShortcutsAdded() {
+
+    }
+
 
     public void onGroupsChange(String category,boolean newCat) {
         if (newCat) {
@@ -4936,9 +4957,9 @@ public class Launcher extends Activity
         // For now, limit only to phones
         LauncherAppState app = LauncherAppState.getInstance();
         DeviceProfile grid = app.getDynamicGrid().getDeviceProfile();
-        if (grid.isTablet()) {
-            return false;
-        }
+//        if (grid.isTablet()) {
+//            return false;
+//        }
 
         // disable clings when running in a test harness
         if(ActivityManager.isRunningInTestHarness()) return false;
@@ -5098,7 +5119,6 @@ public class Launcher extends Activity
 
     public void showWhatsNew(){
         String stringName = "ver" + LauncherAppState.getInstance().internalVersion;
-        Log.d("nbehary120",stringName);
         boolean seenThisVersion = (LauncherAppState.getInstance().getVersionCode() == PreferencesProvider.Interface.General.getLastWhatsNewCode());
         boolean show = true;
         if (LauncherAppState.getInstance().getProVersion() && !PreferencesProvider.Interface.General.getShowWhatsNew()){
@@ -5107,7 +5127,6 @@ public class Launcher extends Activity
         int stringId = this.getResources().getIdentifier(stringName, "string", this.getPackageName());
         if ((stringId != 0) && !seenThisVersion && show){
             String text = this.getResources().getString(stringId);
-            Log.d("nbehary120",text);
             View whatsNewDialog = getLayoutInflater().inflate(R.layout.whats_new_dialog,null);
             TextView textView = (TextView) whatsNewDialog.findViewById(R.id.whats_new_text);
             textView.setText(text);

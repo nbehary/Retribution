@@ -16,7 +16,10 @@
 */
 -->
 
-<resources>
+<resources
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingTranslation">
+    <!-- Application name -->
 
     <!-- DrawableStateProxyView specific attributes. These attributes are used to customize
          a DrawableStateProxyView view in XML files. -->

@@ -245,9 +245,6 @@ public class GridIconFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDetach();
-        Log.d("nbehary110", "GridIconFragment OnDestroyView");
-
-
     }
 
     /**

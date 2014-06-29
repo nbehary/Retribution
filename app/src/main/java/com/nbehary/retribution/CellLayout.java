@@ -1546,6 +1546,13 @@ public class CellLayout extends ViewGroup {
         return bestXY;
     }
 
+	public int[] getEmptyCell(){
+		int[] emptyInt = {0};
+		boolean[][] emptyBool={};
+		//return findNearestArea(1,1,1,1,emptyInt,emptyBool,emptyBool,emptyInt);
+		return findNearestVacantArea(0,0,1,1,null);
+	}
+
     private boolean addViewToTempLocation(View v, Rect rectOccupiedByPotentialDrop,
             int[] direction, ItemConfiguration currentState) {
         CellAndSpan c = currentState.map.get(v);

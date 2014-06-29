@@ -80,20 +80,20 @@ public class GridEditor extends ActionBarActivity
                         if (landscapeChanged){
                             PreferencesProvider.Interface.General.setAllowLand(mContext, mProfile.allowLandscape);
                         }
+                        LauncherAppState.getInstance().getDynamicGrid().setDeviceProfile(mProfile);
                         Intent resultIntent = new Intent();
                         setResult(Activity.RESULT_OK, resultIntent);
                         finish();
                     }
                 });
         if (savedInstanceState == null) {
-            Log.d("nbehary110", "No Saved instance");
             if (findViewById(R.id.grid_editor) instanceof ViewPager) {
                 setupPager();
             } else {
                 setupFrames();
             }
         } else {
-            Log.d("nbehary110", "Saved instance");
+            Log.d("GridEditor", "Saved instance.....figure out why this is here someday.....");
         }
 
         if (!PreferencesProvider.Interface.General.getGridFirstRun()) {
@@ -201,10 +201,17 @@ public class GridEditor extends ActionBarActivity
 
     public void onLandscapeChanged() {
         landscapeChanged = true;
+        if (mProfile.allowLandscape == true) {
+            //mProfile.allowLandscape = false;
+            Log.d("nbehary121","False!!!");
+        } else {
+            //mProfile.allowLandscape = true;
+            Log.d("nbehary121","True!!!");
+        }
+        LauncherAppState.getInstance().getDynamicGrid().setDeviceProfile(mProfile);
     }
 
     public void onRowColDockChanged(DeviceProfile profile) {
-        Log.d("nbehary10x", "Something changed.");
         GridIconValuesFragment iconFrag;
         GridIconPercentFragment percentFragment;
         GridIconFragment iconContainer;
@@ -232,6 +239,8 @@ public class GridEditor extends ActionBarActivity
         if (percentFragment != null) {
             percentFragment.updateViews(profile);
         }
+
+        LauncherAppState.getInstance().getDynamicGrid().setDeviceProfile(profile);
 
     }
 
@@ -282,7 +291,6 @@ public class GridEditor extends ActionBarActivity
                 case 0:
                     fragment = GridIconFragment.newInstance("icon_fragment","");
                     mPageReferenceMap.put("icon_fragment", new WeakReference<Fragment>(fragment));
-                    Log.d("nbehary110","test");
                     return fragment;
                 case 1:
                     fragment = GridIconPercentFragment.newInstance("percent_fragment","");

@@ -16,7 +16,11 @@
 * limitations under the License.
 */
 -->
-<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2"
+
+        xmlns:tools="http://schemas.android.com/tools"
+        tools:ignore="MissingTranslation">
+        <!-- Application name -->
 
     <!-- General -->
     <skip />
@@ -280,7 +284,7 @@ s
     <!-- Error message on dummy custom cling layout [DO NOT TRANSLATE] -->
     <string name="dummy_custom_cling_error_message">Error: custom workspace layout passed in but custom cling was not overwritten</string>
 
-    <add-resource name="default_folder_name" type="string" />
+    <item name="default_folder_name" type="string" />
 
     <!-- Folder accessibility -->
     <!-- The format string for when a folder is opened, speaks the dimensions -->

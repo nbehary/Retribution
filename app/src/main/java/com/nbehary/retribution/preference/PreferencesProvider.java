@@ -296,6 +296,14 @@ public final class PreferencesProvider {
                 return getBoolean("pref_show_whats_new",true);
             }
 
+            public static void setDrawerSort(Context ctx,int sort) {
+                setInt(ctx,"pref_drawer_sort",sort);
+            }
+
+            public static int getDrawerSort() {
+                return getInt("pref_drawer_sort",0 );
+            }
+
         }
     }
 

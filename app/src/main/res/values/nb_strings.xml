@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingTranslation">
     <!-- Application name -->
     <string name="application_name">Retribution Launcher</string>
 
@@ -115,4 +117,10 @@
     <string name="what_new_free_notice">You can choose not to see this dialog with every update in the Pro Version.
     Also, check out the cool new stuff up there you aren\'t getting.  You should consider upgrading.</string>
     <string name="whats_new_checkbox_text">Always Show</string>
+	<string name="create_folder_title">Create Folder</string>
+	<string name="create_folder_name_label">Folder Name:</string>
+	<string name="create_folder_group_label">From Group:</string>
+
+    <string name="folder_add_shortcuts">Edit contents</string>
+    <string name="folder_show_groups_label">Show:</string>
 </resources>

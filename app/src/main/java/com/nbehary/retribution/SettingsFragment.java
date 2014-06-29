@@ -68,7 +68,6 @@ public class SettingsFragment extends PreferenceFragment {
                 ListPreference listPreference = (ListPreference) preference;
 
                 int index = listPreference.findIndexOfValue(stringValue);
-                Log.d("nbehary543", "List baby!!");
                 // Set the summary to reflect the new value.
                 preference.setSummary(
                         index >= 0

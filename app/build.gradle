@@ -13,12 +13,17 @@ dependencies {
 }
 
 android {
-    compileSdkVersion 19
-    buildToolsVersion "19.0.0"
+    compileSdkVersion "android-L"
+    buildToolsVersion "20.0.0"
 
     defaultConfig {
         minSdkVersion 15
-        targetSdkVersion 19
+        targetSdkVersion 'L'
+    }
+
+    lintOptions {
+        abortOnError false
+        ignoreWarnings true
     }
 
     if(project.hasProperty("MyProject.properties")
@@ -71,15 +76,20 @@ android {
     buildTypes {
         release {
             signingConfig signingConfigs.release
-            runProguard true
+            runProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
+
+	debug {
+	    signingConfig signingConfigs.release
+        //packageNameSuffix ".debug"
+	}
     }
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:+'
-    compile "com.android.support:appcompat-v7:+"
+    compile 'com.android.support:support-v4:19.+'
+    compile "com.android.support:appcompat-v7:19.+"
     compile files('libs/protobuf.jar')
     compile fileTree(dir: 'libs', include: '*.jar')
 }

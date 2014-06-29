@@ -320,8 +320,21 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         mRunningTasks = new ArrayList<AppsCustomizeAsyncTask>();
         mPageBitmaps = new ArrayList<Bitmap>();
 
+        switch (PreferencesProvider.Interface.General.getDrawerSort()){
+            case 0:
+                mSortMode = SortMode.Title;
+                break;
+            case 1:
+                mSortMode = SortMode.LaunchCount;
+                break;
+            case 2:
+                mSortMode = SortMode.InstallTime;
+                break;
+        }
 
 
+
+        mAllowOverScroll = false;
 
 
         // Save the default widget preview background
@@ -575,9 +588,9 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
                             }
 
 
-                            //((PageIndicator) v).setActiveMarker(page);
+                            ((PageIndicator) v).setActiveMarker(page);
                             setCurrentPage(page);
-                            //snapToPage(page);
+//                            snapToPage(page);
                             //here!
                             mLastPage = page;
                         }
@@ -1027,9 +1040,7 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         }
         if (getResources().getString(R.string.screen_type).equals("phone")) {
             mLauncher.lockScreenOrientation();
-            Log.d("nbehary444","phone!");
         }else {
-            Log.d("nbehary444","tablet!");
             mLauncher.unlockScreenOrientation(false);
         }
     }
@@ -1820,6 +1831,7 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
     @Override
     protected void screenScrolled(int screenCenter) {
         final boolean isRtl = isLayoutRtl();
+
         mUseTransitionEffect = true;
 
         updatePageAlphaValues(screenCenter);
@@ -1966,6 +1978,7 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         if (mSortMode == sortMode) return;
 
         mSortMode = sortMode;
+        PreferencesProvider.Interface.General.setDrawerSort(mContext,sortMode.ordinal());
 
         Collections.sort(mApps, getComparatorForSortMode());
 

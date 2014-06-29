@@ -60,7 +60,7 @@ public class LauncherAppState {
     public String mVersionName;
     public int mVersionCode;
 
-    public String internalVersion = "1.2.0";
+    public String internalVersion = "1.3.1";
 
     private boolean mProVersion;
 
@@ -244,13 +244,11 @@ public class LauncherAppState {
     }
 
     public void checkProVersion() {
-        Log.d("nbehary446","checkPro");
         PackageManager manager = sContext.getPackageManager();
         mProVersion = false;
         boolean isDebuggable =  ( 0 != ( sContext.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE ) );
         if (isDebuggable) {
             mProVersion= true;
-            Log.d("nbehary449","Debug");
             return;
         }
 

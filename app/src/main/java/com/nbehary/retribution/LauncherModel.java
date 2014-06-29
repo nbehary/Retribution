@@ -1000,7 +1000,6 @@ public class LauncherModel extends BroadcastReceiver {
         item.container = container;
         item.cellX = cellX;
         item.cellY = cellY;
-        Log.d("nbehary456","addtoDB");
         // We store hotseat items in canonical form which is this orientation invariant position
         // in the hotseat
         if (context instanceof Launcher && screenId < 0 &&
@@ -1046,7 +1045,6 @@ public class LauncherModel extends BroadcastReceiver {
                             }
                             break;
                         case LauncherSettings.Favorites.ITEM_TYPE_APPWIDGET:
-                            Log.d("nbehary456","addtoDB");
                             sBgAppWidgets.add((LauncherAppWidgetInfo) item);
                             break;
                     }
@@ -2633,8 +2631,8 @@ public class LauncherModel extends BroadcastReceiver {
 
             // Clear the list of apps
             mBgAllAppsList.clear();
-            mNonSystem.clear();
-            mSystem.clear();
+            //mNonSystem.clear();
+            //mSystem.clear();
             mAll.clear();
 
             ArrayList<String> appsWithCats = new ArrayList<String>();
@@ -2679,7 +2677,6 @@ public class LauncherModel extends BroadcastReceiver {
                 mAll.add(info);
                 String appName = info.componentName.getPackageName();
                 if (appsWithCats.contains(appName)) {
-                    Log.d("nbehary120", appName + " is in Groups....");
 
                     ArrayList<String> cats = getAppCatgoriesDb(mContext,appName);
                     for (String cat: cats){
@@ -2724,7 +2721,6 @@ public class LauncherModel extends BroadcastReceiver {
 //            session.getContext().setAndroidId(androidID);
 
             String query = "retribution";//ri.activityInfo.applicationInfo.packageName;
-            Log.d("nbehary120",query);
             if (query == null) {
                 return "None";
             }
@@ -2744,9 +2740,7 @@ public class LauncherModel extends BroadcastReceiver {
                 @Override
                 public void onResult(Market.ResponseContext context, Market.AppsResponse response) {
                     List<Market.App> entries =response.getAppList();
-                    Log.d("nbehary120","GotResult1");
                     if (entries.size() > 0) {
-                        Log.d("nbehary120","GotResult2");
                     }
                     // Your code here
                     // response.getApp(0).getCreator() ...
@@ -3368,7 +3362,7 @@ public class LauncherModel extends BroadcastReceiver {
         }
     }
 
-    ShortcutInfo addShortcut(Context context, Intent data, long container, int screen,
+    public ShortcutInfo addShortcut(Context context, Intent data, long container, int screen,
             int cellX, int cellY, boolean notify) {
         final ShortcutInfo info = infoFromShortcutIntent(context, data, null);
         if (info == null) {
