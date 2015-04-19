@@ -68,7 +68,7 @@ public class  LauncherProvider extends ContentProvider {
 
     private static final String DATABASE_NAME = "launcher.db";
 
-    private static final int DATABASE_VERSION = 18;
+    private static final int DATABASE_VERSION = 21;
 
     static final String OLD_AUTHORITY = "com.android.launcher2.settings";
     static final String AUTHORITY = ProviderConfig.AUTHORITY;
@@ -756,7 +756,10 @@ public class  LauncherProvider extends ContentProvider {
                 addCategoriesTable(db);
 
                 version = 18;
+            }
 
+            if (version < 21){
+                version = 21;
             }
 
             if (version != DATABASE_VERSION) {

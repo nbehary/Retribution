@@ -13,12 +13,12 @@ dependencies {
 }
 
 android {
-    compileSdkVersion "android-L"
-    buildToolsVersion "20.0.0"
+    compileSdkVersion 22
+    buildToolsVersion "22.0.1"
 
     defaultConfig {
         minSdkVersion 15
-        targetSdkVersion 'L'
+        targetSdkVersion 22
     }
 
     lintOptions {
@@ -76,7 +76,7 @@ android {
     buildTypes {
         release {
             signingConfig signingConfigs.release
-            runProguard false
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
 
@@ -88,8 +88,8 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:19.+'
-    compile "com.android.support:appcompat-v7:19.+"
+    compile 'com.android.support:support-v4:22.+'
+    compile "com.android.support:appcompat-v7:22.+"
     compile files('libs/protobuf.jar')
     compile fileTree(dir: 'libs', include: '*.jar')
 }

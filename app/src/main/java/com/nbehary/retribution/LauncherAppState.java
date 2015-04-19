@@ -244,6 +244,7 @@ public class LauncherAppState {
     }
 
     public void checkProVersion() {
+     /*
         PackageManager manager = sContext.getPackageManager();
         mProVersion = false;
         boolean isDebuggable =  ( 0 != ( sContext.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE ) );
@@ -268,7 +269,8 @@ public class LauncherAppState {
                 mProVersion = true;
             }
         }
-
+*/
+        mProVersion = true;
 
 
 

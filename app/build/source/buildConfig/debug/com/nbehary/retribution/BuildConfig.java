@@ -8,5 +8,6 @@ public final class BuildConfig {
   public static final String PACKAGE_NAME = "com.nbehary.retribution";
   public static final String BUILD_TYPE = "debug";
   public static final String FLAVOR = "";
-  public static final int VERSION_CODE = 2205;
+  public static final int VERSION_CODE = 2234;
+  public static final String VERSION_NAME = "";
 }
