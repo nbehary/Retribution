@@ -20,8 +20,8 @@
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.nbehary.retribution"
-    android:versionCode="2273"
-    android:versionName="1.4.1_Dev">
+    android:versionCode="2279"
+    android:versionName="1.4.1">
 
     <permission
         android:name="com.nbehary.retribution.permission.PRELOAD_WORKSPACE"
@@ -72,13 +72,14 @@
         android:icon="@drawable/ic_launcher"
         android:hardwareAccelerated="true"
         android:largeHeap="@bool/config_largeHeap"
-        android:supportsRtl="true">
+        android:supportsRtl="true"
+        android:theme="@style/Theme">
         <activity
             android:name="com.nbehary.retribution.Launcher"
             android:launchMode="singleTask"
             android:clearTaskOnLaunch="true"
             android:stateNotNeeded="true"
-            android:theme="@style/Theme"
+            android:theme="@style/Theme.Launcher"
             android:windowSoftInputMode="adjustPan"
             >
             <intent-filter>
@@ -135,22 +136,21 @@
             android:name="com.nbehary.retribution.FolderColorsActivity"
             android:exported="false"
             android:label="Folder Colors"
-            android:theme="@style/Theme.Transparent.Holo">
+            android:theme="@style/Theme.Transparent.Material">
         </activity>
 
         <activity
             android:name="com.nbehary.retribution.GridEditor"
             android:exported="false"
             android:label="Grid Editor"
-            android:windowSoftInputMode="stateHidden"
-            android:theme="@style/Theme.AppCompat">
+            android:theme="@style/Theme.GridEditor">
         </activity>
 
         <activity
             android:name="com.nbehary.retribution.AboutActivity"
             android:exported="false"
             android:label="About"
-            android:theme="@style/Theme">
+            android:theme="@style/Theme.Launcher">
 
         </activity>
 

@@ -1,7 +1,7 @@
 package com.nbehary.retribution;
 
 import android.app.Activity;
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.ActionBar;
@@ -13,7 +13,10 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,7 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class GridEditor extends ActionBarActivity
+public class GridEditor extends AppCompatActivity
         implements GridFragment.OnRowColDockChangedListener,
         GridFragment.OnLandscapeListener,
         GridIconFragment.OnCalculatedChangeListener,
@@ -59,8 +62,16 @@ public class GridEditor extends ActionBarActivity
         mContext = this;
         mChanging = "Desktop";
         landscapeChanged = false;
+        //Toolbar toolbar = (Toolbar) findViewById(R.id.grid_toolbar);
+        //setSupportActionBar(toolbar);
         mActionBar = getSupportActionBar();
-        mActionBar.setCustomView(R.layout.actionbar_set_grid);
+        mActionBar.setDisplayShowHomeEnabled(false);
+        mActionBar.setDisplayShowTitleEnabled(false);
+        LayoutInflater mInflater = LayoutInflater.from(this);
+        View mCustomView = mInflater.inflate(R.layout.actionbar_set_grid, null);
+        mActionBar.setCustomView(mCustomView);
+        mActionBar.setDisplayShowCustomEnabled(true);
+
         mActionBar.getCustomView().setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -86,6 +97,7 @@ public class GridEditor extends ActionBarActivity
                         finish();
                     }
                 });
+
         if (savedInstanceState == null) {
             if (findViewById(R.id.grid_editor) instanceof ViewPager) {
                 setupPager();
@@ -106,7 +118,7 @@ public class GridEditor extends ActionBarActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        
+
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.grid_editor, menu);
         return true;
@@ -122,6 +134,7 @@ public class GridEditor extends ActionBarActivity
             showHelp();
             return true;
         }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -152,11 +165,11 @@ public class GridEditor extends ActionBarActivity
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.add(R.id.grid_grid_frame, gridFragment,"grid_fragment")
                 .add(R.id.grid_icon_frame, iconFragment, "icon_fragment").commit();
-           // .add(R.id.grid_icon_frame, mIconFrag, "icon_fragment")
-           // .add(R.id.grid_icon_percent_frame,percentFragment,"percent_fragment").commit();
-      //  mIconPager = (ViewPager) findViewById(R.id.grid_icon_frame);
-     //   mIconPagerAdapter = new IconPagerAdapter(getSupportFragmentManager());
-     //   mIconPager.setAdapter(mIconPagerAdapter);
+        // .add(R.id.grid_icon_frame, mIconFrag, "icon_fragment")
+        // .add(R.id.grid_icon_percent_frame,percentFragment,"percent_fragment").commit();
+        //  mIconPager = (ViewPager) findViewById(R.id.grid_icon_frame);
+        //   mIconPagerAdapter = new IconPagerAdapter(getSupportFragmentManager());
+        //   mIconPager.setAdapter(mIconPagerAdapter);
     }
 
     private void setupPager() {
@@ -169,7 +182,7 @@ public class GridEditor extends ActionBarActivity
                     public void onPageSelected(int position) {
                         // When swiping between pages, select the
                         // corresponding tab.
-                        getActionBar().setSelectedNavigationItem(position);
+                        getSupportActionBar().setSelectedNavigationItem(position);
                     }
                 });
 

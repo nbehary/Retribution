@@ -25,14 +25,17 @@
         <!--<item name="android:windowTranslucentNavigation">true</item>-->
     </style>
 
-    <style name="WallpaperCropperActionBar" parent="android:style/Widget.Holo.ActionBar">
+    <style name="WallpaperCropperActionBar" parent="Widget.AppCompat.ActionBar">
         <item name="android:displayOptions">showCustom</item>
         <item name="android:background">#88000000</item>
     </style>
 
-    <style name="Theme" parent="@android:style/Theme.Holo.Wallpaper.NoTitleBar">
+    <style name="Theme" parent="Theme.AppCompat">
         <!--<item name="android:windowTranslucentStatus">true</item>-->
         <!--<item name="android:windowTranslucentNavigation">true</item>-->
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowShowWallpaper">true</item>
     </style>
 
     <style name="ClingButton">
@@ -164,18 +167,40 @@
 
 
     <style name="Theme.Transparent.Holo" parent="android:Theme.Holo">
-        <!--<item name="android:windowIsTranslucent">true</item>-->
-        <!--<item name="android:windowBackground">@android:color/transparent</item>-->
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
 
         <item name="android:actionBarStyle">@style/WallpaperCropperActionBar</item>
     </style>
 
+    <style name="Theme.Transparent.Material" parent="Theme.AppCompat">
+        <!--<item name="android:windowIsTranslucent">true</item>-->
+        <!--<item name="android:windowBackground">@android:color/transparent</item>-->
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowShowWallpaper">true</item>
+
+        <item name="android:actionBarStyle">@style/WallpaperCropperActionBar</item>
+    </style>
+
+    <style name="Theme.Launcher" parent="Theme.AppCompat.NoActionBar">
+
+        <!--<item name="android:windowIsTranslucent">true</item>-->
+        <!--<item name="android:windowBackground">@android:color/transparent</item>-->
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowShowWallpaper">true</item>
+
+
+    </style>
     <style name="Theme.GridEditor" parent="Theme.AppCompat">
         <!--<item name="android:windowIsTranslucent">true</item>-->
         <!--<item name="android:windowBackground">@android:color/transparent</item>-->
 
         <item name="android:actionBarStyle">@style/WallpaperCropperActionBar</item>
     </style>
+
+    <style name="Theme.AppCompat.GridEditor" parent="Theme.AppCompat.NoActionBar"/>
 
     <style name="Theme.Transparent" parent="android:Theme.Holo.Wallpaper.NoTitleBar">
         <!--<item name="android:windowIsTranslucent">true</item>-->
@@ -187,6 +212,7 @@
         <item name="android:background">#00000000</item>
         <item name="android:popupMenuStyle">@android:style/Widget.Holo.Light.PopupMenu</item>
     </style>
+
 
 
     <!-- Overridden in device overlays -->

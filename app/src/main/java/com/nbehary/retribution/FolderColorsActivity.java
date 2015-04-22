@@ -1,7 +1,8 @@
 package com.nbehary.retribution;
 
+import android.support.v7.app.ActionBar;
 import android.app.Activity;
-import android.app.ActionBar;
+
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
@@ -23,6 +24,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -50,7 +52,7 @@ import com.nbehary.retribution.preference.PreferencesProvider;
 
 
 
-public class FolderColorsActivity extends Activity {
+public class FolderColorsActivity extends AppCompatActivity {
 
     int mBgColor;
     int mIconColor;
@@ -90,8 +92,13 @@ public class FolderColorsActivity extends Activity {
         }
         setContentView(R.layout.activity_folder_colors);
 
-        final ActionBar actionBar = getActionBar();
-        actionBar.setCustomView(R.layout.actionbar_set_folder_colors);
+        final ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowHomeEnabled(false);
+        actionBar.setDisplayShowTitleEnabled(false);
+        LayoutInflater mInflater = LayoutInflater.from(this);
+        View mCustomView = mInflater.inflate(R.layout.actionbar_set_folder_colors, null);
+        actionBar.setCustomView(mCustomView);
+        actionBar.setDisplayShowCustomEnabled(true);
         actionBar.getCustomView().setOnClickListener(
                 new View.OnClickListener() {
                     @Override

@@ -32,7 +32,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityOptions;
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.app.Dialog;
 import android.app.SearchManager;
 import android.appwidget.AppWidgetHostView;
@@ -79,6 +79,7 @@ import android.os.SystemClock;
 import android.provider.Settings;
 import android.speech.RecognizerIntent;
 import android.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Selection;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -151,7 +152,7 @@ import java.net.URISyntaxException;
 /**
  * Default launcher application.
  */
-public class Launcher extends Activity
+public class Launcher extends AppCompatActivity
         implements View.OnClickListener, OnLongClickListener, LauncherModel.Callbacks,
                    View.OnTouchListener,GroupsDialogFragment.OnGroupsChangeListener,
                     FolderAddDialogFragment.OnFolderShortcutsAddedListener{
@@ -1467,7 +1468,7 @@ public class Launcher extends Activity
 
 
     }
-
+/* TODO:AppCompat
     @Override
     public Object onRetainNonConfigurationInstance() {
         // Flag the loader to stop early before switching
@@ -1477,7 +1478,7 @@ public class Launcher extends Activity
         }
         return Boolean.TRUE;
     }
-
+*/
     // We can't hide the IME if it was forced open.  So don't bother
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
@@ -1819,7 +1820,7 @@ public class Launcher extends Activity
      * Add an application shortcut to the workspace.
      *
      * @param data The intent describing the application.
-     * @param cellInfo The position on screen where to create the shortcut.
+
      */
     void completeAddApplication(Intent data, long container, long screenId, int cellX, int cellY) {
         final int[] cellXY = mTmpAddItemCellCoordinates;
@@ -1851,7 +1852,7 @@ public class Launcher extends Activity
      * Add a shortcut to the workspace.
      *
      * @param data The intent describing the shortcut.
-     * @param cellInfo The position on screen where to create the shortcut.
+
      */
     private void completeAddShortcut(Intent data, long container, long screenId, int cellX,
             int cellY) {
@@ -1936,7 +1937,7 @@ public class Launcher extends Activity
      * Add a widget to the workspace.
      *
      * @param appWidgetId The app widget id
-     * @param cellInfo The position on screen where to create the widget.
+.
      */
     private void completeAddAppWidget(final int appWidgetId, long container, long screenId,
             AppWidgetHostView hostView, AppWidgetProviderInfo appWidgetInfo) {
@@ -2508,7 +2509,7 @@ public class Launcher extends Activity
      * @param componentName The name of the component
      * @param screenId The ID of the screen where it should be added
      * @param cell The cell it should be added to, optional
-     * @param position The location on the screen where it was dropped, optional
+
      */
     void processShortcutFromDrop(ComponentName componentName, long container, long screenId,
             int[] cell, int[] loc) {
@@ -2533,7 +2534,7 @@ public class Launcher extends Activity
      * @param info The PendingAppWidgetInfo of the widget being added.
      * @param screenId The ID of the screen where it should be added
      * @param cell The cell it should be added to, optional
-     * @param position The location on the screen where it was dropped, optional
+
      */
     void addAppWidgetFromDrop(PendingAddWidgetInfo info, long container, long screenId,
             int[] cell, int[] span, int[] loc) {
@@ -3118,7 +3119,7 @@ public class Launcher extends Activity
      * is animated relative to the specified View. If the View is null, no animation
      * is played.
      *
-     * @param folderInfo The FolderInfo describing the folder to open.
+
      */
     public void openFolder(FolderIcon folderIcon) {
         Folder folder = folderIcon.getFolder();

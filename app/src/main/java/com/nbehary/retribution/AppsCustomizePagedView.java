@@ -19,23 +19,17 @@ package com.nbehary.retribution;
 import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.appwidget.AppWidgetHostView;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProviderInfo;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -53,15 +47,15 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
+;
 import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
+
 import android.widget.GridLayout;
 import android.widget.ImageView;
-import android.widget.TextView;
+
 import android.widget.Toast;
 
-import com.nbehary.retribution.R;
+
 import com.nbehary.retribution.DropTarget.DragObject;
 import com.nbehary.retribution.preference.PreferencesProvider;
 import com.nbehary.retribution.settings.SettingsProvider;
@@ -72,7 +66,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.xml.transform.sax.TemplatesHandler;
 
 /**
  * A simple callback interface which also provides the results of the task.
