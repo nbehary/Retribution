@@ -1,4 +1,3 @@
-package com.nbehary.retribution;
 
 /*
  * Copyright 2014 Google Inc. All rights reserved.
@@ -15,6 +14,8 @@ package com.nbehary.retribution;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package com.nbehary.retribution;
 
 
         import android.R;
@@ -167,5 +168,3 @@ class SlidingTabStrip extends LinearLayout {
         }
     }
 }
-
-

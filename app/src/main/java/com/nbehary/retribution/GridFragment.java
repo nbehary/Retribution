@@ -91,7 +91,7 @@ public class GridFragment extends Fragment {
         mChanging = "Desktop";
         landscapeChanged = false;
         mDisplayMetrics = getActivity().getResources().getDisplayMetrics();
-        mRootView = inflater.inflate(R.layout.fragment_grid_editor, container, false);
+        mRootView = getActivity().getLayoutInflater(). inflate(R.layout.fragment_grid_editor, container, false);
         LinearLayout ui = (LinearLayout) mRootView.findViewById(R.id.grid_editor_ui);
         //ui.setBackgroundColor(Color.argb(177, 0, 0, 0));
         mHotseatNotice = (TextView) mRootView.findViewById(R.id.grid_auto_hotseat_notice);

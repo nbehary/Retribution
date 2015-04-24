@@ -51,7 +51,9 @@ public class GridEditor extends AppCompatActivity
     private GridIconFragment mIconFrag;
     private String mChanging;
     private boolean landscapeChanged;
-
+    private Toolbar mToolbar;
+    SlidingTabLayout mTabs;
+    CharSequence Titles[]={"Desktop Grid","Icon Sizes"};
 
 
     @Override
@@ -62,16 +64,16 @@ public class GridEditor extends AppCompatActivity
         mContext = this;
         mChanging = "Desktop";
         landscapeChanged = false;
-        //Toolbar toolbar = (Toolbar) findViewById(R.id.grid_toolbar);
-        //setSupportActionBar(toolbar);
-        mActionBar = getSupportActionBar();
-        mActionBar.setDisplayShowHomeEnabled(false);
-        mActionBar.setDisplayShowTitleEnabled(false);
-        LayoutInflater mInflater = LayoutInflater.from(this);
-        View mCustomView = mInflater.inflate(R.layout.actionbar_set_grid, null);
-        mActionBar.setCustomView(mCustomView);
-        mActionBar.setDisplayShowCustomEnabled(true);
-
+        mToolbar = (Toolbar) findViewById(R.id.tool_bar);
+        setSupportActionBar(mToolbar);
+      //  mActionBar = getSupportActionBar();
+        //mActionBar.setDisplayShowHomeEnabled(false);
+        //mActionBar.setDisplayShowTitleEnabled(false);
+        //LayoutInflater mInflater = LayoutInflater.from(this);
+        //View mCustomView = mInflater.inflate(R.layout.actionbar_set_grid, null);
+        //mActionBar.setCustomView(mCustomView);
+        //mActionBar.setDisplayShowCustomEnabled(true);
+/*
         mActionBar.getCustomView().setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -97,7 +99,7 @@ public class GridEditor extends AppCompatActivity
                         finish();
                     }
                 });
-
+*/
         if (savedInstanceState == null) {
             if (findViewById(R.id.grid_editor) instanceof ViewPager) {
                 setupPager();
@@ -133,6 +135,26 @@ public class GridEditor extends AppCompatActivity
         if (id == R.id.action_help) {
             showHelp();
             return true;
+        }
+        if (id == R.id.action_done) {
+            LauncherAppState.getInstance().getDynamicGrid().setDeviceProfile(mProfile);
+            PreferencesProvider.Interface.General.setIconSize(mContext, mProfile.iconSize);
+            PreferencesProvider.Interface.General.setIconSizeCalc(mContext, mProfile.iconSizeCalc);
+            PreferencesProvider.Interface.General.setIconTextSize(mContext, mProfile.iconTextSize);
+            PreferencesProvider.Interface.General.setIconTextSizeCalc(mContext, mProfile.iconTextSizeCalc);
+            PreferencesProvider.Interface.General.setHotseatIcons(mContext, mProfile.numHotseatIcons);
+            PreferencesProvider.Interface.General.setWorkspaceColumns(mContext, (int) mProfile.numColumns);
+            PreferencesProvider.Interface.General.setWorkspaceRows(mContext, (int) mProfile.numRows);
+            PreferencesProvider.Interface.General.setHideHotSeat(mContext, mProfile.hideHotseat);
+            PreferencesProvider.Interface.General.setHideQSB(mContext, mProfile.hideQSB);
+            //PreferencesProvider.Interface.General.setHideLabels(mContext, mProfile.hideLabels);
+            if (landscapeChanged){
+                PreferencesProvider.Interface.General.setAllowLand(mContext, mProfile.allowLandscape);
+            }
+            LauncherAppState.getInstance().getDynamicGrid().setDeviceProfile(mProfile);
+            Intent resultIntent = new Intent();
+            setResult(Activity.RESULT_OK, resultIntent);
+            finish();
         }
 
         return super.onOptionsItemSelected(item);
@@ -174,7 +196,7 @@ public class GridEditor extends AppCompatActivity
 
     private void setupPager() {
         mViewPager = (ViewPager) findViewById(R.id.grid_editor);
-        mPagerAdapter = new GridPagerAdapter(getSupportFragmentManager());
+        mPagerAdapter = new GridPagerAdapter(getSupportFragmentManager(),Titles,2);
         mViewPager.setAdapter(mPagerAdapter);
         mViewPager.setOnPageChangeListener(
                 new ViewPager.SimpleOnPageChangeListener() {
@@ -185,9 +207,21 @@ public class GridEditor extends AppCompatActivity
                         getSupportActionBar().setSelectedNavigationItem(position);
                     }
                 });
+        mTabs = (SlidingTabLayout) findViewById(R.id.tabs);
+        mTabs.setDistributeEvenly(true); // To make the Tabs Fixed set this true, This makes the mTabs Space Evenly in Available width
 
-        mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-        ActionBar.TabListener tabListener = new ActionBar.TabListener() {
+        // Setting Custom Color for the Scroll bar indicator of the Tab View
+      /*  mTabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
+            @Override
+            public int getIndicatorColor(int position) {
+                return getResources().getColor(R.color.tabsScrollColor);
+            }
+        });
+*/
+        // Setting the ViewPager For the SlidingTabsLayout
+        mTabs.setViewPager(mViewPager);
+        //mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+      /*  mToolbar.TabListener tabListener = new ActionBar.TabListener() {
 
             public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
                 // show the given tab
@@ -202,6 +236,7 @@ public class GridEditor extends AppCompatActivity
                 // probably ignore this event
             }
         };
+
         mActionBar.addTab(mActionBar.newTab()
                 .setText("Grid")
                 .setTabListener(tabListener));
@@ -209,7 +244,7 @@ public class GridEditor extends AppCompatActivity
                 .setText("Icons Values")
                 .setTabListener(tabListener));
 
-
+*/
     }
 
     public void onLandscapeChanged() {
@@ -335,13 +370,67 @@ public class GridEditor extends AppCompatActivity
             }
         }
     }
+    public class GridPagerAdapterNo extends FragmentPagerAdapter {
+
+        CharSequence Titles[]; // This will Store the Titles of the Tabs which are Going to be passed when ViewPagerAdapter is created
+        int NumbOfTabs; // Store the number of tabs, this will also be passed when the ViewPagerAdapter is created
+
+
+        // Build a Constructor and assign the passed Values to appropriate values in the class
+        public GridPagerAdapterNo(FragmentManager fm,CharSequence mTitles[], int mNumbOfTabsumb) {
+            super(fm);
+
+            this.Titles = mTitles;
+            this.NumbOfTabs = mNumbOfTabsumb;
+
+        }
+
+        //This method return the fragment for the every position in the View Pager
+        @Override
+        public Fragment getItem(int position) {
+            Fragment fragment;
+
+            if(position == 0) // if the position is 0 we are returning the First tab
+            {
+                fragment = GridFragment.newInstance("grid_fragment");
+                return fragment;
+            }
+            else             // As we are having 2 tabs if the position is now 0 it must be 1 so we are returning second tab
+            {
+                fragment = GridFragment.newInstance("icon_fragment");
+                return fragment;
+            }
+
+
+        }
+
+        // This method return the titles for the Tabs in the Tab Strip
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return Titles[position];
+        }
+
+        // This method return the Number of tabs for the tabs Strip
+
+        @Override
+        public int getCount() {
+            return NumbOfTabs;
+        }
+    }
 
     private class GridPagerAdapter extends FragmentPagerAdapter {
+        CharSequence Titles[]; // This will Store the Titles of the Tabs which are Going to be passed when ViewPagerAdapter is created
+        int NumbOfTabs; // Store the number of tabs, this will also be passed when the ViewPagerAdapter is created
+
 
         private Map<String, WeakReference<Fragment>> mPageReferenceMap = new HashMap<String, WeakReference<Fragment>>();
 
-        public GridPagerAdapter(FragmentManager fm) {
+        public GridPagerAdapter(FragmentManager fm,CharSequence mTitles[], int mNumbOfTabs) {
             super(fm);
+
+            this.Titles = mTitles;
+            this.NumbOfTabs = mNumbOfTabs;
         }
 
 
@@ -384,6 +473,13 @@ public class GridEditor extends AppCompatActivity
                 return null;
             }
         }
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return Titles[position];
+        }
+
+        // This method return the Number of tabs for the tabs Strip
+
 
 
     }

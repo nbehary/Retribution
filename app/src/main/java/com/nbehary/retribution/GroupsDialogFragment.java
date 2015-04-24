@@ -129,7 +129,7 @@ public class GroupsDialogFragment extends DialogFragment {
             }
         });
 
-        builder.setPositiveButton(R.string.dialod_done, new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.dialog_done, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 boolean newCat = false;
                 String result = ((Launcher) getActivity()).getModel().getCategories().clearEmptyCategories();

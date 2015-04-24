@@ -119,7 +119,7 @@ public class GridIconFragment extends Fragment {
         mTempProfile = ((GridEditor) getActivity()).getmProfile();
         mDisplayMetrics = getActivity().getResources().getDisplayMetrics();
         // Inflate the layout for this fragment
-        mRootView = inflater.inflate(R.layout.fragment_grid_icon, container, false);
+        mRootView = getActivity().getLayoutInflater().inflate(R.layout.fragment_grid_icon, container, false);
         FragmentManager fm = getFragmentManager();
         if (fm.findFragmentById(R.id.icon_fragment_container) == null) {
             //GridIconPercentFragment percentFragment = (GridIconPercentFragment) fm.findFragmentById(R.id.icon_fragment_container);

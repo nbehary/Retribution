@@ -143,7 +143,7 @@
         <item name="android:paddingStart">20dp</item>
         <item name="android:paddingEnd">20dp</item>
         <item name="android:background">@drawable/tab_widget_indicator_selector</item>
-        <item name="android:textColor">?android:attr/textColorPrimary</item>
+
         <item name="android:textSize">12sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textAllCaps">true</item>
@@ -192,11 +192,14 @@
         <item name="android:windowShowWallpaper">true</item>
 
 
+
+
     </style>
-    <style name="Theme.GridEditor" parent="Theme.AppCompat">
+    <style name="Theme.GridEditor" parent="Theme.AppCompat.NoActionBar">
         <!--<item name="android:windowIsTranslucent">true</item>-->
         <!--<item name="android:windowBackground">@android:color/transparent</item>-->
 
+        <item name="toolbarStyle">@style/Widget.AppCompat.Toolbar</item>
         <item name="android:actionBarStyle">@style/WallpaperCropperActionBar</item>
     </style>
 
@@ -213,6 +216,22 @@
         <item name="android:popupMenuStyle">@android:style/Widget.Holo.Light.PopupMenu</item>
     </style>
 
+    <style name="ToolBarStyle" parent="ToolBarStyle.Base"/>
+
+    <style name="ToolBarStyle.Base" parent="">
+        <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
+        <item name="theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
+    </style>
+
+    <style name="ToolBarStyle.Event" parent="ToolBarStyle">
+        <item name="titleTextAppearance">@style/TextAppearance.Widget.Event.Toolbar.Title</item>
+    </style>
+
+    <style name="TextAppearance.Widget.Event.Toolbar.Title" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <!--Any text styling can be done here-->
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">14sp</item>
+    </style>
 
 
     <!-- Overridden in device overlays -->

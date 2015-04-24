@@ -1,5 +1,4 @@
 package com.nbehary.retribution;
-
 /*
  * Copyright 2014 Google Inc. All rights reserved.
  *
@@ -15,6 +14,7 @@ package com.nbehary.retribution;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 
 
         import android.content.Context;

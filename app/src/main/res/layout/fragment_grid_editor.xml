@@ -5,16 +5,8 @@
     android:orientation="vertical"
     android:id="@+id/grid_editor_ui"
     tools:context="com.nbehary.retribution.GridEditor$PlaceholderFragment"
-    android:weightSum="1">
-
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/grid_fragment_header"
-        android:id="@+id/textView4"
-        android:layout_weight="0.03" />
+    android:weightSum="1"
+   >
 
     <LinearLayout
         android:orientation="horizontal"

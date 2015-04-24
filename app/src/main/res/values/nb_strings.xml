@@ -106,7 +106,7 @@
     <string name="groups_select_all_label">Select All</string>
     <string name="groups_new_name_hint">New Group</string>
     <string name="groups_new_name_label">Category Name:</string>
-    <string name="dialod_done">Done</string>
+    <string name="dialog_done">Done</string>
 
     <string name="apps_customize_menu_effect_label">Scroll Effect</string>
     <string name="apps_customize_menu_sort_label">Sort</string>
@@ -123,4 +123,5 @@
 
     <string name="folder_add_shortcuts">Edit contents</string>
     <string name="folder_show_groups_label">Show:</string>
+    <string name="general_apply">Apply</string>
 </resources>

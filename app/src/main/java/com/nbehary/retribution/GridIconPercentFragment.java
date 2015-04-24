@@ -89,7 +89,7 @@ public class GridIconPercentFragment extends Fragment {
         if (mRootView !=null) {
             return mRootView;
         }
-        mRootView = (LinearLayout) inflater.inflate(R.layout.fragment_grid_icon_percent, container, false);
+        mRootView = (LinearLayout) getActivity().getLayoutInflater().inflate(R.layout.fragment_grid_icon_percent, container, false);
         mTempProfile = ((GridEditor) getActivity()).getmProfile();
 
         Drawable icon = getResources().getDrawable(R.drawable.ic_launcher);

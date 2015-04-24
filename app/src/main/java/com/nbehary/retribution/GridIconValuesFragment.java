@@ -109,7 +109,7 @@ public class GridIconValuesFragment extends Fragment {
         mTempProfile = ((GridEditor) getActivity()).getmProfile();
         mDisplayMetrics = getActivity().getResources().getDisplayMetrics();
         // Inflate the layout for this fragment
-        mRootView = (FrameLayout) inflater.inflate(R.layout.fragment_grid_icon_values, container, false);
+        mRootView = (FrameLayout) getActivity().getLayoutInflater().inflate(R.layout.fragment_grid_icon_values, container, false);
         //mPreviewImage = (ImageView) mRootView.findViewById(R.id.grid_icon_preview);
         //mPreviewImage.setImageBitmap(generateIconPreview(getResources(),mTempProfile.iconSize,mTempProfile,true));
         mPreviewImage = (TextView) mRootView.findViewById(R.id.grid_icon_preview);
