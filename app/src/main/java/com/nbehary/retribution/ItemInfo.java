@@ -118,7 +118,7 @@ class ItemInfo {
         LauncherModel.checkItemInfo(this);
     }
 
-    protected Intent getIntent() {
+    Intent getIntent() {
         throw new RuntimeException("Unexpected Intent");
     }
 

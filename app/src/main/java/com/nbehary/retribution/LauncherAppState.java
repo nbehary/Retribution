@@ -18,7 +18,6 @@ package com.nbehary.retribution;
 
 import android.app.SearchManager;
 import android.content.*;
-import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -27,9 +26,7 @@ import android.database.ContentObserver;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.provider.Settings;
 import android.util.Log;
-import android.view.Display;
 
 import java.lang.ref.WeakReference;
 
@@ -48,7 +45,7 @@ public class LauncherAppState {
     private IconPackPreviewLoader.CacheDb mIconPackPreviewCacheDb;
     private boolean mIsScreenLarge;
     private float mScreenDensity;
-    private int mLongPressTimeout = 300;
+    private final int mLongPressTimeout = 300;
 
     private static WeakReference<LauncherProvider> sLauncherProvider;
     private static Context sContext;
@@ -60,11 +57,11 @@ public class LauncherAppState {
     public String mVersionName;
     public int mVersionCode;
 
-    public String internalVersion = "1.3.1";
+    public final String internalVersion = "1.3.1";
 
     private boolean mProVersion;
 
-    IRemoteService mRemoteService;
+    private IRemoteService mRemoteService;
 
     public static LauncherAppState getInstance() {
         if (INSTANCE == null) {
@@ -307,7 +304,7 @@ public class LauncherAppState {
     }
 
     // Need a version that doesn't require an instance of LauncherAppState for the wallpaper picker
-    public static boolean isScreenLarge(Resources res) {
+    private static boolean isScreenLarge(Resources res) {
         return res.getBoolean(R.bool.is_large_tablet);
     }
 

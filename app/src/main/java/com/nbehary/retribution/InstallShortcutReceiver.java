@@ -41,17 +41,17 @@ public class InstallShortcutReceiver extends BroadcastReceiver {
     private static final String TAG = "InstallShortcutReceiver";
     private static final boolean DBG = false;
 
-    public static final String ACTION_INSTALL_SHORTCUT =
+    private static final String ACTION_INSTALL_SHORTCUT =
             "com.android.launcher.action.INSTALL_SHORTCUT";
 
-    public static final String DATA_INTENT_KEY = "intent.data";
-    public static final String LAUNCH_INTENT_KEY = "intent.launch";
-    public static final String NAME_KEY = "name";
-    public static final String ICON_KEY = "icon";
-    public static final String ICON_RESOURCE_NAME_KEY = "iconResource";
-    public static final String ICON_RESOURCE_PACKAGE_NAME_KEY = "iconResourcePackage";
+    private static final String DATA_INTENT_KEY = "intent.data";
+    private static final String LAUNCH_INTENT_KEY = "intent.launch";
+    private static final String NAME_KEY = "name";
+    private static final String ICON_KEY = "icon";
+    private static final String ICON_RESOURCE_NAME_KEY = "iconResource";
+    private static final String ICON_RESOURCE_PACKAGE_NAME_KEY = "iconResourcePackage";
     // The set of shortcuts that are pending install
-    public static final String APPS_PENDING_INSTALL = "apps_to_install";
+    private static final String APPS_PENDING_INSTALL = "apps_to_install";
 
     public static final int NEW_SHORTCUT_BOUNCE_DURATION = 450;
     public static final int NEW_SHORTCUT_STAGGER_DELAY = 85;
@@ -63,7 +63,7 @@ public class InstallShortcutReceiver extends BroadcastReceiver {
     public static final String SHORTCUT_MIMETYPE =
             "com.nbehary.retribution/shortcut";
 
-    private static Object sLock = new Object();
+    private static final Object sLock = new Object();
 
     private static void addToStringSet(SharedPreferences sharedPrefs,
             SharedPreferences.Editor editor, String key, String value) {
@@ -195,9 +195,9 @@ public class InstallShortcutReceiver extends BroadcastReceiver {
     private static boolean mUseInstallQueue = false;
 
     private static class PendingInstallShortcutInfo {
-        Intent data;
-        Intent launchIntent;
-        String name;
+        final Intent data;
+        final Intent launchIntent;
+        final String name;
         Bitmap icon;
         Intent.ShortcutIconResource iconResource;
 
@@ -260,7 +260,7 @@ public class InstallShortcutReceiver extends BroadcastReceiver {
         mUseInstallQueue = false;
         flushInstallQueue(context);
     }
-    static void flushInstallQueue(Context context) {
+    private static void flushInstallQueue(Context context) {
         String spKey = LauncherAppState.getSharedPreferencesKey();
         SharedPreferences sp = context.getSharedPreferences(spKey, Context.MODE_PRIVATE);
         ArrayList<PendingInstallShortcutInfo> installQueue = getAndClearInstallQueue(sp);

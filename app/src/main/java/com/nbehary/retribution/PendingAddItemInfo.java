@@ -19,10 +19,7 @@ package com.nbehary.retribution;
 import android.appwidget.AppWidgetHostView;
 import android.appwidget.AppWidgetProviderInfo;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
@@ -39,7 +36,7 @@ class PendingAddItemInfo extends ItemInfo {
 
 class PendingAddShortcutInfo extends PendingAddItemInfo {
 
-    ActivityInfo shortcutActivityInfo;
+    final ActivityInfo shortcutActivityInfo;
 
     public PendingAddShortcutInfo(ActivityInfo activityInfo) {
         shortcutActivityInfo = activityInfo;
@@ -52,7 +49,7 @@ class PendingAddShortcutInfo extends PendingAddItemInfo {
 }
 
 class PendingAddIconPackInfo extends PendingAddItemInfo {
-    ActivityInfo iconPackActivityInfo;
+    private final ActivityInfo iconPackActivityInfo;
 
     public PendingAddIconPackInfo(ActivityInfo activityInfo) {
         iconPackActivityInfo = activityInfo;
@@ -67,20 +64,20 @@ class PendingAddIconPackInfo extends PendingAddItemInfo {
 }
 
 class PendingAddWidgetInfo extends PendingAddItemInfo {
-    int minWidth;
-    int minHeight;
-    int minResizeWidth;
-    int minResizeHeight;
-    int previewImage;
-    int icon;
-    AppWidgetProviderInfo info;
+    final int minWidth;
+    final int minHeight;
+    final int minResizeWidth;
+    final int minResizeHeight;
+    final int previewImage;
+    final int icon;
+    final AppWidgetProviderInfo info;
     AppWidgetHostView boundWidget;
     Bundle bindOptions = null;
 
     // Any configuration data that we want to pass to a configuration activity when
     // starting up a widget
-    String mimeType;
-    Parcelable configurationData;
+    private String mimeType;
+    private Parcelable configurationData;
 
     public PendingAddWidgetInfo(AppWidgetProviderInfo i, String dataMimeType, Parcelable data) {
         itemType = LauncherSettings.Favorites.ITEM_TYPE_APPWIDGET;

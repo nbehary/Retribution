@@ -46,12 +46,12 @@ public class PagedViewIconPack extends LinearLayout {
     private static boolean sDeletePreviewsWhenDetachedFromWindow = true;
     private static boolean sRecyclePreviewsWhenDetachedFromWindow = true;
 
-    private String mDimensionsFormatString;
-    CheckForShortPress mPendingCheckForShortPress = null;
-    ShortPressListener mShortPressListener = null;
-    boolean mShortPressTriggered = false;
-    static PagedViewIconPack sShortpressTarget = null;
-    boolean mIsAppWidget;
+    private final String mDimensionsFormatString;
+    private CheckForShortPress mPendingCheckForShortPress = null;
+    private ShortPressListener mShortPressListener = null;
+    private boolean mShortPressTriggered = false;
+    private static PagedViewIconPack sShortpressTarget = null;
+    private boolean mIsAppWidget;
     private final Rect mOriginalImagePadding = new Rect();
     private Object mInfo;
     private WidgetPreviewLoader mWidgetPreviewLoader;

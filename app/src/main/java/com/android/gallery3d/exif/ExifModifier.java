@@ -18,7 +18,6 @@ package com.android.gallery3d.exif;
 
 import android.util.Log;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -27,8 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 class ExifModifier {
-    public static final String TAG = "ExifModifier";
-    public static final boolean DEBUG = false;
+    private static final String TAG = "ExifModifier";
+    private static final boolean DEBUG = false;
     private final ByteBuffer mByteBuffer;
     private final ExifData mTagToModified;
     private final List<TagOffset> mTagOffsets = new ArrayList<TagOffset>();
@@ -45,7 +44,7 @@ class ExifModifier {
         }
     }
 
-    protected ExifModifier(ByteBuffer byteBuffer, ExifInterface iRef) throws IOException,
+    ExifModifier(ByteBuffer byteBuffer, ExifInterface iRef) throws IOException,
             ExifInvalidFormatException {
         mByteBuffer = byteBuffer;
         mOffsetBase = byteBuffer.position();
@@ -63,11 +62,11 @@ class ExifModifier {
         }
     }
 
-    protected ByteOrder getByteOrder() {
+    private ByteOrder getByteOrder() {
         return mTagToModified.getByteOrder();
     }
 
-    protected boolean commit() throws IOException, ExifInvalidFormatException {
+    boolean commit() throws IOException, ExifInvalidFormatException {
         InputStream is = null;
         try {
             is = new ByteBufferInputStream(mByteBuffer);

@@ -43,15 +43,15 @@ import java.util.ArrayList;
 
 
 public class SavedWallpaperImages extends BaseAdapter implements ListAdapter {
-    private static String TAG = "Launcher3.SavedWallpaperImages";
-    private ImageDb mDb;
-    ArrayList<SavedWallpaperTile> mImages;
-    Context mContext;
-    LayoutInflater mLayoutInflater;
+    private static final String TAG = "Launcher3.SavedWallpaperImages";
+    private final ImageDb mDb;
+    private ArrayList<SavedWallpaperTile> mImages;
+    private final Context mContext;
+    private final LayoutInflater mLayoutInflater;
 
     public static class SavedWallpaperTile extends WallpaperPickerActivity.WallpaperTileInfo {
-        private int mDbId;
-        private Drawable mThumb;
+        private final int mDbId;
+        private final Drawable mThumb;
         public SavedWallpaperTile(int dbId, Drawable thumb) {
             mDbId = dbId;
             mThumb = thumb;
@@ -112,7 +112,7 @@ public class SavedWallpaperImages extends BaseAdapter implements ListAdapter {
 
             Bitmap thumb = BitmapFactory.decodeFile(file.getAbsolutePath());
             if (thumb != null) {
-                mImages.add(new SavedWallpaperTile(result.getInt(0), new BitmapDrawable(thumb)));
+                mImages.add(new SavedWallpaperTile(result.getInt(0), new BitmapDrawable(mContext.getResources(), thumb)));
             }
         }
         result.close();
@@ -139,7 +139,7 @@ public class SavedWallpaperImages extends BaseAdapter implements ListAdapter {
                 mLayoutInflater, position, convertView, parent, thumbDrawable);
     }
 
-    public String getImageFilename(int id) {
+    private String getImageFilename(int id) {
         Pair<String, String> filenames = getImageFilenames(id);
         if (filenames != null) {
             return filenames.second;
@@ -169,7 +169,7 @@ public class SavedWallpaperImages extends BaseAdapter implements ListAdapter {
         }
     }
 
-    public void deleteImage(int id) {
+    private void deleteImage(int id) {
         Pair<String, String> filenames = getImageFilenames(id);
         File imageFile = new File(mContext.getFilesDir(), filenames.first);
         imageFile.delete();
@@ -215,7 +215,7 @@ public class SavedWallpaperImages extends BaseAdapter implements ListAdapter {
         final static String COLUMN_IMAGE_THUMBNAIL_FILENAME = "image_thumbnail";
         final static String COLUMN_IMAGE_FILENAME = "image";
 
-        Context mContext;
+        final Context mContext;
 
         public ImageDb(Context context) {
             super(context, new File(context.getCacheDir(), DB_NAME).getPath(), null, DB_VERSION);

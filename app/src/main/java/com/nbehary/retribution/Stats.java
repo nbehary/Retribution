@@ -31,13 +31,13 @@ public class Stats {
 
     private static final boolean LOCAL_LAUNCH_LOG = true;
 
-    public static final String ACTION_LAUNCH = "com.nbehary.retribution.action.LAUNCH";
-    public static final String PERM_LAUNCH = "com.nbehary.retribution.permission.RECEIVE_LAUNCH_BROADCASTS";
-    public static final String EXTRA_INTENT = "intent";
-    public static final String EXTRA_CONTAINER = "container";
-    public static final String EXTRA_SCREEN = "screen";
-    public static final String EXTRA_CELLX = "cellX";
-    public static final String EXTRA_CELLY = "cellY";
+    private static final String ACTION_LAUNCH = "com.nbehary.retribution.action.LAUNCH";
+    private static final String PERM_LAUNCH = "com.nbehary.retribution.permission.RECEIVE_LAUNCH_BROADCASTS";
+    private static final String EXTRA_INTENT = "intent";
+    private static final String EXTRA_CONTAINER = "container";
+    private static final String EXTRA_SCREEN = "screen";
+    private static final String EXTRA_CELLX = "cellX";
+    private static final String EXTRA_CELLY = "cellY";
 
     private static final String LOG_FILE_NAME = "launches.log";
     private static final int LOG_VERSION = 1;
@@ -53,10 +53,10 @@ public class Stats {
 
     private final Launcher mLauncher;
 
-    DataOutputStream mLog;
+    private DataOutputStream mLog;
 
-    ArrayList<String> mIntents;
-    ArrayList<Integer> mHistogram;
+    private ArrayList<String> mIntents;
+    private ArrayList<Integer> mHistogram;
 
     public Stats(Launcher launcher) {
         mLauncher = launcher;
@@ -93,7 +93,7 @@ public class Stats {
         }
     }
 
-    public void incrementLaunch(String intentStr) {
+    private void incrementLaunch(String intentStr) {
         int pos = mIntents.indexOf(intentStr);
         if (pos < 0) {
             mIntents.add(intentStr);

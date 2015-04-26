@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -25,25 +24,20 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
-import android.content.res.Resources.NotFoundException;
 import android.content.res.XmlResourceParser;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.Toast;
 
 
 import com.nbehary.retribution .preference.PreferencesProvider;
-import com.nbehary.retribution.Launcher;
-import com.nbehary.retribution.IconPickerActivity;
-import com.nbehary.retribution.R;
 
-public class IconPackHelper {
+class IconPackHelper {
 
-    public final static String[] sSupportedActions = new String[] {
+    private final static String[] sSupportedActions = new String[] {
         "org.adw.launcher.THEMES", "com.gau.go.launcherex.theme"
     };
 
-    public static final String[] sSupportedCategories = new String[] {
+    private static final String[] sSupportedCategories = new String[] {
         "com.fede.launcher.THEME_ICONPACK", "com.anddoes.launcher.THEME",
         "com.teslacoilsw.launcher.THEME"
     };
@@ -81,7 +75,7 @@ public class IconPackHelper {
 
     public static ArrayList<Object> getSupportedPackagesArrayList(Context context) {
         Intent i = new Intent();
-        Set packages = new HashSet <Object>();
+        Set<Object> packages = new HashSet <Object>();
         PackageManager packageManager = context.getPackageManager();
 
         for (String action : sSupportedActions) {
@@ -100,8 +94,7 @@ public class IconPackHelper {
             i.removeCategory(category);
         }
         packages.add("Default");
-        ArrayList<Object> packs = new ArrayList<Object>(packages);
-        return packs;
+        return new ArrayList<Object>(packages);
     }
 
     private static void loadResourcesFromXmlParser(XmlPullParser parser,
@@ -386,8 +379,7 @@ public class IconPackHelper {
     }
 
     private int getResourceIdForDrawable(String resource) {
-        int resId = mLoadedIconPackResource.getIdentifier(resource, "drawable", mLoadedIconPackName);
-        return resId;
+        return mLoadedIconPackResource.getIdentifier(resource, "drawable", mLoadedIconPackName);
     }
 
     public Resources getIconPackResources() {

@@ -57,7 +57,7 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
     private boolean mInTransition;
     private boolean mTransitioningToWorkspace;
     private boolean mResetAfterTransition;
-    private Runnable mRelayoutAndMakeVisible;
+    private final Runnable mRelayoutAndMakeVisible;
     private final Rect mInsets = new Rect();
 
     public AppsCustomizeTabHost(Context context, AttributeSet attrs) {
@@ -170,11 +170,8 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
      public boolean onInterceptTouchEvent(MotionEvent ev) {
          // If we are mid transitioning to the workspace, then intercept touch events here so we
          // can ignore them, otherwise we just let all apps handle the touch events.
-         if (mInTransition && mTransitioningToWorkspace) {
-             return true;
-         }
-         return super.onInterceptTouchEvent(ev);
-     };
+         return mInTransition && mTransitioningToWorkspace || super.onInterceptTouchEvent(ev);
+     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -185,10 +182,7 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
 
         // Intercept all touch events up to the bottom of the AppsCustomizePane so they do not fall
         // through to the workspace and trigger showWorkspace()
-        if (event.getY() < mAppsCustomizePane.getBottom()) {
-            return true;
-        }
-        return super.onTouchEvent(event);
+        return event.getY() < mAppsCustomizePane.getBottom() || super.onTouchEvent(event);
     }
 
     private void onTabChangedStart() {
@@ -261,7 +255,7 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
                     mAnimationBuffer.setVisibility(View.VISIBLE);
                     LayoutParams p = new FrameLayout.LayoutParams(child.getMeasuredWidth(),
                             child.getMeasuredHeight());
-                    p.setMargins((int) child.getLeft(), (int) child.getTop(), 0, 0);
+                    p.setMargins(child.getLeft(), child.getTop(), 0, 0);
                     mAnimationBuffer.addView(child, p);
                 }
 

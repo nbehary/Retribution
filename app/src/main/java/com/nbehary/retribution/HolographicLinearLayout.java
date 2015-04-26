@@ -32,7 +32,7 @@ import android.widget.LinearLayout;
 public class HolographicLinearLayout extends LinearLayout {
     private final HolographicViewHelper mHolographicHelper;
     private ImageView mImageView;
-    private int mImageViewId;
+    private final int mImageViewId;
 
     private boolean mHotwordOn;
     private boolean mIsPressed;

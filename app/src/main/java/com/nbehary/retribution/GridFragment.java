@@ -1,30 +1,17 @@
 package com.nbehary.retribution;
 
 import android.app.Activity;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Rect;
-import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.DisplayMetrics;
-import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import java.text.DecimalFormat;
@@ -34,26 +21,32 @@ import java.text.DecimalFormat;
  */
 public class GridFragment extends Fragment {
 
-    DeviceProfile mProfile,mTempProfile;
-    DisplayMetrics mDisplayMetrics;
-    String mChanging;
-    NumberPicker mColsPicker, mRowsPicker, mDockPicker;
-    DecimalFormat df;
-    OnRowColDockChangedListener mCallback;
-    OnLandscapeListener mLandCallback;
-    boolean landscapeChanged;
-    CheckBox mHideHotseat, mHideQSB;
-    TextView mHotseatNotice,mLandscapeNotice,mSearchNotice;
-    View mRootView;
+    private final DeviceProfile mProfile;
+    private DeviceProfile mTempProfile;
+    private DisplayMetrics mDisplayMetrics;
+    private String mChanging;
+    private NumberPicker mColsPicker;
+    private NumberPicker mRowsPicker;
+    NumberPicker mDockPicker;
+    private DecimalFormat df;
+    private OnRowColDockChangedListener mCallback;
+    private OnLandscapeListener mLandCallback;
+    private boolean landscapeChanged;
+    private CheckBox mHideHotseat;
+    private CheckBox mHideQSB;
+    private TextView mHotseatNotice;
+    private TextView mLandscapeNotice;
+    private TextView mSearchNotice;
+    private View mRootView;
 
     private static GridFragment instance;
 
     public interface OnRowColDockChangedListener {
-        public void onRowColDockChanged(DeviceProfile profile);
+        void onRowColDockChanged(DeviceProfile profile);
     }
 
     public interface OnLandscapeListener {
-        public void onLandscapeChanged();
+        void onLandscapeChanged();
     }
 
     public GridFragment() {
@@ -91,7 +84,7 @@ public class GridFragment extends Fragment {
         mChanging = "Desktop";
         landscapeChanged = false;
         mDisplayMetrics = getActivity().getResources().getDisplayMetrics();
-        mRootView = getActivity().getLayoutInflater(). inflate(R.layout.fragment_grid_editor, container, false);
+        mRootView = inflater. inflate(R.layout.fragment_grid_editor, container, false);
         LinearLayout ui = (LinearLayout) mRootView.findViewById(R.id.grid_editor_ui);
         //ui.setBackgroundColor(Color.argb(177, 0, 0, 0));
         mHotseatNotice = (TextView) mRootView.findViewById(R.id.grid_auto_hotseat_notice);
@@ -208,12 +201,7 @@ public class GridFragment extends Fragment {
         mHideHotseat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    mTempProfile.hideHotseat = true;
-
-                } else {
-                    mTempProfile.hideHotseat = false;
-                }
+                mTempProfile.hideHotseat = isChecked;
                 mTempProfile.adjustSizesAuto(getResources());
             }
         });
@@ -228,12 +216,7 @@ public class GridFragment extends Fragment {
         mHideQSB.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    mTempProfile.hideQSB = true;
-
-                } else {
-                    mTempProfile.hideQSB = false;
-                }
+                mTempProfile.hideQSB = isChecked;
                 mTempProfile.adjustSizesAuto(getResources());
             }
         });

@@ -20,7 +20,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Region;
-import android.graphics.Region.Op;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.widget.TextView;
@@ -31,7 +30,7 @@ import android.widget.TextView;
  */
 public class PagedViewIcon extends TextView {
     /** A simple callback interface to allow a PagedViewIcon to notify when it has been pressed */
-    public static interface PressedCallback {
+    public interface PressedCallback {
         void iconPressed(PagedViewIcon icon);
     }
 

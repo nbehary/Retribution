@@ -905,7 +905,7 @@ public final class BackupProtos {
       if (!this.label.equals("")) {
         output.writeString(2, this.label);
       }
-      if (this.configure != false) {
+      if (this.configure) {
         output.writeBool(3, this.configure);
       }
       if (this.icon != null) {
@@ -935,7 +935,7 @@ public final class BackupProtos {
         size += com.google.protobuf.nano.CodedOutputByteBufferNano
             .computeStringSize(2, this.label);
       }
-      if (this.configure != false) {
+      if (this.configure) {
         size += com.google.protobuf.nano.CodedOutputByteBufferNano
             .computeBoolSize(3, this.configure);
       }

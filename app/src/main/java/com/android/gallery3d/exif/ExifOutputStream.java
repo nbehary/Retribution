@@ -78,11 +78,11 @@ class ExifOutputStream extends FilterOutputStream {
     private int mState = STATE_SOI;
     private int mByteToSkip;
     private int mByteToCopy;
-    private byte[] mSingleByteArray = new byte[1];
-    private ByteBuffer mBuffer = ByteBuffer.allocate(4);
+    private final byte[] mSingleByteArray = new byte[1];
+    private final ByteBuffer mBuffer = ByteBuffer.allocate(4);
     private final ExifInterface mInterface;
 
-    protected ExifOutputStream(OutputStream ou, ExifInterface iRef) {
+    ExifOutputStream(OutputStream ou, ExifInterface iRef) {
         super(new BufferedOutputStream(ou, STREAMBUFFER_SIZE));
         mInterface = iRef;
     }
@@ -91,7 +91,7 @@ class ExifOutputStream extends FilterOutputStream {
      * Sets the ExifData to be written into the JPEG file. Should be called
      * before writing image data.
      */
-    protected void setExifData(ExifData exifData) {
+    void setExifData(ExifData exifData) {
         mExifData = exifData;
     }
 
@@ -477,7 +477,7 @@ class ExifOutputStream extends FilterOutputStream {
         return offset;
     }
 
-    static void writeTagValue(ExifTag tag, OrderedDataOutputStream dataOutputStream)
+    private static void writeTagValue(ExifTag tag, OrderedDataOutputStream dataOutputStream)
             throws IOException {
         switch (tag.getDataType()) {
             case ExifTag.TYPE_ASCII:

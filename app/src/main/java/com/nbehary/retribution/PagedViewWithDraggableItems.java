@@ -37,7 +37,7 @@ public abstract class PagedViewWithDraggableItems extends PagedView
     private boolean mIsDragging;
     private boolean mIsDragEnabled;
     private float mDragSlopeThreshold;
-    private Launcher mLauncher;
+    private final Launcher mLauncher;
 
     public PagedViewWithDraggableItems(Context context) {
         this(context, null);
@@ -52,13 +52,13 @@ public abstract class PagedViewWithDraggableItems extends PagedView
         mLauncher = (Launcher) context;
     }
 
-    protected boolean beginDragging(View v) {
+    boolean beginDragging(View v) {
         boolean wasDragging = mIsDragging;
         mIsDragging = true;
         return !wasDragging;
     }
 
-    protected void cancelDragging() {
+    private void cancelDragging() {
         mIsDragging = false;
         mLastTouchedItem = null;
         mIsDragEnabled = false;
@@ -108,9 +108,8 @@ public abstract class PagedViewWithDraggableItems extends PagedView
         if (!mLauncher.isAllAppsVisible() ||
                 mLauncher.getWorkspace().isSwitchingState()) return false;
         // Return if global dragging is not enabled
-        if (!mLauncher.isDraggingEnabled()) return false;
+        return mLauncher.isDraggingEnabled() && beginDragging(v);
 
-        return beginDragging(v);
     }
 
     /*
@@ -125,7 +124,7 @@ public abstract class PagedViewWithDraggableItems extends PagedView
      * Determines if we should change the touch state to start dragging after the
      * user moves their touch point far enough.
      */
-    protected void determineDraggingStart(MotionEvent ev) {
+    void determineDraggingStart(MotionEvent ev) {
         /*
          * Locally do absolute value. mLastMotionX is set to the y value
          * of the down event.
@@ -158,7 +157,7 @@ public abstract class PagedViewWithDraggableItems extends PagedView
         }
     }
 
-    public void setDragSlopeThreshold(float dragSlopeThreshold) {
+    void setDragSlopeThreshold(float dragSlopeThreshold) {
         mDragSlopeThreshold = dragSlopeThreshold;
     }
 

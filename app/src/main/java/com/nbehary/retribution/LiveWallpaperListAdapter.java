@@ -53,7 +53,7 @@ public class LiveWallpaperListAdapter extends BaseAdapter implements ListAdapter
     private final LayoutInflater mInflater;
     private final PackageManager mPackageManager;
 
-    private List<LiveWallpaperTile> mWallpapers;
+    private final List<LiveWallpaperTile> mWallpapers;
 
     @SuppressWarnings("unchecked")
     public LiveWallpaperListAdapter(Context context) {
@@ -114,8 +114,8 @@ public class LiveWallpaperListAdapter extends BaseAdapter implements ListAdapter
     }
 
     public static class LiveWallpaperTile extends WallpaperPickerActivity.WallpaperTileInfo {
-        private Drawable mThumbnail;
-        private WallpaperInfo mInfo;
+        private final Drawable mThumbnail;
+        private final WallpaperInfo mInfo;
         public LiveWallpaperTile(Drawable thumbnail, WallpaperInfo info, Intent intent) {
             mThumbnail = thumbnail;
             mInfo = info;
@@ -138,7 +138,7 @@ public class LiveWallpaperListAdapter extends BaseAdapter implements ListAdapter
 
     private class LiveWallpaperEnumerator extends
             AsyncTask<List<ResolveInfo>, LiveWallpaperTile, Void> {
-        private Context mContext;
+        private final Context mContext;
         private int mWallpaperPosition;
 
         public LiveWallpaperEnumerator(Context context) {

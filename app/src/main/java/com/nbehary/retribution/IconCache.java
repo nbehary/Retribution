@@ -27,8 +27,8 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.support.v4.content.res.ResourcesCompat;
 import android.text.TextUtils;
-import android.util.Log;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -39,7 +39,7 @@ import com.nbehary.retribution.preference.PreferencesProvider;
 /**
  * Cache of application icons.  Icons can be made from any thread.
  */
-public class IconCache {
+class IconCache {
     @SuppressWarnings("unused")
     private static final String TAG = "Launcher.IconCache";
 
@@ -56,7 +56,7 @@ public class IconCache {
     private final PackageManager mPackageManager;
     private final HashMap<ComponentName, CacheEntry> mCache =
             new HashMap<ComponentName, CacheEntry>(INITIAL_ICON_CACHE_CAPACITY);
-    private int mIconDpi;
+    private final int mIconDpi;
 
     public IconCache(Context context) {
         ActivityManager activityManager =
@@ -92,7 +92,7 @@ public class IconCache {
     public Drawable getFullResIcon(Resources resources, int iconId) {
         Drawable d;
         try {
-            d = resources.getDrawableForDensity(iconId, mIconDpi);
+            d = ResourcesCompat.getDrawableForDensity(resources,iconId, mIconDpi,null);
         } catch (Resources.NotFoundException e) {
             d = null;
         }

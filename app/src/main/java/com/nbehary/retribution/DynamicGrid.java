@@ -17,52 +17,33 @@
 
 package com.nbehary.retribution;
 
-import android.appwidget.AppWidgetHostView;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.graphics.Paint;
-import android.graphics.Paint.FontMetrics;
-import android.graphics.PointF;
-import android.graphics.Rect;
 import android.util.DisplayMetrics;
-import android.util.LayoutDirection;
-import android.util.Log;
 import android.util.TypedValue;
-import android.view.Gravity;
-import android.view.View;
-import android.view.ViewGroup.LayoutParams;
-import android.widget.FrameLayout;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-
-import com.nbehary.retribution.R;
-import com.nbehary.retribution.backup.BackupProtos;
-import com.nbehary.retribution.preference.PreferencesProvider;
 
 
-public class DynamicGrid {
+class DynamicGrid {
     @SuppressWarnings("unused")
     private static final String TAG = "DynamicGrid";
 
     private DeviceProfile mProfile;
-    private DeviceProfile mCalculatedProfile;
-    private float mMinWidth;
-    private float mMinHeight;
+    private final DeviceProfile mCalculatedProfile;
+    private final float mMinWidth;
+    private final float mMinHeight;
 
     public static float dpiFromPx(int size, DisplayMetrics metrics){
         float densityRatio = (float) metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT;
         return (size / densityRatio);
     }
     public static int pxFromDp(float size, DisplayMetrics metrics) {
-        return (int) Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+        return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                 size, metrics));
     }
     public static int pxFromSp(float size, DisplayMetrics metrics) {
-        return (int) Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,
+        return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,
                 size, metrics));
     }
 

@@ -45,7 +45,7 @@ public class RawTexture extends BasicTexture {
         mIsFlipped = isFlipped;
     }
 
-    protected void prepare(GLCanvas canvas) {
+    void prepare(GLCanvas canvas) {
         GLId glId = canvas.getGLId();
         mId = glId.generateTexture();
         canvas.initializeTextureSize(this, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE);

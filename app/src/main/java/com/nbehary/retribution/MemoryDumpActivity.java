@@ -40,7 +40,7 @@ public class MemoryDumpActivity extends Activity {
         super.onCreate(savedInstanceState);
     }
 
-    public static String zipUp(ArrayList<String> paths) {
+    private static String zipUp(ArrayList<String> paths) {
         final int BUFSIZ = 256 * 1024; // 256K
         final byte[] buf = new byte[BUFSIZ];
         final String zipfilePath = String.format("%s/hprof-%d.zip",
@@ -80,7 +80,7 @@ public class MemoryDumpActivity extends Activity {
         return zipfilePath;
     }
 
-    public static void dumpHprofAndShare(final Context context, MemoryTracker tracker) {
+    private static void dumpHprofAndShare(final Context context, MemoryTracker tracker) {
         final StringBuilder body = new StringBuilder();
 
         final ArrayList<String> paths = new ArrayList<String>();
@@ -153,7 +153,7 @@ public class MemoryDumpActivity extends Activity {
         startDump(context, null);
     }
 
-    public static void startDump(final Context context, final Runnable andThen) {
+    private static void startDump(final Context context, final Runnable andThen) {
         final ServiceConnection connection = new ServiceConnection() {
             public void onServiceConnected(ComponentName className, IBinder service) {
                 Log.v(TAG, "service connected, dumping...");

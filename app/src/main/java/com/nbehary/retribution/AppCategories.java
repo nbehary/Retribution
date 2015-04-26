@@ -1,27 +1,18 @@
 package com.nbehary.retribution;
 
-import android.os.Bundle;
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.util.Log;
-
-import com.nbehary.retribution.preference.PreferencesProvider;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 /**
  * Created by nate on 2/11/14.
  */
 public class AppCategories  {
 
-    private ArrayList<CategoryEntry> mList2;
+    private final ArrayList<CategoryEntry> mList2;
 
-    private IconCache mIconCache;
+    private final IconCache mIconCache;
 
-    private AppFilter mAppFilter;
+    private final AppFilter mAppFilter;
 
     private class CategoryEntry {
         private AppInfo info;

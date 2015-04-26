@@ -22,8 +22,6 @@ import android.graphics.Point;
 import android.graphics.RectF;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.util.FloatMath;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.ScaleGestureDetector.OnScaleGestureListener;
@@ -36,22 +34,22 @@ import com.android.photos.views.TiledImageView;
 
 public class CropView extends TiledImageView implements OnScaleGestureListener {
 
-    private ScaleGestureDetector mScaleGestureDetector;
+    private final ScaleGestureDetector mScaleGestureDetector;
     private long mTouchDownTime;
     private float mFirstX, mFirstY;
     private float mLastX, mLastY;
     private float mCenterX, mCenterY;
     private float mMinScale;
     private boolean mTouchEnabled = true;
-    private RectF mTempEdges = new RectF();
-    private float[] mTempPoint = new float[] { 0, 0 };
-    private float[] mTempCoef = new float[] { 0, 0 };
-    private float[] mTempAdjustment = new float[] { 0, 0 };
-    private float[] mTempImageDims = new float[] { 0, 0 };
-    private float[] mTempRendererCenter = new float[] { 0, 0 };
-    TouchCallback mTouchCallback;
-    Matrix mRotateMatrix;
-    Matrix mInverseRotateMatrix;
+    private final RectF mTempEdges = new RectF();
+    private final float[] mTempPoint = new float[] { 0, 0 };
+    private final float[] mTempCoef = new float[] { 0, 0 };
+    private final float[] mTempAdjustment = new float[] { 0, 0 };
+    private final float[] mTempImageDims = new float[] { 0, 0 };
+    private final float[] mTempRendererCenter = new float[] { 0, 0 };
+    private TouchCallback mTouchCallback;
+    private final Matrix mRotateMatrix;
+    private final Matrix mInverseRotateMatrix;
 
     public interface TouchCallback {
         void onTouchDown();
@@ -306,12 +304,12 @@ public class CropView extends TiledImageView implements OnScaleGestureListener {
                     adjustment[0] = (edges.right - getWidth()) / scale;
                 }
                 if (edges.top > 0) {
-                    adjustment[1] = FloatMath.ceil(edges.top / scale);
+                    adjustment[1] = (float) Math.ceil(edges.top / scale);
                 } else if (edges.bottom < getHeight()) {
                     adjustment[1] = (edges.bottom - getHeight()) / scale;
                 }
                 for (int dim = 0; dim <= 1; dim++) {
-                    if (coef[dim] > 0) adjustment[dim] = FloatMath.ceil(adjustment[dim]);
+                    if (coef[dim] > 0) adjustment[dim] = (float) Math.ceil(adjustment[dim]);
                 }
 
                 mInverseRotateMatrix.mapPoints(adjustment);

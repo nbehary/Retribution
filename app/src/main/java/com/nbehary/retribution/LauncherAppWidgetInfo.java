@@ -28,7 +28,7 @@ class LauncherAppWidgetInfo extends ItemInfo {
     /**
      * Indicates that the widget hasn't been instantiated yet.
      */
-    static final int NO_ID = -1;
+    private static final int NO_ID = -1;
 
     /**
      * Identifier for this widget when talking with
@@ -36,11 +36,11 @@ class LauncherAppWidgetInfo extends ItemInfo {
      */
     int appWidgetId = NO_ID;
 
-    ComponentName providerName;
+    final ComponentName providerName;
 
     // TODO: Are these necessary here?
-    int minWidth = -1;
-    int minHeight = -1;
+    final int minWidth = -1;
+    final int minHeight = -1;
 
     private boolean mHasNotifiedInitialWidgetSizeChanged;
 

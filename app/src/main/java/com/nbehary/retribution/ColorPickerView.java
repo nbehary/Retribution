@@ -135,7 +135,7 @@ public class ColorPickerView extends View {
 	private Point	mStartTouchPoint = null;
 
 	public interface OnColorChangedListener {
-		public void onColorChanged(int color);
+		void onColorChanged(int color);
 	}
 
 	public ColorPickerView(Context context){
@@ -849,7 +849,7 @@ public class ColorPickerView extends View {
 	 * @param callback If you want to get a callback to
 	 * your OnColorChangedListener.
 	 */
-	public void setColor(int color, boolean callback) {
+	private void setColor(int color, boolean callback) {
 
 		int alpha = Color.alpha(color);
 
@@ -899,7 +899,7 @@ public class ColorPickerView extends View {
 			mValShader = null;
 			mSatShader = null;
 			mHueShader = null;
-			mAlphaShader = null;;
+			mAlphaShader = null;
 
 			requestLayout();
 		}
@@ -937,7 +937,7 @@ public class ColorPickerView extends View {
 	 * alpha slider. Set to null to disable text.
 	 * @param text Text that should be shown.
 	 */
-	public void setAlphaSliderText(String text){
+	private void setAlphaSliderText(String text){
 		mAlphaSliderText = text;
 		invalidate();
 	}

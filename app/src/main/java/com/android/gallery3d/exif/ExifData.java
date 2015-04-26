@@ -22,6 +22,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -45,7 +46,7 @@ class ExifData {
 
     private final IfdData[] mIfdDatas = new IfdData[IfdId.TYPE_IFD_COUNT];
     private byte[] mThumbnail;
-    private ArrayList<byte[]> mStripBytes = new ArrayList<byte[]>();
+    private final ArrayList<byte[]> mStripBytes = new ArrayList<byte[]>();
     private final ByteOrder mByteOrder;
 
     ExifData(ByteOrder order) {
@@ -58,28 +59,28 @@ class ExifData {
      *
      * @see #hasCompressedThumbnail()
      */
-    protected byte[] getCompressedThumbnail() {
+    byte[] getCompressedThumbnail() {
         return mThumbnail;
     }
 
     /**
      * Sets the compressed thumbnail.
      */
-    protected void setCompressedThumbnail(byte[] thumbnail) {
+    void setCompressedThumbnail(byte[] thumbnail) {
         mThumbnail = thumbnail;
     }
 
     /**
      * Returns true it this header contains a compressed thumbnail.
      */
-    protected boolean hasCompressedThumbnail() {
+    boolean hasCompressedThumbnail() {
         return mThumbnail != null;
     }
 
     /**
      * Adds an uncompressed strip.
      */
-    protected void setStripBytes(int index, byte[] strip) {
+    void setStripBytes(int index, byte[] strip) {
         if (index < mStripBytes.size()) {
             mStripBytes.set(index, strip);
         } else {
@@ -93,7 +94,7 @@ class ExifData {
     /**
      * Gets the strip count.
      */
-    protected int getStripCount() {
+    int getStripCount() {
         return mStripBytes.size();
     }
 
@@ -102,21 +103,21 @@ class ExifData {
      *
      * @exceptions #IndexOutOfBoundException
      */
-    protected byte[] getStrip(int index) {
+    byte[] getStrip(int index) {
         return mStripBytes.get(index);
     }
 
     /**
      * Returns true if this header contains uncompressed strip.
      */
-    protected boolean hasUncompressedStrip() {
+    boolean hasUncompressedStrip() {
         return mStripBytes.size() != 0;
     }
 
     /**
      * Gets the byte order.
      */
-    protected ByteOrder getByteOrder() {
+    ByteOrder getByteOrder() {
         return mByteOrder;
     }
 
@@ -124,7 +125,7 @@ class ExifData {
      * Returns the {@link IfdData} object corresponding to a given IFD if it
      * exists or null.
      */
-    protected IfdData getIfdData(int ifdId) {
+    IfdData getIfdData(int ifdId) {
         if (ExifTag.isValidIfd(ifdId)) {
             return mIfdDatas[ifdId];
         }
@@ -135,7 +136,7 @@ class ExifData {
      * Adds IFD data. If IFD data of the same type already exists, it will be
      * replaced by the new data.
      */
-    protected void addIfdData(IfdData data) {
+    void addIfdData(IfdData data) {
         mIfdDatas[data.getId()] = data;
     }
 
@@ -143,7 +144,7 @@ class ExifData {
      * Returns the {@link IfdData} object corresponding to a given IFD or
      * generates one if none exist.
      */
-    protected IfdData getOrCreateIfdData(int ifdId) {
+    private IfdData getOrCreateIfdData(int ifdId) {
         IfdData ifdData = mIfdDatas[ifdId];
         if (ifdData == null) {
             ifdData = new IfdData(ifdId);
@@ -156,7 +157,7 @@ class ExifData {
      * Returns the tag with a given TID in the given IFD if the tag exists.
      * Otherwise returns null.
      */
-    protected ExifTag getTag(short tag, int ifd) {
+    ExifTag getTag(short tag, int ifd) {
         IfdData ifdData = mIfdDatas[ifd];
         return (ifdData == null) ? null : ifdData.getTag(tag);
     }
@@ -165,7 +166,7 @@ class ExifData {
      * Adds the given ExifTag to its default IFD and returns an existing ExifTag
      * with the same TID or null if none exist.
      */
-    protected ExifTag addTag(ExifTag tag) {
+    ExifTag addTag(ExifTag tag) {
         if (tag != null) {
             int ifd = tag.getIfd();
             return addTag(tag, ifd);
@@ -177,7 +178,7 @@ class ExifData {
      * Adds the given ExifTag to the given IFD and returns an existing ExifTag
      * with the same TID or null if none exist.
      */
-    protected ExifTag addTag(ExifTag tag, int ifdId) {
+    private ExifTag addTag(ExifTag tag, int ifdId) {
         if (tag != null && ExifTag.isValidIfd(ifdId)) {
             IfdData ifdData = getOrCreateIfdData(ifdId);
             return ifdData.setTag(tag);
@@ -185,7 +186,7 @@ class ExifData {
         return null;
     }
 
-    protected void clearThumbnailAndStrips() {
+    void clearThumbnailAndStrips() {
         mThumbnail = null;
         mStripBytes.clear();
     }
@@ -201,7 +202,7 @@ class ExifData {
     /**
      * Removes the tag with a given TID and IFD.
      */
-    protected void removeTag(short tagId, int ifdId) {
+    void removeTag(short tagId, int ifdId) {
         IfdData ifdData = mIfdDatas[ifdId];
         if (ifdData == null) {
             return;
@@ -213,7 +214,7 @@ class ExifData {
      * Decodes the user comment tag into string as specified in the EXIF
      * standard. Returns null if decoding failed.
      */
-    protected String getUserComment() {
+    String getUserComment() {
         IfdData ifdData = mIfdDatas[IfdId.TYPE_IFD_0];
         if (ifdData == null) {
             return null;
@@ -252,15 +253,13 @@ class ExifData {
      * Returns a list of all {@link ExifTag}s in the ExifData or null if there
      * are none.
      */
-    protected List<ExifTag> getAllTags() {
+    List<ExifTag> getAllTags() {
         ArrayList<ExifTag> ret = new ArrayList<ExifTag>();
         for (IfdData d : mIfdDatas) {
             if (d != null) {
                 ExifTag[] tags = d.getAllTags();
                 if (tags != null) {
-                    for (ExifTag t : tags) {
-                        ret.add(t);
-                    }
+                    Collections.addAll(ret, tags);
                 }
             }
         }
@@ -274,7 +273,7 @@ class ExifData {
      * Returns a list of all {@link ExifTag}s in a given IFD or null if there
      * are none.
      */
-    protected List<ExifTag> getAllTagsForIfd(int ifd) {
+    List<ExifTag> getAllTagsForIfd(int ifd) {
         IfdData d = mIfdDatas[ifd];
         if (d == null) {
             return null;
@@ -284,9 +283,7 @@ class ExifData {
             return null;
         }
         ArrayList<ExifTag> ret = new ArrayList<ExifTag>(tags.length);
-        for (ExifTag t : tags) {
-            ret.add(t);
-        }
+        Collections.addAll(ret, tags);
         if (ret.size() == 0) {
             return null;
         }
@@ -297,7 +294,7 @@ class ExifData {
      * Returns a list of all {@link ExifTag}s with a given TID or null if there
      * are none.
      */
-    protected List<ExifTag> getAllTagsForTagId(short tag) {
+    List<ExifTag> getAllTagsForTagId(short tag) {
         ArrayList<ExifTag> ret = new ArrayList<ExifTag>();
         for (IfdData d : mIfdDatas) {
             if (d != null) {

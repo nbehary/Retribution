@@ -20,7 +20,6 @@ import com.nbehary.retribution.R;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -28,6 +27,7 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.*;
 import android.graphics.drawable.Drawable;
+import android.support.v4.content.res.ResourcesCompat;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.FocusFinder;
@@ -44,29 +44,29 @@ public class Cling extends FrameLayout implements Insettable, View.OnClickListen
     static final String WORKSPACE_CLING_DISMISSED_KEY = "cling_gel.workspace.dismissed";
     static final String FOLDER_CLING_DISMISSED_KEY = "cling_gel.folder.dismissed";
 
-    private static String FIRST_RUN_PORTRAIT = "first_run_portrait";
-    private static String FIRST_RUN_LANDSCAPE = "first_run_landscape";
+    private static final String FIRST_RUN_PORTRAIT = "first_run_portrait";
+    private static final String FIRST_RUN_LANDSCAPE = "first_run_landscape";
 
-    private static String WORKSPACE_PORTRAIT = "workspace_portrait";
-    private static String WORKSPACE_LANDSCAPE = "workspace_landscape";
-    private static String WORKSPACE_LARGE = "workspace_large";
-    private static String WORKSPACE_CUSTOM = "workspace_custom";
+    private static final String WORKSPACE_PORTRAIT = "workspace_portrait";
+    private static final String WORKSPACE_LANDSCAPE = "workspace_landscape";
+    private static final String WORKSPACE_LARGE = "workspace_large";
+    private static final String WORKSPACE_CUSTOM = "workspace_custom";
 
-    private static String FOLDER_PORTRAIT = "folder_portrait";
-    private static String FOLDER_LANDSCAPE = "folder_landscape";
-    private static String FOLDER_LARGE = "folder_large";
+    private static final String FOLDER_PORTRAIT = "folder_portrait";
+    private static final String FOLDER_LANDSCAPE = "folder_landscape";
+    private static final String FOLDER_LARGE = "folder_large";
 
-    private static float FIRST_RUN_CIRCLE_BUFFER_DPS = 60;
-    private static float WORKSPACE_INNER_CIRCLE_RADIUS_DPS = 50;
-    private static float WORKSPACE_OUTER_CIRCLE_RADIUS_DPS = 60;
-    private static float WORKSPACE_CIRCLE_Y_OFFSET_DPS = 30;
+    private static final float FIRST_RUN_CIRCLE_BUFFER_DPS = 60;
+    private static final float WORKSPACE_INNER_CIRCLE_RADIUS_DPS = 50;
+    private static final float WORKSPACE_OUTER_CIRCLE_RADIUS_DPS = 60;
+    private static final float WORKSPACE_CIRCLE_Y_OFFSET_DPS = 30;
 
     private Launcher mLauncher;
     private boolean mIsInitialized;
-    private String mDrawIdentifier;
+    private final String mDrawIdentifier;
     private Drawable mBackground;
 
-    private int[] mTouchDownPt = new int[2];
+    private final int[] mTouchDownPt = new int[2];
 
     private Drawable mFocusedHotseatApp;
     private ComponentName mFocusedHotseatAppComponent;
@@ -133,9 +133,8 @@ public class Cling extends FrameLayout implements Insettable, View.OnClickListen
                               String description) {
         // Get the app to draw
         Resources r = getResources();
-        int appIconId = drawableId;
         Hotseat hotseat = mLauncher.getHotseat();
-        if (hotseat != null && appIconId > -1 && appRank > -1 && !title.isEmpty() &&
+        if (hotseat != null && drawableId > -1 && appRank > -1 && !title.isEmpty() &&
                 !description.isEmpty()) {
             // Set the app bounds
             int x = hotseat.getCellXFromOrder(appRank);
@@ -143,7 +142,7 @@ public class Cling extends FrameLayout implements Insettable, View.OnClickListen
             Rect pos = hotseat.getCellCoordinates(x, y);
             LauncherAppState app = LauncherAppState.getInstance();
             DeviceProfile grid = app.getDynamicGrid().getDeviceProfile();
-            mFocusedHotseatApp = getResources().getDrawable(appIconId);
+            mFocusedHotseatApp = ResourcesCompat.getDrawable(getResources(), drawableId,null);
             mFocusedHotseatAppComponent = cn;
             mFocusedHotseatAppBounds = new Rect(pos.left, pos.top,
                     pos.left + Utilities.sIconTextureWidth,
@@ -231,7 +230,7 @@ public class Cling extends FrameLayout implements Insettable, View.OnClickListen
                         // We are about to trigger the workspace cling, so don't do anything else
                         setVisibility(View.GONE);
                         postCb.run();
-                    };
+                    }
                 })
                 .start();
         } else {
@@ -243,7 +242,7 @@ public class Cling extends FrameLayout implements Insettable, View.OnClickListen
                         // We are about to trigger the workspace cling, so don't do anything else
                         setVisibility(View.GONE);
                         postCb.run();
-                    };
+                    }
                 })
                 .start();
         }
@@ -256,7 +255,7 @@ public class Cling extends FrameLayout implements Insettable, View.OnClickListen
                 .setListener(new AnimatorListenerAdapter() {
                     public void onAnimationEnd(Animator animation) {
                         mScrimView.setVisibility(View.GONE);
-                    };
+                    }
                 })
                 .start();
         }
@@ -279,7 +278,7 @@ public class Cling extends FrameLayout implements Insettable, View.OnClickListen
         setPadding(insets.left, insets.top, insets.right, insets.bottom);
     }
 
-    View getContent() {
+    private View getContent() {
         return findViewById(R.id.content);
     }
 
@@ -320,7 +319,7 @@ public class Cling extends FrameLayout implements Insettable, View.OnClickListen
             }
         }
         return super.onTouchEvent(event);
-    };
+    }
 
     @Override
     public boolean onTouch(View v, MotionEvent ev) {
@@ -367,7 +366,7 @@ public class Cling extends FrameLayout implements Insettable, View.OnClickListen
             // Get the background override if there is one
             if (mBackground == null) {
                 if (mDrawIdentifier.equals(WORKSPACE_CUSTOM)) {
-                    mBackground = getResources().getDrawable(R.drawable.bg_cling5);
+                    mBackground = ResourcesCompat.getDrawable(getResources(),R.drawable.bg_cling5,null);
                 }
             }
             // Draw the background
@@ -415,7 +414,7 @@ public class Cling extends FrameLayout implements Insettable, View.OnClickListen
                     mDrawIdentifier.equals(WORKSPACE_LANDSCAPE) ||
                     mDrawIdentifier.equals(WORKSPACE_LARGE)) {
                 int offset = DynamicGrid.pxFromDp(WORKSPACE_CIRCLE_Y_OFFSET_DPS, metrics);
-                mErasePaint.setAlpha((int) (128));
+                mErasePaint.setAlpha(128);
                 eraseCanvas.drawCircle(metrics.widthPixels / 2,
                         metrics.heightPixels / 2 - offset,
                         DynamicGrid.pxFromDp(WORKSPACE_OUTER_CIRCLE_RADIUS_DPS, metrics),
@@ -444,5 +443,5 @@ public class Cling extends FrameLayout implements Insettable, View.OnClickListen
 
         // Draw the rest of the cling
         super.dispatchDraw(canvas);
-    };
+    }
 }

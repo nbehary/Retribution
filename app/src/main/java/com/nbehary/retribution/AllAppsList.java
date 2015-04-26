@@ -31,7 +31,7 @@ import android.content.pm.ResolveInfo;
  * Stores the list of all applications for the all apps view.
  */
 class AllAppsList {
-    public static final int DEFAULT_APPLICATIONS_NUMBER = 42;
+    private static final int DEFAULT_APPLICATIONS_NUMBER = 42;
     
     /** The list off all apps. */
     public ArrayList<AppInfo> data =
@@ -40,13 +40,13 @@ class AllAppsList {
     public ArrayList<AppInfo> added =
             new ArrayList<AppInfo>(DEFAULT_APPLICATIONS_NUMBER);
     /** The list of apps that have been removed since the last notify() call. */
-    public ArrayList<AppInfo> removed = new ArrayList<AppInfo>();
+    public final ArrayList<AppInfo> removed = new ArrayList<AppInfo>();
     /** The list of apps that have been modified since the last notify() call. */
-    public ArrayList<AppInfo> modified = new ArrayList<AppInfo>();
+    public final ArrayList<AppInfo> modified = new ArrayList<AppInfo>();
 
-    private IconCache mIconCache;
+    private final IconCache mIconCache;
 
-    private AppFilter mAppFilter;
+    private final AppFilter mAppFilter;
 
     /**
      * Boring constructor.

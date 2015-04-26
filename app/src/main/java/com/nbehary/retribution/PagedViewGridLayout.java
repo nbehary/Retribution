@@ -28,8 +28,8 @@ import android.widget.GridLayout;
 public class PagedViewGridLayout extends GridLayout implements Page {
     static final String TAG = "PagedViewGridLayout";
 
-    private int mCellCountX;
-    private int mCellCountY;
+    private final int mCellCountX;
+    private final int mCellCountY;
     private Runnable mOnLayoutListener;
 
     public PagedViewGridLayout(Context context, int cellCountX, int cellCountY) {
@@ -125,7 +125,7 @@ public class PagedViewGridLayout extends GridLayout implements Page {
         return indexOfChild(v);
     }
 
-    public static class LayoutParams extends FrameLayout.LayoutParams {
+    private static class LayoutParams extends FrameLayout.LayoutParams {
         public LayoutParams(int width, int height) {
             super(width, height);
         }

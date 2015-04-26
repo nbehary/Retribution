@@ -2,15 +2,13 @@ package com.nbehary.retribution;
 
 import android.app.Activity;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.res.ResourcesCompat;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -35,11 +33,11 @@ public class GridIconPercentFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    DeviceProfile mTempProfile;
-    LinearLayout mRootView;
-    TextView mIconCurrent;
-    TextView mIconFull;
-    SeekBar mPercentBar;
+    private DeviceProfile mTempProfile;
+    private LinearLayout mRootView;
+    private TextView mIconCurrent;
+    private TextView mIconFull;
+    private SeekBar mPercentBar;
 
     private static GridIconPercentFragment instance;
 
@@ -89,17 +87,17 @@ public class GridIconPercentFragment extends Fragment {
         if (mRootView !=null) {
             return mRootView;
         }
-        mRootView = (LinearLayout) getActivity().getLayoutInflater().inflate(R.layout.fragment_grid_icon_percent, container, false);
+        mRootView = (LinearLayout) inflater.inflate(R.layout.fragment_grid_icon_percent, container, false);
         mTempProfile = ((GridEditor) getActivity()).getmProfile();
 
-        Drawable icon = getResources().getDrawable(R.drawable.ic_launcher);
+        Drawable icon = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_launcher,null);
         mIconFull = (TextView) mRootView.findViewById(R.id.icon_full);
         DisplayMetrics dm = getResources().getDisplayMetrics();
         int size = DynamicGrid.pxFromDp(mTempProfile.iconSizeCalc,dm);
         icon.setBounds(0,0,size,size);
         mIconFull.setCompoundDrawables(null,icon,null,null);
         mIconCurrent = (TextView) mRootView.findViewById(R.id.icon_current);
-        Drawable icon2 = getResources().getDrawable(R.drawable.ic_launcher);
+        Drawable icon2 = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_launcher,null);
         icon2.setBounds(0,0,mTempProfile.iconSizePx,mTempProfile.iconSizePx);
         mIconCurrent.setCompoundDrawables(null,icon2,null,null);
 
@@ -112,9 +110,9 @@ public class GridIconPercentFragment extends Fragment {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
                 DisplayMetrics dm = getResources().getDisplayMetrics();
-                mTempProfile.iconSize = mTempProfile.iconSizeCalc * (float)((progress+75)/100f);
+                mTempProfile.iconSize = mTempProfile.iconSizeCalc * (progress+75)/100f;
                 mTempProfile.iconSizePx = DynamicGrid.pxFromDp(mTempProfile.iconSize,dm);
-                Drawable icon = getResources().getDrawable(R.drawable.ic_launcher);
+                Drawable icon = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_launcher,null);
                 icon.setBounds(0,0,mTempProfile.iconSizePx,mTempProfile.iconSizePx);
                 mIconCurrent.setCompoundDrawables(null,icon,null,null);
                 mIconCurrent.setText(String.format("%d",progress+75)+'%');
@@ -169,7 +167,7 @@ public class GridIconPercentFragment extends Fragment {
      */
     public interface OnPercentInteractionListener {
         // TODO: Update argument type and name
-        public void onPercentInteraction();
+        void onPercentInteraction();
     }
 
     public void updateViews(DeviceProfile profile) {
@@ -178,12 +176,12 @@ public class GridIconPercentFragment extends Fragment {
         mIconCurrent.setText(String.format("%d",percent)+'%');
         mPercentBar.setProgress(percent-75);
 
-        Drawable icon = getResources().getDrawable(R.drawable.ic_launcher);
+        Drawable icon = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_launcher,null);
         DisplayMetrics dm = getResources().getDisplayMetrics();
         int size = DynamicGrid.pxFromDp(mTempProfile.iconSizeCalc,dm);
         icon.setBounds(0, 0, size, size);
         mIconFull.setCompoundDrawables(null,icon,null,null);
-        Drawable icon2 = getResources().getDrawable(R.drawable.ic_launcher);
+        Drawable icon2 = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_launcher,null);
         icon2.setBounds(0,0,mTempProfile.iconSizePx,mTempProfile.iconSizePx);
         mIconCurrent.setCompoundDrawables(null,icon2,null,null);
         

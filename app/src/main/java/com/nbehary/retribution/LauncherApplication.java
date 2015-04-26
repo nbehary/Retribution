@@ -18,9 +18,6 @@ package com.nbehary.retribution;
 
 import android.app.Application;
 import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.util.Log;
 
 import com.nbehary.retribution.preference.PreferencesProvider;
 

@@ -16,14 +16,10 @@
 
 package com.nbehary.retribution;
 
-import android.animation.AnimatorListenerAdapter;
-import android.animation.LayoutTransition;
 import android.content.Context;
 import android.content.res.Resources;
+import android.support.v4.content.res.ResourcesCompat;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.FrameLayout;
 import com.nbehary.retribution.R;
@@ -57,8 +53,8 @@ public class PageIndicatorMarker extends FrameLayout {
 
     void setMarkerDrawables(int activeResId, int inactiveResId) {
         Resources r = getResources();
-        mActiveMarker.setImageDrawable(r.getDrawable(activeResId));
-        mInactiveMarker.setImageDrawable(r.getDrawable(inactiveResId));
+        mActiveMarker.setImageDrawable(ResourcesCompat.getDrawable(r,activeResId,null));
+        mInactiveMarker.setImageDrawable(ResourcesCompat.getDrawable(r,inactiveResId,null));
     }
 
     void activate(boolean immediate) {

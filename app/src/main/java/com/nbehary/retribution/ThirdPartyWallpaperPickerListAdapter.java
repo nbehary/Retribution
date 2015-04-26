@@ -44,11 +44,11 @@ public class ThirdPartyWallpaperPickerListAdapter extends BaseAdapter implements
     private final PackageManager mPackageManager;
     private final int mIconSize;
 
-    private List<ThirdPartyWallpaperTile> mThirdPartyWallpaperPickers =
+    private final List<ThirdPartyWallpaperTile> mThirdPartyWallpaperPickers =
             new ArrayList<ThirdPartyWallpaperTile>();
 
     public static class ThirdPartyWallpaperTile extends WallpaperPickerActivity.WallpaperTileInfo {
-        private ResolveInfo mResolveInfo;
+        private final ResolveInfo mResolveInfo;
         public ThirdPartyWallpaperTile(ResolveInfo resolveInfo) {
             mResolveInfo = resolveInfo;
         }

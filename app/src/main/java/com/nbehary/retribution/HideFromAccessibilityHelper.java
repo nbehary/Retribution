@@ -23,10 +23,10 @@ import android.view.ViewGroup.OnHierarchyChangeListener;
 
 import java.util.HashMap;
 
-public class HideFromAccessibilityHelper implements OnHierarchyChangeListener {
-    private HashMap<View, Integer> mPreviousValues;
-    boolean mHide;
-    boolean mOnlyAllApps;
+class HideFromAccessibilityHelper implements OnHierarchyChangeListener {
+    private final HashMap<View, Integer> mPreviousValues;
+    private boolean mHide;
+    private boolean mOnlyAllApps;
 
     public HideFromAccessibilityHelper() {
         mPreviousValues = new HashMap<View, Integer>();

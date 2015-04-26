@@ -32,7 +32,6 @@ import com.nbehary.retribution.backup.BackupProtos.Widget;
 
 import android.app.backup.BackupDataInputStream;
 import android.app.backup.BackupHelper;
-import android.app.backup.BackupDataInput;
 import android.app.backup.BackupDataOutput;
 import android.app.backup.BackupManager;
 import android.appwidget.AppWidgetManager;
@@ -65,7 +64,7 @@ import java.util.zip.CRC32;
 /**
  * Persist the launcher home state across calamities.
  */
-public class LauncherBackupHelper implements BackupHelper {
+class LauncherBackupHelper implements BackupHelper {
 
     private static final String TAG = "LauncherBackupHelper";
     private static final boolean DEBUG = false;
@@ -79,7 +78,7 @@ public class LauncherBackupHelper implements BackupHelper {
     /** widgets contain previews, which are very large, dribble them out */
     private static final int MAX_WIDGETS_PER_PASS = 5;
 
-    public static final int IMAGE_COMPRESSION_QUALITY = 75;
+    private static final int IMAGE_COMPRESSION_QUALITY = 75;
 
     public static final String LAUNCHER_PREFIX = "L";
 

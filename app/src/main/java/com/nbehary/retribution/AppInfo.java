@@ -16,9 +16,6 @@
 
 package com.nbehary.retribution;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
-import android.accounts.AccountManagerFuture;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -26,7 +23,6 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.PackageInfo;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
-import android.os.Bundle;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -58,7 +54,7 @@ class AppInfo extends ItemInfo {
     String appCategory;
 
     static final int DOWNLOADED_FLAG = 1;
-    static final int UPDATED_SYSTEM_APP_FLAG = 2;
+    private static final int UPDATED_SYSTEM_APP_FLAG = 2;
 
     int flags = 0;
 
@@ -127,7 +123,7 @@ class AppInfo extends ItemInfo {
      * @param className the class name of the component representing the intent
      * @param launchFlags the launch flags
      */
-    final void setActivity(ComponentName className, int launchFlags) {
+    private final void setActivity(ComponentName className, int launchFlags) {
         intent = new Intent(Intent.ACTION_MAIN);
         intent.addCategory(Intent.CATEGORY_LAUNCHER);
         intent.setComponent(className);

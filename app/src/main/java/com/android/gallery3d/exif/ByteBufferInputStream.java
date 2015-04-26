@@ -21,7 +21,7 @@ import java.nio.ByteBuffer;
 
 class ByteBufferInputStream extends InputStream {
 
-    private ByteBuffer mBuf;
+    private final ByteBuffer mBuf;
 
     public ByteBufferInputStream(ByteBuffer buf) {
         mBuf = buf;

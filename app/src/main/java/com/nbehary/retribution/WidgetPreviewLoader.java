@@ -23,6 +23,7 @@ import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.support.v4.content.res.ResourcesCompat;
 import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
@@ -36,8 +37,8 @@ import java.util.HashSet;
 import com.nbehary.retribution.R;
 
 abstract class SoftReferenceThreadLocal<T> {
-    private ThreadLocal<SoftReference<T>> mThreadLocal;
-    public SoftReferenceThreadLocal() {
+    private final ThreadLocal<SoftReference<T>> mThreadLocal;
+    SoftReferenceThreadLocal() {
         mThreadLocal = new ThreadLocal<SoftReference<T>>();
     }
 
@@ -100,39 +101,39 @@ class BitmapFactoryOptionsCache extends SoftReferenceThreadLocal<BitmapFactory.O
     }
 }
 
-public class WidgetPreviewLoader {
-    static final String TAG = "WidgetPreviewLoader";
+class WidgetPreviewLoader {
+    private static final String TAG = "WidgetPreviewLoader";
 
     private int mPreviewBitmapWidth;
     private int mPreviewBitmapHeight;
     private String mSize;
-    private Context mContext;
-    private PackageManager mPackageManager;
+    private final Context mContext;
+    private final PackageManager mPackageManager;
     private PagedViewCellLayout mWidgetSpacingLayout;
 
     // Used for drawing shortcut previews
-    private BitmapCache mCachedShortcutPreviewBitmap = new BitmapCache();
-    private PaintCache mCachedShortcutPreviewPaint = new PaintCache();
-    private CanvasCache mCachedShortcutPreviewCanvas = new CanvasCache();
+    private final BitmapCache mCachedShortcutPreviewBitmap = new BitmapCache();
+    private final PaintCache mCachedShortcutPreviewPaint = new PaintCache();
+    private final CanvasCache mCachedShortcutPreviewCanvas = new CanvasCache();
 
     // Used for drawing widget previews
-    private CanvasCache mCachedAppWidgetPreviewCanvas = new CanvasCache();
-    private RectCache mCachedAppWidgetPreviewSrcRect = new RectCache();
-    private RectCache mCachedAppWidgetPreviewDestRect = new RectCache();
-    private PaintCache mCachedAppWidgetPreviewPaint = new PaintCache();
+    private final CanvasCache mCachedAppWidgetPreviewCanvas = new CanvasCache();
+    private final RectCache mCachedAppWidgetPreviewSrcRect = new RectCache();
+    private final RectCache mCachedAppWidgetPreviewDestRect = new RectCache();
+    private final PaintCache mCachedAppWidgetPreviewPaint = new PaintCache();
     private String mCachedSelectQuery;
-    private BitmapFactoryOptionsCache mCachedBitmapFactoryOptions = new BitmapFactoryOptionsCache();
+    private final BitmapFactoryOptionsCache mCachedBitmapFactoryOptions = new BitmapFactoryOptionsCache();
 
-    private int mAppIconSize;
-    private IconCache mIconCache;
+    private final int mAppIconSize;
+    private final IconCache mIconCache;
 
     private final float sWidgetPreviewIconPaddingPercentage = 0.25f;
 
-    private CacheDb mDb;
+    private final CacheDb mDb;
 
-    private HashMap<String, WeakReference<Bitmap>> mLoadedPreviews;
-    private ArrayList<SoftReference<Bitmap>> mUnusedBitmaps;
-    private static HashSet<String> sInvalidPackages;
+    private final HashMap<String, WeakReference<Bitmap>> mLoadedPreviews;
+    private final ArrayList<SoftReference<Bitmap>> mUnusedBitmaps;
+    private static final HashSet<String> sInvalidPackages;
 
     static {
         sInvalidPackages = new HashSet<String>();
@@ -263,7 +264,7 @@ public class WidgetPreviewLoader {
         final static String COLUMN_NAME = "name";
         final static String COLUMN_SIZE = "size";
         final static String COLUMN_PREVIEW_BITMAP = "preview_bitmap";
-        Context mContext;
+        final Context mContext;
 
         public CacheDb(Context context) {
             super(context, new File(context.getCacheDir(), DB_NAME).getPath(), null, DB_VERSION);
@@ -358,7 +359,7 @@ public class WidgetPreviewLoader {
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void) null);
     }
 
-    public static void removeItemFromDb(final CacheDb cacheDb, final String objectName) {
+    private static void removeItemFromDb(final CacheDb cacheDb, final String objectName) {
         new AsyncTask<Void, Void, Void>() {
             public Void doInBackground(Void ... args) {
                 SQLiteDatabase db = cacheDb.getWritableDatabase();
@@ -403,7 +404,7 @@ public class WidgetPreviewLoader {
         }
     }
 
-    public Bitmap generatePreview(Object info, Bitmap preview) {
+    private Bitmap generatePreview(Object info, Bitmap preview) {
         if (preview != null &&
                 (preview.getWidth() != mPreviewBitmapWidth ||
                 preview.getHeight() != mPreviewBitmapHeight)) {
@@ -433,7 +434,7 @@ public class WidgetPreviewLoader {
                 mWidgetSpacingLayout.estimateCellWidth(spanX));
     }
 
-    public int maxHeightForWidgetPreview(int spanY) {
+    private int maxHeightForWidgetPreview(int spanY) {
         return Math.min(mPreviewBitmapHeight,
                 mWidgetSpacingLayout.estimateCellHeight(spanY));
     }
@@ -467,8 +468,8 @@ public class WidgetPreviewLoader {
             if (cellHSpan < 1) cellHSpan = 1;
             if (cellVSpan < 1) cellVSpan = 1;
 
-            BitmapDrawable previewDrawable = (BitmapDrawable) mContext.getResources()
-                    .getDrawable(R.drawable.widget_tile);
+            BitmapDrawable previewDrawable = (BitmapDrawable) ResourcesCompat
+                    .getDrawable(mContext.getResources(), R.drawable.widget_tile,null);
             final int previewDrawableWidth = previewDrawable
                     .getIntrinsicWidth();
             final int previewDrawableHeight = previewDrawable

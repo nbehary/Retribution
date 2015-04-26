@@ -69,7 +69,7 @@ class AppsCustomizeTabKeyEventListener implements View.OnKeyListener {
     }
 }
 
-public class FocusHelper {
+class FocusHelper {
     /**
      * Private helper to get the parent TabHost in the view hiearchy.
      */
@@ -140,7 +140,7 @@ public class FocusHelper {
         final TabWidget tabs = tabHost.getTabWidget();
         final int widgetIndex = parent.indexOfChild(w);
         final int widgetCount = parent.getChildCount();
-        final int pageIndex = ((PagedView) container).indexToPage(container.indexOfChild(parent));
+        final int pageIndex = container.indexToPage(container.indexOfChild(parent));
         final int pageCount = container.getChildCount();
         final int cellCountX = parent.getCellCountX();
         final int cellCountY = parent.getCellCountY();
@@ -300,7 +300,7 @@ public class FocusHelper {
         final TabWidget tabs = tabHost.getTabWidget();
         final int iconIndex = itemContainer.indexOfChild(v);
         final int itemCount = itemContainer.getChildCount();
-        final int pageIndex = ((PagedView) container).indexToPage(container.indexOfChild(parentLayout));
+        final int pageIndex = container.indexToPage(container.indexOfChild(parentLayout));
         final int pageCount = container.getChildCount();
 
         final int x = iconIndex % countX;

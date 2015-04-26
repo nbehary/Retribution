@@ -30,11 +30,10 @@ import android.graphics.LightingColorFilter;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Looper;
 import android.os.Parcelable;
+import android.support.v4.content.res.ResourcesCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -45,7 +44,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.nbehary.retribution.R;
 import com.nbehary.retribution.DropTarget.DragObject;
 import com.nbehary.retribution.FolderInfo.FolderListener;
 import com.nbehary.retribution.preference.PreferencesProvider;
@@ -91,7 +89,7 @@ public class FolderIcon extends LinearLayout implements FolderListener {
     private ImageView mPreviewBackground;
     private BubbleTextView mFolderName;
 
-    FolderRingAnimator mFolderRingAnimator = null;
+    private FolderRingAnimator mFolderRingAnimator = null;
 
     // These variables are all associated with the drawing of the preview; they are stored
     // as member variables for shared usage and to avoid computation on each frame
@@ -103,13 +101,13 @@ public class FolderIcon extends LinearLayout implements FolderListener {
     private int mPreviewOffsetX;
     private int mPreviewOffsetY;
     private float mMaxPerspectiveShift;
-    boolean mAnimating = false;
-    private Rect mOldBounds = new Rect();
+    private boolean mAnimating = false;
+    private final Rect mOldBounds = new Rect();
     private static Context mContext;
 
     private PreviewItemDrawingParams mParams = new PreviewItemDrawingParams(0, 0, 0, 0);
-    private PreviewItemDrawingParams mAnimParams = new PreviewItemDrawingParams(0, 0, 0, 0);
-    private ArrayList<ShortcutInfo> mHiddenItems = new ArrayList<ShortcutInfo>();
+    private final PreviewItemDrawingParams mAnimParams = new PreviewItemDrawingParams(0, 0, 0, 0);
+    private final ArrayList<ShortcutInfo> mHiddenItems = new ArrayList<ShortcutInfo>();
 
     public FolderIcon(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -246,6 +244,7 @@ public class FolderIcon extends LinearLayout implements FolderListener {
 
             // We need to reload the static values when configuration changes in case they are
             // different in another configuration
+            //TODO: Why did you do this?
             if (true){ //(sStaticValuesDirty) {
                 if (Looper.myLooper() != Looper.getMainLooper()) {
                     throw new RuntimeException("FolderRingAnimator loading drawables on non-UI thread "
@@ -266,16 +265,16 @@ public class FolderIcon extends LinearLayout implements FolderListener {
                     } else {
                         filter = new LightingColorFilter( Color.WHITE, Color.WHITE);
                     }
-                    sSharedOuterRingDrawable = res.getDrawable(R.drawable.portal_ring_outer_holo);
+                    sSharedOuterRingDrawable = ResourcesCompat.getDrawable(res, R.drawable.portal_ring_outer_holo,null);
                     sSharedOuterRingDrawable.setColorFilter(filter);
-                    sSharedInnerRingDrawable = res.getDrawable(R.drawable.portal_ring_inner_nolip_holo);
+                    sSharedInnerRingDrawable = ResourcesCompat.getDrawable(res,R.drawable.portal_ring_inner_nolip_holo,null);
                     sSharedInnerRingDrawable.setColorFilter(filter);
-                    sSharedFolderLeaveBehind = res.getDrawable(R.drawable.portal_ring_rest);
+                    sSharedFolderLeaveBehind = ResourcesCompat.getDrawable(res,R.drawable.portal_ring_rest,null);
                     sSharedFolderLeaveBehind.setColorFilter(filter);
                 } else {
-                    sSharedOuterRingDrawable = res.getDrawable(R.drawable.portal_ring_outer_holo_old);
-                    sSharedInnerRingDrawable = res.getDrawable(R.drawable.portal_ring_inner_nolip_holo_old);
-                    sSharedFolderLeaveBehind = res.getDrawable(R.drawable.portal_ring_rest_old);
+                    sSharedOuterRingDrawable = ResourcesCompat.getDrawable(res,R.drawable.portal_ring_outer_holo_old,null);
+                    sSharedInnerRingDrawable = ResourcesCompat.getDrawable(res,R.drawable.portal_ring_inner_nolip_holo_old,null);
+                    sSharedFolderLeaveBehind = ResourcesCompat.getDrawable(res,R.drawable.portal_ring_rest_old,null);
                 }
                 sStaticValuesDirty = false;
             }
@@ -379,7 +378,7 @@ public class FolderIcon extends LinearLayout implements FolderListener {
         final int itemType = item.itemType;
         return ((itemType == LauncherSettings.Favorites.ITEM_TYPE_APPLICATION ||
                 itemType == LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT) &&
-                !mFolder.isFull() && item != mInfo && !mInfo.opened);
+                mFolder.isEmpty() && item != mInfo && !mInfo.opened);
     }
 
     public boolean acceptDrop(Object dragInfo) {
@@ -437,7 +436,7 @@ public class FolderIcon extends LinearLayout implements FolderListener {
         onDragExit();
     }
 
-    public void onDragExit() {
+    private void onDragExit() {
         mFolderRingAnimator.animateToNaturalState();
     }
 
@@ -473,8 +472,8 @@ public class FolderIcon extends LinearLayout implements FolderListener {
 
             int[] center = new int[2];
             float scale = getLocalCenterForIndex(index, center);
-            center[0] = (int) Math.round(scaleRelativeToDragLayer * center[0]);
-            center[1] = (int) Math.round(scaleRelativeToDragLayer * center[1]);
+            center[0] = Math.round(scaleRelativeToDragLayer * center[0]);
+            center[1] = Math.round(scaleRelativeToDragLayer * center[1]);
 
             to.offset(center[0] - animateView.getMeasuredWidth() / 2,
                       center[1] - animateView.getMeasuredHeight() / 2);
@@ -565,8 +564,8 @@ public class FolderIcon extends LinearLayout implements FolderListener {
         float offsetX = mParams.transX + (mParams.scale * mIntrinsicIconSize) / 2;
         float offsetY = mParams.transY + (mParams.scale * mIntrinsicIconSize) / 2;
 
-        center[0] = (int) Math.round(offsetX);
-        center[1] = (int) Math.round(offsetY);
+        center[0] = Math.round(offsetX);
+        center[1] = Math.round(offsetY);
         return mParams.scale;
     }
 

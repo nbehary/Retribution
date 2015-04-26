@@ -24,10 +24,10 @@ import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
-import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.support.v4.content.res.ResourcesCompat;
 import android.util.AttributeSet;
 import android.view.*;
 import android.view.accessibility.AccessibilityEvent;
@@ -46,7 +46,7 @@ import com.nbehary.retribution.R;
  */
 public class DragLayer extends FrameLayout implements ViewGroup.OnHierarchyChangeListener {
     private DragController mDragController;
-    private int[] mTmpXY = new int[2];
+    private final int[] mTmpXY = new int[2];
 
     private int mXDown, mYDown;
     private Launcher mLauncher;
@@ -59,17 +59,17 @@ public class DragLayer extends FrameLayout implements ViewGroup.OnHierarchyChang
     // Variables relating to animation of views after drop
     private ValueAnimator mDropAnim = null;
     private ValueAnimator mFadeOutAnim = null;
-    private TimeInterpolator mCubicEaseOutInterpolator = new DecelerateInterpolator(1.5f);
+    private final TimeInterpolator mCubicEaseOutInterpolator = new DecelerateInterpolator(1.5f);
     private DragView mDropView = null;
     private int mAnchorViewInitialScrollX = 0;
     private View mAnchorView = null;
 
     private boolean mHoverPointClosesFolder = false;
-    private Rect mHitRect = new Rect();
+    private final Rect mHitRect = new Rect();
     private int mWorkspaceIndex = -1;
     private int mQsbIndex = -1;
     public static final int ANIMATION_END_DISAPPEAR = 0;
-    public static final int ANIMATION_END_FADE_OUT = 1;
+    private static final int ANIMATION_END_FADE_OUT = 1;
     public static final int ANIMATION_END_REMAIN_VISIBLE = 2;
 
     private TouchCompleteListener mTouchCompleteListener;
@@ -90,8 +90,8 @@ public class DragLayer extends FrameLayout implements ViewGroup.OnHierarchyChang
         setChildrenDrawingOrderEnabled(true);
         setOnHierarchyChangeListener(this);
 
-        mLeftHoverDrawable = getResources().getDrawable(R.drawable.page_hover_left_holo);
-        mRightHoverDrawable = getResources().getDrawable(R.drawable.page_hover_right_holo);
+        mLeftHoverDrawable = ResourcesCompat.getDrawable(getResources(), R.drawable.page_hover_left_holo,null);
+        mRightHoverDrawable = ResourcesCompat.getDrawable(getResources(), R.drawable.page_hover_right_holo,null);
     }
 
     public void setup(Launcher launcher, DragController controller) {
@@ -126,18 +126,12 @@ public class DragLayer extends FrameLayout implements ViewGroup.OnHierarchyChang
 
     private boolean isEventOverFolderTextRegion(Folder folder, MotionEvent ev) {
         getDescendantRectRelativeToSelf(folder.getEditTextRegion(), mHitRect);
-        if (mHitRect.contains((int) ev.getX(), (int) ev.getY())) {
-            return true;
-        }
-        return false;
+        return mHitRect.contains((int) ev.getX(), (int) ev.getY());
     }
 
     private boolean isEventOverFolder(Folder folder, MotionEvent ev) {
         getDescendantRectRelativeToSelf(folder, mHitRect);
-        if (mHitRect.contains((int) ev.getX(), (int) ev.getY())) {
-            return true;
-        }
-        return false;
+        return mHitRect.contains((int) ev.getX(), (int) ev.getY());
     }
 
     private boolean handleTouchDown(MotionEvent ev, boolean intercept) {
@@ -314,8 +308,7 @@ public class DragLayer extends FrameLayout implements ViewGroup.OnHierarchyChang
                     mCurrentResizeFrame = null;
             }
         }
-        if (handled) return true;
-        return mDragController.onTouchEvent(ev);
+        return handled || mDragController.onTouchEvent(ev);
     }
 
     /**
@@ -787,8 +780,8 @@ public class DragLayer extends FrameLayout implements ViewGroup.OnHierarchyChang
     }
 
     private boolean mInScrollArea;
-    private Drawable mLeftHoverDrawable;
-    private Drawable mRightHoverDrawable;
+    private final Drawable mLeftHoverDrawable;
+    private final Drawable mRightHoverDrawable;
 
     void onEnterScrollArea(int direction) {
         mInScrollArea = true;
@@ -804,11 +797,7 @@ public class DragLayer extends FrameLayout implements ViewGroup.OnHierarchyChang
      * Note: this is a reimplementation of View.isLayoutRtl() since that is currently hidden api.
      */
     private boolean isLayoutRtl() {
-        if (Build.VERSION.SDK_INT >=17) {
-            return (getLayoutDirection() == LAYOUT_DIRECTION_RTL);
-        } else {
-            return false;
-        }
+        return Build.VERSION.SDK_INT >= 17 && (getLayoutDirection() == LAYOUT_DIRECTION_RTL);
     }
 
     @Override
@@ -843,6 +832,6 @@ public class DragLayer extends FrameLayout implements ViewGroup.OnHierarchyChang
     }
 
     public interface TouchCompleteListener {
-        public void onTouchComplete();
+        void onTouchComplete();
     }
 }

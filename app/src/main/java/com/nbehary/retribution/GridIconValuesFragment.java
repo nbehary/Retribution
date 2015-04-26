@@ -9,20 +9,15 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.res.ResourcesCompat;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -50,15 +45,18 @@ public class GridIconValuesFragment extends Fragment {
 
     private OnValuesInteractionListener mListener;
 
-    DeviceProfile mTempProfile;
-    TextView mPreviewImage;
-    TextView mIconSize, mFontSize, mFontLabel;
-    ImageButton mUpFontButton,mDownFontButton;
-    DisplayMetrics mDisplayMetrics;
-    String mChanging;
+    private DeviceProfile mTempProfile;
+    private TextView mPreviewImage;
+    private TextView mIconSize;
+    private TextView mFontSize;
+    private TextView mFontLabel;
+    private ImageButton mUpFontButton;
+    private ImageButton mDownFontButton;
+    private DisplayMetrics mDisplayMetrics;
+    private String mChanging;
     Switch mUseCalculated;
-    DecimalFormat df;
-    View mRootView;
+    private DecimalFormat df;
+    private View mRootView;
 
     private static GridIconValuesFragment instance;
 
@@ -109,7 +107,7 @@ public class GridIconValuesFragment extends Fragment {
         mTempProfile = ((GridEditor) getActivity()).getmProfile();
         mDisplayMetrics = getActivity().getResources().getDisplayMetrics();
         // Inflate the layout for this fragment
-        mRootView = (FrameLayout) getActivity().getLayoutInflater().inflate(R.layout.fragment_grid_icon_values, container, false);
+        mRootView = inflater.inflate(R.layout.fragment_grid_icon_values, container, false);
         //mPreviewImage = (ImageView) mRootView.findViewById(R.id.grid_icon_preview);
         //mPreviewImage.setImageBitmap(generateIconPreview(getResources(),mTempProfile.iconSize,mTempProfile,true));
         mPreviewImage = (TextView) mRootView.findViewById(R.id.grid_icon_preview);
@@ -261,7 +259,7 @@ public class GridIconValuesFragment extends Fragment {
      */
     public interface OnValuesInteractionListener {
         // TODO: Update argument type and name
-        public void onValuesInteraction();
+        void onValuesInteraction();
     }
 
     public void updateViews(DeviceProfile profile) {
@@ -274,7 +272,7 @@ public class GridIconValuesFragment extends Fragment {
     }
 
     private void updatePreview() {
-        Drawable icon2 = getResources().getDrawable(R.drawable.ic_launcher);
+        Drawable icon2 = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_launcher,null);
         icon2.setBounds(0,0,mTempProfile.iconSizePx,mTempProfile.iconSizePx);
         mPreviewImage.setCompoundDrawables(null,icon2,null,null);
         mPreviewImage.setTextSize(TypedValue.COMPLEX_UNIT_SP, mTempProfile.iconTextSize);
@@ -300,7 +298,7 @@ public class GridIconValuesFragment extends Fragment {
 
 
         // Drawable icon =  app.getIconCache().getFullResDefaultActivityIcon();
-        Drawable icon = res.getDrawable(R.drawable.ic_launcher);
+        Drawable icon = ResourcesCompat.getDrawable(res,R.drawable.ic_launcher,null);
 
         int cellWidthPx = iconSizePx;
         int cellHeightPx = iconSizePx + (int)(  Math.ceil(fm.bottom - fm.top));
@@ -326,7 +324,7 @@ public class GridIconValuesFragment extends Fragment {
         return previewBitmap;
     }
 
-    public static void renderDrawableToBitmap(
+    private static void renderDrawableToBitmap(
             Drawable d, Bitmap bitmap, int x, int y, int w, int h) {
         renderDrawableToBitmap(d, bitmap, x, y, w, h, 1f);
     }

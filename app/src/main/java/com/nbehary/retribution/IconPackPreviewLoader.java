@@ -4,12 +4,10 @@ import android.appwidget.AppWidgetProviderInfo;
 import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -22,19 +20,14 @@ import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
-import android.graphics.Shader;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -44,39 +37,39 @@ import com.nbehary.retribution.R;
 
 
 
-public class IconPackPreviewLoader {
+class IconPackPreviewLoader {
     static final String TAG = "IconPackPreviewLoader";
 
     private int mPreviewBitmapWidth;
     private int mPreviewBitmapHeight;
     private String mSize;
-    private Context mContext;
-    private PackageManager mPackageManager;
+    private final Context mContext;
+    private final PackageManager mPackageManager;
     private PagedViewCellLayout mIconPackSpacingLayout;
 
     // Used for drawing shortcut previews
-    private BitmapCache mCachedShortcutPreviewBitmap = new BitmapCache();
-    private PaintCache mCachedShortcutPreviewPaint = new PaintCache();
-    private CanvasCache mCachedShortcutPreviewCanvas = new CanvasCache();
+    private final BitmapCache mCachedShortcutPreviewBitmap = new BitmapCache();
+    private final PaintCache mCachedShortcutPreviewPaint = new PaintCache();
+    private final CanvasCache mCachedShortcutPreviewCanvas = new CanvasCache();
 
     // Used for drawing widget previews
-    private CanvasCache mCachedAppIconPackPreviewCanvas = new CanvasCache();
+    private final CanvasCache mCachedAppIconPackPreviewCanvas = new CanvasCache();
     private RectCache mCachedAppIconPackPreviewSrcRect = new RectCache();
     private RectCache mCachedAppIconPackPreviewDestRect = new RectCache();
     private PaintCache mCachedAppIconPackPreviewPaint = new PaintCache();
     private String mCachedSelectQuery;
-    private BitmapFactoryOptionsCache mCachedBitmapFactoryOptions = new BitmapFactoryOptionsCache();
+    private final BitmapFactoryOptionsCache mCachedBitmapFactoryOptions = new BitmapFactoryOptionsCache();
 
-    private int mAppIconSize;
-    private IconCache mIconCache;
+    private final int mAppIconSize;
+    private final IconCache mIconCache;
 
     private final float sPreviewIconPaddingPercentage = 0.25f;
 
-    private CacheDb mDb;
+    private final CacheDb mDb;
 
-    private HashMap<String, WeakReference<Bitmap>> mLoadedPreviews;
-    private ArrayList<SoftReference<Bitmap>> mUnusedBitmaps;
-    private static HashSet<String> sInvalidPackages;
+    private final HashMap<String, WeakReference<Bitmap>> mLoadedPreviews;
+    private final ArrayList<SoftReference<Bitmap>> mUnusedBitmaps;
+    private static final HashSet<String> sInvalidPackages;
 
     static {
         sInvalidPackages = new HashSet<String>();
@@ -207,7 +200,7 @@ public class IconPackPreviewLoader {
         final static String COLUMN_NAME = "name";
         final static String COLUMN_SIZE = "size";
         final static String COLUMN_PREVIEW_BITMAP = "preview_bitmap";
-        Context mContext;
+        final Context mContext;
 
         public CacheDb(Context context) {
             super(context, new File(context.getCacheDir(), DB_NAME).getPath(), null, DB_VERSION);
@@ -311,7 +304,7 @@ public class IconPackPreviewLoader {
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void) null);
     }
 
-    public static void removeItemFromDb(final CacheDb cacheDb, final String objectName) {
+    private static void removeItemFromDb(final CacheDb cacheDb, final String objectName) {
         new AsyncTask<Void, Void, Void>() {
             public Void doInBackground(Void ... args) {
                 SQLiteDatabase db = cacheDb.getWritableDatabase();
@@ -356,7 +349,7 @@ public class IconPackPreviewLoader {
         }
     }
 
-    public Bitmap generatePreview(Object info, Bitmap preview) {
+    private Bitmap generatePreview(Object info, Bitmap preview) {
         if (preview != null &&
                 (preview.getWidth() != mPreviewBitmapWidth ||
                         preview.getHeight() != mPreviewBitmapHeight)) {
@@ -375,7 +368,6 @@ public class IconPackPreviewLoader {
             String info, int maxWidth, int maxHeight, Bitmap preview) {
         Bitmap tempBitmap = mCachedShortcutPreviewBitmap.get();
         final Canvas c = mCachedShortcutPreviewCanvas.get();
-        String packageName = info;
         IconPackHelper iconPackHelper = new IconPackHelper(mContext);
         Drawable packIcon = mIconCache.getFullResIcon(info,0);
         Drawable icon = mIconCache.getFullResDefaultActivityIcon();
@@ -393,8 +385,8 @@ public class IconPackPreviewLoader {
         }
 
         // Don't! Render the icon.  Do other things.
-        if (!packageName.equals("Default")) {
-            iconPackHelper.loadIconPack(packageName);
+        if (!info.equals("Default")) {
+            iconPackHelper.loadIconPack(info);
         }
 
 
@@ -486,7 +478,7 @@ public class IconPackPreviewLoader {
     }
 
 
-    public static void renderDrawableToBitmap(
+    private static void renderDrawableToBitmap(
             Drawable d, Bitmap bitmap, int x, int y, int w, int h) {
         renderDrawableToBitmap(d, bitmap, x, y, w, h, 1f);
     }
@@ -506,8 +498,7 @@ public class IconPackPreviewLoader {
     }
 
     private boolean isSystemPackage(PackageInfo pkgInfo) {
-        return ((pkgInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0) ? true
-                : false;
+        return ((pkgInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0);
     }
 
 }

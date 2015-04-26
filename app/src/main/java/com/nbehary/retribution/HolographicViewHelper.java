@@ -27,12 +27,13 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
 import android.widget.ImageView;
 
-public class HolographicViewHelper {
+class HolographicViewHelper {
 
     private final Canvas mTempCanvas = new Canvas();
 
     private boolean mStatesUpdated;
-    private int mHighlightColor, mHotwordColor;
+    private final int mHighlightColor;
+    private final int mHotwordColor;
 
     public HolographicViewHelper(Context context) {
         Resources res = context.getResources();

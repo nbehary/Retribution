@@ -31,8 +31,8 @@ import java.util.List;
 
 //TODO:ICS_FIX.  Is this ever called on ICS?  (or JB for that matter)
 public class MemoryTracker extends Service {
-    public static final String TAG = MemoryTracker.class.getSimpleName();
-    public static final String ACTION_START_TRACKING = "com.nbehary.retribution.action.START_TRACKING";
+    private static final String TAG = MemoryTracker.class.getSimpleName();
+    private static final String ACTION_START_TRACKING = "com.nbehary.retribution.action.START_TRACKING";
 
     private static final long UPDATE_RATE = 5000;
 
@@ -41,12 +41,12 @@ public class MemoryTracker extends Service {
     private static final int MSG_UPDATE = 3;
 
     public static class ProcessMemInfo {
-        public int pid;
-        public String name;
-        public long startTime;
+        public final int pid;
+        public final String name;
+        public final long startTime;
         public long currentPss, currentUss;
-        public long[] pss = new long[256];
-        public long[] uss = new long[256];
+        public final long[] pss = new long[256];
+        public final long[] uss = new long[256];
             //= new Meminfo[(int) (30 * 60 / (UPDATE_RATE / 1000))]; // 30 minutes
         public long max = 1;
         public int head = 0;
@@ -58,13 +58,14 @@ public class MemoryTracker extends Service {
         public long getUptime() {
             return System.currentTimeMillis() - startTime;
         }
-    };
-    public final LongSparseArray<ProcessMemInfo> mData = new LongSparseArray<ProcessMemInfo>();
-    public final ArrayList<Long> mPids = new ArrayList<Long>();
+    }
+
+    private final LongSparseArray<ProcessMemInfo> mData = new LongSparseArray<ProcessMemInfo>();
+    private final ArrayList<Long> mPids = new ArrayList<Long>();
     private int[] mPidsArray = new int[0];
     private final Object mLock = new Object();
 
-    Handler mHandler = new Handler() {
+    private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message m) {
             switch (m.what) {
@@ -84,7 +85,7 @@ public class MemoryTracker extends Service {
         }
     };
 
-    ActivityManager mAm;
+    private ActivityManager mAm;
 
     public static void startTrackingMe(Context context, String name) {
         context.startService(new Intent(context, MemoryTracker.class)
@@ -102,7 +103,7 @@ public class MemoryTracker extends Service {
         return mPidsArray;
     }
 
-    public void startTrackingProcess(int pid, String name, long start) {
+    private void startTrackingProcess(int pid, String name, long start) {
         synchronized (mLock) {
             final Long lpid = new Long(pid);
 
@@ -115,7 +116,7 @@ public class MemoryTracker extends Service {
         }
     }
 
-    void updatePidsArrayL() {
+    private void updatePidsArrayL() {
         final int N = mPids.size();
         mPidsArray = new int[N];
         StringBuffer sb = new StringBuffer("Now tracking processes: ");
@@ -127,7 +128,7 @@ public class MemoryTracker extends Service {
         Log.v(TAG, sb.toString());
     }
 
-    void update() {
+    private void update() {
         synchronized (mLock) {
             Debug.MemoryInfo[] dinfos = mAm.getProcessMemoryInfo(mPidsArray);
             for (int i=0; i<dinfos.length; i++) {

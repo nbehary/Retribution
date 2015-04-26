@@ -33,13 +33,13 @@ import android.view.animation.DecelerateInterpolator;
 import com.nbehary.retribution.R;
 
 public class DragView extends View {
-    private static float sDragAlpha = 1f;
+    private static final float sDragAlpha = 1f;
 
-    private Bitmap mBitmap;
+    private final Bitmap mBitmap;
     private Bitmap mCrossFadeBitmap;
     private Paint mPaint;
-    private int mRegistrationX;
-    private int mRegistrationY;
+    private final int mRegistrationX;
+    private final int mRegistrationY;
 
     private Point mDragVisualizeOffset = null;
     private Rect mDragRegion = null;
@@ -47,7 +47,7 @@ public class DragView extends View {
     private boolean mHasDrawn = false;
     private float mCrossFadeProgress = 0f;
 
-    ValueAnimator mAnim;
+    private final ValueAnimator mAnim;
     private float mOffsetX = 0.0f;
     private float mOffsetY = 0.0f;
     private float mInitialScale = 1f;

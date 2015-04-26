@@ -26,13 +26,13 @@ import junit.framework.Assert;
 // is valid during the texture's lifetime. When the texture is recycled, it
 // does not free the Bitmap.
 public class BitmapTexture extends UploadedTexture {
-    protected Bitmap mContentBitmap;
+    private final Bitmap mContentBitmap;
 
     public BitmapTexture(Bitmap bitmap) {
         this(bitmap, false);
     }
 
-    public BitmapTexture(Bitmap bitmap, boolean hasBorder) {
+    private BitmapTexture(Bitmap bitmap, boolean hasBorder) {
         super(hasBorder);
         Assert.assertTrue(bitmap != null && !bitmap.isRecycled());
         mContentBitmap = bitmap;

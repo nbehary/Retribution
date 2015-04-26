@@ -28,10 +28,10 @@ public abstract class SmoothPagedView extends PagedView {
     private float mBaseLineFlingVelocity;
     private float mFlingVelocityInfluence;
 
-    static final int DEFAULT_MODE = 0;
+    private static final int DEFAULT_MODE = 0;
     static final int X_LARGE_MODE = 1;
 
-    int mScrollMode;
+    private int mScrollMode;
 
     private Interpolator mScrollInterpolator;
 
@@ -86,7 +86,7 @@ public abstract class SmoothPagedView extends PagedView {
         mDeferScrollUpdate = mScrollMode != X_LARGE_MODE;
     }
 
-    protected int getScrollMode() {
+    int getScrollMode() {
         return X_LARGE_MODE;
     }
 

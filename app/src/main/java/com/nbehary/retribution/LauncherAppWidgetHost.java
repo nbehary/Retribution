@@ -28,7 +28,7 @@ import android.content.Context;
  */
 public class LauncherAppWidgetHost extends AppWidgetHost {
 
-    Launcher mLauncher;
+    private final Launcher mLauncher;
 
     public LauncherAppWidgetHost(Launcher launcher, int hostId) {
         super(launcher, hostId);

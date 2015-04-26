@@ -33,15 +33,15 @@ public class PagedViewCellLayout extends ViewGroup implements Page {
 
     private int mCellCountX;
     private int mCellCountY;
-    private int mOriginalCellWidth;
-    private int mOriginalCellHeight;
-    private int mCellWidth;
-    private int mCellHeight;
+    private final int mOriginalCellWidth;
+    private final int mOriginalCellHeight;
+    private final int mCellWidth;
+    private final int mCellHeight;
     private int mOriginalWidthGap;
     private int mOriginalHeightGap;
     private int mWidthGap;
     private int mHeightGap;
-    protected PagedViewCellLayoutChildren mChildren;
+    private final PagedViewCellLayoutChildren mChildren;
 
     public PagedViewCellLayout(Context context) {
         this(context, null);
@@ -94,19 +94,18 @@ public class PagedViewCellLayout extends ViewGroup implements Page {
 
     public boolean addViewToCellLayout(View child, int index, int childId,
             PagedViewCellLayout.LayoutParams params) {
-        final PagedViewCellLayout.LayoutParams lp = params;
 
         // Generate an id for each view, this assumes we have at most 256x256 cells
         // per workspace screen
-        if (lp.cellX >= 0 && lp.cellX <= (mCellCountX - 1) &&
-                lp.cellY >= 0 && (lp.cellY <= mCellCountY - 1)) {
+        if (params.cellX >= 0 && params.cellX <= (mCellCountX - 1) &&
+                params.cellY >= 0 && (params.cellY <= mCellCountY - 1)) {
             // If the horizontal or vertical span is set to -1, it is taken to
             // mean that it spans the extent of the CellLayout
-            if (lp.cellHSpan < 0) lp.cellHSpan = mCellCountX;
-            if (lp.cellVSpan < 0) lp.cellVSpan = mCellCountY;
+            if (params.cellHSpan < 0) params.cellHSpan = mCellCountX;
+            if (params.cellVSpan < 0) params.cellVSpan = mCellCountY;
 
             child.setId(childId);
-            mChildren.addView(child, index, lp);
+            mChildren.addView(child, index, params);
 
             return true;
         }
@@ -153,11 +152,11 @@ public class PagedViewCellLayout extends ViewGroup implements Page {
         return mChildren.indexOfChild(v);
     }
 
-    public int getCellCountX() {
+    private int getCellCountX() {
         return mCellCountX;
     }
 
-    public int getCellCountY() {
+    private int getCellCountY() {
         return mCellCountY;
     }
 
@@ -226,7 +225,7 @@ public class PagedViewCellLayout extends ViewGroup implements Page {
         return 0;
     }
 
-    int getWidthBeforeFirstLayout() {
+    private int getWidthBeforeFirstLayout() {
         if (mCellCountX > 0) {
             return mCellCountX * mCellWidth + (mCellCountX - 1) * Math.max(0, mWidthGap);
         }
@@ -307,31 +306,27 @@ public class PagedViewCellLayout extends ViewGroup implements Page {
     /**
      * Estimates the number of cells that the specified width would take up.
      */
-    public int estimateCellHSpan(int width) {
+    private int estimateCellHSpan(int width) {
         // We don't show the next/previous pages any more, so we use the full width, minus the
         // padding
         int availWidth = width - (getPaddingLeft() + getPaddingRight());
 
         // We know that we have to fit N cells with N-1 width gaps, so we just juggle to solve for N
-        int n = Math.max(1, (availWidth + mWidthGap) / (mCellWidth + mWidthGap));
-
         // We don't do anything fancy to determine if we squeeze another row in.
-        return n;
+        return Math.max(1, (availWidth + mWidthGap) / (mCellWidth + mWidthGap));
     }
 
     /**
      * Estimates the number of cells that the specified height would take up.
      */
-    public int estimateCellVSpan(int height) {
+    private int estimateCellVSpan(int height) {
         // The space for a page is the height - top padding (current page) - bottom padding (current
         // page)
         int availHeight = height - (getPaddingTop() + getPaddingBottom());
 
         // We know that we have to fit N cells with N-1 height gaps, so we juggle to solve for N
-        int n = Math.max(1, (availHeight + mHeightGap) / (mCellHeight + mHeightGap));
-
         // We don't do anything fancy to determine if we squeeze another row in.
-        return n;
+        return Math.max(1, (availHeight + mHeightGap) / (mCellHeight + mHeightGap));
     }
 
     /** Returns an estimated center position of the cell at the specified index */

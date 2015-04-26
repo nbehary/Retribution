@@ -35,7 +35,7 @@ public class UninstallShortcutReceiver extends BroadcastReceiver {
             "com.android.launcher.action.UNINSTALL_SHORTCUT";
 
     // The set of shortcuts that are pending uninstall
-    private static ArrayList<PendingUninstallShortcutInfo> mUninstallQueue =
+    private static final ArrayList<PendingUninstallShortcutInfo> mUninstallQueue =
             new ArrayList<PendingUninstallShortcutInfo>();
 
     // Determines whether to defer uninstalling shortcuts immediately until
@@ -43,7 +43,7 @@ public class UninstallShortcutReceiver extends BroadcastReceiver {
     private static boolean mUseUninstallQueue = false;
 
     private static class PendingUninstallShortcutInfo {
-        Intent data;
+        final Intent data;
 
         public PendingUninstallShortcutInfo(Intent rawData) {
             data = rawData;

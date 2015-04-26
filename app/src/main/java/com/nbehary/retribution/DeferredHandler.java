@@ -31,10 +31,10 @@ import java.util.ListIterator;
  *
  * This class is fifo.
  */
-public class DeferredHandler {
-    private LinkedList<Pair<Runnable, Integer>> mQueue = new LinkedList<Pair<Runnable, Integer>>();
-    private MessageQueue mMessageQueue = Looper.myQueue();
-    private Impl mHandler = new Impl();
+class DeferredHandler {
+    private final LinkedList<Pair<Runnable, Integer>> mQueue = new LinkedList<Pair<Runnable, Integer>>();
+    private final MessageQueue mMessageQueue = Looper.myQueue();
+    private final Impl mHandler = new Impl();
 
     private class Impl extends Handler implements MessageQueue.IdleHandler {
         public void handleMessage(Message msg) {
@@ -60,7 +60,7 @@ public class DeferredHandler {
     }
 
     private class IdleRunnable implements Runnable {
-        Runnable mRunnable;
+        final Runnable mRunnable;
 
         IdleRunnable(Runnable r) {
             mRunnable = r;
@@ -91,7 +91,7 @@ public class DeferredHandler {
     public void postIdle(final Runnable runnable) {
         postIdle(runnable, 0);
     }
-    public void postIdle(final Runnable runnable, int type) {
+    private void postIdle(final Runnable runnable, int type) {
         post(new IdleRunnable(runnable), type);
     }
 
@@ -131,7 +131,7 @@ public class DeferredHandler {
         }
     }
 
-    void scheduleNextLocked() {
+    private void scheduleNextLocked() {
         if (mQueue.size() > 0) {
             Pair<Runnable, Integer> p = mQueue.getFirst();
             Runnable peek = p.first;

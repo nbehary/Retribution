@@ -1,12 +1,11 @@
 package com.nbehary.retribution;
 
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.ActionBar;
-import android.app.Activity;
 
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -23,23 +22,15 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
-import android.os.Build;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -54,14 +45,14 @@ import com.nbehary.retribution.preference.PreferencesProvider;
 
 public class FolderColorsActivity extends AppCompatActivity {
 
-    int mBgColor;
-    int mIconColor;
-    int mNameColor;
-    boolean mDefaultBG;
-    Context mContext;
-    String mFreeColor;
-    boolean mTintIcon;
-    int mFolderType;
+    private int mBgColor;
+    private int mIconColor;
+    private int mNameColor;
+    private boolean mDefaultBG;
+    private Context mContext;
+    private String mFreeColor;
+    private boolean mTintIcon;
+    private int mFolderType;
 
 
 
@@ -125,30 +116,30 @@ public class FolderColorsActivity extends AppCompatActivity {
 
     }
 
-    public void setmDefaultBG(boolean mDefaultBG) {
+    private void setmDefaultBG(boolean mDefaultBG) {
         this.mDefaultBG = mDefaultBG;
     }
 
-    public void setmNameColor(int mNameColor) {
+    private void setmNameColor(int mNameColor) {
         this.mNameColor = mNameColor;
     }
 
-    public void setmIconColor(int mIconColor) {
+    private void setmIconColor(int mIconColor) {
         this.mIconColor = mIconColor;
     }
 
-    public void setmBgColor(int mBgColor) {
+    private void setmBgColor(int mBgColor) {
         this.mBgColor = mBgColor;
     }
 
-    public void setmFreeColor(String mFreeColor) {
+    private void setmFreeColor(String mFreeColor) {
         this.mFreeColor = mFreeColor;
     }
 
-    public void setmTintIcon(boolean mTintIcon) {
+    private void setmTintIcon(boolean mTintIcon) {
         this.mTintIcon = mTintIcon;
     } 
-    public void setmFolderType(int mFolderType) { this.mFolderType = mFolderType;}
+    private void setmFolderType(int mFolderType) { this.mFolderType = mFolderType;}
 
 
 
@@ -549,7 +540,7 @@ public class FolderColorsActivity extends AppCompatActivity {
 
             Canvas canvas = new Canvas(previewBitmap);
             // new antialised Paint
-            previewDefaultBG = resources.getDrawable(R.drawable.portal_container_holo);
+            previewDefaultBG = ResourcesCompat.getDrawable(resources, R.drawable.portal_container_holo,null);
             if (!bg){
                 ColorFilter filter = new LightingColorFilter( back, back);
                 previewDefaultBG.setColorFilter(filter);
@@ -608,12 +599,11 @@ public class FolderColorsActivity extends AppCompatActivity {
             final Paint paint = new Paint();
             final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
             final RectF rectF = new RectF(rect);
-            final float roundPx = pixels;
 
             paint.setAntiAlias(true);
             canvas.drawARGB(0, 0, 0, 0);
             paint.setColor(color);
-            canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+            canvas.drawRoundRect(rectF, (float) pixels, (float) pixels, paint);
 
             paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
             canvas.drawBitmap(bitmap, rect, rect, paint);

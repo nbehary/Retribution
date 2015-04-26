@@ -26,9 +26,9 @@ import android.view.ViewTreeObserver;
 
 import java.util.HashSet;
 
-public class LauncherAnimUtils {
-    static HashSet<Animator> sAnimators = new HashSet<Animator>();
-    static Animator.AnimatorListener sEndAnimListener = new Animator.AnimatorListener() {
+class LauncherAnimUtils {
+    private static final HashSet<Animator> sAnimators = new HashSet<Animator>();
+    private static final Animator.AnimatorListener sEndAnimListener = new Animator.AnimatorListener() {
         public void onAnimationStart(Animator animation) {
             sAnimators.add(animation);
         }

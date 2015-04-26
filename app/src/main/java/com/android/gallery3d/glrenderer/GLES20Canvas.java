@@ -138,7 +138,7 @@ public class GLES20Canvas implements GLCanvas {
     // Keep track of restore state
     private float[] mMatrices = new float[INITIAL_RESTORE_STATE_SIZE * MATRIX_SIZE];
     private float[] mAlphas = new float[INITIAL_RESTORE_STATE_SIZE];
-    private IntArray mSaveFlags = new IntArray();
+    private final IntArray mSaveFlags = new IntArray();
 
     private int mCurrentAlphaIndex = 0;
     private int mCurrentMatrixIndex = 0;
@@ -148,20 +148,20 @@ public class GLES20Canvas implements GLCanvas {
     private int mHeight;
 
     // Projection matrix
-    private float[] mProjectionMatrix = new float[MATRIX_SIZE];
+    private final float[] mProjectionMatrix = new float[MATRIX_SIZE];
 
     // Screen size for when we aren't bound to a texture
     private int mScreenWidth;
     private int mScreenHeight;
 
     // GL programs
-    private int mDrawProgram;
-    private int mTextureProgram;
-    private int mOesTextureProgram;
-    private int mMeshProgram;
+    private final int mDrawProgram;
+    private final int mTextureProgram;
+    private final int mOesTextureProgram;
+    private final int mMeshProgram;
 
     // GL buffer containing BOX_COORDINATES
-    private int mBoxCoordinates;
+    private final int mBoxCoordinates;
 
     // Handle indices -- common
     private static final int INDEX_POSITION = 0;
@@ -180,7 +180,7 @@ public class GLES20Canvas implements GLCanvas {
 
     private abstract static class ShaderParameter {
         public int handle;
-        protected final String mName;
+        final String mName;
 
         public ShaderParameter(String name) {
             mName = name;
@@ -213,26 +213,26 @@ public class GLES20Canvas implements GLCanvas {
         }
     }
 
-    ShaderParameter[] mDrawParameters = {
+    private final ShaderParameter[] mDrawParameters = {
             new AttributeShaderParameter(POSITION_ATTRIBUTE), // INDEX_POSITION
             new UniformShaderParameter(MATRIX_UNIFORM), // INDEX_MATRIX
             new UniformShaderParameter(COLOR_UNIFORM), // INDEX_COLOR
     };
-    ShaderParameter[] mTextureParameters = {
+    private final ShaderParameter[] mTextureParameters = {
             new AttributeShaderParameter(POSITION_ATTRIBUTE), // INDEX_POSITION
             new UniformShaderParameter(MATRIX_UNIFORM), // INDEX_MATRIX
             new UniformShaderParameter(TEXTURE_MATRIX_UNIFORM), // INDEX_TEXTURE_MATRIX
             new UniformShaderParameter(TEXTURE_SAMPLER_UNIFORM), // INDEX_TEXTURE_SAMPLER
             new UniformShaderParameter(ALPHA_UNIFORM), // INDEX_ALPHA
     };
-    ShaderParameter[] mOesTextureParameters = {
+    private final ShaderParameter[] mOesTextureParameters = {
             new AttributeShaderParameter(POSITION_ATTRIBUTE), // INDEX_POSITION
             new UniformShaderParameter(MATRIX_UNIFORM), // INDEX_MATRIX
             new UniformShaderParameter(TEXTURE_MATRIX_UNIFORM), // INDEX_TEXTURE_MATRIX
             new UniformShaderParameter(TEXTURE_SAMPLER_UNIFORM), // INDEX_TEXTURE_SAMPLER
             new UniformShaderParameter(ALPHA_UNIFORM), // INDEX_ALPHA
     };
-    ShaderParameter[] mMeshParameters = {
+    private final ShaderParameter[] mMeshParameters = {
             new AttributeShaderParameter(POSITION_ATTRIBUTE), // INDEX_POSITION
             new UniformShaderParameter(MATRIX_UNIFORM), // INDEX_MATRIX
             new AttributeShaderParameter(TEXTURE_COORD_ATTRIBUTE), // INDEX_TEXTURE_COORD
@@ -251,10 +251,10 @@ public class GLES20Canvas implements GLCanvas {
 
     // Buffer for framebuffer IDs -- we keep track so we can switch the attached
     // texture.
-    private int[] mFrameBuffer = new int[1];
+    private final int[] mFrameBuffer = new int[1];
 
     // Bound textures.
-    private ArrayList<RawTexture> mTargetTextures = new ArrayList<RawTexture>();
+    private final ArrayList<RawTexture> mTargetTextures = new ArrayList<RawTexture>();
 
     // Temporary variables used within calculations
     private final float[] mTempMatrix = new float[32];

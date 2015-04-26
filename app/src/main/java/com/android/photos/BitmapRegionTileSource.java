@@ -55,17 +55,17 @@ public class BitmapRegionTileSource implements TiledImageRenderer.TileSource {
     // due to decodePreview being allowed to be up to 2x the size of the target
     private static final int MAX_PREVIEW_SIZE = 1024;
 
-    BitmapRegionDecoder mDecoder;
-    int mWidth;
-    int mHeight;
-    int mTileSize;
+    private BitmapRegionDecoder mDecoder;
+    private int mWidth;
+    private int mHeight;
+    private final int mTileSize;
     private BasicTexture mPreview;
     private final int mRotation;
 
     // For use only by getTile
-    private Rect mWantRegion = new Rect();
-    private Rect mOverlapRegion = new Rect();
-    private BitmapFactory.Options mOptions;
+    private final Rect mWantRegion = new Rect();
+    private final Rect mOverlapRegion = new Rect();
+    private final BitmapFactory.Options mOptions;
     private Canvas mCanvas;
 
     public BitmapRegionTileSource(Context context, String path, int previewSize, int rotation) {

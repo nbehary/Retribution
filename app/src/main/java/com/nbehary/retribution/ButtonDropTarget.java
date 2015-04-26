@@ -34,18 +34,18 @@ import com.nbehary.retribution.R;
  */
 public class ButtonDropTarget extends TextView implements DropTarget, DragController.DragListener {
 
-    protected final int mTransitionDuration;
+    final int mTransitionDuration;
 
-    protected Launcher mLauncher;
-    private int mBottomDragPadding;
+    Launcher mLauncher;
+    private final int mBottomDragPadding;
     protected TextView mText;
-    protected SearchDropTargetBar mSearchDropTargetBar;
+    SearchDropTargetBar mSearchDropTargetBar;
 
     /** Whether this drop target is active for the current drag */
-    protected boolean mActive;
+    boolean mActive;
 
     /** The paint applied to the drag view on hover */
-    protected int mHoverColor = 0;
+    int mHoverColor = 0;
 
     public ButtonDropTarget(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -71,7 +71,7 @@ public class ButtonDropTarget extends TextView implements DropTarget, DragContro
         mSearchDropTargetBar = searchDropTargetBar;
     }
 
-    protected Drawable getCurrentDrawable() {
+    Drawable getCurrentDrawable() {
         Drawable[] drawables;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             drawables = getCompoundDrawablesRelative();
@@ -128,11 +128,7 @@ public class ButtonDropTarget extends TextView implements DropTarget, DragContro
     }
 
     private boolean isRtl() {
-        if (Build.VERSION.SDK_INT >=17) {
-            return (getLayoutDirection() == View.LAYOUT_DIRECTION_RTL);
-        } else {
-            return false;
-        }
+        return Build.VERSION.SDK_INT >= 17 && (getLayoutDirection() == View.LAYOUT_DIRECTION_RTL);
     }
 
     Rect getIconRect(int viewWidth, int viewHeight, int drawableWidth, int drawableHeight) {
@@ -142,28 +138,25 @@ public class ButtonDropTarget extends TextView implements DropTarget, DragContro
         Rect to = new Rect();
         dragLayer.getViewRectRelativeToSelf(this, to);
 
-        final int width = drawableWidth;
-        final int height = drawableHeight;
-
         final int left;
         final int right;
 
         if (isRtl()) {
             right = to.right - getPaddingRight();
-            left = right - width;
+            left = right - drawableWidth;
         } else {
             left = to.left + getPaddingLeft();
-            right = left + width;
+            right = left + drawableWidth;
         }
 
-        final int top = to.top + (getMeasuredHeight() - height) / 2;
-        final int bottom = top +  height;
+        final int top = to.top + (getMeasuredHeight() - drawableHeight) / 2;
+        final int bottom = top + drawableHeight;
 
         to.set(left, top, right, bottom);
 
         // Center the destination rect about the trash icon
-        final int xOffset = (int) -(viewWidth - width) / 2;
-        final int yOffset = (int) -(viewHeight - height) / 2;
+        final int xOffset = -(viewWidth - drawableWidth) / 2;
+        final int yOffset = -(viewHeight - drawableHeight) / 2;
         to.offset(xOffset, yOffset);
 
         return to;

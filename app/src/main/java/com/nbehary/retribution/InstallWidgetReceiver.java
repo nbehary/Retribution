@@ -40,7 +40,7 @@ import com.nbehary.retribution.R;
  * We will likely flesh this out later, to handle allow external apps to place widgets, but for now,
  * we just want to expose the action around for checking elsewhere.
  */
-public class InstallWidgetReceiver {
+class InstallWidgetReceiver {
     public static final String ACTION_INSTALL_WIDGET =
             "com.nbehary.retribution.action.INSTALL_WIDGET";
     public static final String ACTION_SUPPORTS_CLIPDATA_MIMETYPE =
@@ -59,8 +59,8 @@ public class InstallWidgetReceiver {
      * A simple data class that contains per-item information that the adapter below can reference.
      */
     public static class WidgetMimeTypeHandlerData {
-        public ResolveInfo resolveInfo;
-        public AppWidgetProviderInfo widgetInfo;
+        public final ResolveInfo resolveInfo;
+        public final AppWidgetProviderInfo widgetInfo;
 
         public WidgetMimeTypeHandlerData(ResolveInfo rInfo, AppWidgetProviderInfo wInfo) {
             resolveInfo = rInfo;
@@ -73,12 +73,12 @@ public class InstallWidgetReceiver {
      */
     public static class WidgetListAdapter implements ListAdapter, DialogInterface.OnClickListener {
         private LayoutInflater mInflater;
-        private Launcher mLauncher;
-        private String mMimeType;
-        private ClipData mClipData;
-        private List<WidgetMimeTypeHandlerData> mActivities;
-        private int mTargetLayoutScreen;
-        private int[] mTargetLayoutPos;
+        private final Launcher mLauncher;
+        private final String mMimeType;
+        private final ClipData mClipData;
+        private final List<WidgetMimeTypeHandlerData> mActivities;
+        private final int mTargetLayoutScreen;
+        private final int[] mTargetLayoutPos;
 
         public WidgetListAdapter(Launcher l, String mimeType, ClipData data,
                 List<WidgetMimeTypeHandlerData> list, int targetScreen, int[] targetPos) {

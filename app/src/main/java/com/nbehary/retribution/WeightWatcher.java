@@ -46,14 +46,14 @@ public class WeightWatcher extends LinearLayout {
     private static final int MSG_STOP = 2;
     private static final int MSG_UPDATE = 3;
 
-    static int indexOf(int[] a, int x) {
+    private static int indexOf(int[] a, int x) {
         for (int i=0; i<a.length; i++) {
             if (a[i] == x) return i;
         }
         return -1;
     }
 
-    Handler mHandler = new Handler() {
+    private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message m) {
             switch (m.what) {
@@ -104,7 +104,7 @@ public class WeightWatcher extends LinearLayout {
         setBackgroundColor(BACKGROUND_COLOR);
     }
 
-    public void initViews() {
+    private void initViews() {
         removeAllViews();
         int[] processes = mMemoryService.getTrackedProcesses();
         for (int i=0; i<processes.length; i++) {
@@ -131,8 +131,8 @@ public class WeightWatcher extends LinearLayout {
     }
 
     public class ProcessWatcher extends LinearLayout {
-        GraphView mRamGraph;
-        TextView mText;
+        final GraphView mRamGraph;
+        final TextView mText;
         int mPid;
         private MemoryTracker.ProcessMemInfo mMemInfo;
 
@@ -225,7 +225,9 @@ public class WeightWatcher extends LinearLayout {
         }
 
         public class GraphView extends View {
-            Paint pssPaint, ussPaint, headPaint;
+            final Paint pssPaint;
+            final Paint ussPaint;
+            final Paint headPaint;
 
             public GraphView(Context context, AttributeSet attrs) {
                 super(context, attrs);

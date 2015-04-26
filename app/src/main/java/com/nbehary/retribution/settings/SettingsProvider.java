@@ -20,7 +20,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 public final class SettingsProvider {
-    public static final String SETTINGS_KEY = "com.nbehary.retribution_preferences";
+    private static final String SETTINGS_KEY = "com.nbehary.retribution_preferences";
 
     public static final String SETTINGS_CHANGED = "settings_changed";
 
@@ -42,7 +42,7 @@ public final class SettingsProvider {
         return context.getSharedPreferences(SETTINGS_KEY, Context.MODE_MULTI_PROCESS);
     }
 
-    public static int getIntCustomDefault(Context context, String key, int def) {
+    private static int getIntCustomDefault(Context context, String key, int def) {
         return get(context).getInt(key, def);
     }
 
@@ -50,7 +50,7 @@ public final class SettingsProvider {
         return getIntCustomDefault(context, key, context.getResources().getInteger(resource));
     }
 
-    public static long getLongCustomDefault(Context context, String key, long def) {
+    private static long getLongCustomDefault(Context context, String key, long def) {
         return get(context).getLong(key, def);
     }
 
@@ -58,7 +58,7 @@ public final class SettingsProvider {
         return getLongCustomDefault(context, key, context.getResources().getInteger(resource));
     }
 
-    public static boolean getBooleanCustomDefault(Context context, String key, boolean def) {
+    private static boolean getBooleanCustomDefault(Context context, String key, boolean def) {
         return get(context).getBoolean(key, def);
     }
 
@@ -66,7 +66,7 @@ public final class SettingsProvider {
         return getBooleanCustomDefault(context, key, context.getResources().getBoolean(resource));
     }
 
-    public static String getStringCustomDefault(Context context, String key, String def) {
+    private static String getStringCustomDefault(Context context, String key, String def) {
         return get(context).getString(key, def);
     }
 

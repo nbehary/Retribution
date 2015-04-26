@@ -52,7 +52,7 @@ final class Utilities {
     private static int sIconHeight = -1;
     public static int sIconTextureWidth = -1;
     public static int sIconTextureHeight = -1;
-    public static int sHotseatIconSize = -1;
+    private static int sHotseatIconSize = -1;
 
     private static final Paint sBlurPaint = new Paint();
     private static final Paint sGlowColorPressedPaint = new Paint();
@@ -65,8 +65,8 @@ final class Utilities {
         sCanvas.setDrawFilter(new PaintFlagsDrawFilter(Paint.DITHER_FLAG,
                 Paint.FILTER_BITMAP_FLAG));
     }
-    static int sColors[] = { 0xffff0000, 0xff00ff00, 0xff0000ff };
-    static int sColorIndex = 0;
+    private static final int[] sColors = { 0xffff0000, 0xff00ff00, 0xff0000ff };
+    private static int sColorIndex = 0;
 
     /**
      * Returns a FastBitmapDrawable with the icon, accurately sized.
@@ -92,7 +92,7 @@ final class Utilities {
     /**
      * Resizes an icon drawable to the correct icon size.
      */
-    static void resizeIconDrawable(Drawable icon) {
+    private static void resizeIconDrawable(Drawable icon) {
         icon.setBounds(0, 0, sIconTextureWidth, sIconTextureHeight);
     }
 
@@ -262,8 +262,8 @@ final class Utilities {
             scale *= v0.getScaleX();
         }
 
-        coord[0] = (int) Math.round(pt[0]);
-        coord[1] = (int) Math.round(pt[1]);
+        coord[0] = Math.round(pt[0]);
+        coord[1] = Math.round(pt[1]);
         return scale;
     }
 
@@ -302,8 +302,8 @@ final class Utilities {
             }
         }
 
-        coord[0] = (int) Math.round(pt[0]);
-        coord[1] = (int) Math.round(pt[1]);
+        coord[0] = Math.round(pt[0]);
+        coord[1] = Math.round(pt[1]);
         return scale;
     }
 
@@ -334,7 +334,7 @@ final class Utilities {
 
     }
 
-    public static void scaleRect(Rect r, float scale) {
+    private static void scaleRect(Rect r, float scale) {
         if (scale != 1.0f) {
             r.left = (int) (r.left * scale + 0.5f);
             r.top = (int) (r.top * scale + 0.5f);

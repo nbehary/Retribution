@@ -32,7 +32,7 @@ class CountedDataInputStream extends FilterInputStream {
     private final byte mByteArray[] = new byte[8];
     private final ByteBuffer mByteBuffer = ByteBuffer.wrap(mByteArray);
 
-    protected CountedDataInputStream(InputStream in) {
+    CountedDataInputStream(InputStream in) {
         super(in);
     }
 
@@ -68,7 +68,7 @@ class CountedDataInputStream extends FilterInputStream {
         return skip;
     }
 
-    public void skipOrThrow(long length) throws IOException {
+    private void skipOrThrow(long length) throws IOException {
         if (skip(length) != length) throw new EOFException();
     }
 
@@ -79,12 +79,12 @@ class CountedDataInputStream extends FilterInputStream {
         skipOrThrow(diff);
     }
 
-    public void readOrThrow(byte[] b, int off, int len) throws IOException {
+    private void readOrThrow(byte[] b, int off, int len) throws IOException {
         int r = read(b, off, len);
         if (r != len) throw new EOFException();
     }
 
-    public void readOrThrow(byte[] b) throws IOException {
+    private void readOrThrow(byte[] b) throws IOException {
         readOrThrow(b, 0, b.length);
     }
 

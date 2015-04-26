@@ -18,12 +18,12 @@ package com.nbehary.retribution;
 
 import android.view.View;
 
-public class CheckLongPressHelper {
-    private View mView;
+class CheckLongPressHelper {
+    private final View mView;
     private boolean mHasPerformedLongPress;
     private CheckForLongPress mPendingCheckForLongPress;
 
-    class CheckForLongPress implements Runnable {
+    private class CheckForLongPress implements Runnable {
         public void run() {
             if ((mView.getParent() != null) && mView.hasWindowFocus()
                     && !mHasPerformedLongPress) {

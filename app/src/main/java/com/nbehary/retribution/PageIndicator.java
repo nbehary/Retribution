@@ -16,22 +16,12 @@
 
 package com.nbehary.retribution;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.animation.LayoutTransition;
-import android.animation.TimeInterpolator;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import com.nbehary.retribution.R;
 
@@ -43,17 +33,17 @@ public class PageIndicator extends LinearLayout {
     // Want this to look good? Keep it odd
     private static final boolean MODULATE_ALPHA_ENABLED = false;
 
-    private LayoutInflater mLayoutInflater;
-    private int[] mWindowRange = new int[2];
-    private int mMaxWindowSize;
+    private final LayoutInflater mLayoutInflater;
+    private final int[] mWindowRange = new int[2];
+    private final int mMaxWindowSize;
 
-    private ArrayList<PageIndicatorMarker> mMarkers =
+    private final ArrayList<PageIndicatorMarker> mMarkers =
             new ArrayList<PageIndicatorMarker>();
     private int mActiveMarkerIndex;
 
     public static class PageMarkerResources {
-        int activeId;
-        int inactiveId;
+        final int activeId;
+        final int inactiveId;
 
         public PageMarkerResources() {
             activeId = R.drawable.ic_pageindicator_current;
@@ -106,12 +96,12 @@ public class PageIndicator extends LinearLayout {
         transition.disableTransitionType(LayoutTransition.CHANGE_DISAPPEARING);
     }
 
-    void offsetWindowCenterTo(int activeIndex, boolean allowAnimations) {
+    private void offsetWindowCenterTo(int activeIndex, boolean allowAnimations) {
         if (activeIndex < 0) {
             new Throwable().printStackTrace();
         }
         int windowSize = Math.min(mMarkers.size(), mMaxWindowSize);
-        int hWindowSize = (int) windowSize / 2;
+        int hWindowSize = windowSize / 2;
         float hfWindowSize = windowSize / 2f;
         int windowStart = Math.max(0, activeIndex - hWindowSize);
         int windowEnd = Math.min(mMarkers.size(), windowStart + mMaxWindowSize);
@@ -137,7 +127,7 @@ public class PageIndicator extends LinearLayout {
 
         // Add all the new children that belong in the window
         for (int i = 0; i < mMarkers.size(); ++i) {
-            PageIndicatorMarker marker = (PageIndicatorMarker) mMarkers.get(i);
+            PageIndicatorMarker marker = mMarkers.get(i);
             if (windowStart <= i && i < windowEnd) {
                 if (indexOfChild(marker) < 0) {
                     addView(marker, i - windowStart);

@@ -173,12 +173,8 @@ public class ShortcutAndWidgetContainer extends ViewGroup {
         return mInvertIfRtl && isLayoutRtl();
     }
 
-    public boolean isLayoutRtl() {
-        if (Build.VERSION.SDK_INT >=17) {
-            return (getLayoutDirection() == LAYOUT_DIRECTION_RTL);
-        } else {
-            return false;
-        }
+    private boolean isLayoutRtl() {
+        return Build.VERSION.SDK_INT >= 17 && (getLayoutDirection() == LAYOUT_DIRECTION_RTL);
     }
 
     @Override

@@ -4,7 +4,6 @@ package com.nbehary.retribution;
 import android.support.v7.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
@@ -26,24 +25,24 @@ import com.nbehary.retribution.preference.PreferencesProvider;
 
 public class FolderColorsDialogFragment extends DialogFragment implements ColorPickerView.OnColorChangedListener {
 
-    Folder mFolder;
-    GridLayout mRootView;
-    Spinner mChangeSpinner;
+    private Folder mFolder;
+    private GridLayout mRootView;
+    private Spinner mChangeSpinner;
     Spinner mIconSpinner;
-    ColorPickerView mPicker;
-    TextView mLabelText;
-    TextView mNameText;
-    LinearLayout mPreview;
-    Drawable mPreviewBackground;
-    int mCustomColors;
-    int mIconColor;
-    int mNameColor;
-    int mBgColor;
-    int mLabelColor;
-    boolean mDefaultBG;
+    private ColorPickerView mPicker;
+    private TextView mLabelText;
+    private TextView mNameText;
+    private LinearLayout mPreview;
+    private Drawable mPreviewBackground;
+    private int mCustomColors;
+    private int mIconColor;
+    private int mNameColor;
+    private int mBgColor;
+    private int mLabelColor;
+    private boolean mDefaultBG;
     boolean mTintIcon;
     int mFolderType;
-    String mChanging;
+    private String mChanging;
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the Builder class for convenient dialog construction

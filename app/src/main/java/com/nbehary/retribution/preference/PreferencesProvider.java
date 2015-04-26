@@ -19,15 +19,11 @@ package com.nbehary.retribution.preference;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.util.Log;
-
-import com.nbehary.retribution.Workspace;
-import com.nbehary.retribution.AppsCustomizePagedView;
 
 import java.util.Map;
 
 public final class PreferencesProvider {
-    public static final String PREFERENCES_KEY = "com.nbehary.retribution_preferences";
+    private static final String PREFERENCES_KEY = "com.nbehary.retribution_preferences";
 
     public static final String PREFERENCES_CHANGED = "preferences_changed";
 
@@ -307,7 +303,7 @@ public final class PreferencesProvider {
         }
     }
 
-    public static class Application {
+    private static class Application {
 
     }
 }

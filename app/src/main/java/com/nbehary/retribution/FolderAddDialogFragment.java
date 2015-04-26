@@ -8,17 +8,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.EditText;
-import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -32,18 +27,18 @@ import java.util.ArrayList;
  */
 public class FolderAddDialogFragment extends DialogFragment {
 
-    LinearLayout mRootView;
+    private LinearLayout mRootView;
 
     private OnFolderShortcutsAddedListener mListener;
 
-    String mCategory;
+    private String mCategory;
 
-    Folder mFolder;
-    FolderInfo mFolderInfo;
+    private Folder mFolder;
+    private FolderInfo mFolderInfo;
 
-    FolderAddArrayAdapter mListAdapter;
+    private FolderAddArrayAdapter mListAdapter;
 
-    Launcher mLauncher;
+    private Launcher mLauncher;
 
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -190,7 +185,7 @@ public class FolderAddDialogFragment extends DialogFragment {
 
     public interface OnFolderShortcutsAddedListener {
         // TODO: Update argument type and name
-        public void onFolderShortcutsAdded();
+        void onFolderShortcutsAdded();
     }
 
     public void setFolder(Folder folder) {
@@ -204,11 +199,12 @@ public class FolderAddDialogFragment extends DialogFragment {
 
     private final Context context;
     private ArrayList<String> values;
-    private AllAppsList apps,allApps;
+    private AllAppsList apps;
+     private final AllAppsList allApps;
     private String category;
-    private FolderInfo folderInfo;
-    private Launcher mLauncher;
-    private Folder mFolder;
+    private final FolderInfo folderInfo;
+    private final Launcher mLauncher;
+    private final Folder mFolder;
 
     public FolderAddArrayAdapter(Context context, ArrayList<String>values,AllAppsList apps, String category, FolderInfo folderInfo, Launcher launcher,Folder folder) {
         super(context, R.layout.groups_list_item, values);

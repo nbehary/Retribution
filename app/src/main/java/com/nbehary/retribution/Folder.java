@@ -34,36 +34,27 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.SystemClock;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.widget.AutoScrollHelper;
 import android.text.InputType;
 import android.text.Selection;
-import android.text.Spannable;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.ActionMode;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.Interpolator;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.PopupMenu;
-import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -84,17 +75,17 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         View.OnFocusChangeListener {
     private static final String TAG = "Launcher.Folder";
 
-    protected DragController mDragController;
-    protected Launcher mLauncher;
-    protected FolderInfo mInfo;
+    private DragController mDragController;
+    final Launcher mLauncher;
+    FolderInfo mInfo;
 
-    static final int STATE_NONE = -1;
-    static final int STATE_SMALL = 0;
-    static final int STATE_ANIMATING = 1;
-    static final int STATE_OPEN = 2;
+    private static final int STATE_NONE = -1;
+    private static final int STATE_SMALL = 0;
+    private static final int STATE_ANIMATING = 1;
+    private static final int STATE_OPEN = 2;
 
-    private int mExpandDuration;
-    protected CellLayout mContent;
+    private final int mExpandDuration;
+    private CellLayout mContent;
     private ScrollView mScrollView;
     private final LayoutInflater mInflater;
     private final IconCache mIconCache;
@@ -104,42 +95,42 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
     private static final int ON_EXIT_CLOSE_DELAY = 800;
     private boolean mRearrangeOnClose = false;
     private FolderIcon mFolderIcon;
-    private int mMaxCountX;
-    private int mMaxCountY;
-    private int mMaxNumItems;
-    private ArrayList<View> mItemsInReadingOrder = new ArrayList<View>();
+    private final int mMaxCountX;
+    private final int mMaxCountY;
+    private final int mMaxNumItems;
+    private final ArrayList<View> mItemsInReadingOrder = new ArrayList<View>();
     private Drawable mIconDrawable;
-    boolean mItemsInvalidated = false;
+    private boolean mItemsInvalidated = false;
     private ShortcutInfo mCurrentDragInfo;
     private View mCurrentDragView;
-    boolean mSuppressOnAdd = false;
+    private boolean mSuppressOnAdd = false;
     private int[] mTargetCell = new int[2];
-    private int[] mPreviousTargetCell = new int[2];
-    private int[] mEmptyCell = new int[2];
-    private Alarm mReorderAlarm = new Alarm();
-    private Alarm mOnExitAlarm = new Alarm();
+    private final int[] mPreviousTargetCell = new int[2];
+    private final int[] mEmptyCell = new int[2];
+    private final Alarm mReorderAlarm = new Alarm();
+    private final Alarm mOnExitAlarm = new Alarm();
     private int mFolderNameHeight;
     private int mFolderCustomizeHeight;
-    private Rect mTempRect = new Rect();
+    private final Rect mTempRect = new Rect();
     private boolean mDragInProgress = false;
     private boolean mDeleteFolderOnDropCompleted = false;
     private boolean mSuppressFolderDeletion = false;
     private boolean mItemAddedBackToSelfViaIcon = false;
-    LinearLayout mFolderNameAndCustomize;
+    private LinearLayout mFolderNameAndCustomize;
     FolderEditText mFolderName;
-    FolderCustomize mFolderCustomize;
-    Drawable mFolderBackground;
+    private FolderCustomize mFolderCustomize;
+    private Drawable mFolderBackground;
     private float mFolderIconPivotX;
     private float mFolderIconPivotY;
 
     private boolean mIsEditingName = false;
-    private InputMethodManager mInputMethodManager;
+    private final InputMethodManager mInputMethodManager;
 
     private static String sDefaultFolderName;
     private static String sHintText;
 
-    private int DRAG_MODE_NONE = 0;
-    private int DRAG_MODE_REORDER = 1;
+    private final int DRAG_MODE_NONE = 0;
+    private final int DRAG_MODE_REORDER = 1;
     private int mDragMode = DRAG_MODE_NONE;
 
     private boolean mDestroyed;
@@ -316,7 +307,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
       //  mFolderCustomizeHeight = mFolderCustomize.getMeasuredHeight();
     }
 
-    private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
+    private final ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             return false;
         }
@@ -374,7 +365,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         return mIsEditingName;
     }
 
-    public void startEditingFolderName() {
+    private void startEditingFolderName() {
         mFolderName.setHint("");
         mIsEditingName = true;
     }
@@ -400,7 +391,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         // ensures that every time the field is clicked, focus is gained, giving reliable behavior.
         requestFocus();
 
-        Selection.setSelection((Spannable) mFolderName.getText(), 0, 0);
+        Selection.setSelection(mFolderName.getText(), 0, 0);
         mIsEditingName = false;
     }
 
@@ -451,7 +442,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
     }
 
     private class GridComparator implements Comparator<ShortcutInfo> {
-        int mNumCols;
+        final int mNumCols;
         public GridComparator(int numCols) {
             mNumCols = numCols;
         }
@@ -494,7 +485,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         placeInReadingOrder(children);
         int count = 0;
         for (int i = 0; i < children.size(); i++) {
-            ShortcutInfo child = (ShortcutInfo) children.get(i);
+            ShortcutInfo child = children.get(i);
             if (!createAndAddShortcut(child)) {
                 overflow.add(child);
             } else {
@@ -543,7 +534,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
             }
 
 
-            Drawable myIcon = mLauncher.getResources().getDrawable(R.drawable.portal_ring_inner_holo);
+            Drawable myIcon = ResourcesCompat.getDrawable(mLauncher.getResources(), R.drawable.portal_ring_inner_holo,null);
             //Drawable myIcon = icon.mPreviewBackground.getDrawable();
             ColorFilter filter = new LightingColorFilter( color, color);
 
@@ -673,10 +664,10 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         final int itemType = item.itemType;
         return ((itemType == LauncherSettings.Favorites.ITEM_TYPE_APPLICATION ||
                     itemType == LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT) &&
-                    !isFull());
+                isEmpty());
     }
 
-    protected boolean findAndSetEmptyCells(ShortcutInfo item) {
+    private boolean findAndSetEmptyCells(ShortcutInfo item) {
         int[] emptyCell = new int[2];
         if (mContent.findCellForSpan(emptyCell, item.spanX, item.spanY)) {
             item.cellX = emptyCell[0];
@@ -687,7 +678,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         }
     }
 
-    protected boolean createAndAddShortcut(ShortcutInfo item) {
+    private boolean createAndAddShortcut(ShortcutInfo item) {
         final BubbleTextView textView =
             (BubbleTextView) mInflater.inflate(R.layout.application, this, false);
         textView.setCompoundDrawables(null,
@@ -753,18 +744,14 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         mOnExitAlarm.cancelAlarm();
     }
 
-    OnAlarmListener mReorderAlarmListener = new OnAlarmListener() {
+    private final OnAlarmListener mReorderAlarmListener = new OnAlarmListener() {
         public void onAlarm(Alarm alarm) {
             realTimeReorder(mEmptyCell, mTargetCell);
         }
     };
 
-    boolean readingOrderGreaterThan(int[] v1, int[] v2) {
-        if (v1[1] > v2[1] || (v1[1] == v2[1] && v1[0] > v2[0])) {
-            return true;
-        } else {
-            return false;
-        }
+    private boolean readingOrderGreaterThan(int[] v1, int[] v2) {
+        return v1[1] > v2[1] || (v1[1] == v2[1] && v1[0] > v2[0]);
     }
 
     private void realTimeReorder(int[] empty, int[] target) {
@@ -811,12 +798,8 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         }
     }
 
-    public boolean isLayoutRtl() {
-        if (Build.VERSION.SDK_INT >=17) {
-            return (getLayoutDirection() == LAYOUT_DIRECTION_RTL);
-        } else {
-            return false;
-        }
+    private boolean isLayoutRtl() {
+        return Build.VERSION.SDK_INT >= 17 && (getLayoutDirection() == LAYOUT_DIRECTION_RTL);
     }
 
     public void onDragOver(DragObject d) {
@@ -885,7 +868,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         return res;
     }
 
-    OnAlarmListener mOnExitAlarmListener = new OnAlarmListener() {
+    private final OnAlarmListener mOnExitAlarmListener = new OnAlarmListener() {
         public void onAlarm(Alarm alarm) {
             completeDragExit();
         }
@@ -1058,8 +1041,8 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         arrangeChildren(list);
     }
 
-    public boolean isFull() {
-        return getItemCount() >= mMaxNumItems;
+    public boolean isEmpty() {
+        return getItemCount() < mMaxNumItems;
     }
 
     private void centerAboutIcon() {
@@ -1156,9 +1139,8 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
     }
 
     private int getFolderHeight() {
-        int height = getPaddingTop() + getPaddingBottom()
+        return getPaddingTop() + getPaddingBottom()
                 + getContentAreaHeight() + mFolderNameHeight;
-        return height;
     }
 
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -1209,7 +1191,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         return mContent.getShortcutsAndWidgets().getChildCount();
     }
 
-    public View getItemAt(int index) {
+    private View getItemAt(int index) {
         return mContent.getShortcutsAndWidgets().getChildAt(index);
     }
 
@@ -1218,7 +1200,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         if (parent != null) {
             parent.removeView(this);
         }
-        mDragController.removeDropTarget((DropTarget) this);
+        mDragController.removeDropTarget(this);
         clearFocus();
         mFolderIcon.requestFocus();
 
@@ -1438,12 +1420,11 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         final Paint paint = new Paint();
         final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
         final RectF rectF = new RectF(rect);
-        final float roundPx = pixels;
 
         paint.setAntiAlias(true);
         canvas.drawARGB(0, 0, 0, 0);
         paint.setColor(color);
-        canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+        canvas.drawRoundRect(rectF, (float) pixels, (float) pixels, paint);
 
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
         canvas.drawBitmap(bitmap, rect, rect, paint);

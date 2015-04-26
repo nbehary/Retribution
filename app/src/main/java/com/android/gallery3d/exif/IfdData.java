@@ -47,14 +47,14 @@ class IfdData {
         mIfdId = ifdId;
     }
 
-    static protected int[] getIfds() {
+    static int[] getIfds() {
         return sIfds;
     }
 
     /**
      * Get a array the contains all {@link ExifTag} in this IFD.
      */
-    protected ExifTag[] getAllTags() {
+    ExifTag[] getAllTags() {
         return mExifTags.values().toArray(new ExifTag[mExifTags.size()]);
     }
 
@@ -67,7 +67,7 @@ class IfdData {
      * @see IfdId#TYPE_IFD_GPS
      * @see IfdId#TYPE_IFD_INTEROPERABILITY
      */
-    protected int getId() {
+    int getId() {
         return mIfdId;
     }
 
@@ -75,14 +75,14 @@ class IfdData {
      * Gets the {@link ExifTag} with given tag id. Return null if there is no
      * such tag.
      */
-    protected ExifTag getTag(short tagId) {
+    ExifTag getTag(short tagId) {
         return mExifTags.get(tagId);
     }
 
     /**
      * Adds or replaces a {@link ExifTag}.
      */
-    protected ExifTag setTag(ExifTag tag) {
+    ExifTag setTag(ExifTag tag) {
         tag.setIfd(mIfdId);
         return mExifTags.put(tag.getTagId(), tag);
     }
@@ -94,28 +94,28 @@ class IfdData {
     /**
      * Removes the tag of the given ID
      */
-    protected void removeTag(short tagId) {
+    void removeTag(short tagId) {
         mExifTags.remove(tagId);
     }
 
     /**
      * Gets the tags count in the IFD.
      */
-    protected int getTagCount() {
+    int getTagCount() {
         return mExifTags.size();
     }
 
     /**
      * Sets the offset of next IFD.
      */
-    protected void setOffsetToNextIfd(int offset) {
+    void setOffsetToNextIfd(int offset) {
         mOffsetToNextIfd = offset;
     }
 
     /**
      * Gets the offset of next IFD.
      */
-    protected int getOffsetToNextIfd() {
+    int getOffsetToNextIfd() {
         return mOffsetToNextIfd;
     }
 

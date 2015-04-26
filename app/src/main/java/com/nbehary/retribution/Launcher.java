@@ -32,6 +32,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityOptions;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
 import android.app.Dialog;
 import android.app.SearchManager;
@@ -47,14 +48,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.ContentObserver;
@@ -72,7 +69,6 @@ import android.os.Bundle;
 import android.os.Debug;
 import android.os.Environment;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Message;
 import android.os.StrictMode;
 import android.os.SystemClock;
@@ -116,20 +112,15 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.NumberPicker;
 import android.widget.PopupMenu;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.gallery3d.common.BitmapUtils;
-import com.android.vending.billing.IInAppBillingService;
 import com.nbehary.retribution.R;
 import com.nbehary.retribution.DropTarget.DragObject;
 import com.nbehary.retribution.preference.PreferencesProvider;
 import com.nbehary.retribution.settings.SettingsProvider;
-import com.nbehary.retribution.util.IabHelper;
-import com.nbehary.retribution.util.IabResult;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -141,6 +132,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -159,13 +151,13 @@ public class Launcher extends AppCompatActivity
     static final String TAG = "Launcher";
     static final boolean LOGD = false;
 
-    static final boolean PROFILE_STARTUP = false;
-    static final boolean DEBUG_WIDGETS = false;
-    static final boolean DEBUG_STRICT_MODE = false;
-    static final boolean DEBUG_RESUME_TIME = false;
-    static final boolean DEBUG_DUMP_LOG = false;
+    private static final boolean PROFILE_STARTUP = false;
+    private static final boolean DEBUG_WIDGETS = false;
+    private static final boolean DEBUG_STRICT_MODE = false;
+    private static final boolean DEBUG_RESUME_TIME = false;
+    private static final boolean DEBUG_DUMP_LOG = false;
 
-    static final boolean DEBUG_SHOW_APPS_TIME = false;
+    private static final boolean DEBUG_SHOW_APPS_TIME = false;
 
     private static final int REQUEST_CREATE_SHORTCUT = 1;
     private static final int REQUEST_CREATE_APPWIDGET = 5;
@@ -190,13 +182,13 @@ public class Launcher extends AppCompatActivity
     static final String EXTRA_SHORTCUT_DUPLICATE = "duplicate";
 
     static final int SCREEN_COUNT = 5;
-    static final int DEFAULT_SCREEN = 2;
+    private static final int DEFAULT_SCREEN = 2;
 
     private static final String PREFERENCES = "launcher.preferences";
     // To turn on these properties, type
     // adb shell setprop log.tag.PROPERTY_NAME [VERBOSE | SUPPRESS]
-    static final String FORCE_ENABLE_ROTATION_PROPERTY = "launcher_force_rotate";
-    static final String DUMP_STATE_PROPERTY = "launcher_dump_state";
+    private static final String FORCE_ENABLE_ROTATION_PROPERTY = "launcher_force_rotate";
+    private static final String DUMP_STATE_PROPERTY = "launcher_dump_state";
 
     // The Intent extra that defines whether to ignore the launch animation
     static final String INTENT_EXTRA_IGNORE_LAUNCH_ANIMATION =
@@ -231,14 +223,15 @@ public class Launcher extends AppCompatActivity
     private static final String TOOLBAR_VOICE_SEARCH_ICON_METADATA_NAME =
             "com.android.launcher.toolbar_voice_search_icon";
 
-    public static final String SHOW_WEIGHT_WATCHER = "debug.show_mem";
-    public static final boolean SHOW_WEIGHT_WATCHER_DEFAULT = false;
+    private static final String SHOW_WEIGHT_WATCHER = "debug.show_mem";
+    private static final boolean SHOW_WEIGHT_WATCHER_DEFAULT = false;
 
-    static final String EXTRA_CUSTOM_WIDGET = "custom_widget";
-    static final String SEARCH_WIDGET = "search_widget";
+    private static final String EXTRA_CUSTOM_WIDGET = "custom_widget";
+    private static final String SEARCH_WIDGET = "search_widget";
 
     /** The different states that Launcher can be in. */
-    private enum State { NONE, WORKSPACE, APPS_CUSTOMIZE, APPS_CUSTOMIZE_SPRING_LOADED, WIDGETS_CUSTOMIZE, ICONPACKS_CUSTOMIZE,FOLDERS_CUSTOMIZE };
+    private enum State { NONE, WORKSPACE, APPS_CUSTOMIZE, APPS_CUSTOMIZE_SPRING_LOADED, WIDGETS_CUSTOMIZE, ICONPACKS_CUSTOMIZE,FOLDERS_CUSTOMIZE }
+
     private State mState = State.WORKSPACE;
     private AnimatorSet mStateAnimation;
 
@@ -252,9 +245,9 @@ public class Launcher extends AppCompatActivity
     private static int sScreen = DEFAULT_SCREEN;
 
     // How long to wait before the new-shortcut animation automatically pans the workspace
-    private static int NEW_APPS_PAGE_MOVE_DELAY = 500;
-    private static int NEW_APPS_ANIMATION_INACTIVE_TIMEOUT_SECONDS = 5;
-    private static int NEW_APPS_ANIMATION_DELAY = 500;
+    private static final int NEW_APPS_PAGE_MOVE_DELAY = 500;
+    private static final int NEW_APPS_ANIMATION_INACTIVE_TIMEOUT_SECONDS = 5;
+    private static final int NEW_APPS_ANIMATION_DELAY = 500;
 
     private final BroadcastReceiver mCloseSystemDialogsReceiver
             = new CloseSystemDialogsIntentReceiver();
@@ -271,10 +264,10 @@ public class Launcher extends AppCompatActivity
     private AppWidgetManager mAppWidgetManager;
     private LauncherAppWidgetHost mAppWidgetHost;
 
-    private ItemInfo mPendingAddInfo = new ItemInfo();
+    private final ItemInfo mPendingAddInfo = new ItemInfo();
     private AppWidgetProviderInfo mPendingAddWidgetInfo;
 
-    private int[] mTmpAddItemCellCoordinates = new int[2];
+    private final int[] mTmpAddItemCellCoordinates = new int[2];
 
     private FolderInfo mFolderInfo;
 
@@ -311,8 +304,8 @@ public class Launcher extends AppCompatActivity
     private boolean mWaitingForResult;
     private boolean mOnResumeNeedsLoad;
 
-    private ArrayList<Runnable> mBindOnResumeCallbacks = new ArrayList<Runnable>();
-    private ArrayList<Runnable> mOnResumeCallbacks = new ArrayList<Runnable>();
+    private final ArrayList<Runnable> mBindOnResumeCallbacks = new ArrayList<Runnable>();
+    private final ArrayList<Runnable> mOnResumeCallbacks = new ArrayList<Runnable>();
 
     // Keep track of whether the user has left launcher
     private static boolean sPausedFromUserAction = false;
@@ -333,7 +326,7 @@ public class Launcher extends AppCompatActivity
 
     private static LocaleConfiguration sLocaleConfiguration = null;
 
-    private static HashMap<Long, FolderInfo> sFolders = new HashMap<Long, FolderInfo>();
+    private static final HashMap<Long, FolderInfo> sFolders = new HashMap<Long, FolderInfo>();
 
     private View.OnTouchListener mHapticFeedbackTouchListener;
 
@@ -343,7 +336,7 @@ public class Launcher extends AppCompatActivity
     private final int mAdvanceStagger = 250;
     private long mAutoAdvanceSentTime;
     private long mAutoAdvanceTimeLeft = -1;
-    private HashMap<View, AppWidgetProviderInfo> mWidgetsToAdvance =
+    private final HashMap<View, AppWidgetProviderInfo> mWidgetsToAdvance =
         new HashMap<View, AppWidgetProviderInfo>();
 
     // Determines how long to wait after a rotation before restoring the screen orientation to
@@ -351,9 +344,9 @@ public class Launcher extends AppCompatActivity
     private final int mRestoreScreenOrientationDelay = 500;
 
     // External icons saved in case of resource changes, orientation, etc.
-    private static Drawable.ConstantState[] sGlobalSearchIcon = new Drawable.ConstantState[2];
-    private static Drawable.ConstantState[] sVoiceSearchIcon = new Drawable.ConstantState[2];
-    private static Drawable.ConstantState[] sAppMarketIcon = new Drawable.ConstantState[2];
+    private static final Drawable.ConstantState[] sGlobalSearchIcon = new Drawable.ConstantState[2];
+    private static final Drawable.ConstantState[] sVoiceSearchIcon = new Drawable.ConstantState[2];
+    private static final Drawable.ConstantState[] sAppMarketIcon = new Drawable.ConstantState[2];
 
     private Intent mAppMarketIntent = null;
     private static final boolean DISABLE_MARKET_BUTTON = true;
@@ -362,11 +355,11 @@ public class Launcher extends AppCompatActivity
 
     private final ArrayList<Integer> mSynchronouslyBoundPages = new ArrayList<Integer>();
 
-    static final ArrayList<String> sDumpLogs = new ArrayList<String>();
-    static Date sDateStamp = new Date();
-    static DateFormat sDateFormat =
+    private static final ArrayList<String> sDumpLogs = new ArrayList<String>();
+    private static final Date sDateStamp = new Date();
+    private static final DateFormat sDateFormat =
             DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
-    static long sRunStart = System.currentTimeMillis();
+    private static final long sRunStart = System.currentTimeMillis();
     static final String CORRUPTION_EMAIL_SENT_KEY = "corruptionEmailSent";
 
     // We only want to get the SharedPreferences once since it does an FS stat each time we get
@@ -380,14 +373,14 @@ public class Launcher extends AppCompatActivity
     private ImageView mFolderIconImageView;
     private Bitmap mFolderIconBitmap;
     private Canvas mFolderIconCanvas;
-    private Rect mRectForFolderAnimation = new Rect();
+    private final Rect mRectForFolderAnimation = new Rect();
 
     private BubbleTextView mWaitingForResume;
 
-    private HideFromAccessibilityHelper mHideFromAccessibilityHelper
+    private final HideFromAccessibilityHelper mHideFromAccessibilityHelper
         = new HideFromAccessibilityHelper();
 
-    private Runnable mBuildLayersRunnable = new Runnable() {
+    private final Runnable mBuildLayersRunnable = new Runnable() {
         public void run() {
             if (mWorkspace != null) {
                 mWorkspace.buildPageHardwareLayers();
@@ -395,10 +388,10 @@ public class Launcher extends AppCompatActivity
         }
     };
 
-    private static ArrayList<PendingAddArguments> sPendingAddList
+    private static final ArrayList<PendingAddArguments> sPendingAddList
             = new ArrayList<PendingAddArguments>();
 
-    public static boolean sForceEnableRotation = isPropertyEnabled(FORCE_ENABLE_ROTATION_PROPERTY);
+    public static final boolean sForceEnableRotation = isPropertyEnabled(FORCE_ENABLE_ROTATION_PROPERTY);
 
     private static class PendingAddArguments {
         int requestCode;
@@ -572,19 +565,19 @@ public class Launcher extends AppCompatActivity
         String authToken = "null";
         Context ctx = getApplicationContext();
 
-        Activity activity = (Activity) this;
+        Activity activity = this;
         try {
             AccountManager am = AccountManager.get(ctx);
             Account[] accounts = am.getAccountsByType("com.google");
             AccountManagerFuture<Bundle> accountManagerFuture;
 //                accountManagerFuture = am.getAuthToken(accounts[0], "android", false, null, null);
             if(activity == null){//this is used when calling from an interval thread
-                accountManagerFuture = am.getAuthToken(accounts[0], "android", false, null, null);
+                accountManagerFuture = am.getAuthToken(accounts[0], "android",null, false, null, null);
             } else {
                 accountManagerFuture = am.getAuthToken(accounts[0], "android", null, activity, null, null);
             }
             Bundle authTokenBundle = accountManagerFuture.getResult();
-            authToken = authTokenBundle.getString(AccountManager.KEY_AUTHTOKEN).toString();
+            authToken = authTokenBundle.getString(AccountManager.KEY_AUTHTOKEN);
             if(invalidateToken) {
                 am.invalidateAuthToken("com.google", authToken);
                 authToken = updateToken(false);
@@ -596,7 +589,7 @@ public class Launcher extends AppCompatActivity
     }
 
 
-    public int getStatusBarHeight() {
+    private int getStatusBarHeight() {
         int result = 0;
         int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
         if (resourceId > 0) {
@@ -613,7 +606,7 @@ public class Launcher extends AppCompatActivity
     }
 
     /** To be overriden by subclasses to hint to Launcher that we have custom content */
-    protected boolean hasCustomContentToLeft() {
+    private boolean hasCustomContentToLeft() {
         return false;
     }
 
@@ -622,7 +615,7 @@ public class Launcher extends AppCompatActivity
      * {@link #addToCustomContentPage}. This will only be invoked if
      * {@link #hasCustomContentToLeft()} is {@code true}.
      */
-    protected void addCustomContentToLeft() {
+    private void addCustomContentToLeft() {
     }
 
     /**
@@ -651,9 +644,6 @@ public class Launcher extends AppCompatActivity
         int coi = getCurrentOrientationIndexForGlobalIcons();
         if (sGlobalSearchIcon[coi] == null || sVoiceSearchIcon[coi] == null ||
                 sAppMarketIcon[coi] == null) {
-            if (!DISABLE_MARKET_BUTTON) {
-                updateAppMarketIcon();
-            }
             searchVisible = updateGlobalSearchIcon();
             voiceVisible = updateVoiceSearchIcon(searchVisible);
         }
@@ -665,9 +655,7 @@ public class Launcher extends AppCompatActivity
             updateVoiceSearchIcon(sVoiceSearchIcon[coi]);
             voiceVisible = true;
         }
-        if (!DISABLE_MARKET_BUTTON && sAppMarketIcon[coi] != null) {
-            updateAppMarketIcon(sAppMarketIcon[coi]);
-        }
+
         if (mSearchDropTargetBar != null) {
             mSearchDropTargetBar.onSearchPackagesChanged(searchVisible, voiceVisible);
         }
@@ -1001,7 +989,7 @@ public class Launcher extends AppCompatActivity
 
     private void completeTwoStageWidgetDrop(final int resultCode, final int appWidgetId) {
         CellLayout cellLayout =
-                (CellLayout) mWorkspace.getScreenWithId(mPendingAddInfo.screenId);
+                mWorkspace.getScreenWithId(mPendingAddInfo.screenId);
         Runnable onCompleteRunnable = null;
         int animationType = 0;
 
@@ -1195,13 +1183,13 @@ public class Launcher extends AppCompatActivity
         }
     }
 
-    protected void onFinishBindingItems() {
+    private void onFinishBindingItems() {
         if (mWorkspace != null && hasCustomContentToLeft() && mWorkspace.hasCustomContent()) {
             addCustomContentToLeft();
         }
     }
 
-    QSBScroller mQsbScroller = new QSBScroller() {
+    private final QSBScroller mQsbScroller = new QSBScroller() {
         int scrollY = 0;
 
         @Override
@@ -1222,16 +1210,16 @@ public class Launcher extends AppCompatActivity
 
     public interface CustomContentCallbacks {
         // Custom content is completely shown
-        public void onShow();
+        void onShow();
 
         // Custom content is completely hidden
-        public void onHide();
+        void onHide();
 
         // Custom content scroll progress changed. From 0 (not showing) to 1 (fully showing).
-        public void onScrollProgressChanged(float progress);
+        void onScrollProgressChanged(float progress);
     }
 
-    protected void startSettings() {
+    private void startSettings() {
         mWorkspace.setVisibility(View.INVISIBLE);
         mOverviewPanel.setVisibility(View.INVISIBLE);
         mState = State.FOLDERS_CUSTOMIZE;
@@ -1242,7 +1230,7 @@ public class Launcher extends AppCompatActivity
 
     }
 
-    protected void startAbout() {
+    private void startAbout() {
        // mWorkspace.setVisibility(View.INVISIBLE);
       //  mOverviewPanel.setVisibility(View.INVISIBLE);
        // mState = State.FOLDERS_CUSTOMIZE;
@@ -1252,14 +1240,14 @@ public class Launcher extends AppCompatActivity
         Launcher.this.startActivityForResult(myIntent, REQUEST_ABOUT);
     }
 
-    protected void startGrid() {
+    private void startGrid() {
         //mState = State.FOLDERS_CUSTOMIZE;
         Intent myIntent = new Intent(Launcher.this, com.nbehary.retribution.GridEditor.class);
         Launcher.this.startActivityForResult(myIntent, REQUEST_GRID);
 
     }
 
-    public void onClickSortModeButton(View v) {
+    private void onClickSortModeButton(View v) {
         final PopupMenu popupMenu = new PopupMenu(this, v);
         final Menu menu = popupMenu.getMenu();
         popupMenu.inflate(R.menu.apps_customize_sort_mode);
@@ -1309,7 +1297,7 @@ public class Launcher extends AppCompatActivity
 //here!!
 	}
 
-    public void onClickTransitionEffectButton() {
+    private void onClickTransitionEffectButton() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         // Load values
@@ -1447,7 +1435,7 @@ public class Launcher extends AppCompatActivity
 */
 
     public interface QSBScroller {
-        public void setScrollY(int scrollY);
+        void setScrollY(int scrollY);
     }
 
     public QSBScroller addToCustomContentPage(View customContent,
@@ -1512,11 +1500,8 @@ public class Launcher extends AppCompatActivity
         }
 
         // Eat the long press event so the keyboard doesn't come up.
-        if (keyCode == KeyEvent.KEYCODE_MENU && event.isLongPress()) {
-            return true;
-        }
+        return keyCode == KeyEvent.KEYCODE_MENU && event.isLongPress() || handled;
 
-        return handled;
     }
 
     private String getTypedText() {
@@ -1620,7 +1605,7 @@ public class Launcher extends AppCompatActivity
 
         mLauncherView.setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
-        mWorkspaceBackgroundDrawable = getResources().getDrawable(R.drawable.workspace_bg);
+        mWorkspaceBackgroundDrawable = ResourcesCompat.getDrawable(getResources(),R.drawable.workspace_bg,null);
 
         // Setup the drag layer
         mDragLayer.setup(this, dragController);
@@ -1795,7 +1780,7 @@ public class Launcher extends AppCompatActivity
      *
      * @return A View inflated from R.layout.application.
      */
-    View createShortcut(ShortcutInfo info) {
+    private View createShortcut(ShortcutInfo info) {
         return createShortcut(R.layout.application,
                 (ViewGroup) mWorkspace.getChildAt(mWorkspace.getCurrentPage()), info);
     }
@@ -1822,7 +1807,7 @@ public class Launcher extends AppCompatActivity
      * @param data The intent describing the application.
 
      */
-    void completeAddApplication(Intent data, long container, long screenId, int cellX, int cellY) {
+    private void completeAddApplication(Intent data, long container, long screenId, int cellX, int cellY) {
         final int[] cellXY = mTmpAddItemCellCoordinates;
         final CellLayout layout = getCellLayout(container, screenId);
 
@@ -1906,8 +1891,8 @@ public class Launcher extends AppCompatActivity
         }
     }
 
-    static int[] getSpanForWidget(Context context, ComponentName component, int minWidth,
-            int minHeight) {
+    private static int[] getSpanForWidget(Context context, ComponentName component, int minWidth,
+                                          int minHeight) {
         Rect padding = AppWidgetHostView.getDefaultPaddingForWidget(context, component, null);
         // We want to account for the extra amount of padding that we are adding to the widget
         // to ensure that it gets the full amount of space that it has requested
@@ -2112,11 +2097,7 @@ public class Launcher extends AppCompatActivity
                     });
                 }
             }
-            // When Launcher comes back to foreground, a different Activity might be responsible for
-            // the app market intent, so refresh the icon
-            if (!DISABLE_MARKET_BUTTON) {
-                updateAppMarketIcon();
-            }
+
             clearTypedText();
         }
     }
@@ -2169,7 +2150,7 @@ public class Launcher extends AppCompatActivity
         }
     };
 
-    void addWidgetToAutoAdvanceIfNeeded(View hostView, AppWidgetProviderInfo appWidgetInfo) {
+    private void addWidgetToAutoAdvanceIfNeeded(View hostView, AppWidgetProviderInfo appWidgetInfo) {
         if (appWidgetInfo == null || appWidgetInfo.autoAdvanceViewId == -1) return;
         View v = hostView.findViewById(appWidgetInfo.autoAdvanceViewId);
         if ((v instanceof Advanceable) && (Build.VERSION.SDK_INT >=16)) {
@@ -2180,7 +2161,7 @@ public class Launcher extends AppCompatActivity
         }
     }
 
-    void removeWidgetToAutoAdvance(View hostView) {
+    private void removeWidgetToAutoAdvance(View hostView) {
         if (mWidgetsToAdvance.containsKey(hostView)) {
             mWidgetsToAdvance.remove(hostView);
             updateRunning();
@@ -2205,7 +2186,7 @@ public class Launcher extends AppCompatActivity
         return mModel;
     }
 
-    public void closeSystemDialogs() {
+    private void closeSystemDialogs() {
         getWindow().closeAllPanels();
 
         // Whatever we were doing is hereby canceled.
@@ -2397,8 +2378,8 @@ public class Launcher extends AppCompatActivity
                 appSearchData, sourceBounds);
     }
 
-    public void startSearch(String initialQuery,
-            boolean selectInitialQuery, Bundle appSearchData, Rect sourceBounds) {
+    private void startSearch(String initialQuery,
+                             boolean selectInitialQuery, Bundle appSearchData, Rect sourceBounds) {
         startGlobalSearch(initialQuery, selectInitialQuery,
                 appSearchData, sourceBounds);
     }
@@ -2466,7 +2447,7 @@ public class Launcher extends AppCompatActivity
         return true;
     }
 
-    public boolean isWorkspaceLocked() {
+    private boolean isWorkspaceLocked() {
         return mWorkspaceLoading || mWaitingForResult;
     }
 
@@ -2479,8 +2460,8 @@ public class Launcher extends AppCompatActivity
         mPendingAddInfo.dropPos = null;
     }
 
-    void addAppWidgetImpl(final int appWidgetId, ItemInfo info, AppWidgetHostView boundWidget,
-            AppWidgetProviderInfo appWidgetInfo) {
+    private void addAppWidgetImpl(final int appWidgetId, ItemInfo info, AppWidgetHostView boundWidget,
+                                  AppWidgetProviderInfo appWidgetInfo) {
         if (appWidgetInfo.configure != null) {
             mPendingAddWidgetInfo = appWidgetInfo;
 
@@ -2591,7 +2572,7 @@ public class Launcher extends AppCompatActivity
         }
     }
 
-    void processShortcut(Intent intent) {
+    private void processShortcut(Intent intent) {
         // Handle case where user selected "Applications"
         String applicationName = getResources().getString(R.string.group_applications);
         String shortcutName = intent.getStringExtra(Intent.EXTRA_SHORTCUT_NAME);
@@ -2647,13 +2628,13 @@ public class Launcher extends AppCompatActivity
         sFolders.remove(folder.id);
     }
 
-    protected void startWallpaper() {
+    private void startWallpaper() {
         final Intent pickWallpaper = new Intent(Intent.ACTION_SET_WALLPAPER);
         pickWallpaper.setComponent(getWallpaperPickerComponent());
         startActivityForResult(pickWallpaper, REQUEST_PICK_WALLPAPER);
     }
 
-    protected ComponentName getWallpaperPickerComponent() {
+    private ComponentName getWallpaperPickerComponent() {
         return new ComponentName(getPackageName(), WallpaperPickerActivity.class.getName());
     }
 
@@ -2830,7 +2811,7 @@ public class Launcher extends AppCompatActivity
         startVoice();
     }
 
-    public void startVoice() {
+    private void startVoice() {
         try {//TODO:ICS_FIX (This is probably never called outside the GEL.  (so, remove it?????)
             final SearchManager searchManager =
                     (SearchManager) getSystemService(Context.SEARCH_SERVICE);
@@ -2884,20 +2865,14 @@ public class Launcher extends AppCompatActivity
     }
 
     public void onClickAppMarketButton(View v) {
-        if (!DISABLE_MARKET_BUTTON) {
-            if (mAppMarketIntent != null) {
-                startActivitySafely(v, mAppMarketIntent, "app market");
-            } else {
-                Log.e(TAG, "Invalid app market intent.");
-            }
-        }
+
     }
 
     /**
      * Called when the user stops interacting with the launcher.
      * This implies that the user is now on the homescreen and is not doing housekeeping.
      */
-    protected void onInteractionEnd() {}
+    void onInteractionEnd() {}
 
     /**
      * Called when the user starts interacting with the launcher.
@@ -2908,7 +2883,7 @@ public class Launcher extends AppCompatActivity
      * This is a good time to stop doing things that only make sense
      * when the user is on the homescreen and not doing housekeeping.
      */
-    protected void onInteractionBegin() {}
+    void onInteractionBegin() {}
 
     void startApplicationDetailsActivity(ComponentName componentName) {
         String packageName = componentName.getPackageName();
@@ -2938,7 +2913,7 @@ public class Launcher extends AppCompatActivity
         }
     }
 
-    boolean startActivity(View v, Intent intent, Object tag) {
+    private boolean startActivity(View v, Intent intent, Object tag) {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         try {
@@ -3121,7 +3096,7 @@ public class Launcher extends AppCompatActivity
      *
 
      */
-    public void openFolder(FolderIcon folderIcon) {
+    private void openFolder(FolderIcon folderIcon) {
         Folder folder = folderIcon.getFolder();
         FolderInfo info = folder.mInfo;
 
@@ -3131,7 +3106,7 @@ public class Launcher extends AppCompatActivity
         // There was a one-off crash where the folder had a parent already.
         if (folder.getParent() == null) {
             mDragLayer.addView(folder);
-            mDragController.addDropTarget((DropTarget) folder);
+            mDragController.addDropTarget(folder);
         } else {
             Log.w(TAG, "Opening folder (" + folder + ") which already has a parent (" +
                     folder.getParent() + ").");
@@ -3158,7 +3133,7 @@ public class Launcher extends AppCompatActivity
         }
     }
 
-    void closeFolder(Folder folder) {
+    private void closeFolder(Folder folder) {
         folder.getInfo().opened = false;
 
         ViewGroup parent = (ViewGroup) folder.getParent().getParent();
@@ -3256,7 +3231,7 @@ public class Launcher extends AppCompatActivity
                 return null;
             }
         } else {
-            return (CellLayout) mWorkspace.getScreenWithId(screenId);
+            return mWorkspace.getScreenWithId(screenId);
         }
     }
 
@@ -3483,6 +3458,7 @@ public class Launcher extends AppCompatActivity
                     toView.setVisibility(View.VISIBLE);
                     toView.bringToFront();
                 }
+
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     dispatchOnLauncherTransitionEnd(fromView, animated, false);
@@ -3490,7 +3466,7 @@ public class Launcher extends AppCompatActivity
 
                     // Hide the search bar
                     if (mSearchDropTargetBar != null) {
-                       mSearchDropTargetBar.hideSearchBar(false);
+                        mSearchDropTargetBar.hideSearchBar(false);
                     }
                 }
             });
@@ -3506,7 +3482,7 @@ public class Launcher extends AppCompatActivity
 
             // If any of the objects being animated haven't been measured/laid out
             // yet, delay the animation until we get a layout pass
-            if ((((LauncherTransitionable) toView).getContent().getMeasuredWidth() == 0) ||
+            if ((toView.getContent().getMeasuredWidth() == 0) ||
                     (mWorkspace.getMeasuredWidth() == 0) ||
                     (toView.getMeasuredWidth() == 0)) {
                 delayAnim = true;
@@ -3532,11 +3508,11 @@ public class Launcher extends AppCompatActivity
             if ((delayAnim) && (Build.VERSION.SDK_INT >=16)) {
                 final ViewTreeObserver observer = toView.getViewTreeObserver();
                 observer.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
-                        public void onGlobalLayout() {
-                            startAnimRunnable.run();
-                            toView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        }
-                    });
+                    public void onGlobalLayout() {
+                        startAnimRunnable.run();
+                        toView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    }
+                });
             } else {
                 startAnimRunnable.run();
             }
@@ -3676,15 +3652,15 @@ public class Launcher extends AppCompatActivity
         }
     }
 
-    protected void showWorkspace(boolean animated) {
+    private void showWorkspace(boolean animated) {
         showWorkspace(animated, null);
     }
 
-    protected void showWorkspace() {
+    private void showWorkspace() {
         showWorkspace(true);
     }
 
-    void showWorkspace(boolean animated, Runnable onCompleteRunnable) {
+    private void showWorkspace(boolean animated, Runnable onCompleteRunnable) {
         if (mWorkspace.isInOverviewMode()) {
             mWorkspace.exitOverviewMode(animated);
         }
@@ -3719,17 +3695,17 @@ public class Launcher extends AppCompatActivity
         onWorkspaceShown(animated);
     }
 
-    void showOverviewMode(boolean animated) {
+    private void showOverviewMode(boolean animated) {
         mWorkspace.setVisibility(View.VISIBLE);
         hideAppsCustomizeHelper(Workspace.State.OVERVIEW, animated, false, null);
         mState = State.WORKSPACE;
         onWorkspaceShown(animated);
     }
 
-    public void onWorkspaceShown(boolean animated) {
+    private void onWorkspaceShown(boolean animated) {
     }
 
-    void pickappWidget(){
+    private void pickappWidget(){
         int appWidgetId = Launcher.this.mAppWidgetHost.allocateAppWidgetId();
 
         Intent pickIntent = new Intent(AppWidgetManager.ACTION_APPWIDGET_PICK);
@@ -3754,9 +3730,9 @@ public class Launcher extends AppCompatActivity
         startActivityForResult(pickIntent, REQUEST_PICK_APPWIDGET_ICS);
     }
 
-    void addAppWidget(Intent data) {
+    private void addAppWidget(Intent data) {
         CellLayout cellLayout =
-                (CellLayout) mWorkspace.getScreenWithId(mWorkspace.getScreenIdForPageIndex(mWorkspace.getCurrentPage()));
+                mWorkspace.getScreenWithId(mWorkspace.getScreenIdForPageIndex(mWorkspace.getCurrentPage()));
         int appWidgetId = data.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, -1);
         AppWidgetProviderInfo appWidget = mAppWidgetManager.getAppWidgetInfo(appWidgetId);
         if (appWidget == null) {
@@ -3772,7 +3748,7 @@ public class Launcher extends AppCompatActivity
         //mWorkspace.getC
         long currentScreenId = mWorkspace.getScreenIdForPageIndex(mWorkspace.getCurrentPage());
         long nextScreenId = mWorkspace.getScreenIdForPageIndex(mWorkspace.getCurrentPage());
-        completeAddAppWidget(appWidgetId,LauncherSettings.Favorites.CONTAINER_DESKTOP, currentScreenId, hostView, appWidget);
+        completeAddAppWidget(appWidgetId, LauncherSettings.Favorites.CONTAINER_DESKTOP, currentScreenId, hostView, appWidget);
         //completeTwoStageWidgetDrop(RESULT_OK,appWidgetId);
 
 
@@ -3790,8 +3766,8 @@ public class Launcher extends AppCompatActivity
 */
     }
 
-    void showAllApps(boolean animated, AppsCustomizePagedView.ContentType contentType,
-                     boolean resetPageToZero) {
+    private void showAllApps(boolean animated, AppsCustomizePagedView.ContentType contentType,
+                             boolean resetPageToZero) {
         if (mState != State.WORKSPACE) return;
 
         if (resetPageToZero) {
@@ -3949,7 +3925,7 @@ public class Launcher extends AppCompatActivity
         // Otherwise, we are not in spring loaded mode, so don't do anything.
     }
 
-    void lockAllApps() {
+    private void lockAllApps() {
         // TODO
     }
 
@@ -3960,7 +3936,7 @@ public class Launcher extends AppCompatActivity
     /**
      * Shows the hotseat area.
      */
-    void showHotseat(boolean animated) {
+    private void showHotseat(boolean animated) {
         if (!LauncherAppState.getInstance().isScreenLarge()) {
             if (animated) {
                 if (mHotseat.getAlpha() != 1f) {
@@ -3979,7 +3955,7 @@ public class Launcher extends AppCompatActivity
     /**
      * Hides the hotseat area.
      */
-    void hideHotseat(boolean animated) {
+    private void hideHotseat(boolean animated) {
         if (!LauncherAppState.getInstance().isScreenLarge()) {
             if (animated) {
                 if (mHotseat.getAlpha() != 0f) {
@@ -4026,7 +4002,7 @@ public class Launcher extends AppCompatActivity
                 int iconResId = metaData.getInt(resourceName);
                 if (iconResId != 0) {
                     Resources res = packageManager.getResourcesForActivity(activityName);
-                    return res.getDrawable(iconResId);
+                    return ResourcesCompat.getDrawable(res,iconResId,null);
                 }
             }
         } catch (NameNotFoundException e) {
@@ -4053,7 +4029,7 @@ public class Launcher extends AppCompatActivity
         TextView button = (TextView) findViewById(buttonId);
         // If we were unable to find the icon via the meta-data, use a generic one
         if (toolbarIcon == null) {
-            toolbarIcon = r.getDrawable(fallbackDrawableId);
+            toolbarIcon = ResourcesCompat.getDrawable(r,fallbackDrawableId,null);
             toolbarIcon.setBounds(0, 0, w, h);
             if (button != null) {
                 button.setCompoundDrawables(toolbarIcon, null, null, null);
@@ -4117,7 +4093,7 @@ public class Launcher extends AppCompatActivity
         return mQsbBar;
     }
 
-    protected boolean updateGlobalSearchIcon() {
+    private boolean updateGlobalSearchIcon() {
         final View searchButtonContainer = findViewById(R.id.search_button_container);
         final ImageView searchButton = (ImageView) findViewById(R.id.search_button);
         final View voiceButtonContainer = findViewById(R.id.voice_button_container);
@@ -4165,14 +4141,14 @@ public class Launcher extends AppCompatActivity
 
     }
 
-    protected void updateGlobalSearchIcon(Drawable.ConstantState d) {
+    private void updateGlobalSearchIcon(Drawable.ConstantState d) {
         final View searchButtonContainer = findViewById(R.id.search_button_container);
-        final View searchButton = (ImageView) findViewById(R.id.search_button);
+        final View searchButton = findViewById(R.id.search_button);
         updateButtonWithDrawable(R.id.search_button, d);
         invalidatePressedFocusedStates(searchButtonContainer, searchButton);
     }
 
-    protected boolean updateVoiceSearchIcon(boolean searchVisible) {
+    private boolean updateVoiceSearchIcon(boolean searchVisible) {
         final View voiceButtonContainer = findViewById(R.id.voice_button_container);
         final View voiceButton = findViewById(R.id.voice_button);
 
@@ -4228,7 +4204,7 @@ public class Launcher extends AppCompatActivity
         }
     }
 
-    protected void updateVoiceSearchIcon(Drawable.ConstantState d) {
+    private void updateVoiceSearchIcon(Drawable.ConstantState d) {
         final View voiceButtonContainer = findViewById(R.id.voice_button_container);
         final View voiceButton = findViewById(R.id.voice_button);
         updateButtonWithDrawable(R.id.voice_button, d);
@@ -4256,39 +4232,7 @@ public class Launcher extends AppCompatActivity
      * Sets the app market icon
      */
     private void updateAppMarketIcon() {
-        if (!DISABLE_MARKET_BUTTON) {
-            final View marketButton = findViewById(R.id.market_button);
-            Intent intent = new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_APP_MARKET);
-            // Find the app market activity by resolving an intent.
-            // (If multiple app markets are installed, it will return the ResolverActivity.)
-            ComponentName activityName = intent.resolveActivity(getPackageManager());
-            if (activityName != null) {
-                int coi = getCurrentOrientationIndexForGlobalIcons();
-                mAppMarketIntent = intent;
-                sAppMarketIcon[coi] = updateTextButtonWithIconFromExternalActivity(
-                        R.id.market_button, activityName, R.drawable.ic_launcher_market_holo,
-                        TOOLBAR_ICON_METADATA_NAME);
-                marketButton.setVisibility(View.VISIBLE);
-            } else {
-                // We should hide and disable the view so that we don't try and restore the visibility
-                // of it when we swap between drag & normal states from IconDropTarget subclasses.
-                marketButton.setVisibility(View.GONE);
-                marketButton.setEnabled(false);
-            }
-        }
-    }
-
-    private void updateAppMarketIcon(Drawable.ConstantState d) {
-        if (!DISABLE_MARKET_BUTTON) {
-            // Ensure that the new drawable we are creating has the approprate toolbar icon bounds
-            Resources r = getResources();
-            Drawable marketIconDrawable = d.newDrawable(r);
-            int w = r.getDimensionPixelSize(R.dimen.toolbar_external_icon_width);
-            int h = r.getDimensionPixelSize(R.dimen.toolbar_external_icon_height);
-            marketIconDrawable.setBounds(0, 0, w, h);
-
-            updateTextButtonWithDrawable(R.id.market_button, marketIconDrawable);
-        }
+        //TODO:get rid of ALL of MarketButton.
     }
 
     @Override
@@ -4448,9 +4392,8 @@ public class Launcher extends AppCompatActivity
     private boolean shouldShowWeightWatcher() {
         String spKey = LauncherAppState.getSharedPreferencesKey();
         SharedPreferences sp = getSharedPreferences(spKey, Context.MODE_PRIVATE);
-        boolean show = sp.getBoolean(SHOW_WEIGHT_WATCHER, SHOW_WEIGHT_WATCHER_DEFAULT);
 
-        return show;
+        return sp.getBoolean(SHOW_WEIGHT_WATCHER, SHOW_WEIGHT_WATCHER_DEFAULT);
     }
 
     private void toggleShowWeightWatcher() {
@@ -4698,12 +4641,6 @@ public class Launcher extends AppCompatActivity
         }
         sPendingAddList.clear();
 
-        // Update the market app icon as necessary (the other icons will be managed in response to
-        // package changes in bindSearchablesChanged()
-        if (!DISABLE_MARKET_BUTTON) {
-            updateAppMarketIcon();
-        }
-
         mWorkspaceLoading = false;
         if (upgradePath) {
             mWorkspace.getUniqueComponents(true, null);
@@ -4719,10 +4656,7 @@ public class Launcher extends AppCompatActivity
     }
 
     public boolean isAllAppsButtonRank(int rank) {
-        if (mHotseat != null) {
-            return mHotseat.isAllAppsButtonRank(rank);
-        }
-        return false;
+        return mHotseat != null && mHotseat.isAllAppsButtonRank(rank);
     }
 
     private boolean canRunNewAppsAnimation() {
@@ -4836,7 +4770,7 @@ public class Launcher extends AppCompatActivity
      * A number of packages were updated.
      */
     private ArrayList<Object> mWidgetsAndShortcuts;
-    private Runnable mBindPackagesUpdatedRunnable = new Runnable() {
+    private final Runnable mBindPackagesUpdatedRunnable = new Runnable() {
             public void run() {
                 bindPackagesUpdated(mWidgetsAndShortcuts);
                 mWidgetsAndShortcuts = null;
@@ -4888,10 +4822,9 @@ public class Launcher extends AppCompatActivity
         return oriMap[(d.getRotation() + indexOffset) % 4];
     }
 
-    public boolean isRotationEnabled() {
-        boolean enableRotation = sForceEnableRotation ||
+    private boolean isRotationEnabled() {
+        return sForceEnableRotation ||
                 getResources().getBoolean(R.bool.allow_rotation);
-        return enableRotation;
     }
     public void lockScreenOrientation() {
         if (isRotationEnabled()) {
@@ -5118,7 +5051,7 @@ public class Launcher extends AppCompatActivity
         }
     }
 
-    public void showWhatsNew(){
+    private void showWhatsNew(){
         String stringName = "ver" + LauncherAppState.getInstance().internalVersion;
         boolean seenThisVersion = (LauncherAppState.getInstance().getVersionCode() == PreferencesProvider.Interface.General.getLastWhatsNewCode());
         boolean show = true;
@@ -5176,7 +5109,7 @@ public class Launcher extends AppCompatActivity
 
     }
 
-    public void showFirstRunCling() {
+    private void showFirstRunCling() {
         if (isClingsEnabled() &&
                 !mSharedPrefs.getBoolean(Cling.FIRST_RUN_CLING_DISMISSED_KEY, false) &&
                 !skipCustomClingIfNoAccounts() ) {
@@ -5213,29 +5146,29 @@ public class Launcher extends AppCompatActivity
         }
     }
 
-    protected String getFirstRunClingSearchBarHint() {
+    private String getFirstRunClingSearchBarHint() {
         return "";
     }
-    protected String getFirstRunCustomContentHint() {
+    private String getFirstRunCustomContentHint() {
         return "";
     }
-    protected int getFirstRunFocusedHotseatAppDrawableId() {
+    private int getFirstRunFocusedHotseatAppDrawableId() {
         return -1;
     }
-    protected ComponentName getFirstRunFocusedHotseatAppComponentName() {
+    private ComponentName getFirstRunFocusedHotseatAppComponentName() {
         return null;
     }
-    protected int getFirstRunFocusedHotseatAppRank() {
+    private int getFirstRunFocusedHotseatAppRank() {
         return -1;
     }
-    protected String getFirstRunFocusedHotseatAppBubbleTitle() {
+    private String getFirstRunFocusedHotseatAppBubbleTitle() {
         return "";
     }
-    protected String getFirstRunFocusedHotseatAppBubbleDescription() {
+    private String getFirstRunFocusedHotseatAppBubbleDescription() {
         return "";
     }
 
-    public void showFirstRunWorkspaceCling() {
+    private void showFirstRunWorkspaceCling() {
         // Enable the clings only if they have not been dismissed before
         if (isClingsEnabled() &&
                 !mSharedPrefs.getBoolean(Cling.WORKSPACE_CLING_DISMISSED_KEY, false)) {
@@ -5255,23 +5188,19 @@ public class Launcher extends AppCompatActivity
         // Enable the clings only if they have not been dismissed before
         if (isClingsEnabled() &&
                 !mSharedPrefs.getBoolean(Cling.FOLDER_CLING_DISMISSED_KEY, false)) {
-            Cling cling = initCling(R.id.folder_cling, R.id.cling_scrim,
+            return initCling(R.id.folder_cling, R.id.cling_scrim,
                     true, true);
-            return cling;
         } else {
             removeCling(R.id.folder_cling);
             return null;
         }
     }
-    protected SharedPreferences getSharedPrefs() {
+    SharedPreferences getSharedPrefs() {
         return mSharedPrefs;
     }
     public boolean isFolderClingVisible() {
         Cling cling = (Cling) findViewById(R.id.folder_cling);
-        if (cling != null) {
-            return cling.getVisibility() == View.VISIBLE;
-        }
-        return false;
+        return cling != null && cling.getVisibility() == View.VISIBLE;
     }
     public void dismissFirstRunCling(View v) {
         Cling cling = (Cling) findViewById(R.id.first_run_cling);
@@ -5344,7 +5273,7 @@ public class Launcher extends AppCompatActivity
     /**
      * Prints out out state for debugging.
      */
-    public void dumpState() {
+    private void dumpState() {
         Log.d(TAG, "BEGIN launcher3 dump state for launcher " + this);
         Log.d(TAG, "mSavedState=" + mSavedState);
         Log.d(TAG, "mWorkspaceLoading=" + mWorkspaceLoading);
@@ -5406,11 +5335,15 @@ public class Launcher extends AppCompatActivity
                 public void run() {
                     boolean success = false;
                     sDateStamp.setTime(sRunStart);
-                    String FILENAME = sDateStamp.getMonth() + "-"
-                            + sDateStamp.getDay() + "_"
-                            + sDateStamp.getHours() + "-"
-                            + sDateStamp.getMinutes() + "_"
-                            + sDateStamp.getSeconds() + ".txt";
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTime(sDateStamp);
+                    String FILENAME = cal.get(Calendar.MONTH) + "-"
+                            + cal.get(Calendar.DATE) + "_"
+                            + cal.get(Calendar.HOUR) + "-"
+                            + cal.get(Calendar.MINUTE) + "_"
+                            + cal.get(Calendar.SECOND) + ".txt";
+
+
 
                     FileOutputStream fos = null;
                     File outFile = null;

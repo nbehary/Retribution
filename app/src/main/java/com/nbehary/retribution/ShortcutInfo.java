@@ -63,7 +63,7 @@ class ShortcutInfo extends ItemInfo {
      */
     private Bitmap mIcon;
 
-    long firstInstallTime;
+    private long firstInstallTime;
     int flags = 0;
 
     ShortcutInfo() {

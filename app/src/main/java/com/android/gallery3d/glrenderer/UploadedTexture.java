@@ -44,9 +44,9 @@ public abstract class UploadedTexture extends BasicTexture {
 
     // To prevent keeping allocation the borders, we store those used borders here.
     // Since the length will be power of two, it won't use too much memory.
-    private static HashMap<BorderKey, Bitmap> sBorderLines =
+    private static final HashMap<BorderKey, Bitmap> sBorderLines =
             new HashMap<BorderKey, Bitmap>();
-    private static BorderKey sBorderKey = new BorderKey();
+    private static final BorderKey sBorderKey = new BorderKey();
 
     @SuppressWarnings("unused")
     private static final String TAG = "Texture";
@@ -59,14 +59,14 @@ public abstract class UploadedTexture extends BasicTexture {
     private static int sUploadedCount;
     private static final int UPLOAD_LIMIT = 100;
 
-    protected Bitmap mBitmap;
+    private Bitmap mBitmap;
     private int mBorder;
 
     protected UploadedTexture() {
         this(false);
     }
 
-    protected UploadedTexture(boolean hasBorder) {
+    UploadedTexture(boolean hasBorder) {
         super(null, 0, STATE_UNLOADED);
         if (hasBorder) {
             setBorder(true);

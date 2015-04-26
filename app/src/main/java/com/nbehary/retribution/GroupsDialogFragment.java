@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,9 +15,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -32,11 +29,11 @@ import java.util.ArrayList;
  */
 public class GroupsDialogFragment extends DialogFragment {
 
-    LinearLayout mRootView;
+    private LinearLayout mRootView;
 
     private OnGroupsChangeListener mListener;
 
-    String mCategory;
+    private String mCategory;
 
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -176,15 +173,16 @@ public class GroupsDialogFragment extends DialogFragment {
 
     public interface OnGroupsChangeListener {
         // TODO: Update argument type and name
-        public void onGroupsChange(String category,boolean newCat);
+        void onGroupsChange(String category, boolean newCat);
     }
 }
 
  class GroupsArrayAdapter extends ArrayAdapter<String> {
 
     private final Context context;
-    private ArrayList<String> values;
-    private AllAppsList apps,allApps;
+    private final ArrayList<String> values;
+    private AllAppsList apps;
+     private final AllAppsList allApps;
     private String category;
 
     public GroupsArrayAdapter(Context context, ArrayList<String>values,AllAppsList apps, String category) {

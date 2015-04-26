@@ -47,6 +47,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.Parcelable;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -57,9 +58,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
-import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
-import android.view.accessibility.AccessibilityNodeInfo;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.TextView;
@@ -119,7 +118,7 @@ public class Workspace extends SmoothPagedView
     private final WallpaperManager mWallpaperManager;
     private IBinder mWindowToken;
 
-    private int mOriginalDefaultPage;
+    private final int mOriginalDefaultPage;
     private int mDefaultPage;
 
     private ShortcutAndWidgetContainer mDragSourceInternal;
@@ -129,8 +128,8 @@ public class Workspace extends SmoothPagedView
     private final static long EXTRA_EMPTY_SCREEN_ID = -201;
     private final static long CUSTOM_CONTENT_SCREEN_ID = -301;
 
-    private HashMap<Long, CellLayout> mWorkspaceScreens = new HashMap<Long, CellLayout>();
-    private ArrayList<Long> mScreenOrder = new ArrayList<Long>();
+    private final HashMap<Long, CellLayout> mWorkspaceScreens = new HashMap<Long, CellLayout>();
+    private final ArrayList<Long> mScreenOrder = new ArrayList<Long>();
 
     /**
      * CellInfo for the cell that is currently being dragged
@@ -166,29 +165,30 @@ public class Workspace extends SmoothPagedView
      */
     private CellLayout mDropToLayout = null;
 
-    private Launcher mLauncher;
+    private final Launcher mLauncher;
     private IconCache mIconCache;
     private DragController mDragController;
-    private Context mContext;
+    private final Context mContext;
 
     // These are temporary variables to prevent having to allocate a new object just to
     // return an (x, y) value from helper functions. Do NOT use them to maintain other state.
-    private int[] mTempCell = new int[2];
-    private int[] mTempPt = new int[2];
-    private int[] mTempEstimate = new int[2];
+    private final int[] mTempCell = new int[2];
+    private final int[] mTempPt = new int[2];
+    private final int[] mTempEstimate = new int[2];
     private float[] mDragViewVisualCenter = new float[2];
-    private float[] mTempCellLayoutCenterCoordinates = new float[2];
-    private Matrix mTempInverseMatrix = new Matrix();
+    private final float[] mTempCellLayoutCenterCoordinates = new float[2];
+    private final Matrix mTempInverseMatrix = new Matrix();
 
     private SpringLoadedDragController mSpringLoadedDragController;
-    private float mSpringLoadedShrinkFactor;
-    private float mOverviewModeShrinkFactor;
-    private int mOverviewModePageOffset;
+    private final float mSpringLoadedShrinkFactor;
+    private final float mOverviewModeShrinkFactor;
+    private final int mOverviewModePageOffset;
 
     // State variable that indicates whether the pages are small (ie when you're
     // in all apps or customize mode)
 
-    enum State { NORMAL, SPRING_LOADED, SMALL, OVERVIEW};
+    enum State { NORMAL, SPRING_LOADED, SMALL, OVERVIEW}
+
     private State mState = State.NORMAL;
     private boolean mIsSwitchingState = false;
 
@@ -201,21 +201,21 @@ public class Workspace extends SmoothPagedView
     /** Is the user is dragging an item near the edge of a page? */
     private boolean mInScrollArea = false;
 
-    private HolographicOutlineHelper mOutlineHelper;
+    private final HolographicOutlineHelper mOutlineHelper;
     private Bitmap mDragOutline = null;
     private final Rect mTempRect = new Rect();
     private final int[] mTempXY = new int[2];
-    private int[] mTempVisiblePagesRange = new int[2];
+    private final int[] mTempVisiblePagesRange = new int[2];
     private boolean mOverscrollTransformsSet;
     private float mLastOverscrollPivotX;
     public static final int DRAG_BITMAP_PADDING = 2;
-    private boolean mWorkspaceFadeInAdjacentScreens;
+    private final boolean mWorkspaceFadeInAdjacentScreens;
 
     WallpaperOffsetInterpolator mWallpaperOffset;
     private Runnable mDelayedResizeRunnable;
     private Runnable mDelayedSnapToPageRunnable;
-    private Point mDisplaySize = new Point();
-    private int mCameraDistance;
+    private final Point mDisplaySize = new Point();
+    private final int mCameraDistance;
 
     // Variables relating to the creation of user folders by hovering shortcuts over shortcuts
     private static final int FOLDER_CREATION_TIMEOUT = 0;
@@ -226,7 +226,7 @@ public class Workspace extends SmoothPagedView
     private FolderIcon mDragOverFolderIcon = null;
     private boolean mCreateUserFolderOnDrop = false;
     private boolean mAddToExistingFolderOnDrop = false;
-    private DropTarget.DragEnforcer mDragEnforcer;
+    private final DropTarget.DragEnforcer mDragEnforcer;
     private float mMaxDistanceForFolderCreation;
 
     // Variables relating to touch disambiguation (scrolling workspace vs. scrolling a widget)
@@ -266,7 +266,7 @@ public class Workspace extends SmoothPagedView
     private float[] mOldAlphas;
     private float[] mNewBackgroundAlphas;
     private float[] mNewAlphas;
-    private int mLastChildCount = -1;
+    private final int mLastChildCount = -1;
     private float mTransitionProgress;
 
     private Runnable mDeferredAction;
@@ -438,7 +438,7 @@ public class Workspace extends SmoothPagedView
 
         final Resources res = getResources();
         try {
-            mBackground = res.getDrawable(R.drawable.apps_customize_bg);
+            mBackground = ResourcesCompat.getDrawable(res,R.drawable.apps_customize_bg,null);
         } catch (Resources.NotFoundException e) {
             // In this case, we will skip drawing background protection
         }
@@ -714,8 +714,7 @@ public class Workspace extends SmoothPagedView
     }
 
     public CellLayout getScreenWithId(long screenId) {
-        CellLayout layout = mWorkspaceScreens.get(screenId);
-        return layout;
+        return mWorkspaceScreens.get(screenId);
     }
 
     public long getIdForScreen(CellLayout layout) {
@@ -928,11 +927,8 @@ public class Workspace extends SmoothPagedView
 
     @Override
     public boolean dispatchUnhandledMove(View focused, int direction) {
-        if (isSmall() || !isFinishedSwitchingState()) {
-            // when the home screens are shrunken, shouldn't allow side-scrolling
-            return false;
-        }
-        return super.dispatchUnhandledMove(focused, direction);
+        // when the home screens are shrunken, shouldn't allow side-scrolling
+        return !(isSmall() || !isFinishedSwitchingState()) && super.dispatchUnhandledMove(focused, direction);
     }
 
     @Override
@@ -1142,8 +1138,8 @@ public class Workspace extends SmoothPagedView
         float mFinalOffset = 0.0f;
         float mCurrentOffset = 0.5f; // to force an initial update
         boolean mWaitingForUpdate;
-        Choreographer mChoreographer;
-        Interpolator mInterpolator;
+        final Choreographer mChoreographer;
+        final Interpolator mInterpolator;
         boolean mAnimating;
         long mAnimationStartTime;
         float mAnimationStartOffset;
@@ -1193,10 +1189,7 @@ public class Workspace extends SmoothPagedView
             if (Math.abs(mCurrentOffset - mFinalOffset) > 0.0000001f) {
                 scheduleUpdate();
             }
-            if (Math.abs(oldOffset - mCurrentOffset) > 0.0000001f) {
-                return true;
-            }
-            return false;
+            return Math.abs(oldOffset - mCurrentOffset) > 0.0000001f;
         }
 
         private float wallpaperOffsetForCurrentScroll() {
@@ -1250,8 +1243,7 @@ public class Workspace extends SmoothPagedView
         }
 
         private int getNumScreensExcludingEmptyAndCustom() {
-            int numScrollingPages = getChildCount() - numEmptyScreensToIgnore() - numCustomPages();
-            return numScrollingPages;
+            return getChildCount() - numEmptyScreensToIgnore() - numCustomPages();
         }
 
         public void syncWithScroll() {
@@ -1502,13 +1494,12 @@ public class Workspace extends SmoothPagedView
         if (!am.isTouchExplorationEnabled()) {
             return null;
         }
-        OnClickListener listener = new OnClickListener() {
+        return new OnClickListener() {
             @Override
             public void onClick(View arg0) {
                 enterOverviewMode();
             }
         };
-        return listener;
     }
 
     @Override
@@ -1766,7 +1757,7 @@ public class Workspace extends SmoothPagedView
      * from the camera.
      */
     static class ZInterpolator implements TimeInterpolator {
-        private float focalLength;
+        private final float focalLength;
 
         public ZInterpolator(float foc) {
             focalLength = foc;
@@ -1782,7 +1773,7 @@ public class Workspace extends SmoothPagedView
      * The exact reverse of ZInterpolator.
      */
     static class InverseZInterpolator implements TimeInterpolator {
-        private ZInterpolator zInterpolator;
+        private final ZInterpolator zInterpolator;
         public InverseZInterpolator(float foc) {
             zInterpolator = new ZInterpolator(foc);
         }
@@ -1951,19 +1942,12 @@ public class Workspace extends SmoothPagedView
         int scaledChildHeight = (int) (mOverviewModeShrinkFactor * childHeight);
 
         int offset = (viewPortHeight - scaledChildHeight) / 2;
-        int offsetDelta = mOverviewModePageOffset - offset + mInsets.top;
 
-        return offsetDelta;
+        return mOverviewModePageOffset - offset + mInsets.top;
     }
 
     boolean shouldVoiceButtonProxyBeVisible() {
-        if (isOnOrMovingToCustomContent()) {
-            return false;
-        }
-        if (mState != State.NORMAL) {
-            return false;
-        }
-        return true;
+        return !isOnOrMovingToCustomContent() && mState == State.NORMAL;
     }
 
     public void updateInteractionForState() {
@@ -2188,7 +2172,7 @@ public class Workspace extends SmoothPagedView
     }
 
     static class AlphaUpdateListener implements AnimatorUpdateListener, AnimatorListener {
-        View view;
+        final View view;
         public AlphaUpdateListener(View v) {
             view = v;
         }
@@ -2499,7 +2483,7 @@ public class Workspace extends SmoothPagedView
 
     void addApplicationShortcut(ShortcutInfo info, CellLayout target, long container, long screenId,
             int cellX, int cellY, boolean insertAtFirst, int intersectX, int intersectY) {
-        View view = mLauncher.createShortcut(R.layout.application, target, (ShortcutInfo) info);
+        View view = mLauncher.createShortcut(R.layout.application, target, info);
 
         final int[] cellXY = new int[2];
         target.findCellForSpanThatIntersects(cellXY, 1, 1, intersectX, intersectY);
@@ -2564,7 +2548,7 @@ public class Workspace extends SmoothPagedView
                     mTargetCell, distance, true)) {
                 return true;
             }
-            if (willAddToExistingUserFolder((ItemInfo) d.dragInfo, dropTargetLayout,
+            if (willAddToExistingUserFolder(d.dragInfo, dropTargetLayout,
                     mTargetCell, distance)) {
                 return true;
             }
@@ -3147,10 +3131,7 @@ Log.d("nbehary110","onDrop");
        LauncherAppState app = LauncherAppState.getInstance();
        DeviceProfile grid = app.getDynamicGrid().getDeviceProfile();
        r = grid.getHotseatRect();
-       if (r.contains(mTempPt[0], mTempPt[1])) {
-           return true;
-       }
-       return false;
+       return r.contains(mTempPt[0], mTempPt[1]);
    }
 
    void mapPointFromSelfToHotseatLayout(Hotseat hotseat, float[] xy) {
@@ -3434,13 +3415,12 @@ Log.d("nbehary110","onDrop");
             setDragMode(DRAG_MODE_NONE);
         }
 
-        return;
     }
 
     class FolderCreationAlarmListener implements OnAlarmListener {
-        CellLayout layout;
-        int cellX;
-        int cellY;
+        final CellLayout layout;
+        final int cellX;
+        final int cellY;
 
         public FolderCreationAlarmListener(CellLayout layout, int cellX, int cellY) {
             this.layout = layout;
@@ -3464,10 +3444,13 @@ Log.d("nbehary110","onDrop");
     }
 
     class ReorderAlarmListener implements OnAlarmListener {
-        float[] dragViewCenter;
-        int minSpanX, minSpanY, spanX, spanY;
-        DragView dragView;
-        View child;
+        final float[] dragViewCenter;
+        final int minSpanX;
+        final int minSpanY;
+        final int spanX;
+        final int spanY;
+        final DragView dragView;
+        final View child;
 
         public ReorderAlarmListener(float[] dragViewCenter, int minSpanX, int minSpanY, int spanX,
                 int spanY, DragView dragView, View child) {
@@ -3519,7 +3502,7 @@ Log.d("nbehary110","onDrop");
      */
     public boolean addExternalItemToScreen(ItemInfo dragInfo, CellLayout layout) {
         if (layout.findCellForSpan(mTempEstimate, dragInfo.spanX, dragInfo.spanY)) {
-            onDropExternal(dragInfo.dropPos, (ItemInfo) dragInfo, (CellLayout) layout, false);
+            onDropExternal(dragInfo.dropPos, dragInfo, layout, false);
             return true;
         }
         mLauncher.showOutOfSpaceMessage(mLauncher.isHotseatLayout(layout));
@@ -3571,12 +3554,12 @@ Log.d("nbehary110","onDrop");
 
             boolean findNearestVacantCell = true;
             if (pendingInfo.itemType == LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT) {
-                mTargetCell = findNearestArea((int) touchXY[0], (int) touchXY[1], spanX, spanY,
+                mTargetCell = findNearestArea(touchXY[0], touchXY[1], spanX, spanY,
                         cellLayout, mTargetCell);
                 float distance = cellLayout.getDistanceFromCell(mDragViewVisualCenter[0],
                         mDragViewVisualCenter[1], mTargetCell);
                 if (willCreateUserFolder((ItemInfo) d.dragInfo, cellLayout, mTargetCell,
-                        distance, true) || willAddToExistingUserFolder((ItemInfo) d.dragInfo,
+                        distance, true) || willAddToExistingUserFolder(d.dragInfo,
                                 cellLayout, mTargetCell, distance)) {
                     findNearestVacantCell = false;
                 }
@@ -3667,7 +3650,7 @@ Log.d("nbehary110","onDrop");
             // First we find the cell nearest to point at which the item is
             // dropped, without any consideration to whether there is an item there.
             if (touchXY != null) {
-                mTargetCell = findNearestArea((int) touchXY[0], (int) touchXY[1], spanX, spanY,
+                mTargetCell = findNearestArea(touchXY[0], touchXY[1], spanX, spanY,
                         cellLayout, mTargetCell);
                 float distance = cellLayout.getDistanceFromCell(mDragViewVisualCenter[0],
                         mDragViewVisualCenter[1], mTargetCell);
@@ -3804,7 +3787,7 @@ Log.d("nbehary110","onDrop");
             if (animationType == ANIMATE_INTO_POSITION_AND_REMAIN) {
                 endStyle = DragLayer.ANIMATION_END_REMAIN_VISIBLE;
             } else {
-                endStyle = DragLayer.ANIMATION_END_DISAPPEAR;;
+                endStyle = DragLayer.ANIMATION_END_DISAPPEAR;
             }
 
             Runnable onComplete = new Runnable() {
@@ -3967,7 +3950,7 @@ Log.d("nbehary110","onDrop");
 
     ArrayList<ComponentName> getUniqueComponents(boolean stripDuplicates, ArrayList<ComponentName> duplicates) {
         ArrayList<ComponentName> uniqueIntents = new ArrayList<ComponentName>();
-        getUniqueIntents((CellLayout) mLauncher.getHotseat().getLayout(), uniqueIntents, duplicates, false);
+        getUniqueIntents(mLauncher.getHotseat().getLayout(), uniqueIntents, duplicates, false);
         int count = getChildCount();
         for (int i = 0; i < count; i++) {
             CellLayout cl = (CellLayout) getChildAt(i);
@@ -4048,7 +4031,7 @@ Log.d("nbehary110","onDrop");
     }
 
     void saveWorkspaceToDb() {
-        saveWorkspaceScreenToDb((CellLayout) mLauncher.getHotseat().getLayout());
+        saveWorkspaceScreenToDb(mLauncher.getHotseat().getLayout());
         int count = getChildCount();
         for (int i = 0; i < count; i++) {
             CellLayout cl = (CellLayout) getChildAt(i);

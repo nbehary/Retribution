@@ -37,7 +37,7 @@ import com.android.gallery3d.glrenderer.UploadedTexture;
  * Handles laying out, decoding, and drawing of tiles in GL
  */
 public class TiledImageRenderer {
-    public static final int SIZE_UNKNOWN = -1;
+    private static final int SIZE_UNKNOWN = -1;
 
     private static final String TAG = "TiledImageRenderer";
     private static final int UPLOAD_LIMIT = 1;
@@ -67,14 +67,14 @@ public class TiledImageRenderer {
     private static final int STATE_RECYCLING = 0x20;
     private static final int STATE_RECYCLED = 0x40;
 
-    private static Pool<Bitmap> sTilePool = new SynchronizedPool<Bitmap>(64);
+    private static final Pool<Bitmap> sTilePool = new SynchronizedPool<Bitmap>(64);
 
     // TILE_SIZE must be 2^N
     private int mTileSize;
 
     private TileSource mModel;
     private BasicTexture mPreview;
-    protected int mLevelCount;  // cache the value of mScaledBitmaps.length
+    private int mLevelCount;  // cache the value of mScaledBitmaps.length
 
     // The mLevel variable indicates which level of bitmap we should use.
     // Level 0 means the original full-sized bitmap, and a larger value means
@@ -102,13 +102,13 @@ public class TiledImageRenderer {
     private final TileQueue mDecodeQueue = new TileQueue();
 
     // The width and height of the full-sized bitmap
-    protected int mImageWidth = SIZE_UNKNOWN;
-    protected int mImageHeight = SIZE_UNKNOWN;
+    private int mImageWidth = SIZE_UNKNOWN;
+    private int mImageHeight = SIZE_UNKNOWN;
 
-    protected int mCenterX;
-    protected int mCenterY;
-    protected float mScale;
-    protected int mRotation;
+    private int mCenterX;
+    private int mCenterY;
+    private float mScale;
+    private int mRotation;
 
     private boolean mLayoutTiles;
 
@@ -116,31 +116,31 @@ public class TiledImageRenderer {
     private final Rect mTileRange = new Rect();
     private final Rect mActiveRange[] = {new Rect(), new Rect()};
 
-    private TileDecoder mTileDecoder;
+    private final TileDecoder mTileDecoder;
     private boolean mBackgroundTileUploaded;
 
     private int mViewWidth, mViewHeight;
-    private View mParent;
+    private final View mParent;
 
     /**
      * Interface for providing tiles to a {@link TiledImageRenderer}
      */
-    public static interface TileSource {
+    public interface TileSource {
 
         /**
          * If the source does not care about the tile size, it should use
          * {@link TiledImageRenderer#suggestedTileSize(Context)}
          */
-        public int getTileSize();
-        public int getImageWidth();
-        public int getImageHeight();
-        public int getRotation();
+        int getTileSize();
+        int getImageWidth();
+        int getImageHeight();
+        int getRotation();
 
         /**
          * Return a Preview image if available. This will be used as the base layer
          * if higher res tiles are not yet available
          */
-        public BasicTexture getPreview();
+        BasicTexture getPreview();
 
         /**
          * The tile returned by this method can be specified this way: Assuming
@@ -155,7 +155,7 @@ public class TiledImageRenderer {
          *
          * The method would be called by the decoder thread.
          */
-        public Bitmap getTile(int level, int x, int y, Bitmap reuse);
+        Bitmap getTile(int level, int x, int y, Bitmap reuse);
     }
 
     public static int suggestedTileSize(Context context) {
@@ -215,7 +215,7 @@ public class TiledImageRenderer {
         }
     }
 
-    public void notifyModelInvalidated() {
+    private void notifyModelInvalidated() {
         invalidateTiles();
         if (mModel == null) {
             mImageWidth = 0;

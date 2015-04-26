@@ -18,7 +18,7 @@ package com.android.gallery3d.glrenderer;
 
 import junit.framework.Assert;
 
-public class GLPaint {
+class GLPaint {
     private float mLineWidth = 1f;
     private int mColor = 0;
 

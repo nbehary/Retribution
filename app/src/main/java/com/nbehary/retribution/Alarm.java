@@ -18,7 +18,7 @@ package com.nbehary.retribution;
 
 import android.os.Handler;
 
-public class Alarm implements Runnable{
+class Alarm implements Runnable{
     // if we reach this time and the alarm hasn't been cancelled, call the listener
     private long mAlarmTriggerTime;
 
@@ -26,7 +26,7 @@ public class Alarm implements Runnable{
     // We use this to avoid having multiple pending callbacks
     private boolean mWaitingForCallback;
 
-    private Handler mHandler;
+    private final Handler mHandler;
     private OnAlarmListener mAlarmListener;
     private boolean mAlarmPending = false;
 
@@ -80,5 +80,5 @@ public class Alarm implements Runnable{
 }
 
 interface OnAlarmListener {
-    public void onAlarm(Alarm alarm);
+    void onAlarm(Alarm alarm);
 }

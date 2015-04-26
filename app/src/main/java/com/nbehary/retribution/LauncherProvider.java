@@ -78,9 +78,9 @@ public class  LauncherProvider extends ContentProvider {
     static final String TABLE_CATEGORIES= "categories";
 
     static final String PARAMETER_NOTIFY = "notify";
-    static final String UPGRADED_FROM_OLD_DATABASE =
+    private static final String UPGRADED_FROM_OLD_DATABASE =
             "UPGRADED_FROM_OLD_DATABASE";
-    static final String EMPTY_DATABASE_CREATED =
+    private static final String EMPTY_DATABASE_CREATED =
             "EMPTY_DATABASE_CREATED";
     static final String DEFAULT_WORKSPACE_RESOURCE_ID =
             "DEFAULT_WORKSPACE_RESOURCE_ID";
@@ -256,7 +256,7 @@ public class  LauncherProvider extends ContentProvider {
         String spKey = LauncherAppState.getSharedPreferencesKey();
         SharedPreferences sp = getContext().getSharedPreferences(spKey, Context.MODE_PRIVATE);
 
-        boolean loadedOldDb = false || sJustLoadedFromOldDb;
+        boolean loadedOldDb = sJustLoadedFromOldDb;
 
         sJustLoadedFromOldDb = false;
         if (sp.getBoolean(UPGRADED_FROM_OLD_DATABASE, false)) {
@@ -297,8 +297,8 @@ public class  LauncherProvider extends ContentProvider {
         }
     }
 
-    private static interface ContentValuesCallback {
-        public void onRow(ContentValues values);
+    private interface ContentValuesCallback {
+        void onRow(ContentValues values);
     }
 
     private static class DatabaseHelper extends SQLiteOpenHelper {
@@ -1106,7 +1106,6 @@ public class  LauncherProvider extends ContentProvider {
             int type;
             while ((type = parser.next()) != XmlPullParser.START_TAG
                     && type != XmlPullParser.END_DOCUMENT) {
-                ;
             }
 
             if (type != XmlPullParser.START_TAG) {
@@ -1530,7 +1529,7 @@ public class  LauncherProvider extends ContentProvider {
      * Build a query string that will match any row where the column matches
      * anything in the values list.
      */
-    static String buildOrWhereString(String column, int[] values) {
+    private static String buildOrWhereString(String column, int[] values) {
         StringBuilder selectWhere = new StringBuilder();
         for (int i = values.length - 1; i >= 0; i--) {
             selectWhere.append(column).append("=").append(values[i]);

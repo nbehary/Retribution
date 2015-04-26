@@ -24,8 +24,8 @@ package com.nbehary.retribution.util;
  * calling {@link #isSuccess()} and {@link #isFailure()}.
  */
 public class IabResult {
-    int mResponse;
-    String mMessage;
+    private final int mResponse;
+    private final String mMessage;
 
     public IabResult(int response, String message) {
         mResponse = response;
@@ -38,7 +38,7 @@ public class IabResult {
     }
     public int getResponse() { return mResponse; }
     public String getMessage() { return mMessage; }
-    public boolean isSuccess() { return mResponse == IabHelper.BILLING_RESPONSE_RESULT_OK; }
+    private boolean isSuccess() { return mResponse == IabHelper.BILLING_RESPONSE_RESULT_OK; }
     public boolean isFailure() { return !isSuccess(); }
     public String toString() { return "IabResult: " + getMessage(); }
 }

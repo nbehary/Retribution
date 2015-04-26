@@ -1,39 +1,20 @@
 package com.nbehary.retribution;
 
 import android.app.Activity;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Rect;
-import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.DisplayMetrics;
-import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.NumberPicker;
-import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import java.lang.ref.PhantomReference;
 import java.text.DecimalFormat;
 
 
@@ -58,16 +39,18 @@ public class GridIconFragment extends Fragment {
 
     private OnCalculatedChangeListener mListener;
 
-    DeviceProfile mTempProfile;
+    private DeviceProfile mTempProfile;
     ImageView mPreviewImage;
     TextView mIconSize, mFontSize, mFontLabel;
     ImageButton mUpFontButton,mDownFontButton;
-    DisplayMetrics mDisplayMetrics;
+    private DisplayMetrics mDisplayMetrics;
     String mChanging;
-    Switch mUseCalculated, mChangeValues;
-    DecimalFormat df;
-    View mRootView;
-    TextView mFolderWarning, mDockWarning;
+    private Switch mUseCalculated;
+    private Switch mChangeValues;
+    private DecimalFormat df;
+    private View mRootView;
+    private TextView mFolderWarning;
+    private TextView mDockWarning;
 
     private static GridIconFragment instance;
 
@@ -119,7 +102,7 @@ public class GridIconFragment extends Fragment {
         mTempProfile = ((GridEditor) getActivity()).getmProfile();
         mDisplayMetrics = getActivity().getResources().getDisplayMetrics();
         // Inflate the layout for this fragment
-        mRootView = getActivity().getLayoutInflater().inflate(R.layout.fragment_grid_icon, container, false);
+        mRootView = inflater.inflate(R.layout.fragment_grid_icon, container, false);
         FragmentManager fm = getFragmentManager();
         if (fm.findFragmentById(R.id.icon_fragment_container) == null) {
             //GridIconPercentFragment percentFragment = (GridIconPercentFragment) fm.findFragmentById(R.id.icon_fragment_container);
@@ -259,7 +242,7 @@ public class GridIconFragment extends Fragment {
      */
     public interface OnCalculatedChangeListener {
         // TODO: Update argument type and name
-        public void onCalculatedChangedInteraction(DeviceProfile profile);
+        void onCalculatedChangedInteraction(DeviceProfile profile);
     }
 
 

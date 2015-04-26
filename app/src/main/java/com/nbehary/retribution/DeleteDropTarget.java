@@ -30,6 +30,7 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.drawable.TransitionDrawable;
 import android.os.Build;
+import android.support.v4.content.res.ResourcesCompat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -44,11 +45,11 @@ import java.util.Set;
 import com.nbehary.retribution.R;
 
 public class DeleteDropTarget extends ButtonDropTarget {
-    private static int DELETE_ANIMATION_DURATION = 285;
-    private static int FLING_DELETE_ANIMATION_DURATION = 350;
-    private static float FLING_TO_DELETE_FRICTION = 0.035f;
-    private static int MODE_FLING_DELETE_TO_TRASH = 0;
-    private static int MODE_FLING_DELETE_ALONG_VECTOR = 1;
+    private static final int DELETE_ANIMATION_DURATION = 285;
+    private static final int FLING_DELETE_ANIMATION_DURATION = 350;
+    private static final float FLING_TO_DELETE_FRICTION = 0.035f;
+    private static final int MODE_FLING_DELETE_TO_TRASH = 0;
+    private static final int MODE_FLING_DELETE_ALONG_VECTOR = 1;
 
     private final int mFlingDeleteMode = MODE_FLING_DELETE_ALONG_VECTOR;
 
@@ -77,9 +78,9 @@ public class DeleteDropTarget extends ButtonDropTarget {
         // Get the hover color
         Resources r = getResources();
         mHoverColor = r.getColor(R.color.delete_target_hover_tint);
-        mUninstallDrawable = (TransitionDrawable) 
-                r.getDrawable(R.drawable.uninstall_target_selector);
-        mRemoveDrawable = (TransitionDrawable) r.getDrawable(R.drawable.remove_target_selector);
+        mUninstallDrawable = (TransitionDrawable)
+                ResourcesCompat.getDrawable(r, R.drawable.uninstall_target_selector,null);
+        mRemoveDrawable = (TransitionDrawable) ResourcesCompat.getDrawable(r,R.drawable.remove_target_selector,null);
 
         mRemoveDrawable.setCrossFadeEnabled(true);
         mUninstallDrawable.setCrossFadeEnabled(true);
@@ -427,12 +428,12 @@ public class DeleteDropTarget extends ButtonDropTarget {
      * progressively.
      */
     private static class FlingAlongVectorAnimatorUpdateListener implements AnimatorUpdateListener {
-        private DragLayer mDragLayer;
-        private PointF mVelocity;
-        private Rect mFrom;
+        private final DragLayer mDragLayer;
+        private final PointF mVelocity;
+        private final Rect mFrom;
         private long mPrevTime;
         private boolean mHasOffsetForScale;
-        private float mFriction;
+        private final float mFriction;
 
         private final TimeInterpolator mAlphaInterpolator = new DecelerateInterpolator(0.75f);
 
@@ -472,7 +473,8 @@ public class DeleteDropTarget extends ButtonDropTarget {
             mVelocity.y *= mFriction;
             mPrevTime = curTime;
         }
-    };
+    }
+
     private AnimatorUpdateListener createFlingAlongVectorAnimatorListener(final DragLayer dragLayer,
             DragObject d, PointF vel, final long startTime, final int duration,
             ViewConfiguration config) {

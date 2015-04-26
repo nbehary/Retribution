@@ -36,7 +36,7 @@ public class Utils {
     private static final long POLY64REV = 0x95AC9329AC4BC9B5L;
     private static final long INITIALCRC = 0xFFFFFFFFFFFFFFFFL;
 
-    private static long[] sCrcTable = new long[256];
+    private static final long[] sCrcTable = new long[256];
 
     private static final boolean IS_DEBUG_BUILD =
             Build.TYPE.equals("eng") || Build.TYPE.equals("userdebug");
@@ -69,7 +69,7 @@ public class Utils {
     // Returns true if two input Object are both null or equal
     // to each other.
     public static boolean equals(Object a, Object b) {
-        return (a == b) || (a == null ? false : a.equals(b));
+        return (a == b) || (a != null && a.equals(b));
     }
 
     // Returns the next power of two.
@@ -152,7 +152,7 @@ public class Utils {
         }
     }
 
-    public static final long crc64Long(byte[] buffer) {
+    private static long crc64Long(byte[] buffer) {
         long crc = INITIALCRC;
         for (int k = 0, n = buffer.length; k < n; ++k) {
             crc = sCrcTable[(((int) crc) ^ buffer[k]) & 0xff] ^ (crc >> 8);
@@ -160,7 +160,7 @@ public class Utils {
         return crc;
     }
 
-    public static byte[] getBytes(String in) {
+    private static byte[] getBytes(String in) {
         byte[] result = new byte[in.length() * 2];
         int output = 0;
         for (char ch : in.toCharArray()) {

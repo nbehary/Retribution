@@ -26,7 +26,7 @@ public class PreloadReceiver extends BroadcastReceiver {
     private static final String TAG = "Launcher.PreloadReceiver";
     private static final boolean LOGD = false;
 
-    public static final String EXTRA_WORKSPACE_NAME =
+    private static final String EXTRA_WORKSPACE_NAME =
             "com.nbehary.retribution.action.EXTRA_WORKSPACE_NAME";
 
     @Override

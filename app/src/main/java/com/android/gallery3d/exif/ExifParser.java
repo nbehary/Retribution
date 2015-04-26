@@ -126,22 +126,22 @@ class ExifParser {
     /**
      * Option bit to request to parse thumbnail.
      */
-    public static final int OPTION_THUMBNAIL = 1 << 5;
+    private static final int OPTION_THUMBNAIL = 1 << 5;
 
-    protected static final int EXIF_HEADER = 0x45786966; // EXIF header "Exif"
-    protected static final short EXIF_HEADER_TAIL = (short) 0x0000; // EXIF header in APP1
+    private static final int EXIF_HEADER = 0x45786966; // EXIF header "Exif"
+    private static final short EXIF_HEADER_TAIL = (short) 0x0000; // EXIF header in APP1
 
     // TIFF header
-    protected static final short LITTLE_ENDIAN_TAG = (short) 0x4949; // "II"
-    protected static final short BIG_ENDIAN_TAG = (short) 0x4d4d; // "MM"
-    protected static final short TIFF_HEADER_TAIL = 0x002A;
+    private static final short LITTLE_ENDIAN_TAG = (short) 0x4949; // "II"
+    private static final short BIG_ENDIAN_TAG = (short) 0x4d4d; // "MM"
+    private static final short TIFF_HEADER_TAIL = 0x002A;
 
-    protected static final int TAG_SIZE = 12;
-    protected static final int OFFSET_SIZE = 2;
+    private static final int TAG_SIZE = 12;
+    private static final int OFFSET_SIZE = 2;
 
     private static final Charset US_ASCII = Charset.forName("US-ASCII");
 
-    protected static final int DEFAULT_IFD0_OFFSET = 8;
+    private static final int DEFAULT_IFD0_OFFSET = 8;
 
     private final CountedDataInputStream mTiffStream;
     private final int mOptions;
@@ -236,7 +236,7 @@ class ExifParser {
      * @exception IOException
      * @exception ExifInvalidFormatException
      */
-    protected static ExifParser parse(InputStream inputStream, int options, ExifInterface iRef)
+    static ExifParser parse(InputStream inputStream, int options, ExifInterface iRef)
             throws IOException, ExifInvalidFormatException {
         return new ExifParser(inputStream, options, iRef);
     }
@@ -249,7 +249,7 @@ class ExifParser {
      * @exception ExifInvalidFormatException
      * @see #parse(InputStream, int)
      */
-    protected static ExifParser parse(InputStream inputStream, ExifInterface iRef)
+    static ExifParser parse(InputStream inputStream, ExifInterface iRef)
             throws IOException, ExifInvalidFormatException {
         return new ExifParser(inputStream, OPTION_IFD_0 | OPTION_IFD_1
                 | OPTION_IFD_EXIF | OPTION_IFD_GPS | OPTION_IFD_INTEROPERABILITY
@@ -268,7 +268,7 @@ class ExifParser {
      * @see #EVENT_UNCOMPRESSED_STRIP
      * @see #EVENT_END
      */
-    protected int next() throws IOException, ExifInvalidFormatException {
+    int next() throws IOException, ExifInvalidFormatException {
         if (!mContainExifData) {
             return EVENT_END;
         }
@@ -360,7 +360,7 @@ class ExifParser {
      * @throws IOException
      * @throws ExifInvalidFormatException
      */
-    protected void skipRemainingTagsInCurrentIfd() throws IOException, ExifInvalidFormatException {
+    void skipRemainingTagsInCurrentIfd() throws IOException, ExifInvalidFormatException {
         int endOfTags = mIfdStartOffset + OFFSET_SIZE + TAG_SIZE * mNumOfTagInIfd;
         int offset = mTiffStream.getReadByteCount();
         if (offset > endOfTags) {
@@ -428,7 +428,7 @@ class ExifParser {
      * @see #readString(int)
      * @see #readString(int, Charset)
      */
-    protected ExifTag getTag() {
+    ExifTag getTag() {
         return mTag;
     }
 
@@ -448,7 +448,7 @@ class ExifParser {
      * @see IfdId#TYPE_IFD_INTEROPERABILITY
      * @see IfdId#TYPE_IFD_EXIF
      */
-    protected int getCurrentIfd() {
+    int getCurrentIfd() {
         return mIfdType;
     }
 
@@ -458,7 +458,7 @@ class ExifParser {
      *
      * @see #getStripCount()
      */
-    protected int getStripIndex() {
+    int getStripIndex() {
         return mImageEvent.stripIndex;
     }
 
@@ -476,7 +476,7 @@ class ExifParser {
      * When receiving {@link #EVENT_UNCOMPRESSED_STRIP}, call this function to
      * get the strip size.
      */
-    protected int getStripSize() {
+    int getStripSize() {
         if (mStripSizeTag == null)
             return 0;
         return (int) mStripSizeTag.getValueAt(0);
@@ -486,7 +486,7 @@ class ExifParser {
      * When receiving {@link #EVENT_COMPRESSED_IMAGE}, call this function to get
      * the image data size.
      */
-    protected int getCompressedImageSize() {
+    int getCompressedImageSize() {
         if (mJpegSizeTag == null) {
             return 0;
         }
@@ -509,7 +509,7 @@ class ExifParser {
      *
      * @see #EVENT_VALUE_OF_REGISTERED_TAG
      */
-    protected void registerForTagValue(ExifTag tag) {
+    void registerForTagValue(ExifTag tag) {
         if (tag.getOffset() >= mTiffStream.getReadByteCount()) {
             mCorrespondingEvent.put(tag.getOffset(), new ExifTagEvent(tag, true));
         }
@@ -636,13 +636,10 @@ class ExifParser {
 
     private boolean checkAllowed(int ifd, int tagId) {
         int info = mInterface.getTagInfo().get(tagId);
-        if (info == ExifInterface.DEFINITION_NULL) {
-            return false;
-        }
-        return ExifInterface.isIfdAllowed(info, ifd);
+        return info != ExifInterface.DEFINITION_NULL && ExifInterface.isIfdAllowed(info, ifd);
     }
 
-    protected void readFullTagValue(ExifTag tag) throws IOException {
+    void readFullTagValue(ExifTag tag) throws IOException {
         // Some invalid images contains tags with wrong size, check it here
         short type = tag.getDataType();
         if (type == ExifTag.TYPE_ASCII || type == ExifTag.TYPE_UNDEFINED ||
@@ -786,11 +783,11 @@ class ExifParser {
         return false;
     }
 
-    protected int getOffsetToExifEndFromSOF() {
+    int getOffsetToExifEndFromSOF() {
         return mOffsetToApp1EndFromSOF;
     }
 
-    protected int getTiffStartPosition() {
+    int getTiffStartPosition() {
         return mTiffStartPosition;
     }
 
@@ -804,7 +801,7 @@ class ExifParser {
     /**
      * Equivalent to read(buffer, 0, buffer.length).
      */
-    protected int read(byte[] buffer) throws IOException {
+    int read(byte[] buffer) throws IOException {
         return mTiffStream.read(buffer);
     }
 
@@ -813,7 +810,7 @@ class ExifParser {
      * will read n bytes and convert it to ascii string. This is used for
      * reading values of type {@link ExifTag#TYPE_ASCII}.
      */
-    protected String readString(int n) throws IOException {
+    private String readString(int n) throws IOException {
         return readString(n, US_ASCII);
     }
 
@@ -822,7 +819,7 @@ class ExifParser {
      * will read n bytes and convert it to string. This is used for reading
      * values of type {@link ExifTag#TYPE_ASCII}.
      */
-    protected String readString(int n, Charset charset) throws IOException {
+    private String readString(int n, Charset charset) throws IOException {
         if (n > 0) {
             return mTiffStream.readString(n, charset);
         } else {
@@ -834,7 +831,7 @@ class ExifParser {
      * Reads value of type {@link ExifTag#TYPE_UNSIGNED_SHORT} from the
      * InputStream.
      */
-    protected int readUnsignedShort() throws IOException {
+    private int readUnsignedShort() throws IOException {
         return mTiffStream.readShort() & 0xffff;
     }
 
@@ -842,7 +839,7 @@ class ExifParser {
      * Reads value of type {@link ExifTag#TYPE_UNSIGNED_LONG} from the
      * InputStream.
      */
-    protected long readUnsignedLong() throws IOException {
+    private long readUnsignedLong() throws IOException {
         return readLong() & 0xffffffffL;
     }
 
@@ -850,7 +847,7 @@ class ExifParser {
      * Reads value of type {@link ExifTag#TYPE_UNSIGNED_RATIONAL} from the
      * InputStream.
      */
-    protected Rational readUnsignedRational() throws IOException {
+    private Rational readUnsignedRational() throws IOException {
         long nomi = readUnsignedLong();
         long denomi = readUnsignedLong();
         return new Rational(nomi, denomi);
@@ -859,22 +856,22 @@ class ExifParser {
     /**
      * Reads value of type {@link ExifTag#TYPE_LONG} from the InputStream.
      */
-    protected int readLong() throws IOException {
+    private int readLong() throws IOException {
         return mTiffStream.readInt();
     }
 
     /**
      * Reads value of type {@link ExifTag#TYPE_RATIONAL} from the InputStream.
      */
-    protected Rational readRational() throws IOException {
+    private Rational readRational() throws IOException {
         int nomi = readLong();
         int denomi = readLong();
         return new Rational(nomi, denomi);
     }
 
     private static class ImageEvent {
-        int stripIndex;
-        int type;
+        final int stripIndex;
+        final int type;
 
         ImageEvent(int type) {
             this.stripIndex = 0;
@@ -888,8 +885,8 @@ class ExifParser {
     }
 
     private static class IfdEvent {
-        int ifd;
-        boolean isRequested;
+        final int ifd;
+        final boolean isRequested;
 
         IfdEvent(int ifd, boolean isInterestedIfd) {
             this.ifd = ifd;
@@ -898,8 +895,8 @@ class ExifParser {
     }
 
     private static class ExifTagEvent {
-        ExifTag tag;
-        boolean isRequested;
+        final ExifTag tag;
+        final boolean isRequested;
 
         ExifTagEvent(ExifTag tag, boolean isRequireByUser) {
             this.tag = tag;
@@ -910,7 +907,7 @@ class ExifParser {
     /**
      * Gets the byte order of the current InputStream.
      */
-    protected ByteOrder getByteOrder() {
+    ByteOrder getByteOrder() {
         return mTiffStream.getByteOrder();
     }
 }

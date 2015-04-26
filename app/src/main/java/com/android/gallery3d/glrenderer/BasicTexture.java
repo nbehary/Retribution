@@ -29,32 +29,32 @@ public abstract class BasicTexture implements Texture {
 
     @SuppressWarnings("unused")
     private static final String TAG = "BasicTexture";
-    protected static final int UNSPECIFIED = -1;
+    static final int UNSPECIFIED = -1;
 
-    protected static final int STATE_UNLOADED = 0;
-    protected static final int STATE_LOADED = 1;
-    protected static final int STATE_ERROR = -1;
+    static final int STATE_UNLOADED = 0;
+    static final int STATE_LOADED = 1;
+    static final int STATE_ERROR = -1;
 
     // Log a warning if a texture is larger along a dimension
     private static final int MAX_TEXTURE_SIZE = 4096;
 
-    protected int mId = -1;
-    protected int mState;
+    int mId = -1;
+    int mState;
 
-    protected int mWidth = UNSPECIFIED;
-    protected int mHeight = UNSPECIFIED;
+    int mWidth = UNSPECIFIED;
+    int mHeight = UNSPECIFIED;
 
-    protected int mTextureWidth;
-    protected int mTextureHeight;
+    private int mTextureWidth;
+    private int mTextureHeight;
 
     private boolean mHasBorder;
 
-    protected GLCanvas mCanvasRef = null;
-    private static WeakHashMap<BasicTexture, Object> sAllTextures
+    private GLCanvas mCanvasRef = null;
+    private static final WeakHashMap<BasicTexture, Object> sAllTextures
             = new WeakHashMap<BasicTexture, Object>();
-    private static ThreadLocal sInFinalizer = new ThreadLocal();
+    private static final ThreadLocal<Class<BasicTexture>> sInFinalizer = new ThreadLocal<Class<BasicTexture>>();
 
-    protected BasicTexture(GLCanvas canvas, int id, int state) {
+    BasicTexture(GLCanvas canvas, int id, int state) {
         setAssociatedCanvas(canvas);
         mId = id;
         mState = state;
@@ -63,11 +63,11 @@ public abstract class BasicTexture implements Texture {
         }
     }
 
-    protected BasicTexture() {
+    BasicTexture() {
         this(null, 0, STATE_UNLOADED);
     }
 
-    protected void setAssociatedCanvas(GLCanvas canvas) {
+    void setAssociatedCanvas(GLCanvas canvas) {
         mCanvasRef = canvas;
     }
 
@@ -129,7 +129,7 @@ public abstract class BasicTexture implements Texture {
         return mHasBorder;
     }
 
-    protected void setBorder(boolean hasBorder) {
+    void setBorder(boolean hasBorder) {
         mHasBorder = hasBorder;
     }
 
@@ -156,7 +156,7 @@ public abstract class BasicTexture implements Texture {
 
     // recycle() is called when the texture will never be used again,
     // so it can free all resources.
-    public void recycle() {
+    void recycle() {
         freeResource();
     }
 
@@ -165,7 +165,7 @@ public abstract class BasicTexture implements Texture {
     // The default implementation unloads the texture from GL memory, so
     // the subclass should make sure it can reload the texture to GL memory
     // later, or it will have to override this method.
-    public void yield() {
+    void yield() {
         freeResource();
     }
 

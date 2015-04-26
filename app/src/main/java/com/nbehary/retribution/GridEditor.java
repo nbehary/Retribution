@@ -12,16 +12,12 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.support.v4.view.ViewPager;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 
@@ -38,8 +34,8 @@ public class GridEditor extends AppCompatActivity
         GridIconFragment.OnCalculatedChangeListener,
         GridIconValuesFragment.OnValuesInteractionListener,
         GridIconPercentFragment.OnPercentInteractionListener{
-    DeviceProfile mProfile;
-    Context mContext;
+    private DeviceProfile mProfile;
+    private Context mContext;
 
     private ViewPager mViewPager;
     private LinearLayout mFrame;
@@ -52,8 +48,8 @@ public class GridEditor extends AppCompatActivity
     private String mChanging;
     private boolean landscapeChanged;
     private Toolbar mToolbar;
-    SlidingTabLayout mTabs;
-    CharSequence Titles[]={"Desktop Grid","Icon Sizes"};
+    private SlidingTabLayout mTabs;
+    private final CharSequence[] Titles={"Desktop Grid","Icon Sizes"};
 
 
     @Override
@@ -198,7 +194,7 @@ public class GridEditor extends AppCompatActivity
         mViewPager = (ViewPager) findViewById(R.id.grid_editor);
         mPagerAdapter = new GridPagerAdapter(getSupportFragmentManager(),Titles,2);
         mViewPager.setAdapter(mPagerAdapter);
-        mViewPager.setOnPageChangeListener(
+    /*    mViewPager.setOnPageChangeListener(
                 new ViewPager.SimpleOnPageChangeListener() {
                     @Override
                     public void onPageSelected(int position) {
@@ -207,6 +203,7 @@ public class GridEditor extends AppCompatActivity
                         getSupportActionBar().setSelectedNavigationItem(position);
                     }
                 });
+                */
         mTabs = (SlidingTabLayout) findViewById(R.id.tabs);
         mTabs.setDistributeEvenly(true); // To make the Tabs Fixed set this true, This makes the mTabs Space Evenly in Available width
 
@@ -249,7 +246,7 @@ public class GridEditor extends AppCompatActivity
 
     public void onLandscapeChanged() {
         landscapeChanged = true;
-        if (mProfile.allowLandscape == true) {
+        if (mProfile.allowLandscape) {
             //mProfile.allowLandscape = false;
             Log.d("nbehary121","False!!!");
         } else {
@@ -324,7 +321,7 @@ public class GridEditor extends AppCompatActivity
     public void setmChanging(String changing) {mChanging = changing;}
 
     private class IconPagerAdapter extends FragmentPagerAdapter {
-        private Map<String, WeakReference<Fragment>> mPageReferenceMap = new HashMap<String, WeakReference<Fragment>>();
+        private final Map<String, WeakReference<Fragment>> mPageReferenceMap = new HashMap<String, WeakReference<Fragment>>();
 
         public IconPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -372,8 +369,8 @@ public class GridEditor extends AppCompatActivity
     }
     public class GridPagerAdapterNo extends FragmentPagerAdapter {
 
-        CharSequence Titles[]; // This will Store the Titles of the Tabs which are Going to be passed when ViewPagerAdapter is created
-        int NumbOfTabs; // Store the number of tabs, this will also be passed when the ViewPagerAdapter is created
+        final CharSequence[] Titles; // This will Store the Titles of the Tabs which are Going to be passed when ViewPagerAdapter is created
+        final int NumbOfTabs; // Store the number of tabs, this will also be passed when the ViewPagerAdapter is created
 
 
         // Build a Constructor and assign the passed Values to appropriate values in the class
@@ -420,11 +417,11 @@ public class GridEditor extends AppCompatActivity
     }
 
     private class GridPagerAdapter extends FragmentPagerAdapter {
-        CharSequence Titles[]; // This will Store the Titles of the Tabs which are Going to be passed when ViewPagerAdapter is created
-        int NumbOfTabs; // Store the number of tabs, this will also be passed when the ViewPagerAdapter is created
+        final CharSequence[] Titles; // This will Store the Titles of the Tabs which are Going to be passed when ViewPagerAdapter is created
+        final int NumbOfTabs; // Store the number of tabs, this will also be passed when the ViewPagerAdapter is created
 
 
-        private Map<String, WeakReference<Fragment>> mPageReferenceMap = new HashMap<String, WeakReference<Fragment>>();
+        private final Map<String, WeakReference<Fragment>> mPageReferenceMap = new HashMap<String, WeakReference<Fragment>>();
 
         public GridPagerAdapter(FragmentManager fm,CharSequence mTitles[], int mNumbOfTabs) {
             super(fm);

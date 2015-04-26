@@ -33,11 +33,11 @@ class FolderInfo extends ItemInfo {
     /**
      * The apps and shortcuts
      */
-    ArrayList<ShortcutInfo> contents = new ArrayList<ShortcutInfo>();
+    final ArrayList<ShortcutInfo> contents = new ArrayList<ShortcutInfo>();
 
-    ArrayList<FolderListener> listeners = new ArrayList<FolderListener>();
+    private final ArrayList<FolderListener> listeners = new ArrayList<FolderListener>();
 
-    ArrayList<CharSequence> titles = new ArrayList<CharSequence>();
+    final ArrayList<CharSequence> titles = new ArrayList<CharSequence>();
 
     /**
      * Colors and sorting
@@ -114,7 +114,7 @@ class FolderInfo extends ItemInfo {
         }
     }
 
-    void itemsChanged() {
+    private void itemsChanged() {
         for (int i = 0; i < listeners.size(); i++) {
             listeners.get(i).onItemsChanged();
         }
@@ -127,10 +127,10 @@ class FolderInfo extends ItemInfo {
     }
 
     interface FolderListener {
-        public void onAdd(ShortcutInfo item);
-        public void onRemove(ShortcutInfo item);
-        public void onTitleChanged(CharSequence title);
-        public void onItemsChanged();
+        void onAdd(ShortcutInfo item);
+        void onRemove(ShortcutInfo item);
+        void onTitleChanged(CharSequence title);
+        void onItemsChanged();
     }
 
     @Override

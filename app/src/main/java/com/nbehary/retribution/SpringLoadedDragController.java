@@ -18,15 +18,15 @@ package com.nbehary.retribution;
 
 public class SpringLoadedDragController implements OnAlarmListener {
     // how long the user must hover over a mini-screen before it unshrinks
-    final long ENTER_SPRING_LOAD_HOVER_TIME = 500;
-    final long ENTER_SPRING_LOAD_CANCEL_HOVER_TIME = 950;
+    private final long ENTER_SPRING_LOAD_HOVER_TIME = 500;
+    private final long ENTER_SPRING_LOAD_CANCEL_HOVER_TIME = 950;
     final long EXIT_SPRING_LOAD_HOVER_TIME = 200;
 
-    Alarm mAlarm;
+    private final Alarm mAlarm;
 
     // the screen the user is currently hovering over, if any
     private CellLayout mScreen;
-    private Launcher mLauncher;
+    private final Launcher mLauncher;
 
     public SpringLoadedDragController(Launcher launcher) {
         mLauncher = launcher;

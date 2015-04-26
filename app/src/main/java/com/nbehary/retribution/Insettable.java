@@ -18,7 +18,7 @@ package com.nbehary.retribution;
 
 import android.graphics.Rect;
 
-public interface Insettable {
+interface Insettable {
 
     void setInsets(Rect insets);
 }

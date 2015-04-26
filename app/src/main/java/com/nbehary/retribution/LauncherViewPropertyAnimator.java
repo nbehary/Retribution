@@ -19,7 +19,6 @@ package com.nbehary.retribution;
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.animation.TimeInterpolator;
-import android.os.Build;
 import android.view.View;
 import android.view.ViewPropertyAnimator;
 
@@ -39,22 +38,22 @@ public class LauncherViewPropertyAnimator extends Animator implements AnimatorLi
             INTERPOLATOR,
             WITH_LAYER
     }
-    EnumSet<Properties> mPropertiesToSet = EnumSet.noneOf(Properties.class);
-    ViewPropertyAnimator mViewPropertyAnimator;
-    View mTarget;
+    private final EnumSet<Properties> mPropertiesToSet = EnumSet.noneOf(Properties.class);
+    private ViewPropertyAnimator mViewPropertyAnimator;
+    private final View mTarget;
 
-    float mTranslationX;
-    float mTranslationY;
-    float mScaleX;
-    float mScaleY;
-    float mRotationY;
-    float mAlpha;
-    long mStartDelay;
-    long mDuration;
-    TimeInterpolator mInterpolator;
-    ArrayList<Animator.AnimatorListener> mListeners;
-    boolean mRunning = false;
-    FirstFrameAnimatorHelper mFirstFrameHelper;
+    private float mTranslationX;
+    private float mTranslationY;
+    private float mScaleX;
+    private float mScaleY;
+    private float mRotationY;
+    private float mAlpha;
+    private long mStartDelay;
+    private long mDuration;
+    private TimeInterpolator mInterpolator;
+    private final ArrayList<Animator.AnimatorListener> mListeners;
+    private boolean mRunning = false;
+    private FirstFrameAnimatorHelper mFirstFrameHelper;
 
     public LauncherViewPropertyAnimator(View target) {
         mTarget = target;
@@ -75,6 +74,7 @@ public class LauncherViewPropertyAnimator extends Animator implements AnimatorLi
 
     @Override
     public Animator clone() {
+        super.clone();
         throw new RuntimeException("Not implemented");
     }
 

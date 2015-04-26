@@ -16,6 +16,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.content.res.ResourcesCompat;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -62,12 +63,12 @@ public class IconPickerActivity extends Activity {
     }
 
     public class ImageAdapter extends BaseAdapter {
-        private Context mContext;
+        private final Context mContext;
         private Resources mResources;
-        private ArrayList<DrawableInfo> mDrawables = new ArrayList<DrawableInfo>();
+        private final ArrayList<DrawableInfo> mDrawables = new ArrayList<DrawableInfo>();
 
         public class FetchDrawable extends AsyncTask<Integer, Void, Drawable> {
-            WeakReference<ImageView> mImageView;
+            final WeakReference<ImageView> mImageView;
 
             FetchDrawable(ImageView imgView) {
                 mImageView = new WeakReference<ImageView>(imgView);
@@ -77,7 +78,7 @@ public class IconPickerActivity extends Activity {
             protected Drawable doInBackground(Integer... position) {
                 DrawableInfo info = getItem(position[0]);
                 int itemId = info.resource_id;
-                Drawable d = mResources.getDrawable(itemId);
+                Drawable d = ResourcesCompat.getDrawable(mResources,itemId,null);
                 info.drawable = new WeakReference<Drawable>(d);
                 return d;
             }

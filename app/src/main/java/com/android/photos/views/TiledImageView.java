@@ -17,7 +17,6 @@
 package com.android.photos.views;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -30,7 +29,6 @@ import android.opengl.GLSurfaceView;
 import android.opengl.GLSurfaceView.Renderer;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Choreographer;
 import android.view.Choreographer.FrameCallback;
 import android.view.View;
@@ -52,6 +50,7 @@ public class TiledImageView extends FrameLayout {
     private static final boolean USE_TEXTURE_VIEW = false;
     private static final boolean IS_SUPPORTED = true;
     //        Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
+    //TODO: Why the above?  (and why not below?)
     private static final boolean USE_CHOREOGRAPHER =
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
 
@@ -72,12 +71,12 @@ public class TiledImageView extends FrameLayout {
         TiledImageRenderer image;
     }
 
-    private float[] mValues = new float[9];
+    private final float[] mValues = new float[9];
 
     // -------------------------
     // Guarded by mLock
     // -------------------------
-    protected Object mLock = new Object();
+    protected final Object mLock = new Object();
     protected ImageRendererWrapper mRenderer;
 
     public static boolean isTilingSupported() {
@@ -124,7 +123,7 @@ public class TiledImageView extends FrameLayout {
         }
     }
 
-    private Runnable mFreeTextures = new Runnable() {
+    private final Runnable mFreeTextures = new Runnable() {
 
         @Override
         public void run() {
@@ -150,7 +149,7 @@ public class TiledImageView extends FrameLayout {
         }
     }
 
-    public void setTileSource(TileSource source, Runnable isReadyCallback) {
+    protected void setTileSource(TileSource source, Runnable isReadyCallback) {
         if (!IS_SUPPORTED) {
             return;
         }
@@ -242,7 +241,7 @@ public class TiledImageView extends FrameLayout {
         }
     }
 
-    private RectF mTempRectF = new RectF();
+    private final RectF mTempRectF = new RectF();
     public void positionFromMatrix(Matrix matrix) {
         if (!IS_SUPPORTED) {
             return;
@@ -335,8 +334,8 @@ public class TiledImageView extends FrameLayout {
             Color.WHITE,
         };
 
-        private Paint mPaint = new Paint();
-        private Canvas mCanvas = new Canvas();
+        private final Paint mPaint = new Paint();
+        private final Canvas mCanvas = new Canvas();
 
         @Override
         public int getTileSize() {

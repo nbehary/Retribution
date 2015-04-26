@@ -22,6 +22,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.support.v4.content.res.ResourcesCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -43,8 +44,8 @@ public class Hotseat extends FrameLayout {
 
     private int mAllAppsButtonRank;
 
-    private boolean mTransposeLayoutWithOrientation;
-    private boolean mIsLandscape;
+    private final boolean mTransposeLayoutWithOrientation;
+    private final boolean mIsLandscape;
 
     public Hotseat(Context context) {
         this(context, null);
@@ -97,11 +98,7 @@ public class Hotseat extends FrameLayout {
         return hasVerticalHotseat() ? (mContent.getCountY() - (rank + 1)) : 0;
     }
     public boolean isAllAppsButtonRank(int rank) {
-        if (AppsCustomizePagedView.DISABLE_ALL_APPS) {
-            return false;
-        } else {
-            return rank == mAllAppsButtonRank;
-        }
+        return !AppsCustomizePagedView.DISABLE_ALL_APPS && rank == mAllAppsButtonRank;
     }
 
     /** This returns the coordinates of an app in a given cell, relative to the DragLayer */
@@ -154,7 +151,7 @@ public class Hotseat extends FrameLayout {
             LayoutInflater inflater = LayoutInflater.from(context);
             TextView allAppsButton = (TextView)
                     inflater.inflate(R.layout.all_apps_button, mContent, false);
-            Drawable d = context.getResources().getDrawable(R.drawable.all_apps_button_icon);
+            Drawable d = ResourcesCompat.getDrawable(context.getResources(), R.drawable.all_apps_button_icon,null);
             Utilities.resizeHotseatIconDrawable(d);
             allAppsButton.setCompoundDrawables(null, d, null, null);
 
@@ -185,10 +182,7 @@ public class Hotseat extends FrameLayout {
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         // We don't want any clicks to go through to the hotseat unless the workspace is in
         // the normal state.
-        if (mLauncher.getWorkspace().isSmall()) {
-            return true;
-        }
-        return false;
+        return mLauncher.getWorkspace().isSmall();
     }
 
     void addAllAppsFolder(IconCache iconCache,

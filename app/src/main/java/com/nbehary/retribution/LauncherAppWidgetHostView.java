@@ -31,11 +31,11 @@ import com.nbehary.retribution.DragLayer.TouchCompleteListener;
  * {@inheritDoc}
  */
 public class LauncherAppWidgetHostView extends AppWidgetHostView implements TouchCompleteListener {
-    private CheckLongPressHelper mLongPressHelper;
-    private LayoutInflater mInflater;
-    private Context mContext;
+    private final CheckLongPressHelper mLongPressHelper;
+    private final LayoutInflater mInflater;
+    private final Context mContext;
     private int mPreviousOrientation;
-    private DragLayer mDragLayer;
+    private final DragLayer mDragLayer;
 
     public LauncherAppWidgetHostView(Context context) {
         super(context);
@@ -59,10 +59,7 @@ public class LauncherAppWidgetHostView extends AppWidgetHostView implements Touc
 
     public boolean orientationChangedSincedInflation() {
         int orientation = mContext.getResources().getConfiguration().orientation;
-        if (mPreviousOrientation != orientation) {
-           return true;
-       }
-       return false;
+        return mPreviousOrientation != orientation;
     }
 
     public boolean onInterceptTouchEvent(MotionEvent ev) {

@@ -41,7 +41,7 @@ class ExifReader {
      * @throws ExifInvalidFormatException
      * @throws IOException
      */
-    protected ExifData read(InputStream inputStream) throws ExifInvalidFormatException,
+    ExifData read(InputStream inputStream) throws ExifInvalidFormatException,
             IOException {
         ExifParser parser = ExifParser.parse(inputStream, mInterface);
         ExifData exifData = new ExifData(parser.getByteOrder());

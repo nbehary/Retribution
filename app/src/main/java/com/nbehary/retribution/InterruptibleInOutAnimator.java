@@ -28,11 +28,11 @@ import android.view.View;
  * be exactly reversed. Using this class, both the 'in' and the 'out' animation use the
  * interpolator in the same direction.
  */
-public class InterruptibleInOutAnimator {
-    private long mOriginalDuration;
-    private float mOriginalFromValue;
-    private float mOriginalToValue;
-    private ValueAnimator mAnimator;
+class InterruptibleInOutAnimator {
+    private final long mOriginalDuration;
+    private final float mOriginalFromValue;
+    private final float mOriginalToValue;
+    private final ValueAnimator mAnimator;
 
     private boolean mFirstRun = true;
 
@@ -81,7 +81,7 @@ public class InterruptibleInOutAnimator {
         mFirstRun = false;
     }
 
-    public void cancel() {
+    private void cancel() {
         mAnimator.cancel();
         mDirection = STOPPED;
     }

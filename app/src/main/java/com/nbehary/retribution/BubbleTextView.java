@@ -22,13 +22,11 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.Region;
 import android.graphics.Region.Op;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.widget.TextView;
@@ -291,7 +289,7 @@ public class BubbleTextView extends TextView {
         setCellLayoutPressedOrFocusedIcon();
     }
 
-    void setCellLayoutPressedOrFocusedIcon() {
+    private void setCellLayoutPressedOrFocusedIcon() {
         if (getParent() instanceof ShortcutAndWidgetContainer) {
             ShortcutAndWidgetContainer parent = (ShortcutAndWidgetContainer) getParent();
             if (parent != null) {
