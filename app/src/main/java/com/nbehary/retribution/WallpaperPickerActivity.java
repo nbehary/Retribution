@@ -129,7 +129,6 @@ public class WallpaperPickerActivity extends WallpaperCropActivity {
             Utilities.startActivityForResultSafely(a, intent, IMAGE_PICK);
         }
     }
-
     public static class LiveWallpaperTileICS extends WallpaperTileInfo{
         private final Drawable mThumbnail;
         private WallpaperInfo mInfo;
@@ -460,9 +459,10 @@ public class WallpaperPickerActivity extends WallpaperCropActivity {
         // Action bar
         // Show the custom action bar view
         final ActionBar actionBar = getActionBar();
-//        actionBar.setCustomView(R.layout.actionbar_set_wallpaper);
-  //      actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-   /*     actionBar.getCustomView().setOnClickListener(
+
+        actionBar.setCustomView(R.layout.actionbar_set_wallpaper);
+        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        actionBar.getCustomView().setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -472,7 +472,7 @@ public class WallpaperPickerActivity extends WallpaperCropActivity {
                         }
                     }
                 });
-*/
+
         // CAB for deleting items
         mActionModeCallback = new ActionMode.Callback() {
             // Called when the action mode is created; startActionMode() was called
@@ -623,7 +623,7 @@ public class WallpaperPickerActivity extends WallpaperCropActivity {
             }
             thumbnail.setOnClickListener(mThumbnailOnClickListener);
             if (i == 0 && selectFirstTile) {
-//                mThumbnailOnClickListener.onClick(thumbnail);
+                mThumbnailOnClickListener.onClick(thumbnail);
             }
         }
     }

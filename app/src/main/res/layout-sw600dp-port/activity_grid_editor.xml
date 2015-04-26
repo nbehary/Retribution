@@ -14,34 +14,38 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/grid_editor2"
         android:orientation="vertical"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp">
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="@string/grid_fragment_header"
         android:id="@+id/textView4"
-        android:layout_weight="0.03" />
+        android:layout_weight="0.03"
+        android:layout_gravity="center_horizontal" />
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:id="@+id/grid_grid_frame"
-        android:layout_weight="1"></FrameLayout>
+        android:layout_weight="1"
+        android:layout_gravity="center_horizontal"></FrameLayout>
         </LinearLayout>
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/grid_editor3"
         android:orientation="vertical"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp">
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="@string/icon_fragment_header"
         android:id="@+id/textView"
-        android:layout_gravity="center_vertical" />
+        android:layout_gravity="center_horizontal" />
 
     <FrameLayout
         android:layout_width="match_parent"

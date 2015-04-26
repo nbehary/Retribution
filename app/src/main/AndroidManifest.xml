@@ -20,7 +20,7 @@
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.nbehary.retribution"
-    android:versionCode="2281"
+    android:versionCode="2286"
     android:versionName="1.4.1">
 
     <permission
@@ -64,7 +64,7 @@
 
     <!--<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />-->
 
-    <uses-sdk android:targetSdkVersion="22" android:minSdkVersion="15"/>
+
 
     <application
         android:name="com.nbehary.retribution.LauncherApplication"

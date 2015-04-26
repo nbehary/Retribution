@@ -57,7 +57,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class WallpaperCropActivity extends AppCompatActivity {
+public class WallpaperCropActivity extends Activity {
     private static final String LOGTAG = "Launcher3.CropActivity";
 
     private static final String WALLPAPER_WIDTH_KEY = "wallpaper.width";
@@ -87,7 +87,7 @@ public class WallpaperCropActivity extends AppCompatActivity {
 
     void init() {
         setContentView(R.layout.wallpaper_cropper);
-
+Log.d("NBEHARY142", "WallCropInit");
         mCropView = (CropView) findViewById(R.id.cropView);
 
         Intent cropIntent = getIntent();

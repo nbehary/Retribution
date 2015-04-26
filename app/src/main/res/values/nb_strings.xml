@@ -40,13 +40,11 @@
     <string name="os_dialog_top_text">This program is based on or includes portions of software available under open source licenses.</string>
     <string name="os_notice_header">Notices:</string>
     <string name="os_dialog_header">Open Source</string>
-    <string name="nb_copyright">Copyright © 2013-2014 Nathan A. Behary</string>
+    <string name="nb_copyright">Copyright © 2015 Nathan A. Behary</string>
     <string name="about_credits">
         Written and designed by:\n
         Nathan A. Behary\n
         \n
-        Nexus 10 Support Testing:\n
-        Kyle Riedemann
 
     </string>
     <string name="os_button_text">Open Source Software</string>
