@@ -51,8 +51,6 @@ import android.util.ArrayMap;
 import android.util.Log;
 import android.util.Pair;
 
-import com.gc.android.market.api.MarketSession;
-import com.gc.android.market.api.model.Market;
 import com.nbehary.retribution.InstallWidgetReceiver.WidgetMimeTypeHandlerData;
 
 import java.lang.ref.WeakReference;
@@ -2708,76 +2706,7 @@ public class LauncherModel extends BroadcastReceiver {
             }
         }
 
-        private String getAppCategory(ResolveInfo ri) {
-            MarketSession session = new MarketSession();
-            String authToken = updateToken(false);
-            session.setAuthSubToken(authToken);
-            //session.login(email,password);
-//            String androidID = Settings.Secure.getString(mLauncher.getContentResolver(), Settings.Secure.ANDROID_ID);
-//            session.getContext().setAndroidId(androidID);
 
-            String query = "retribution";//ri.activityInfo.applicationInfo.packageName;
-            if (query == null) {
-                return "None";
-            }
-            Market.AppsRequest appsRequest = Market.AppsRequest.newBuilder()
-                    .setQuery(query)
-                    .setStartIndex(0).setEntriesCount(10)
-                    .setWithExtendedInfo(true)
-                    .build();
-//
-//            Market.CategoriesRequest appsRequest = Market.CategoriesRequest.newBuilder()
-//                   .setQuery(query)
-//                   .setStartIndex(0).setEntriesCount(10)
-//                   .setWithExtendedInfo(true)
-//                   .build();
-
-            session.append(appsRequest, new MarketSession.Callback<Market.AppsResponse>() {
-                @Override
-                public void onResult(Market.ResponseContext context, Market.AppsResponse response) {
-                    List<Market.App> entries =response.getAppList();
-                    if (entries.size() > 0) {
-                    }
-                    // Your code here
-                    // response.getApp(0).getCreator() ...
-                    // see AppsResponse class definition for more infos
-                }
-            });
-           session.flush();
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            return "None"; //TODO:NO!!!!!!!
-
-        }
-
-        private String updateToken(boolean invalidateToken) {
-            String authToken = "null";
-            Context ctx = mApp.getContext();
-            Activity activity = mLauncher;
-            try {
-                AccountManager am = AccountManager.get(ctx);
-                Account[] accounts = am.getAccountsByType("com.google");
-                AccountManagerFuture<Bundle> accountManagerFuture;
-//                accountManagerFuture = am.getAuthToken(accounts[0], "android", false, null, null);
-                if(activity == null){//this is used when calling from an interval thread
-                    accountManagerFuture = am.getAuthToken(accounts[0], "android", null, false, null, null);
-                } else {
-                    accountManagerFuture = am.getAuthToken(accounts[0], "android", null, activity, null, null);
-                }
-                Bundle authTokenBundle = accountManagerFuture.getResult();
-                authToken = authTokenBundle.getString(AccountManager.KEY_AUTHTOKEN);
-                if(invalidateToken) {
-                    am.invalidateAuthToken("com.google", authToken);
-                    authToken = updateToken(false);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return authToken;
-        }
 
 
 
