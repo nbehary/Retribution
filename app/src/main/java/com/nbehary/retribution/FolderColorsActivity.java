@@ -42,7 +42,6 @@ import android.widget.Spinner;
 import com.nbehary.retribution.preference.PreferencesProvider;
 
 
-
 public class FolderColorsActivity extends AppCompatActivity {
 
     private int mBgColor;
@@ -55,12 +54,9 @@ public class FolderColorsActivity extends AppCompatActivity {
     private int mFolderType;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
 
 
         mBgColor = PreferencesProvider.Interface.General.getFolderBackColor();
@@ -72,7 +68,7 @@ public class FolderColorsActivity extends AppCompatActivity {
         mFolderType = PreferencesProvider.Interface.General.getFolderType();
         mContext = this;
         //No colors set.  Default to black text on white.  (sort of, but not the default)
-        if (mBgColor==0 && mIconColor==0 && mNameColor==0) {
+        if (mBgColor == 0 && mIconColor == 0 && mNameColor == 0) {
             mBgColor = -109145601;
             mIconColor = -4038656;
             mNameColor = -847872;
@@ -100,7 +96,7 @@ public class FolderColorsActivity extends AppCompatActivity {
                         PreferencesProvider.Interface.General.setDefaultFolderBG(mContext, mDefaultBG);
                         PreferencesProvider.Interface.General.setFolderColor(mContext, mFreeColor);
                         PreferencesProvider.Interface.General.setFolderIconTint(mContext, mTintIcon);
-                        PreferencesProvider.Interface.General.setFolderType(mContext,mFolderType);
+                        PreferencesProvider.Interface.General.setFolderType(mContext, mFolderType);
                         LauncherAppState.getInstance().getModel().startLoader(true, -1);
                         finish();
                         //do stuff
@@ -138,10 +134,11 @@ public class FolderColorsActivity extends AppCompatActivity {
 
     private void setmTintIcon(boolean mTintIcon) {
         this.mTintIcon = mTintIcon;
-    } 
-    private void setmFolderType(int mFolderType) { this.mFolderType = mFolderType;}
+    }
 
-
+    private void setmFolderType(int mFolderType) {
+        this.mFolderType = mFolderType;
+    }
 
 
     @Override
@@ -196,7 +193,7 @@ public class FolderColorsActivity extends AppCompatActivity {
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
+                                 Bundle savedInstanceState) {
 
 
             mContext = getActivity();
@@ -209,315 +206,135 @@ public class FolderColorsActivity extends AppCompatActivity {
 
             mChanging = "Background";
             //No colors set.  Default to black text on white.  (sort of, but not the default)
-            if (mBgColor==0 && mIconColor==0 && mNameColor==0) {
+            if (mBgColor == 0 && mIconColor == 0 && mNameColor == 0) {
                 mBgColor = -109145601;
                 mIconColor = -4038656;
                 mNameColor = -847872;
             }
 
             View rootView;
-            if (LauncherAppState.getInstance().getProVersion()) {
-                rootView = inflater.inflate(R.layout.fragment_folder_colors, container, false);
-                LinearLayout ui_pane = (LinearLayout) rootView.findViewById(R.id.folder_colors_ui);
-                ui_pane.setBackgroundColor(Color.argb(128, 0, 0, 0));
-                mPreviewImage = (ImageView) rootView.findViewById(R.id.folder_color_preview_image);
 
-                Spinner spinner = (Spinner) rootView.findViewById(R.id.folder_colors_item_spinner);
-                ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(mContext,
-                        R.array.folder_colors_array, android.R.layout.simple_spinner_item);
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                spinner.setAdapter(adapter);
-                spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        mChanging = (String) parent.getItemAtPosition(position);
-                        if (mChanging.equals("Background")) {
-                            mPicker.setColor(mBgColor);
-                        } else if (mChanging.equals("Folder Name")) {
-                            if (mNameColor != 0) {
-                                mPicker.setColor(mNameColor);
-                            }
-                        } else {
-                            if (mIconColor != 0) {
-                                mPicker.setColor(mIconColor);
-                            }
+            rootView = inflater.inflate(R.layout.fragment_folder_colors, container, false);
+            LinearLayout ui_pane = (LinearLayout) rootView.findViewById(R.id.folder_colors_ui);
+            ui_pane.setBackgroundColor(Color.argb(128, 0, 0, 0));
+            mPreviewImage = (ImageView) rootView.findViewById(R.id.folder_color_preview_image);
 
+            Spinner spinner = (Spinner) rootView.findViewById(R.id.folder_colors_item_spinner);
+            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(mContext,
+                    R.array.folder_colors_array, android.R.layout.simple_spinner_item);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinner.setAdapter(adapter);
+            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    mChanging = (String) parent.getItemAtPosition(position);
+                    if (mChanging.equals("Background")) {
+                        mPicker.setColor(mBgColor);
+                    } else if (mChanging.equals("Folder Name")) {
+                        if (mNameColor != 0) {
+                            mPicker.setColor(mNameColor);
                         }
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parent) {
-
-                    }
-                });
-
-
-                Button reset = (Button) rootView.findViewById(R.id.folder_color_reset);
-                reset.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        mDefaultBG = true;
-                        ((FolderColorsActivity)getActivity()).setmDefaultBG(true);
-                        mPreviewImage.setImageBitmap(generateFolderPreview(getResources(), mBgColor, mIconColor, mNameColor, mDefaultBG));
-                    }
-                });
-
-
-                FrameLayout preview_pane = (FrameLayout) rootView.findViewById(R.id.folder_color_preview);
-                preview_pane.setBackgroundColor(Color.argb(0,0, 0, 0));
-
-                mPreviewImage.setImageBitmap(generateFolderPreview(getResources(),mBgColor,mIconColor,mNameColor,mDefaultBG));
-
-                mPicker = (ColorPickerView) rootView.findViewById(R.id.picker);
-                mPicker.setAlphaSliderVisible(false);
-
-                mPicker.setOnColorChangedListener(new ColorPickerView.OnColorChangedListener() {
-                    @Override
-                    public void onColorChanged(int i) {
-                        FolderColorsActivity parent = (FolderColorsActivity) getActivity();
-                        if (mChanging.equals("Background")) {
-                            mBgColor = i;
-                            parent.setmBgColor(i);
-                        } else if (mChanging.equals("Folder Name")) {
-                            mNameColor = i;
-                            parent.setmNameColor(i);
-                        } else {
-                            mIconColor = i;
-                            parent.setmIconColor(i);
-                        }
-                        if (mDefaultBG) {
-                            mDefaultBG = false;
-                            parent.setmDefaultBG(false);
-                        }
-                        mPreviewImage.setImageBitmap(generateFolderPreview(getResources(),mBgColor,mIconColor,mNameColor,mDefaultBG));
-
-                    }
-                });
-                mPicker.setColor(mBgColor);
-
-/*                CheckBox allowLand = (CheckBox) rootView.findViewById(R.id.folder_tint_icon);
-                allowLand.setChecked(mTintIcon);
-                allowLand.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        FolderColorsActivity parent = (FolderColorsActivity) getActivity();
-                        if (isChecked) {
-                            mTintIcon = true;
-                            parent.setmTintIcon(true);
-                        } else {
-                            mTintIcon = false;
-                            parent.setmTintIcon(false);
+                    } else {
+                        if (mIconColor != 0) {
+                            mPicker.setColor(mIconColor);
                         }
 
                     }
-                });
-
-                */
-
-                Spinner iconSpinner = (Spinner) rootView.findViewById(R.id.folder_colors_icon_spinner);
-                ArrayAdapter<CharSequence> iconAdapter = ArrayAdapter.createFromResource(mContext,
-                        R.array.folder_icons_array_pro, android.R.layout.simple_spinner_item);
-                iconAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                iconSpinner.setAdapter(iconAdapter);
-                if (!mTintIcon && (mFolderType!=2)) {
-                    iconSpinner.setSelection(0);
-                } else if (mTintIcon) {
-                    iconSpinner.setSelection(1);
-                } else {
-                    iconSpinner.setSelection(2);
                 }
-                iconSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        String iconType = (String) parent.getItemAtPosition(position);
-                        FolderColorsActivity activity = (FolderColorsActivity) getActivity();
-                        if (iconType.equals("Default (White)")) {
-                            mTintIcon = false;
-                            activity.setmTintIcon(false);
-                            mFolderType = 0;
-                            activity.setmFolderType(0);
-                        } else if (iconType.equals("Tint with Background")) {
-                            mTintIcon = true;
-                            activity.setmTintIcon(true);
-                            mFolderType = 0;
-                            activity.setmFolderType(0);
 
-                        } else {
-                            mTintIcon = false;
-                            activity.setmTintIcon(false);
-                            mFolderType = 2;
-                            activity.setmFolderType(2);
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
 
-                        }
+                }
+            });
+
+
+            Button reset = (Button) rootView.findViewById(R.id.folder_color_reset);
+            reset.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    mDefaultBG = true;
+                    ((FolderColorsActivity) getActivity()).setmDefaultBG(true);
+                    mPreviewImage.setImageBitmap(generateFolderPreview(getResources(), mBgColor, mIconColor, mNameColor, mDefaultBG));
+                }
+            });
+
+
+            FrameLayout preview_pane = (FrameLayout) rootView.findViewById(R.id.folder_color_preview);
+            preview_pane.setBackgroundColor(Color.argb(0, 0, 0, 0));
+
+            mPreviewImage.setImageBitmap(generateFolderPreview(getResources(), mBgColor, mIconColor, mNameColor, mDefaultBG));
+
+            mPicker = (ColorPickerView) rootView.findViewById(R.id.picker);
+            mPicker.setAlphaSliderVisible(false);
+
+            mPicker.setOnColorChangedListener(new ColorPickerView.OnColorChangedListener() {
+                @Override
+                public void onColorChanged(int i) {
+                    FolderColorsActivity parent = (FolderColorsActivity) getActivity();
+                    if (mChanging.equals("Background")) {
+                        mBgColor = i;
+                        parent.setmBgColor(i);
+                    } else if (mChanging.equals("Folder Name")) {
+                        mNameColor = i;
+                        parent.setmNameColor(i);
+                    } else {
+                        mIconColor = i;
+                        parent.setmIconColor(i);
                     }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parent) {
-
+                    if (mDefaultBG) {
+                        mDefaultBG = false;
+                        parent.setmDefaultBG(false);
                     }
-                });
+                    mPreviewImage.setImageBitmap(generateFolderPreview(getResources(), mBgColor, mIconColor, mNameColor, mDefaultBG));
+
+                }
+            });
+            mPicker.setColor(mBgColor);
+
+
+            Spinner iconSpinner = (Spinner) rootView.findViewById(R.id.folder_colors_icon_spinner);
+            ArrayAdapter<CharSequence> iconAdapter = ArrayAdapter.createFromResource(mContext,
+                    R.array.folder_icons_array_pro, android.R.layout.simple_spinner_item);
+            iconAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            iconSpinner.setAdapter(iconAdapter);
+            if (!mTintIcon && (mFolderType != 2)) {
+                iconSpinner.setSelection(0);
+            } else if (mTintIcon) {
+                iconSpinner.setSelection(1);
             } else {
-                rootView = inflater.inflate(R.layout.fragment_folder_colors_free, container, false);
-                FrameLayout ui_pane = (FrameLayout) rootView.findViewById(R.id.folder_colors_ui_free);
-                ui_pane.setBackgroundColor(Color.argb(128, 0, 0, 0));
-                mPreviewImage = (ImageView) rootView.findViewById(R.id.folder_color_preview_image_free);
-                RadioGroup rGroup = (RadioGroup)rootView.findViewById(R.id.radioGroup1);
-
-                final Button playButton = (Button) rootView.findViewById(R.id.play_button3);
-                playButton.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.nbehary.retribution.pro_key")));
-                    }
-                });
-
-                int color = Integer.parseInt(PreferencesProvider.Interface.General.getFolderColor());
-                switch (color) {
-                    case 1:  //White(Default)
-                        mPreviewImage.setImageBitmap(generateFolderPreview(getResources(),
-                                Color.argb(255,84,84,84),
-                                Color.rgb(255,255,255),
-                                Color.rgb(255,255,255),
-                                true));
-                        rGroup.check(R.id.radioWhite);
-                        break;
-                    case 2:  //Grey (Transparent)
-                        //folder.setBackgroundColor(Color.argb(128,84,84,84));
-                        mPreviewImage.setImageBitmap(generateFolderPreview(getResources(),
-                                Color.argb(128, 84, 84, 84),
-                                Color.rgb(255, 255, 255),
-                                Color.rgb(255, 255, 255),
-                                false));
-                        rGroup.check(R.id.radioGreyT);
-                        break;
-                    case 3:  //Black (Transparent)
-                        //folder.setBackgroundColor(Color.argb(128,0,0,0));
-                        mPreviewImage.setImageBitmap(generateFolderPreview(getResources(),
-                                Color.argb(128, 0, 0, 0),
-                                Color.rgb(255, 255, 255),
-                                Color.rgb(255, 255, 255),
-                                false));
-                        rGroup.check(R.id.radioBlackT);
-                        break;
-                    case 4:  //Grey (Opaque)
-                        //folder.setBackgroundColor(Color.argb(255,84,84,84));
-                        mPreviewImage.setImageBitmap(generateFolderPreview(getResources(),
-                                Color.argb(255, 84, 84, 84),
-                                Color.rgb(255, 255, 255),
-                                Color.rgb(255, 255, 255),
-                                false));
-                        rGroup.check(R.id.radioGreyO);
-                        break;
-                    case 5:  //Black (Opaque)
-                        //folder.setBackgroundColor(Color.argb(255,0,0,0));
-                        mPreviewImage.setImageBitmap(generateFolderPreview(getResources(),
-                                Color.argb(255, 0, 0, 0),
-                                Color.rgb(255, 255, 255),
-                                Color.rgb(255, 255, 255),
-                                false));
-                        rGroup.check(R.id.radioBlackO);
-                        break;
-
-
-
-                }
-
-                rGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
-                {
-                    public void onCheckedChanged(RadioGroup rGroup, int checkedId)
-                    {
-                        FolderColorsActivity parent = (FolderColorsActivity) getActivity();
-                        // This will get the radiobutton that has changed in its check state
-                        RadioButton checkedRadioButton = (RadioButton)rGroup.findViewById(checkedId);
-                        // This puts the value (true/false) into the variable
-                        boolean isChecked = checkedRadioButton.isChecked();
-                        // If the radiobutton that has changed in check state is now checked...
-                        if (isChecked)
-                        {mPreviewImage.setImageBitmap(generateFolderPreview(getResources(),
-                                            Color.argb(128, 0, 0, 0),
-                                            Color.rgb(255, 255, 255),
-                                            Color.rgb(255, 255, 255),
-                                            false));
-                            // Changes the textview's text to "Checked: example radiobutton text"
-                            switch (checkedId) {
-                                case R.id.radioWhite:
-                                    parent.setmFreeColor("1");
-                                    mPreviewImage.setImageBitmap(generateFolderPreview(getResources(),
-                                            Color.argb(255, 84, 84, 84),
-                                            Color.rgb(255, 255, 255),
-                                            Color.rgb(255, 255, 255),
-                                            true));
-                                    break;
-                                case R.id.radioGreyO:
-                                    parent.setmFreeColor("4");
-                                    mPreviewImage.setImageBitmap(generateFolderPreview(getResources(),
-                                            Color.argb(255, 84, 84, 84),
-                                            Color.rgb(255, 255, 255),
-                                            Color.rgb(255, 255, 255),
-                                            false));
-                                    break;
-                                case R.id.radioGreyT:
-                                    parent.setmFreeColor("2");
-                                    mPreviewImage.setImageBitmap(generateFolderPreview(getResources(),
-                                            Color.argb(128, 84, 84, 84),
-                                            Color.rgb(255, 255, 255),
-                                            Color.rgb(255, 255, 255),
-                                            false));
-                                    break;
-                                case R.id.radioBlackO:
-                                    parent.setmFreeColor("5");
-                                    mPreviewImage.setImageBitmap(generateFolderPreview(getResources(),
-                                            Color.argb(255, 0, 0, 0),
-                                            Color.rgb(255, 255, 255),
-                                            Color.rgb(255, 255, 255),
-                                            false));
-                                    break;
-                                case R.id.radioBlackT:
-                                    parent.setmFreeColor("3");
-                                    mPreviewImage.setImageBitmap(generateFolderPreview(getResources(),
-                                            Color.argb(128, 0, 0, 0),
-                                            Color.rgb(255, 255, 255),
-                                            Color.rgb(255, 255, 255),
-                                            false));
-                                    break;
-                            }
-                        }
-                    }
-                });
-
-                Spinner iconSpinner = (Spinner) rootView.findViewById(R.id.folder_colors_icon_spinner_free);
-                ArrayAdapter<CharSequence> iconAdapter = ArrayAdapter.createFromResource(mContext,
-                        R.array.folder_icons_array_free, android.R.layout.simple_spinner_item);
-                iconAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                iconSpinner.setAdapter(iconAdapter);
-                if (mFolderType!=2) {
-                    iconSpinner.setSelection(0);
-                } else  {
-                    iconSpinner.setSelection(1);
-                }
-                iconSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        String iconType = (String) parent.getItemAtPosition(position);
-                        FolderColorsActivity activity = (FolderColorsActivity) getActivity();
-                        if (iconType.equals("Default (White)")) {
-                            mTintIcon = false;
-                            activity.setmTintIcon(false);
-                            mFolderType = 0;
-                            activity.setmFolderType(0);
-                        }  else {
-                            mTintIcon = false;
-                            activity.setmTintIcon(false);
-                            mFolderType = 2;
-                            activity.setmFolderType(2);
-
-                        }
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parent) {
-
-                    }
-                });
+                iconSpinner.setSelection(2);
             }
+            iconSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    String iconType = (String) parent.getItemAtPosition(position);
+                    FolderColorsActivity activity = (FolderColorsActivity) getActivity();
+                    if (iconType.equals("Default (White)")) {
+                        mTintIcon = false;
+                        activity.setmTintIcon(false);
+                        mFolderType = 0;
+                        activity.setmFolderType(0);
+                    } else if (iconType.equals("Tint with Background")) {
+                        mTintIcon = true;
+                        activity.setmTintIcon(true);
+                        mFolderType = 0;
+                        activity.setmFolderType(0);
+
+                    } else {
+                        mTintIcon = false;
+                        activity.setmTintIcon(false);
+                        mFolderType = 2;
+                        activity.setmFolderType(2);
+
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+
 
             return rootView;
         }
@@ -530,30 +347,30 @@ public class FolderColorsActivity extends AppCompatActivity {
             LauncherAppState app = LauncherAppState.getInstance();
             DeviceProfile grid = app.getDynamicGrid().getDeviceProfile();
 
-            Drawable icon =  app.getIconCache().getFullResDefaultActivityIcon();
+            Drawable icon = app.getIconCache().getFullResDefaultActivityIcon();
 
-            int folderWidth = grid.folderCellWidthPx *2;
-            int folderHeight = (int) (grid.folderCellHeightPx + (grid.folderCellHeightPx/2)*1.2);
+            int folderWidth = grid.folderCellWidthPx * 2;
+            int folderHeight = (int) (grid.folderCellHeightPx + (grid.folderCellHeightPx / 2) * 1.2);
 
-            Bitmap previewBitmap = Bitmap.createBitmap(folderWidth,folderHeight,
+            Bitmap previewBitmap = Bitmap.createBitmap(folderWidth, folderHeight,
                     Bitmap.Config.ARGB_8888);
 
             Canvas canvas = new Canvas(previewBitmap);
             // new antialised Paint
-            previewDefaultBG = ResourcesCompat.getDrawable(resources, R.drawable.portal_container_holo,null);
-            if (!bg){
-                ColorFilter filter = new LightingColorFilter( back, back);
+            previewDefaultBG = ResourcesCompat.getDrawable(resources, R.drawable.portal_container_holo, null);
+            if (!bg) {
+                ColorFilter filter = new LightingColorFilter(back, back);
                 previewDefaultBG.setColorFilter(filter);
             }
-          //      previewDefaultBG.setColorFilter(back, PorterDuff.Mode.MULTIPLY);
+            //      previewDefaultBG.setColorFilter(back, PorterDuff.Mode.MULTIPLY);
 
-          //  } else {
-                //canvas.drawColor(back);
+            //  } else {
+            //canvas.drawColor(back);
             //    previewDefaultBG = resources.getDrawable(R.drawable.portal_container_custom);
-          //      ;
-           // }
-            renderDrawableToBitmap(previewDefaultBG,previewBitmap ,0,0,folderWidth,folderHeight);
-            renderDrawableToBitmap(icon,previewBitmap,20,20,grid.iconSizePx,grid.iconSizePx);
+            //      ;
+            // }
+            renderDrawableToBitmap(previewDefaultBG, previewBitmap, 0, 0, folderWidth, folderHeight);
+            renderDrawableToBitmap(icon, previewBitmap, 20, 20, grid.iconSizePx, grid.iconSizePx);
 
             Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
@@ -570,9 +387,9 @@ public class FolderColorsActivity extends AppCompatActivity {
                 paint.setColor(Color.rgb(61, 61, 61));
             }
 
-            paint.getTextBounds("Icon Text",0,9,bounds);
+            paint.getTextBounds("Icon Text", 0, 9, bounds);
             int width = bounds.width();
-            int x = ((grid.folderCellWidthPx-width)/2 );
+            int x = ((grid.folderCellWidthPx - width) / 2);
             canvas.drawText("Icon Text", x, grid.iconSizePx + 50, paint);
 
             if (!bg) {
@@ -581,11 +398,11 @@ public class FolderColorsActivity extends AppCompatActivity {
                 paint.setColor(Color.rgb(61, 61, 61));
             }
 
-            paint.getTextBounds("Folder Name",0,11,bounds);
+            paint.getTextBounds("Folder Name", 0, 11, bounds);
             width = bounds.width();
-            x = (canvas.getWidth()-width)/2;
-            canvas.drawText("Folder Name", x, grid.folderCellHeightPx + 50,paint);
-            previewBitmap = getRoundedCornerBitmap(previewBitmap,2);
+            x = (canvas.getWidth() - width) / 2;
+            canvas.drawText("Folder Name", x, grid.folderCellHeightPx + 50, paint);
+            previewBitmap = getRoundedCornerBitmap(previewBitmap, 2);
             return previewBitmap;
         }
 
@@ -630,9 +447,6 @@ public class FolderColorsActivity extends AppCompatActivity {
             }
         }
     }
-
-
-
 
 
 }

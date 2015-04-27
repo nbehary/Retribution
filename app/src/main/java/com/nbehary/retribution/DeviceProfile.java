@@ -150,8 +150,7 @@ class DeviceProfile {
                   int wPx, int hPx,
                   int awPx, int ahPx,
                   Resources resources) {
-        boolean isProVersion = LauncherAppState.getInstance().getProVersion();
-        DisplayMetrics dm = resources.getDisplayMetrics();
+       DisplayMetrics dm = resources.getDisplayMetrics();
         ArrayList<DeviceProfileQuery> points =
                 new ArrayList<DeviceProfileQuery>();
         transposeLayoutWithOrientation =
@@ -176,7 +175,7 @@ class DeviceProfile {
         numRowsDevice = numRows;
         numRowsCalc= numRows;
         numRows = PreferencesProvider.Interface.General.getWorkspaceRows();
-        if ( (numRows==0)|| ((!isProVersion) && (( numRows > numRowsCalc+1) || (numRows < numRowsCalc-1))) ) {
+        if ( (numRows==0)|| ( (( numRows > numRowsCalc+1) || (numRows < numRowsCalc-1))) ) {
             numRows = numRowsCalc;
         }
 
@@ -188,7 +187,7 @@ class DeviceProfile {
         numColumns = Math.round(invDistWeightedInterpolate(minWidth, minHeight, points));
         numColumnsDevice = numColumnsCalc = numColumns;
         numColumns = PreferencesProvider.Interface.General.getWorkspaceColumns();
-        if ( (numColumns==0) || ((!isProVersion) && (( numColumns > numColumnsCalc+1) || (numColumns < numColumnsCalc-1))) ) {
+        if ( (numColumns==0) || ( (( numColumns > numColumnsCalc+1) || (numColumns < numColumnsCalc-1))) ) {
             numColumns = numColumnsCalc;
         }
         // Interpolate the icon size
@@ -230,9 +229,8 @@ class DeviceProfile {
             points.add(new DeviceProfileQuery(p.minWidthDps, p.minHeightDps, p.numHotseatIcons));
         }
         float temp = numHotseatIcons = Math.round(invDistWeightedInterpolate(minWidth, minHeight, points));
-        if (isProVersion) {
+
             numHotseatIcons = PreferencesProvider.Interface.General.getHotseatIcons();
-        }
         if  (numHotseatIcons==0) {
             numHotseatIcons = temp;
         }
@@ -243,9 +241,8 @@ class DeviceProfile {
         }
         // Hotseat
         hotseatIconSize = hotseatIconSizeCalc = invDistWeightedInterpolate(minWidth, minHeight, points);
-        if (isProVersion) {
-            hotseatIconSize = PreferencesProvider.Interface.General.getHotseatIconSize();
-        }
+        hotseatIconSize = PreferencesProvider.Interface.General.getHotseatIconSize();
+
         if  (hotseatIconSize==0) {
             hotseatIconSize = hotseatIconSizeCalc;
         }

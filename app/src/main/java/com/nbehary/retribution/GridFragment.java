@@ -55,7 +55,7 @@ public class GridFragment extends Fragment {
 
     }
 
-    public static GridFragment newInstance(String text){
+    public static GridFragment newInstance(String text) {
         GridFragment f = new GridFragment();
         Bundle b = new Bundle();
         b.putString("TAG", text);
@@ -66,8 +66,7 @@ public class GridFragment extends Fragment {
 
     }
 
-    public static GridFragment getInstance()
-    {
+    public static GridFragment getInstance() {
         if (instance == null)
             instance = new GridFragment();
         return instance;
@@ -76,15 +75,15 @@ public class GridFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-     //   if (mRootView != null){
-    //        return mRootView;
-     //   }
-        df= new DecimalFormat("0.##");
+        //   if (mRootView != null){
+        //        return mRootView;
+        //   }
+        df = new DecimalFormat("0.##");
         mTempProfile = ((GridEditor) getActivity()).getmProfile();
         mChanging = "Desktop";
         landscapeChanged = false;
         mDisplayMetrics = getActivity().getResources().getDisplayMetrics();
-        mRootView = inflater. inflate(R.layout.fragment_grid_editor, container, false);
+        mRootView = inflater.inflate(R.layout.fragment_grid_editor, container, false);
         LinearLayout ui = (LinearLayout) mRootView.findViewById(R.id.grid_editor_ui);
         //ui.setBackgroundColor(Color.argb(177, 0, 0, 0));
         mHotseatNotice = (TextView) mRootView.findViewById(R.id.grid_auto_hotseat_notice);
@@ -96,25 +95,22 @@ public class GridFragment extends Fragment {
 
         mColsPicker = (NumberPicker) mRootView.findViewById(R.id.grid_cols_picker);
         mColsPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-        if (LauncherAppState.getInstance().getProVersion()) {
-            mColsPicker.setMaxValue(12);
-            mColsPicker.setMinValue(2);
-        } else {
-            mColsPicker.setMinValue((int)mTempProfile.numColumnsDevice -1);
-            mColsPicker.setMaxValue((int)mTempProfile.numColumnsDevice +1);
-        }
-        mColsPicker.setValue((int)mTempProfile.numColumns);
-        mColsPicker.setOnValueChangedListener( new NumberPicker.OnValueChangeListener() {
+
+        mColsPicker.setMaxValue(12);
+        mColsPicker.setMinValue(2);
+
+        mColsPicker.setValue((int) mTempProfile.numColumns);
+        mColsPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
                 mTempProfile.numColumns = picker.getValue();
                 boolean hotseatChange = mTempProfile.adjustSizesAuto(getResources());
-                if ((hotseatChange) && mTempProfile.autoHotseat){
+                if ((hotseatChange) && mTempProfile.autoHotseat) {
                     //hotseat was hidden.
                     mHideHotseat.setChecked(true);
                     mHideHotseat.setVisibility(View.GONE);
                     mHotseatNotice.setVisibility(View.VISIBLE);
-                } else if (hotseatChange){
+                } else if (hotseatChange) {
                     //hotseat unhidden.
                     mHideHotseat.setVisibility(View.VISIBLE);
                     mHideHotseat.setChecked(false);
@@ -123,32 +119,29 @@ public class GridFragment extends Fragment {
                 //mFontSize.setText(df.format(mTempProfile.iconTextSize));
                 //mIconSize.setText(df.format(mTempProfile.iconSize));
                 //mChanging = "Desktop";
-               // mPreviewImage.setImageBitmap(generateIconPreview(getResources(), mTempProfile.iconSize, mTempProfile,true));
+                // mPreviewImage.setImageBitmap(generateIconPreview(getResources(), mTempProfile.iconSize, mTempProfile,true));
                 mCallback.onRowColDockChanged(mTempProfile);
             }
         });
 
         mRowsPicker = (NumberPicker) mRootView.findViewById(R.id.grid_rows_picker);
         mRowsPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-        if (LauncherAppState.getInstance().getProVersion()) {
-            mRowsPicker.setMaxValue(12);
-            mRowsPicker.setMinValue(2);
-        } else {
-            mRowsPicker.setMinValue((int)mTempProfile.numRowsDevice -1);
-            mRowsPicker.setMaxValue((int)mTempProfile.numRowsDevice +1);
-        }
-        mRowsPicker.setValue((int)mTempProfile.numRows);
-        mRowsPicker.setOnValueChangedListener( new NumberPicker.OnValueChangeListener() {
+
+        mRowsPicker.setMaxValue(12);
+        mRowsPicker.setMinValue(2);
+
+        mRowsPicker.setValue((int) mTempProfile.numRows);
+        mRowsPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
                 mTempProfile.numRows = picker.getValue();
                 boolean hotseatChange = mTempProfile.adjustSizesAuto(getResources());
-                if ((hotseatChange) && mTempProfile.autoHotseat){
+                if ((hotseatChange) && mTempProfile.autoHotseat) {
                     //hotseat was hidden.
                     mHideHotseat.setChecked(true);
                     mHideHotseat.setVisibility(View.GONE);
                     mHotseatNotice.setVisibility(View.VISIBLE);
-                } else if (hotseatChange){
+                } else if (hotseatChange) {
                     //hotseat unhidden.
                     mHideHotseat.setVisibility(View.VISIBLE);
                     mHideHotseat.setChecked(false);
@@ -158,9 +151,9 @@ public class GridFragment extends Fragment {
 
                 //mFontSize.setText(df.format(mTempProfile.iconTextSize));
                 //mIconSize.setText(df.format(mTempProfile.iconSize));
-               // mChanging = "Desktop";
-               // mPreviewImage.setImageBitmap(generateIconPreview(getResources(), mTempProfile.iconSize, mTempProfile,true));
-               mCallback.onRowColDockChanged(mTempProfile);
+                // mChanging = "Desktop";
+                // mPreviewImage.setImageBitmap(generateIconPreview(getResources(), mTempProfile.iconSize, mTempProfile,true));
+                mCallback.onRowColDockChanged(mTempProfile);
             }
         });
 
@@ -178,14 +171,14 @@ public class GridFragment extends Fragment {
                 mTempProfile.numRows = mTempProfile.numRowsDevice;
                 mTempProfile.numColumns = mTempProfile.numColumnsDevice;
                 //mProfile = mTempProfile;
-               // mFontSize.setText(df.format(mTempProfile.iconTextSize));
-              //  mIconSize.setText(df.format(mTempProfile.iconSize));
-              //  mChanging = "Desktop";
-              //  mPreviewImage.setImageBitmap(generateIconPreview(getResources(), mTempProfile.iconSize, mTempProfile,true));
+                // mFontSize.setText(df.format(mTempProfile.iconTextSize));
+                //  mIconSize.setText(df.format(mTempProfile.iconSize));
+                //  mChanging = "Desktop";
+                //  mPreviewImage.setImageBitmap(generateIconPreview(getResources(), mTempProfile.iconSize, mTempProfile,true));
                 mCallback.onRowColDockChanged(mTempProfile);
                 //mDockPicker.setValue((int) mTempProfile.numHotseatIcons/2);
-                mRowsPicker.setValue((int)mTempProfile.numRows);
-                mColsPicker.setValue((int)mTempProfile.numColumns);
+                mRowsPicker.setValue((int) mTempProfile.numRows);
+                mColsPicker.setValue((int) mTempProfile.numColumns);
                 //The hotseat should never be invalid on default.
                 if (mHideHotseat.getVisibility() == View.GONE) {
                     mHideHotseat.setChecked(false);
@@ -206,7 +199,7 @@ public class GridFragment extends Fragment {
             }
         });
 
-        if (mTempProfile.autoHotseat){
+        if (mTempProfile.autoHotseat) {
             mHotseatNotice.setVisibility(View.VISIBLE);
             mHideHotseat.setVisibility(View.GONE);
         }
@@ -241,11 +234,11 @@ public class GridFragment extends Fragment {
                     if (!mTempProfile.isTablet()) {
                         mLandscapeNotice.setVisibility(View.VISIBLE);
                     }
-                  //  mHideQSB.setVisibility(View.GONE);
-                  //  mSearchNotice.setVisibility(View.VISIBLE);
-                  //  mHideQSB.setChecked(false);
-                  //  mTempProfile.hideQSB = false;
-                  //  mTempProfile.adjustSizesAuto(getResources());
+                    //  mHideQSB.setVisibility(View.GONE);
+                    //  mSearchNotice.setVisibility(View.VISIBLE);
+                    //  mHideQSB.setChecked(false);
+                    //  mTempProfile.hideQSB = false;
+                    //  mTempProfile.adjustSizesAuto(getResources());
 
 
                 } else {
@@ -253,8 +246,8 @@ public class GridFragment extends Fragment {
                     if (!mTempProfile.isTablet()) {
                         mLandscapeNotice.setVisibility(View.GONE);
                     }
-                  //  mHideQSB.setVisibility(View.VISIBLE);
-                  //  mSearchNotice.setVisibility(View.GONE);
+                    //  mHideQSB.setVisibility(View.VISIBLE);
+                    //  mSearchNotice.setVisibility(View.GONE);
 
 
                 }
@@ -265,8 +258,6 @@ public class GridFragment extends Fragment {
                 //mTempProfile.setCellHotSeatAndFolders();
             }
         });
-
-
 
 
         return mRootView;

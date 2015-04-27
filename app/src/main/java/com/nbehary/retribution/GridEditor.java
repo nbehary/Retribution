@@ -33,7 +33,7 @@ public class GridEditor extends AppCompatActivity
         GridFragment.OnLandscapeListener,
         GridIconFragment.OnCalculatedChangeListener,
         GridIconValuesFragment.OnValuesInteractionListener,
-        GridIconPercentFragment.OnPercentInteractionListener{
+        GridIconPercentFragment.OnPercentInteractionListener {
     private DeviceProfile mProfile;
     private Context mContext;
 
@@ -49,7 +49,7 @@ public class GridEditor extends AppCompatActivity
     private boolean landscapeChanged;
     private Toolbar mToolbar;
     private SlidingTabLayout mTabs;
-    private final CharSequence[] Titles={"Desktop Grid","Icon Sizes"};
+    private final CharSequence[] Titles = {"Desktop Grid", "Icon Sizes"};
 
 
     @Override
@@ -62,7 +62,7 @@ public class GridEditor extends AppCompatActivity
         landscapeChanged = false;
         mToolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(mToolbar);
-      //  mActionBar = getSupportActionBar();
+        //  mActionBar = getSupportActionBar();
         //mActionBar.setDisplayShowHomeEnabled(false);
         //mActionBar.setDisplayShowTitleEnabled(false);
         //LayoutInflater mInflater = LayoutInflater.from(this);
@@ -108,7 +108,7 @@ public class GridEditor extends AppCompatActivity
 
         if (!PreferencesProvider.Interface.General.getGridFirstRun()) {
             showHelp();
-            PreferencesProvider.Interface.General.setGridFirstRun(this,true);
+            PreferencesProvider.Interface.General.setGridFirstRun(this, true);
         }
 
     }
@@ -144,7 +144,7 @@ public class GridEditor extends AppCompatActivity
             PreferencesProvider.Interface.General.setHideHotSeat(mContext, mProfile.hideHotseat);
             PreferencesProvider.Interface.General.setHideQSB(mContext, mProfile.hideQSB);
             //PreferencesProvider.Interface.General.setHideLabels(mContext, mProfile.hideLabels);
-            if (landscapeChanged){
+            if (landscapeChanged) {
                 PreferencesProvider.Interface.General.setAllowLand(mContext, mProfile.allowLandscape);
             }
             LauncherAppState.getInstance().getDynamicGrid().setDeviceProfile(mProfile);
@@ -159,11 +159,8 @@ public class GridEditor extends AppCompatActivity
     private void showHelp() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-        if (LauncherAppState.getInstance().getProVersion()) {
-            builder.setMessage(R.string.grid_help_pro);
-        } else {
-            builder.setMessage(R.string.grid_help_pro);
-        }
+
+        builder.setMessage(R.string.grid_help_pro);
 
 
         builder.setTitle(R.string.grid_about_dialog_title);
@@ -177,11 +174,11 @@ public class GridEditor extends AppCompatActivity
         dialog.show();
     }
 
-    private void setupFrames(){
+    private void setupFrames() {
         Fragment gridFragment = GridFragment.newInstance("grid_frgment");
         Fragment iconFragment = GridIconFragment.newInstance("icon_fragment", "");
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.add(R.id.grid_grid_frame, gridFragment,"grid_fragment")
+        ft.add(R.id.grid_grid_frame, gridFragment, "grid_fragment")
                 .add(R.id.grid_icon_frame, iconFragment, "icon_fragment").commit();
         // .add(R.id.grid_icon_frame, mIconFrag, "icon_fragment")
         // .add(R.id.grid_icon_percent_frame,percentFragment,"percent_fragment").commit();
@@ -192,7 +189,7 @@ public class GridEditor extends AppCompatActivity
 
     private void setupPager() {
         mViewPager = (ViewPager) findViewById(R.id.grid_editor);
-        mPagerAdapter = new GridPagerAdapter(getSupportFragmentManager(),Titles,2);
+        mPagerAdapter = new GridPagerAdapter(getSupportFragmentManager(), Titles, 2);
         mViewPager.setAdapter(mPagerAdapter);
     /*    mViewPager.setOnPageChangeListener(
                 new ViewPager.SimpleOnPageChangeListener() {
@@ -248,10 +245,10 @@ public class GridEditor extends AppCompatActivity
         landscapeChanged = true;
         if (mProfile.allowLandscape) {
             //mProfile.allowLandscape = false;
-            Log.d("nbehary121","False!!!");
+            Log.d("nbehary121", "False!!!");
         } else {
             //mProfile.allowLandscape = true;
-            Log.d("nbehary121","True!!!");
+            Log.d("nbehary121", "True!!!");
         }
         LauncherAppState.getInstance().getDynamicGrid().setDeviceProfile(mProfile);
     }
@@ -262,13 +259,13 @@ public class GridEditor extends AppCompatActivity
         GridIconFragment iconContainer;
         if (mViewPager == null) {
             iconFrag = (GridIconValuesFragment) getSupportFragmentManager().findFragmentByTag("values_fragment");
-            percentFragment = (GridIconPercentFragment)getSupportFragmentManager().findFragmentByTag("percent_fragment");
+            percentFragment = (GridIconPercentFragment) getSupportFragmentManager().findFragmentByTag("percent_fragment");
             iconContainer = (GridIconFragment) getSupportFragmentManager().findFragmentByTag("icon_fragment");
-        }else {
+        } else {
             //iconFrag = (GridIconValuesFragment) mPagerAdapter.getFragment("values_fragment");
             //percentFragment = (GridIconPercentFragment) mPagerAdapter.getFragment("percent_fragment");
             iconFrag = (GridIconValuesFragment) getSupportFragmentManager().findFragmentByTag("values_fragment");
-            percentFragment = (GridIconPercentFragment)getSupportFragmentManager().findFragmentByTag("percent_fragment");
+            percentFragment = (GridIconPercentFragment) getSupportFragmentManager().findFragmentByTag("percent_fragment");
             iconContainer = (GridIconFragment) getSupportFragmentManager().findFragmentByTag("icon_fragment");
         }
 
@@ -297,7 +294,7 @@ public class GridEditor extends AppCompatActivity
         GridIconFragment iconFrag;
         if (mViewPager == null) {
             iconFrag = (GridIconFragment) getSupportFragmentManager().findFragmentByTag("icon_fragment");
-        }else {
+        } else {
             iconFrag = (GridIconFragment) mPagerAdapter.getFragment("icon_fragment");
             //percentFragment = (GridIconPercentFragment) mPagerAdapter.getFragment("percent_fragment");
             //iconFrag = (GridIconFragment) getSupportFragmentManager().findFragmentByTag("icon_fragment");
@@ -313,12 +310,17 @@ public class GridEditor extends AppCompatActivity
     }
 
 
+    public DeviceProfile getmProfile() {
+        return mProfile;
+    }
 
-    public DeviceProfile getmProfile() {return mProfile;}
+    public String getmChanging() {
+        return mChanging;
+    }
 
-    public String getmChanging() {return mChanging;}
-
-    public void setmChanging(String changing) {mChanging = changing;}
+    public void setmChanging(String changing) {
+        mChanging = changing;
+    }
 
     private class IconPagerAdapter extends FragmentPagerAdapter {
         private final Map<String, WeakReference<Fragment>> mPageReferenceMap = new HashMap<String, WeakReference<Fragment>>();
@@ -331,18 +333,18 @@ public class GridEditor extends AppCompatActivity
         @Override
         public Fragment getItem(int pos) {
             Fragment fragment;
-            switch(pos) {
+            switch (pos) {
 
                 case 0:
-                    fragment = GridIconFragment.newInstance("icon_fragment","");
+                    fragment = GridIconFragment.newInstance("icon_fragment", "");
                     mPageReferenceMap.put("icon_fragment", new WeakReference<Fragment>(fragment));
                     return fragment;
                 case 1:
-                    fragment = GridIconPercentFragment.newInstance("percent_fragment","");
+                    fragment = GridIconPercentFragment.newInstance("percent_fragment", "");
                     mPageReferenceMap.put("percent_fragment", new WeakReference<Fragment>(fragment));
                     return fragment;
                 default:
-                    fragment = GridIconFragment.newInstance("icon_fragment","");
+                    fragment = GridIconFragment.newInstance("icon_fragment", "");
                     mPageReferenceMap.put("icon_fragment", new WeakReference<Fragment>(fragment));
                     return fragment;
             }
@@ -357,16 +359,16 @@ public class GridEditor extends AppCompatActivity
 
             WeakReference<Fragment> weakReference = mPageReferenceMap.get(key);
 
-            if(null != weakReference) {
+            if (null != weakReference) {
 
                 return weakReference.get();
-            }
-            else {
+            } else {
 
                 return null;
             }
         }
     }
+
     public class GridPagerAdapterNo extends FragmentPagerAdapter {
 
         final CharSequence[] Titles; // This will Store the Titles of the Tabs which are Going to be passed when ViewPagerAdapter is created
@@ -374,7 +376,7 @@ public class GridEditor extends AppCompatActivity
 
 
         // Build a Constructor and assign the passed Values to appropriate values in the class
-        public GridPagerAdapterNo(FragmentManager fm,CharSequence mTitles[], int mNumbOfTabsumb) {
+        public GridPagerAdapterNo(FragmentManager fm, CharSequence mTitles[], int mNumbOfTabsumb) {
             super(fm);
 
             this.Titles = mTitles;
@@ -387,12 +389,11 @@ public class GridEditor extends AppCompatActivity
         public Fragment getItem(int position) {
             Fragment fragment;
 
-            if(position == 0) // if the position is 0 we are returning the First tab
+            if (position == 0) // if the position is 0 we are returning the First tab
             {
                 fragment = GridFragment.newInstance("grid_fragment");
                 return fragment;
-            }
-            else             // As we are having 2 tabs if the position is now 0 it must be 1 so we are returning second tab
+            } else             // As we are having 2 tabs if the position is now 0 it must be 1 so we are returning second tab
             {
                 fragment = GridFragment.newInstance("icon_fragment");
                 return fragment;
@@ -423,7 +424,7 @@ public class GridEditor extends AppCompatActivity
 
         private final Map<String, WeakReference<Fragment>> mPageReferenceMap = new HashMap<String, WeakReference<Fragment>>();
 
-        public GridPagerAdapter(FragmentManager fm,CharSequence mTitles[], int mNumbOfTabs) {
+        public GridPagerAdapter(FragmentManager fm, CharSequence mTitles[], int mNumbOfTabs) {
             super(fm);
 
             this.Titles = mTitles;
@@ -434,14 +435,14 @@ public class GridEditor extends AppCompatActivity
         @Override
         public Fragment getItem(int pos) {
             Fragment fragment;
-            switch(pos) {
+            switch (pos) {
 
                 case 0:
                     fragment = GridFragment.newInstance("grid_fragment");
                     mPageReferenceMap.put("grid_fragment", new WeakReference<Fragment>(fragment));
                     return fragment;
                 case 1:
-                    fragment = GridIconFragment.newInstance("icon_fragment","");
+                    fragment = GridIconFragment.newInstance("icon_fragment", "");
                     mPageReferenceMap.put("icon_fragment", new WeakReference<Fragment>(fragment));
                     return fragment;
 
@@ -461,15 +462,15 @@ public class GridEditor extends AppCompatActivity
 
             WeakReference<Fragment> weakReference = mPageReferenceMap.get(key);
 
-            if(null != weakReference) {
+            if (null != weakReference) {
 
                 return weakReference.get();
-            }
-            else {
+            } else {
 
                 return null;
             }
         }
+
         @Override
         public CharSequence getPageTitle(int position) {
             return Titles[position];
@@ -478,10 +479,7 @@ public class GridEditor extends AppCompatActivity
         // This method return the Number of tabs for the tabs Strip
 
 
-
     }
-
-
 
 
     /**

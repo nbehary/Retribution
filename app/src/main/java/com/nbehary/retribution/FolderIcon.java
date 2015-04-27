@@ -195,7 +195,7 @@ public class FolderIcon extends LinearLayout implements FolderListener {
         Drawable myIcon = getBackground();
 
         int icon_type = PreferencesProvider.Interface.General.getFolderType();
-        if (LauncherAppState.getInstance().getProVersion() && PreferencesProvider.Interface.General.getFolderIconTint()){
+        if (PreferencesProvider.Interface.General.getFolderIconTint()){
             int color = Color.WHITE;
             boolean tint = PreferencesProvider.Interface.General.getFolderIconTint();
             if (tint) {

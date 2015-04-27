@@ -126,9 +126,7 @@ public class GridIconFragment extends Fragment {
                 }
             }
         });
-        if (!LauncherAppState.getInstance().getProVersion()) {
-            mChangeValues.setVisibility(View.GONE);
-        }
+
 
 
 

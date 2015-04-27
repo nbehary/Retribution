@@ -77,15 +77,8 @@ public class AboutActivity extends Activity {
                 }
             });
             final Button playButton = (Button) rootView.findViewById(R.id.play_button);
-            appState.checkProVersion();
-            if (!appState.getProVersion()) {
-                playButton.setVisibility(View.VISIBLE);
-                playButton.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.nbehary.retribution.pro_key")));
-                    }
-                });
-            }
+
+
             return rootView;
         }
     }

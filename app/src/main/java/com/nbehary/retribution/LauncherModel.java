@@ -2630,9 +2630,8 @@ public class LauncherModel extends BroadcastReceiver {
             mAll.clear();
 
             ArrayList<String> appsWithCats = new ArrayList<String>();
-            if (LauncherAppState.getInstance().getProVersion()) {
-                appsWithCats = getAppsWithCatsDB(mContext);
-            }
+            appsWithCats = getAppsWithCatsDB(mContext);
+
 
 
 

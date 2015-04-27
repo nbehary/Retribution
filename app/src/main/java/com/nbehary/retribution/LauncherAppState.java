@@ -55,9 +55,9 @@ public class LauncherAppState {
     public String mVersionName;
     public int mVersionCode;
 
-    public final String internalVersion = "1.3.1";
+    public final String internalVersion = "1.4.2";
 
-    private boolean mProVersion;
+
 
     public static LauncherAppState getInstance() {
         if (INSTANCE == null) {
@@ -136,10 +136,6 @@ public class LauncherAppState {
         }
         mVersionName = pInfo.versionName;
         mVersionCode = pInfo.versionCode;
-        mProVersion = false;
-
-        checkProVersion();
-
     }
 
     /**
@@ -200,8 +196,6 @@ public class LauncherAppState {
 
     int getVersionCode() {return mVersionCode;}
 
-    boolean getProVersion() { return mProVersion; }
-
     static void setLauncherProvider(LauncherProvider provider) {
         sLauncherProvider = new WeakReference<LauncherProvider>(provider);
     }
@@ -234,40 +228,6 @@ public class LauncherAppState {
     }
     DynamicGrid getDynamicGrid() {
         return mDynamicGrid;
-    }
-
-    public void checkProVersion() {
-     /*
-        PackageManager manager = sContext.getPackageManager();
-        mProVersion = false;
-        boolean isDebuggable =  ( 0 != ( sContext.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE ) );
-        if (isDebuggable) {
-            mProVersion= true;
-            return;
-        }
-
-        if ((manager.checkSignatures("com.nbehary.retribution", "com.nbehary.retribution.pro_key")
-                == PackageManager.SIGNATURE_MATCH) &&
-                (manager.getInstallerPackageName("com.nbehary.retribution.pro_key").equals("com.android.vending"))){
-          //  Intent serviceIntent=new Intent();
-          //  serviceIntent.setClassName("com.nbehary.retribution.pro_key", "com.nbehary.retribution.pro_key.LicenseCheckService");
-          //  mProVersion=sContext.bindService(serviceIntent, mServiceConnection,Context.BIND_AUTO_CREATE);
-                mProVersion = true;
-        }
-
-        if ((mVersionName.contains("Beta"))||(mVersionName.contains("Dev")) || (mVersionName.contains("RC"))) {
-            if ((manager.checkSignatures("com.nbehary.retribution", "com.nbehary.retribution.key.beta")
-                    == PackageManager.SIGNATURE_MATCH) &&
-                    (manager.getInstallerPackageName("com.nbehary.retribution.key.beta").equals("com.android.vending"))){
-                mProVersion = true;
-            }
-        }
-*/
-        mProVersion = true;
-
-
-
-
     }
 
 

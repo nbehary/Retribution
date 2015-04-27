@@ -145,7 +145,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
      * Used to inflate the Workspace from XML.
      *
      * @param context The application's context.
-     * @param attrs The attribtues set containing the Workspace's customization values.
+     * @param attrs   The attribtues set containing the Workspace's customization values.
      */
     public Folder(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -157,7 +157,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         mIconCache = app.getIconCache();
 
         Resources res = getResources();
-        mMaxCountX = (int) grid.numColumns-1;
+        mMaxCountX = (int) grid.numColumns - 1;
         mMaxCountY = 50;//(int) grid.numRows;
         mMaxNumItems = mMaxCountX * mMaxCountY;
 
@@ -211,100 +211,47 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         mFolderName.setInputType(mFolderName.getInputType() |
                 InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
         final Folder thisFolder = this;
-        if (!LauncherAppState.getInstance().getProVersion()){
-            mFolderCustomize.setVisibility(GONE);
-        } else{
-            mFolderCustomize.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mFolderCustomize.setFolder(thisFolder);
-                    mFolderCustomize.showPopup(v);
-                }
-            });
-        }
+
+        mFolderCustomize.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mFolderCustomize.setFolder(thisFolder);
+                mFolderCustomize.showPopup(v);
+            }
+        });
 
 
         //Get color for background from shared preferences and set it
         LinearLayout folder = (LinearLayout) findViewById(R.id.user_folder);
 
         mFolderBackground = getBackground();
-        SharedPreferences preferences = getContext().getSharedPreferences("com.nbehary.retribution_preferences",0);
+        SharedPreferences preferences = getContext().getSharedPreferences("com.nbehary.retribution_preferences", 0);
 
         if (!PreferencesProvider.Interface.General.getDefaultFolderBG()) {
-            //Drawable myIcon = getResources().getDrawable( R.drawable.portal_container_custom );
-            //getResources().getDrawable( R.drawable.portal_container_holo);
-            //myIcon.get
-            //Bitmap bg1 = Bitmap.createBitmap(myIcon.getIntrinsicWidth(), myIcon.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-            if (!LauncherAppState.getInstance().getProVersion()) {
-                int color = Integer.parseInt(preferences.getString("pref_folder_color","1"));
-                switch (color) {
-                    case 1:  //White(Default)
-                        break;
-                    case 2:  //Grey (Transparent)
-                        //folder.setBackgroundColor(Color.argb(128,84,84,84));
-                        //bg1.eraseColor(Color.argb(128,84,84,84));
-                        mFolderBackground.setColorFilter(Color.argb(128,84,84,84), PorterDuff.Mode.MULTIPLY);
-                        mFolderName.setHintTextColor(Color.rgb(255,255,255));
-                        mFolderName.setTextColor(Color.rgb(255,255,255));
-                        break;
-                    case 3:  //Black (Transparent)
-                        //folder.setBackgroundColor(Color.argb(128,0,0,0));
-                        //bg1.eraseColor(Color.argb(128,0,0,0));
-                        mFolderBackground.setColorFilter(Color.argb(128,0,0,0), PorterDuff.Mode.MULTIPLY);
-                        mFolderName.setHintTextColor(Color.rgb(255,255,255));
-                        mFolderName.setTextColor(Color.rgb(255,255,255));
-                        break;
-                    case 4:  //Grey (Opaque)
-                        //folder.setBackgroundColor(Color.argb(255,84,84,84));
-                        //bg1.eraseColor(Color.argb(255,84,84,84));
-                        mFolderBackground.setColorFilter(Color.argb(255,84,84,84), PorterDuff.Mode.MULTIPLY);
-                        mFolderName.setHintTextColor(Color.rgb(255,255,255));
-                        mFolderName.setTextColor(Color.rgb(255,255,255));
-                        break;
-                    case 5:  //Black (Opaque)
-                        //folder.setBackgroundColor(Color.argb(255,0,0,0));
-                        //bg1.eraseColor(Color.argb(255,0,0,0));
-                        mFolderBackground.setColorFilter(Color.argb(255,0,0,0), PorterDuff.Mode.MULTIPLY);
-                        mFolderName.setHintTextColor(Color.rgb(255,255,255));
-                        mFolderName.setTextColor(Color.rgb(255,255,255));
-                        break;
-                }
-            } else {
-                Context ctx = getContext();
 
-                if (!PreferencesProvider.Interface.General.getDefaultFolderBG()){
-                    //folder.setBackgroundColor(PreferencesProvider.Interface.General.getFolderBackColor());
-                   // bg1.eraseColor(PreferencesProvider.Interface.General.getFolderBackColor());
-                    //myIcon.setColorFilter(PreferencesProvider.Interface.General.getFolderBackColor(), PorterDuff.Mode.MULTIPLY);
-                    int color = PreferencesProvider.Interface.General.getFolderBackColor();
-                    ColorFilter filter = new LightingColorFilter( color, color);
-                    mFolderBackground.setColorFilter(filter);
-                    mFolderName.setHintTextColor(PreferencesProvider.Interface.General.getFolderNameColor());
-                    mFolderName.setTextColor(PreferencesProvider.Interface.General.getFolderNameColor());
+            Context ctx = getContext();
 
-                }
+            if (!PreferencesProvider.Interface.General.getDefaultFolderBG()) {
+                //folder.setBackgroundColor(PreferencesProvider.Interface.General.getFolderBackColor());
+                // bg1.eraseColor(PreferencesProvider.Interface.General.getFolderBackColor());
+                //myIcon.setColorFilter(PreferencesProvider.Interface.General.getFolderBackColor(), PorterDuff.Mode.MULTIPLY);
+                int color = PreferencesProvider.Interface.General.getFolderBackColor();
+                ColorFilter filter = new LightingColorFilter(color, color);
+                mFolderBackground.setColorFilter(filter);
+                mFolderName.setHintTextColor(PreferencesProvider.Interface.General.getFolderNameColor());
+                mFolderName.setTextColor(PreferencesProvider.Interface.General.getFolderNameColor());
+
             }
-            //Bitmap bg2 = getRoundedCornerBitmap(bg1,2);
-
-          //  folder.setBackgroundDrawable(new BitmapDrawable(bg2));
-           // Drawable test = getResources().getDrawable(R.drawable.portal_container_custom);
-//           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-//               folder.setBackground(myIcon);
-//           } else {
-//               folder.setBackgroundDrawable(myIcon);
-//           }
-
 
 
         }
 
 
-
-       mAutoScrollHelper = new FolderAutoScrollHelper(mScrollView);
-       // mFolderCustomize = (FolderCustomize) findViewById(R.id.folder_customize);
-       // mFolderCustomize.setFolder(this);
+        mAutoScrollHelper = new FolderAutoScrollHelper(mScrollView);
+        // mFolderCustomize = (FolderCustomize) findViewById(R.id.folder_customize);
+        // mFolderCustomize.setFolder(this);
         //mFolderCustomize.measure(measureSpec, measureSpec);
-      //  mFolderCustomizeHeight = mFolderCustomize.getMeasuredHeight();
+        //  mFolderCustomizeHeight = mFolderCustomize.getMeasuredHeight();
     }
 
     private final ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
@@ -345,7 +292,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
             mLauncher.dismissFolderCling(null);
 
             mLauncher.getWorkspace().onDragStartedWithItem(v);
-            mLauncher.getWorkspace().beginDragShared(v, this,false);
+            mLauncher.getWorkspace().beginDragShared(v, this, false);
             mIconDrawable = ((TextView) v).getCompoundDrawables()[1];
 
             mCurrentDragInfo = item;
@@ -443,6 +390,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
 
     private class GridComparator implements Comparator<ShortcutInfo> {
         final int mNumCols;
+
         public GridComparator(int numCols) {
             mNumCols = numCols;
         }
@@ -499,7 +447,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         // If our folder has too many items we prune them from the list. This is an issue 
         // when upgrading from the old Folders implementation which could contain an unlimited
         // number of items.
-        for (ShortcutInfo item: overflow) {
+        for (ShortcutInfo item : overflow) {
             mInfo.remove(item);
             LauncherModel.deleteItemFromDatabase(mLauncher, item);
         }
@@ -515,7 +463,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         }
         if (mInfo.customColors == 1) {
             int color = mInfo.backColor;
-            ColorFilter filter = new LightingColorFilter( color, color);
+            ColorFilter filter = new LightingColorFilter(color, color);
             mFolderBackground.setColorFilter(filter);
             mFolderName.setHintTextColor(mInfo.nameColor);
             mFolderName.setTextColor(mInfo.nameColor);
@@ -526,7 +474,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         //Drawable myIcon = mFolderIcon.getPreviewBackground().getDrawable();
 
         int icon_type = PreferencesProvider.Interface.General.getFolderType();
-        if (LauncherAppState.getInstance().getProVersion() && PreferencesProvider.Interface.General.getFolderIconTint()){
+        if (PreferencesProvider.Interface.General.getFolderIconTint()) {
             int color = Color.WHITE;
             boolean tint = PreferencesProvider.Interface.General.getFolderIconTint();
             if (tint) {
@@ -534,9 +482,9 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
             }
 
 
-            Drawable myIcon = ResourcesCompat.getDrawable(mLauncher.getResources(), R.drawable.portal_ring_inner_holo,null);
+            Drawable myIcon = ResourcesCompat.getDrawable(mLauncher.getResources(), R.drawable.portal_ring_inner_holo, null);
             //Drawable myIcon = icon.mPreviewBackground.getDrawable();
-            ColorFilter filter = new LightingColorFilter( color, color);
+            ColorFilter filter = new LightingColorFilter(color, color);
 
             myIcon.setColorFilter(filter);
             mFolderIcon.getPreviewBackground().setImageDrawable(myIcon);
@@ -544,7 +492,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
 
         }
 
-        if (icon_type == 2){
+        if (icon_type == 2) {
             mFolderIcon.getPreviewBackground().setImageResource(R.drawable.portal_ring_inner_holo_old);
         }
 
@@ -555,14 +503,12 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
      * Creates a new UserFolder, inflated from R.layout.user_folder.
      *
      * @param context The application's context.
-     *
      * @return A new UserFolder.
      */
     static Folder fromXml(Context context) {
 
         return (Folder) LayoutInflater.from(context).inflate(R.layout.user_folder, null);
     }
-
 
 
     /**
@@ -586,16 +532,17 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         PropertyValuesHolder scaleX = PropertyValuesHolder.ofFloat("scaleX", 1.0f);
         PropertyValuesHolder scaleY = PropertyValuesHolder.ofFloat("scaleY", 1.0f);
         final ObjectAnimator oa =
-            LauncherAnimUtils.ofPropertyValuesHolder(this, alpha, scaleX, scaleY);
+                LauncherAnimUtils.ofPropertyValuesHolder(this, alpha, scaleX, scaleY);
 
         oa.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationStart(Animator animation) {
                 sendCustomAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED,
                         String.format(getContext().getString(R.string.folder_opened),
-                        mContent.getCountX(), mContent.getCountY()));
+                                mContent.getCountX(), mContent.getCountY()));
                 mState = STATE_ANIMATING;
             }
+
             @Override
             public void onAnimationEnd(Animator animation) {
                 mState = STATE_OPEN;
@@ -647,6 +594,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
                 setLayerType(LAYER_TYPE_NONE, null);
                 mState = STATE_SMALL;
             }
+
             @Override
             public void onAnimationStart(Animator animation) {
                 sendCustomAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED,
@@ -663,7 +611,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         final ItemInfo item = (ItemInfo) d.dragInfo;
         final int itemType = item.itemType;
         return ((itemType == LauncherSettings.Favorites.ITEM_TYPE_APPLICATION ||
-                    itemType == LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT) &&
+                itemType == LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT) &&
                 isEmpty());
     }
 
@@ -680,7 +628,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
 
     private boolean createAndAddShortcut(ShortcutInfo item) {
         final BubbleTextView textView =
-            (BubbleTextView) mInflater.inflate(R.layout.application, this, false);
+                (BubbleTextView) mInflater.inflate(R.layout.application, this, false);
         textView.setCompoundDrawables(null,
                 Utilities.createIconDrawable(item.getIcon(mIconCache)), null, null);
         textView.setText(item.title);
@@ -688,33 +636,15 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         textView.setTextColor(getResources().getColor(R.color.folder_items_text_color));
         textView.setShadowsEnabled(false);
 
-        SharedPreferences preferences = getContext().getSharedPreferences("com.nbehary.retribution_preferences",0);
+        SharedPreferences preferences = getContext().getSharedPreferences("com.nbehary.retribution_preferences", 0);
         //Here
-        if (!LauncherAppState.getInstance().getProVersion()) {
-            int color = Integer.parseInt(preferences.getString("pref_folder_color","1"));
-            switch (color) {
-                case 1:  //White(Default)
-                    break;
-                case 2:  //Grey (Transparent)
-                    textView.setTextColor(Color.rgb(200,200,200));
-                    break;
-                case 3:  //Black (Transparent)
-                    textView.setTextColor(Color.rgb(200,200,200));
-                    break;
-                case 4:  //Grey (Opaque)
-                    textView.setTextColor(Color.rgb(128, 128, 128 ));
-                    break;
-                case 5:  //Black (Opaque)
-                    textView.setTextColor(Color.rgb(128, 128, 128 ));
-                    break;
-            }
-        } else {
+
             if (mInfo.customColors == 1) {
                 textView.setTextColor(mInfo.labelColor);
-            }else if (!PreferencesProvider.Interface.General.getDefaultFolderBG()){
+            } else if (!PreferencesProvider.Interface.General.getDefaultFolderBG()) {
                 textView.setTextColor(PreferencesProvider.Interface.General.getFolderIconColor());
             }
-        }
+
 
         textView.setOnClickListener(this);
         textView.setOnLongClickListener(this);
@@ -731,10 +661,10 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         }
 
         CellLayout.LayoutParams lp =
-            new CellLayout.LayoutParams(item.cellX, item.cellY, item.spanX, item.spanY);
+                new CellLayout.LayoutParams(item.cellX, item.cellY, item.spanX, item.spanY);
         boolean insert = false;
         textView.setOnKeyListener(new FolderKeyEventListener());
-        mContent.addViewToCellLayout(textView, insert ? 0 : -1, (int)item.id, lp, true);
+        mContent.addViewToCellLayout(textView, insert ? 0 : -1, (int) item.id, lp, true);
         return true;
     }
 
@@ -768,7 +698,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
                 startX = y == empty[1] ? empty[0] + 1 : 0;
                 endX = y < target[1] ? mContent.getCountX() - 1 : target[0];
                 for (int x = startX; x <= endX; x++) {
-                    View v = mContent.getChildAt(x,y);
+                    View v = mContent.getChildAt(x, y);
                     if (mContent.animateChildToPosition(v, empty[0], empty[1],
                             REORDER_ANIMATION_DURATION, delay, true, true)) {
                         empty[0] = x;
@@ -785,7 +715,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
                 startX = y == empty[1] ? empty[0] - 1 : mContent.getCountX() - 1;
                 endX = y > target[1] ? 0 : target[0];
                 for (int x = startX; x >= endX; x--) {
-                    View v = mContent.getChildAt(x,y);
+                    View v = mContent.getChildAt(x, y);
                     if (mContent.animateChildToPosition(v, empty[0], empty[1],
                             REORDER_ANIMATION_DURATION, delay, true, true)) {
                         empty[0] = x;
@@ -814,10 +744,10 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
                 downTime, downTime, MotionEvent.ACTION_MOVE, d.x, d.y, 0);
 
         if (!mAutoScrollHelper.isEnabled()) {
-           mAutoScrollHelper.setEnabled(true);
+            mAutoScrollHelper.setEnabled(true);
         }
 
-        final boolean handled =false;// mAutoScrollHelper.onTouch(this, translatedEv);
+        final boolean handled = false;// mAutoScrollHelper.onTouch(this, translatedEv);
         translatedEv.recycle();
 
         if (handled) {
@@ -846,7 +776,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
     // the visual center represents the user's interpretation of where the item is, and hence
     // is the appropriate point to use when determining drop location.
     private float[] getDragViewVisualCenter(int x, int y, int xOffset, int yOffset,
-            DragView dragView, float[] recycle) {
+                                            DragView dragView, float[] recycle) {
         float res[];
         if (recycle == null) {
             res = new float[2];
@@ -896,15 +826,15 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
     }
 
     public void onDropCompleted(final View target, final DragObject d,
-            final boolean isFlingToDelete, final boolean success) {
+                                final boolean isFlingToDelete, final boolean success) {
         if (mDeferDropAfterUninstall) {
             Log.d(TAG, "Deferred handling drop because waiting for uninstall.");
             mDeferredAction = new Runnable() {
-                    public void run() {
-                        onDropCompleted(target, d, isFlingToDelete, success);
-                        mDeferredAction = null;
-                    }
-                };
+                public void run() {
+                    onDropCompleted(target, d, isFlingToDelete, success);
+                    mDeferredAction = null;
+                }
+            };
             return;
         }
 
@@ -976,7 +906,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
             View v = list.get(i);
             ItemInfo info = (ItemInfo) v.getTag();
             LauncherModel.moveItemInDatabase(mLauncher, info, mInfo.id, 0,
-                        info.cellX, info.cellY);
+                    info.cellX, info.cellY);
         }
     }
 
@@ -998,7 +928,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
             View v = list.get(i);
             ItemInfo info = (ItemInfo) v.getTag();
             LauncherModel.addItemToDatabase(mLauncher, info, mInfo.id, 0,
-                        info.cellX, info.cellY, false);
+                    info.cellX, info.cellY, false);
         }
     }
 
@@ -1108,6 +1038,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
     float getPivotXForIconAnimation() {
         return mFolderIconPivotX;
     }
+
     float getPivotYForIconAnimation() {
         return mFolderIconPivotY;
     }
@@ -1182,7 +1113,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
                         info.cellX, info.cellY);
             }
             boolean insert = false;
-            mContent.addViewToCellLayout(v, insert ? 0 : -1, (int)info.id, lp, true);
+            mContent.addViewToCellLayout(v, insert ? 0 : -1, (int) info.id, lp, true);
         }
         mItemsInvalidated = true;
     }
@@ -1225,7 +1156,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
             public void run() {
                 CellLayout cellLayout = mLauncher.getCellLayout(mInfo.container, mInfo.screenId);
 
-               View child = null;
+                View child = null;
                 // Move the item from the folder to the workspace, in the position of the folder
                 if (getItemCount() == 1) {
                     ShortcutInfo finalItem = mInfo.contents.get(0);
@@ -1293,7 +1224,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
             CellLayout.LayoutParams lp = (CellLayout.LayoutParams) mCurrentDragView.getLayoutParams();
             si.cellX = lp.cellX = mEmptyCell[0];
             si.cellX = lp.cellY = mEmptyCell[1];
-            mContent.addViewToCellLayout(mCurrentDragView, -1, (int)item.id, lp, true);
+            mContent.addViewToCellLayout(mCurrentDragView, -1, (int) item.id, lp, true);
             if (d.dragView.hasDrawn()) {
                 mLauncher.getDragLayer().animateViewIntoPosition(d.dragView, mCurrentDragView);
             } else {
@@ -1312,16 +1243,17 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
     // to correspond to the animation of the icon back into the folder. This is
     public void hideItem(ShortcutInfo info) {
         View v = getViewForInfo(info);
-       // if (v != null) {
-            v.setVisibility(INVISIBLE);
-       // }
+        // if (v != null) {
+        v.setVisibility(INVISIBLE);
+        // }
 
     }
+
     public void showItem(ShortcutInfo info) {
         View v = getViewForInfo(info);
-       // if (v != null) {
-            v.setVisibility(VISIBLE);
-       // }
+        // if (v != null) {
+        v.setVisibility(VISIBLE);
+        // }
     }
 
     public void onAdd(ShortcutInfo item) {
