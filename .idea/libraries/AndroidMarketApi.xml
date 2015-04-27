@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="AndroidMarketApi">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/app/libs/AndroidMarketApi.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

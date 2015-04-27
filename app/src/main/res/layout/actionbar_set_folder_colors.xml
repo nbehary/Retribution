@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+**
+** Copyright 2013, Nathan A. Behary
+**
+
+*/
+-->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="?android:actionButtonStyle"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    <TextView style="?android:actionBarTabTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|center_vertical"
+        android:paddingRight="20dp"
+        android:drawableLeft="@drawable/ic_actionbar_accept"
+        android:drawablePadding="8dp"
+        android:gravity="center_vertical"
+        android:text="@string/folder_colors_instructions" />
+</RelativeLayout>

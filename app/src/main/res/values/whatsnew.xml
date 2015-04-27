@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingTranslation">
+    <!-- Application name -->
+    <string name="ver1.2.0">
+        Version 1.2.0\n
+        \n
+        Free and Pro:\n
+        - Scroll Transitions. (Set from the Long Press Screen for the Workspace, a menu in the App Drawer controls
+        it for that and the Widget and Icon Pack selectors)\n
+        - App Drawer Sort by Name, Install Time, and Launch Count.  (App Drawer Menu)\n
+        \n
+        Pro Only:\n
+        - App Drawer Groups. View either All Apps, or limited user defined Groups groups in the App Drawer.\n
+        - Ability to set Folder Colors individually. (Menu that isn\'t a menu yet on the Folder View.  More folder options in 1.2.1!)\n
+
+    </string>
+
+    <string name="ver1.2.1">
+
+        Version 1.3.0\n
+        \n
+
+        New Feature (Pro Version Only):\n
+        - Items in folders can now be added/removed from a list of installed apps.  (or from groups) This is accessable from the menu on folders that really is a menu now.\n
+\n
+        Bug Fixes (Free and Pro as applicable):\n
+        - Prevented a crash when Quick Scrolling in Widgets or the App Drawer.\n
+        - App Drawer Sort menu shows the current sort mode rather than always showing "Install Time" regardless.\n
+        - App Drawer Sort is actually saved in preferences now.\n
+        - Long pressing All Apps and another Dock item no longer makes All Apps seemingly draggable which in turn caused the launcher to crash.\n
+
+    </string>
+
+
+</resources>

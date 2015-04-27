@@ -1,0 +1,134 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:id="@+id/grid_editor_ui"
+    tools:context="com.nbehary.retribution.GridEditor$PlaceholderFragment"
+    android:weightSum="1"
+   >
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:weightSum="1"
+        android:layout_weight="0.03">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.06">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Rows"
+                android:id="@+id/textView"
+                android:layout_gravity="center_horizontal" />
+
+            <NumberPicker
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/grid_rows_picker" />
+        </LinearLayout>
+
+        <Space
+            android:layout_width="15dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.12" />
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Columns"
+                android:id="@+id/textView2"
+                android:layout_gravity="center_horizontal" />
+
+            <NumberPicker
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/grid_cols_picker" />
+        </LinearLayout>
+
+        <Space
+            android:layout_width="15dp"
+            android:layout_height="match_parent" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/grid_auto_hotseat_notice_text"
+            android:id="@+id/grid_auto_hotseat_notice"
+            android:textColor="#aa8c13"
+            android:visibility="gone" />
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hide Dock"
+            android:id="@+id/grid_hide_hotseat"
+            android:checked="false" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/grid_search_warning"
+            android:id="@+id/grid_search_notice"
+            android:textColor="#aa8c13"
+            android:visibility="gone" />
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hide Search Bar"
+            android:id="@+id/grid_hide_qsb"
+            android:checked="false"
+            android:visibility="visible" />
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/grid_allow_landscape"
+            android:id="@+id/grid_allow_land"
+            android:checked="false" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/landscape_warning"
+        android:id="@+id/grid_landscape_notice"
+        android:layout_weight="0.03"
+        android:textColor="#aa8c13"
+        android:visibility="gone" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Reset Default"
+        android:id="@+id/grid_reset_button"
+        android:layout_weight="0.03" />
+
+
+</LinearLayout>
+

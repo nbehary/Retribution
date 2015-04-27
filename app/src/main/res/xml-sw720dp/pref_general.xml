@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <ListPreference
+        android:key="pref_folder_color"
+        android:title="@string/pref_folder_colors_title"
+        android:dialogTitle="@string/pref_folder_colors_title"
+        android:entries="@array/pref_folder_colors_entries"
+        android:entryValues="@array/pref_folder_colors_values"
+        android:defaultValue="@string/pref_folder_colors_default" />
+    <ListPreference
+        android:key="pref_folder_icon"
+        android:title="@string/pref_folder_icon_title"
+        android:dialogTitle="@string/pref_folder_icon_title"
+        android:entries="@array/pref_folder_icon_entries"
+        android:entryValues="@array/pref_folder_icon_values"
+        android:defaultValue="@string/pref_folder_icon_default" />
+</PreferenceScreen>

@@ -1,0 +1,97 @@
+import java.util.regex.Pattern
+
+apply plugin: 'com.android.application'
+
+repositories {
+    maven { url 'http://repo1.maven.org/maven2' }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: '*.jar')
+    compile files('libs/protobuf-java-2.2.0.jar')
+    compile files('libs/androidmarketapi-0.6.jar')
+    compile files('libs/AndroidMarketApi.jar')
+    compile files('libs/protobuf-java-2.4.1.jar')
+}
+
+android {
+    compileSdkVersion 22
+    buildToolsVersion "22.0.1"
+
+    defaultConfig {
+        minSdkVersion 15
+        targetSdkVersion 22
+    }
+
+    lintOptions {
+        abortOnError false
+        ignoreWarnings true
+    }
+
+    if(project.hasProperty("MyProject.properties")
+            && new File(project.property("MyProject.properties")).exists()) {
+
+        Properties props = new Properties()
+        props.load(new FileInputStream(file(project.property("MyProject.properties"))))
+
+        signingConfigs {
+            release {
+                storeFile file(props['keystore'])
+                storePassword props['keystore.password']
+                keyAlias props['keyAlias']
+                keyPassword props['keyPassword']
+            }
+        }
+    }
+
+    task('increaseVersionCode') << {
+        def manifestFile = file("src/main/AndroidManifest.xml")
+        def pattern = Pattern.compile("versionCode=\"(\\d+)\"")
+        def manifestText = manifestFile.getText()
+        def matcher = pattern.matcher(manifestText)
+        matcher.find()
+        def versionCode = Integer.parseInt(matcher.group(1))
+        def manifestContent = matcher.replaceAll("versionCode=\"" + ++versionCode + "\"")
+        manifestFile.write(manifestContent)
+    }
+
+    task('tagDebugBuilds') << {
+        def manifestFile = file("src/main/AndroidManifest.xml")
+        def pattern = java.util.regex.Pattern.compile("versionName=\".*\"")
+        def manifestText = manifestFile.getText()
+        def matcher = pattern.matcher(manifestText)
+        matcher.find()
+        def manifestContent = matcher.replaceAll("versionName=\"" + "-debug" + "\"")
+        manifestFile.write(manifestContent)
+
+    }
+
+    tasks.whenTaskAdded { task ->
+        if ((task.name == 'generateReleaseBuildConfig')) {
+            task.dependsOn 'increaseVersionCode'
+        }
+
+
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+
+	debug {
+	    signingConfig signingConfigs.release
+        //packageNameSuffix ".debug"
+	}
+    }
+}
+
+dependencies {
+    compile 'com.android.support:support-v4:22.1.1'
+    compile "com.android.support:appcompat-v7:22.1.1"
+    compile "com.android.support:palette-v7:22.1.1"
+    compile files('libs/protobuf.jar')
+    compile fileTree(dir: 'libs', include: '*.jar')
+}

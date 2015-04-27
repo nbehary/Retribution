@@ -1,0 +1,137 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin">
+    <!--tools:context=".........src.com.nbehary.retribution.FolderColorsActivity$PlaceholderFragment">-->
+
+    <!--  <FrameLayout
+          android:layout_width="fill_parent"
+          android:layout_height="fill_parent"
+          android:layout_alignParentBottom="true"
+          android:layout_alignParentLeft="true"
+          android:layout_alignParentStart="true">
+  -->
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="left|top"
+        android:weightSum="1"
+        android:id="@+id/linearLayout">
+
+        <FrameLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_gravity="left|top"
+            android:id="@+id/folder_colors_ui_free"
+            android:weightSum="1">
+
+            <RadioGroup android:id="@+id/radioGroup1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Default (White Semi-Transparent)"
+                    android:id="@+id/radioWhite"
+                    android:checked="true" />
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Grey, Transparent"
+                    android:id="@+id/radioGreyT"
+                    android:checked="false" />
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Grey, Opaque"
+                    android:id="@+id/radioGreyO"
+                    android:checked="false" />
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Black, Transparent"
+                    android:id="@+id/radioBlackT"
+                    android:checked="false" />
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Black, Opaque"
+                    android:id="@+id/radioBlackO"
+                    android:checked="false" />
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="@string/folder_icon_spinner_text"
+                        android:id="@+id/textView2"
+                        android:layout_marginLeft="5dp" />
+
+                    <Spinner
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/folder_colors_icon_spinner_free"
+                        android:layout_weight="1" />
+                </LinearLayout>
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/pitch_pro_colors"
+                    android:id="@+id/textView"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginLeft="10dp" />
+
+            </RadioGroup>
+
+        </FrameLayout>
+
+
+        <FrameLayout
+            android:id="@+id/folder_color_preview_free"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Buy Pro Version Key"
+                android:id="@+id/play_button3"
+                android:visibility="visible" />
+
+            <ImageView
+                android:id="@+id/folder_color_preview_image_free"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_gravity="center_horizontal|bottom"
+                />
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+
+    <!--</FrameLayout>-->
+</RelativeLayout>

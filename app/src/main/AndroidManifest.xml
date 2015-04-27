@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+**
+** Copyright 2008, The Android Open Source Project
+**
+** Licensed under the Apache License, Version 2.0 (the "License");
+** you may not use this file except in compliance with the License.
+** You may obtain a copy of the License at
+**
+**     http://www.apache.org/licenses/LICENSE-2.0
+**
+** Unless required by applicable law or agreed to in writing, software
+** distributed under the License is distributed on an "AS IS" BASIS,
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+** See the License for the specific language governing permissions and
+** limitations under the License.
+*/
+-->
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.nbehary.retribution"
+    android:versionCode="2286"
+    android:versionName="1.4.1">
+
+    <permission
+        android:name="com.nbehary.retribution.permission.PRELOAD_WORKSPACE"
+        android:permissionGroup="android.permission-group.SYSTEM_TOOLS"
+        android:protectionLevel="signature" />
+
+    <permission
+        android:name="com.nbehary.retribution.permission.READ_SETTINGS"
+        android:permissionGroup="android.permission-group.SYSTEM_TOOLS"
+        android:protectionLevel="normal"
+        android:label="@string/permlab_read_settings"
+        android:description="@string/permdesc_read_settings"/>
+    <permission
+        android:name="com.nbehary.retribution.permission.WRITE_SETTINGS"
+        android:permissionGroup="android.permission-group.SYSTEM_TOOLS"
+        android:protectionLevel="normal"
+        android:label="@string/permlab_write_settings"
+        android:description="@string/permdesc_write_settings"/>
+
+    <permission
+        android:name="com.nbehary.retribution.permission.RECEIVE_LAUNCH_BROADCASTS"
+        android:protectionLevel="signature"
+        />
+
+ 
+    <uses-permission android:name="android.permission.SET_WALLPAPER" />
+    <uses-permission android:name="android.permission.SET_WALLPAPER_HINTS" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <!--<uses-permission android:name="android.permission.BIND_APPWIDGET" />-->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS" />
+    <uses-permission android:name="com.android.launcher.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="com.nbehary.retribution.permission.READ_SETTINGS" />
+    <uses-permission android:name="com.nbehary.retribution.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="com.nbehary.retribution.permission.RECEIVE_LAUNCH_BROADCASTS" />
+    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.USE_CREDENTIALS"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <!--<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />-->
+
+
+
+    <application
+        android:name="com.nbehary.retribution.LauncherApplication"
+        android:label="@string/application_name"
+        android:icon="@drawable/ic_launcher"
+        android:hardwareAccelerated="true"
+        android:largeHeap="@bool/config_largeHeap"
+        android:supportsRtl="true"
+        android:theme="@style/Theme">
+        <activity
+            android:name="com.nbehary.retribution.Launcher"
+            android:launchMode="singleTask"
+            android:clearTaskOnLaunch="true"
+            android:stateNotNeeded="true"
+            android:theme="@style/Theme.Launcher"
+            android:windowSoftInputMode="adjustPan"
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.HOME" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.MONKEY"/>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+       
+        <activity
+            android:name="com.nbehary.retribution.WallpaperPickerActivity"
+            android:theme="@style/Theme.WallpaperCropper"
+            android:label="@string/pick_wallpaper"
+            android:icon="@mipmap/ic_launcher_wallpaper"
+            android:finishOnCloseSystemDialogs="true"
+            android:process=":wallpaper_chooser">
+            <intent-filter>
+                <action android:name="android.intent.action.SET_WALLPAPER" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="com.nbehary.retribution.WallpaperCropActivity"
+            android:theme="@style/Theme.WallpaperCropper"
+            android:label="@string/crop_wallpaper"
+            android:icon="@mipmap/ic_launcher_wallpaper"
+            android:finishOnCloseSystemDialogs="true"
+            android:process=":wallpaper_chooser">
+            <intent-filter>
+                <action android:name="android.service.wallpaper.CROP_AND_SET_WALLPAPER" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".IconPickerActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:launchMode="singleTop" />
+
+        <activity
+            android:name="com.nbehary.retribution.SettingsActivity"
+            android:exported="false"
+            android:label="Folder Settings"
+            android:theme="@style/Theme.Transparent">
+        </activity>
+
+        <activity
+            android:name="com.nbehary.retribution.FolderColorsActivity"
+            android:exported="false"
+            android:label="Folder Colors"
+            android:theme="@style/Theme.Transparent.Material">
+        </activity>
+
+        <activity
+            android:name="com.nbehary.retribution.GridEditor"
+            android:exported="false"
+            android:label="Grid Editor"
+            android:theme="@style/Theme.GridEditor">
+        </activity>
+
+        <activity
+            android:name="com.nbehary.retribution.AboutActivity"
+            android:exported="false"
+            android:label="About"
+            android:theme="@style/Theme.Launcher">
+
+        </activity>
+
+
+        <!-- Debugging tools -->
+        <activity
+            android:name="com.nbehary.retribution.MemoryDumpActivity"
+            android:theme="@android:style/Theme.NoDisplay"
+            android:label="@string/debug_memory_activity"
+            android:enabled="@bool/debug_memory_enabled"
+            android:excludeFromRecents="true"
+            android:icon="@mipmap/ic_launcher_home"
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <service android:name="com.nbehary.retribution.MemoryTracker"
+            android:enabled="@bool/debug_memory_enabled"
+            >
+        </service>
+
+        <!-- Intent received used to prepopulate the default workspace. -->
+        <receiver
+            android:name="com.nbehary.retribution.PreloadReceiver"
+            android:permission="com.nbehary.retribution.permission.PRELOAD_WORKSPACE">
+            <intent-filter>
+                <action android:name="com.nbehary.retribution.action.PRELOAD_WORKSPACE" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Intent received used to install shortcuts from other applications -->
+        <receiver
+            android:name="com.nbehary.retribution.InstallShortcutReceiver"
+            android:permission="com.android.launcher.permission.INSTALL_SHORTCUT">
+            <intent-filter>
+                <action android:name="com.nbehary.retribution.action.INSTALL_SHORTCUT" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Intent received used to uninstall shortcuts from other applications -->
+        <receiver
+            android:name="com.nbehary.retribution.UninstallShortcutReceiver"
+            android:permission="com.android.launcher.permission.UNINSTALL_SHORTCUT">
+            <intent-filter>
+                <action android:name="com.nbehary.retribution.action.UNINSTALL_SHORTCUT" />
+            </intent-filter>
+        </receiver>
+
+        <!-- New user initialization; set up initial wallpaper -->
+        <receiver
+            android:name="com.nbehary.retribution.UserInitializeReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.USER_INITIALIZE" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name="com.nbehary.retribution.PackageChangedReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_CHANGED"/>
+                <action android:name="android.intent.action.PACKAGE_REPLACED"/>
+                <action android:name="android.intent.action.PACKAGE_REMOVED"/>
+                <data android:scheme="package"></data>
+            </intent-filter>
+        </receiver>
+
+
+        <!-- The settings provider contains Home's data, like the workspace favorites -->
+        <provider
+            android:name="com.nbehary.retribution.LauncherProvider"
+            android:authorities="com.nbehary.retribution.settings"
+            android:exported="true"
+            android:writePermission="com.nbehary.retribution.permission.WRITE_SETTINGS"
+            android:readPermission="com.nbehary.retribution.permission.READ_SETTINGS" />
+
+        <meta-data android:name="android.nfc.disable_beam_default"
+                       android:value="true" />
+    </application>
+</manifest>

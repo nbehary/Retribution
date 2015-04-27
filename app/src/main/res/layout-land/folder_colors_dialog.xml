@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/folder_colors_dialog_change_text"
+        android:id="@+id/textView"
+        android:layout_row="0"
+        android:layout_column="0" />
+
+    <com.nbehary.retribution.ColorPickerView
+        android:layout_width="344dp"
+        android:layout_height="277dp"
+        android:layout_row="1"
+        android:layout_column="0"
+        android:id="@+id/picker"
+        alphaSlider="true"
+        android:layout_rowSpan="3"
+        android:layout_columnSpan="3" />
+
+    <Spinner
+        android:layout_width="284dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/folder_colors_dialog_change"
+        android:layout_row="0"
+        android:layout_column="1" />
+
+    <LinearLayout
+        android:id="@+id/folder_color_preview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/portal_container_holo"
+        android:orientation="vertical"
+        android:layout_row="1"
+        android:layout_column="2">
+        <!--<ImageView-->
+            <!--android:id="@+id/folder_color_preview_image"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center_horizontal|bottom"-->
+            <!--/>-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:fontFamily="sans-serif-condensed"
+            android:id="@+id/folder_colors_icon_text"
+            android:text="@string/folder_colors_preview_icon_text"></TextView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:fontFamily="sans-serif-condensed"
+            android:id="@+id/folder_colors_label_text"
+            android:text="@string/folder_colors_preview_label_text"></TextView>
+
+    </LinearLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/reset_system_button_text"
+        android:id="@+id/folder_colors_reset_button"
+        android:layout_row="0"
+        android:layout_column="2" />
+
+</GridLayout>

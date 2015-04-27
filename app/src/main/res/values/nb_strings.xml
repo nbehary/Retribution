@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingTranslation">
+    <!-- Application name -->
+    <string name="application_name">Retribution Launcher</string>
+
+
+    <string name="dialog_pick_iconpack_title">Pick icon pack</string>
+    <string name="default_iconpack_title">Default</string>
+    <string name="no_iconpacks_summary">No icon packs installed</string>
+    <string name="descr_overflow_button">Options</string>
+    <string name="folder_color_chooser">Choose Color</string>
+    <string name="help">Help</string>
+
+    <string name="pref_folder_colors_title">Folder Backround Color</string>
+    <string name="pref_folder_colors_default">1</string>
+
+    <string name="pref_folder_icon_title">Folder Icon</string>
+    <string name="pref_folder_icon_default">1</string>
+
+    <string name="action_settings">Settings</string>
+
+    <string name="pref_folder_colors_activity_name">Folder Colors</string>
+
+    <string name="about_button_text">About</string>
+
+    <string name="folder_button_text">Folders</string>
+
+    <string name="grid_button_text">Desktop Grid</string>
+
+    <string name="title_activity_folder_colors">FolderColorsActivity</string>
+    <string name="hello_world">Hello world!</string>
+
+    <string name="title_activity_about">AboutActivity</string>
+    <string name="about_version">Version: 0.0.0 (0000)</string>
+
+
+    <string name="os_dialog_title">Open Source Licenses</string>
+    <string name="os_dialog_top_text">This program is based on or includes portions of software available under open source licenses.</string>
+    <string name="os_notice_header">Notices:</string>
+    <string name="os_dialog_header">Open Source</string>
+    <string name="nb_copyright">Copyright © 2015 Nathan A. Behary</string>
+    <string name="about_credits">
+        Written and designed by:\n
+        Nathan A. Behary\n
+        \n
+
+    </string>
+    <string name="os_button_text">Open Source Software</string>
+    <string name="pitch_pro_colors">Full color choices available in the Pro Version!</string>
+
+    <string-array name="folder_colors_array">
+        <item>Background</item>
+        <item>Folder Name</item>
+        <item>Icon Labels</item>
+    </string-array>
+
+    <string-array name="grid_choices_array">
+        <item>Desktop</item>
+        <item>Dock</item>
+    </string-array>
+
+    <string-array name="folder_icons_array_pro">
+        <item>Default (White)</item>
+        <item>Tint with Background</item>
+        <item>Old style (Black/Holo)</item>
+    </string-array>
+
+    <string-array name="folder_icons_array_free">
+        <item>Default (White)</item>
+        <item>Old style (Black/Holo Blue)</item>
+    </string-array>
+
+    <string name="grid_instructions">Set Grid</string>
+    <string name="icon_fragment_header">Icon Sizes</string>
+    <string name="grid_fragment_header">Desktop Grid</string>
+    <string name="grid_hide_labels_text">Hide Labels</string>
+    <string name="grid_allow_landscape">Allow Landscape</string>
+    <string name="apps_overview_text">Apps</string>
+    <string name="grid_auto_hotseat_notice_text">Dock is always hidden in this configuration.</string>
+    <string name="grid_folder_warning">Folders are not supported in the Dock at this size.</string>
+    <string name="grid_dock_warning">Dock icons may appear distorted at this size.</string>
+    <string name="landscape_warning">Landscape may not work correctly on Phones.</string>
+    <string name="grid_search_warning">Search Bar required in Landscape.</string>
+    <string name="dialog_ok">Ok</string>
+    <string name="grid_about_dialog_title">About the Grid Editor</string>
+    <string name="action_help">Help</string><string name="folder_tint_icon_text">Tint folder icons with the Background Color.</string>
+    <string name="folder_icon_spinner_text">Icon Style</string>
+    <string name="folder_colors_dialog_change_text">Change:</string>
+    <string name="folder_colors_dialog_icon_text">Icon Type</string>
+    <string name="reset_default_button_text">Reset Defaults</string>
+    <string name="reset_system_button_text">Use Global</string>
+    <string name="folder_colors_preview_icon_text">Icon Labels</string>
+    <string name="folder_colors_preview_label_text">Folder Name</string>
+
+    <!-- Text for transition effect button -->
+    <string name="transition_effect_button_text">Scroll Effect</string>
+
+    <string name="sort_mode_title">Title</string>
+    <string name="sort_mode_launch_count">Launch Count</string>
+    <string name="sort_mode_install_time">Install Time</string>
+    <string name="group_select_label">Setup Group:</string>
+    <string name="groups_select_all_label">Select All</string>
+    <string name="groups_new_name_hint">New Group</string>
+    <string name="groups_new_name_label">Category Name:</string>
+    <string name="dialog_done">Done</string>
+
+    <string name="apps_customize_menu_effect_label">Scroll Effect</string>
+    <string name="apps_customize_menu_sort_label">Sort</string>
+    <string name="apps_customize_menu_groups_label">Manage Groups</string>
+    <string name="groups_new_button_label">New Group</string>
+
+    <string name="whats_new_title">What\'s New!</string>
+    <string name="what_new_free_notice">You can choose not to see this dialog with every update in the Pro Version.
+    Also, check out the cool new stuff up there you aren\'t getting.  You should consider upgrading.</string>
+    <string name="whats_new_checkbox_text">Always Show</string>
+	<string name="create_folder_title">Create Folder</string>
+	<string name="create_folder_name_label">Folder Name:</string>
+	<string name="create_folder_group_label">From Group:</string>
+
+    <string name="folder_add_shortcuts">Edit contents</string>
+    <string name="folder_show_groups_label">Show:</string>
+    <string name="general_apply">Apply</string>
+</resources>
