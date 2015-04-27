@@ -30,9 +30,7 @@ import android.util.Log;
 
 import java.lang.ref.WeakReference;
 
-import com.nbehary.retribution.R;
 
-import com.nbehary.retribution.pro_key.IRemoteService;
 
 public class LauncherAppState {
     private static final String TAG = "LauncherAppState";
@@ -60,8 +58,6 @@ public class LauncherAppState {
     public final String internalVersion = "1.3.1";
 
     private boolean mProVersion;
-
-    private IRemoteService mRemoteService;
 
     public static LauncherAppState getInstance() {
         if (INSTANCE == null) {
@@ -274,30 +270,6 @@ public class LauncherAppState {
 
     }
 
-    private ServiceConnection mServiceConnection=new ServiceConnection() {
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            // TODO Auto-generated method stub
-
-        }
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            // get instance of the aidl binder
-            mRemoteService = IRemoteService.Stub.asInterface(service);
-            try {
-                String message = "";
-                if (mRemoteService.checkLicense()) {
-                    message=mRemoteService.sayHello("Mina");
-                }
-                Log.v("nbehary445", message);
-            } catch (RemoteException e) {
-                Log.e("nbehary445", "RemoteException: "+e.toString());
-            }
-
-        }
-    };
 
     public boolean isScreenLarge() {
         return mIsScreenLarge;
