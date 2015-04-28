@@ -23,6 +23,11 @@
         <option name="ASSETS_FOLDER_RELATIVE_PATH" value="/src/main/assets" />
       </configuration>
     </facet>
+    <facet type="protobuf" name="Protobuf Facet">
+      <configuration>
+        <option name="COMPILER_OUTPUT_SOURCE_DIRECTORY" value="$MODULE_DIR$/src/main/java" />
+      </configuration>
+    </facet>
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="false">
     <output url="file://$MODULE_DIR$/build/intermediates/classes/debug" />
@@ -106,9 +111,13 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="appcompat-v7-22.1.1" level="project" />
     <orderEntry type="library" exported="" name="AndroidMarketApi" level="project" />
+    <orderEntry type="library" exported="" name="protobuf-javanano-3.0.0-alpha-2" level="project" />
+    <orderEntry type="library" exported="" name="wire-runtime-1.7.0" level="project" />
+    <orderEntry type="library" exported="" name="okio-1.2.0" level="project" />
     <orderEntry type="library" exported="" name="palette-v7-22.1.1" level="project" />
     <orderEntry type="library" exported="" name="protobuf-java-2.4.1" level="project" />
     <orderEntry type="library" exported="" name="protobuf" level="project" />
+    <orderEntry type="library" exported="" name="gradle-plugin-protobuf-0.9.1" level="project" />
     <orderEntry type="library" exported="" name="support-v4-22.1.1" level="project" />
     <orderEntry type="library" exported="" name="protobuf-java-2.2.0" level="project" />
     <orderEntry type="library" exported="" name="androidmarketapi-0.6" level="project" />

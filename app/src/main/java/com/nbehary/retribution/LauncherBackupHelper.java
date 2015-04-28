@@ -186,8 +186,8 @@ class LauncherBackupHelper implements BackupHelper {
         } catch (IOException e) {
             Log.e(TAG, "launcher backup has failed", e);
         }
-
-        out.key = keys.toArray(BackupProtos.Key.EMPTY_ARRAY);
+        Key emptyArray[] = {};
+        out.key = keys.toArray(emptyArray);
         writeJournal(newState, out);
         Log.v(TAG, "onBackup: wrote " + out.bytes + "b in " + out.rows + " rows.");
     }
@@ -259,7 +259,8 @@ class LauncherBackupHelper implements BackupHelper {
         // will catch any changes the restore process might have made
         Journal out = new Journal();
         out.t = 0;
-        out.key = mKeys.toArray(BackupProtos.Key.EMPTY_ARRAY);
+        Key emptyArray[] = {};
+        out.key = mKeys.toArray(emptyArray);
         writeJournal(newState, out);
         Log.v(TAG, "onRestore: read " + mKeys.size() + " rows");
         mKeys.clear();

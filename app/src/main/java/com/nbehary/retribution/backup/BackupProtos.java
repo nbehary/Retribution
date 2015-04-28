@@ -2,44 +2,61 @@
 
 package com.nbehary.retribution.backup;
 
-public final class BackupProtos {
-  private BackupProtos() {}
-  @SuppressWarnings("hiding")
+@SuppressWarnings("hiding")
+public interface BackupProtos {
+
   public static final class Key extends
-      com.google.protobuf.nano.MessageNano {
-    public static final Key EMPTY_ARRAY[] = {};
-    public Key() {}
-    
+      com.google.protobuf.nano.ExtendableMessageNano<Key> {
+
     // enum Type
     public static final int FAVORITE = 1;
     public static final int SCREEN = 2;
     public static final int ICON = 3;
     public static final int WIDGET = 4;
-    
+
+    private static volatile Key[] _emptyArray;
+    public static Key[] emptyArray() {
+      // Lazily initializes the empty array
+      if (_emptyArray == null) {
+        synchronized (
+            com.google.protobuf.nano.InternalNano.LAZY_INIT_LOCK) {
+          if (_emptyArray == null) {
+            _emptyArray = new Key[0];
+          }
+        }
+      }
+      return _emptyArray;
+    }
+
     // required .launcher_backup.Key.Type type = 1;
-    public int type = com.nbehary.retribution.backup.BackupProtos.Key.FAVORITE;
-    
+    public int type;
+
     // optional string name = 2;
-    public java.lang.String name = "";
-    
+    public java.lang.String name;
+
     // optional int64 id = 3;
-    public long id = 0L;
-    
+    public long id;
+
     // optional int64 checksum = 4;
-    public long checksum = 0L;
-    
-    public final Key clear() {
+    public long checksum;
+
+    public Key() {
+      clear();
+    }
+
+    public Key clear() {
       type = com.nbehary.retribution.backup.BackupProtos.Key.FAVORITE;
       name = "";
       id = 0L;
       checksum = 0L;
+      unknownFieldData = null;
       cachedSize = -1;
       return this;
     }
-    
+
     @Override
     public void writeTo(com.google.protobuf.nano.CodedOutputByteBufferNano output)
-                        throws java.io.IOException {
+        throws java.io.IOException {
       output.writeInt32(1, this.type);
       if (!this.name.equals("")) {
         output.writeString(2, this.name);
@@ -50,21 +67,12 @@ public final class BackupProtos {
       if (this.checksum != 0L) {
         output.writeInt64(4, this.checksum);
       }
+      super.writeTo(output);
     }
-    
-    private int cachedSize = -1;
+
     @Override
-    public int getCachedSize() {
-      if (cachedSize < 0) {
-        // getSerializedSize sets cachedSize
-        getSerializedSize();
-      }
-      return cachedSize;
-    }
-    
-    @Override
-    public int getSerializedSize() {
-      int size = 0;
+    protected int computeSerializedSize() {
+      int size = super.computeSerializedSize();
       size += com.google.protobuf.nano.CodedOutputByteBufferNano
         .computeInt32Size(1, this.type);
       if (!this.name.equals("")) {
@@ -79,13 +87,12 @@ public final class BackupProtos {
         size += com.google.protobuf.nano.CodedOutputByteBufferNano
             .computeInt64Size(4, this.checksum);
       }
-      cachedSize = size;
       return size;
     }
-    
+
     @Override
     public Key mergeFrom(
-        com.google.protobuf.nano.CodedInputByteBufferNano input)
+            com.google.protobuf.nano.CodedInputByteBufferNano input)
         throws java.io.IOException {
       while (true) {
         int tag = input.readTag();
@@ -93,13 +100,21 @@ public final class BackupProtos {
           case 0:
             return this;
           default: {
-            if (!com.google.protobuf.nano.WireFormatNano.parseUnknownField(input, tag)) {
+            if (!storeUnknownField(input, tag)) {
               return this;
             }
             break;
           }
           case 8: {
-              this.type = input.readInt32();
+            int value = input.readInt32();
+            switch (value) {
+              case com.nbehary.retribution.backup.BackupProtos.Key.FAVORITE:
+              case com.nbehary.retribution.backup.BackupProtos.Key.SCREEN:
+              case com.nbehary.retribution.backup.BackupProtos.Key.ICON:
+              case com.nbehary.retribution.backup.BackupProtos.Key.WIDGET:
+                this.type = value;
+                break;
+            }
             break;
           }
           case 18: {
@@ -117,70 +132,75 @@ public final class BackupProtos {
         }
       }
     }
-    
+
     public static Key parseFrom(byte[] data)
         throws com.google.protobuf.nano.InvalidProtocolBufferNanoException {
       return com.google.protobuf.nano.MessageNano.mergeFrom(new Key(), data);
     }
-    
+
     public static Key parseFrom(
             com.google.protobuf.nano.CodedInputByteBufferNano input)
         throws java.io.IOException {
       return new Key().mergeFrom(input);
     }
-    
   }
-  
-  @SuppressWarnings("hiding")
+
   public static final class CheckedMessage extends
-      com.google.protobuf.nano.MessageNano {
-    public static final CheckedMessage EMPTY_ARRAY[] = {};
-    public CheckedMessage() {}
-    
+      com.google.protobuf.nano.ExtendableMessageNano<CheckedMessage> {
+
+    private static volatile CheckedMessage[] _emptyArray;
+    public static CheckedMessage[] emptyArray() {
+      // Lazily initializes the empty array
+      if (_emptyArray == null) {
+        synchronized (
+            com.google.protobuf.nano.InternalNano.LAZY_INIT_LOCK) {
+          if (_emptyArray == null) {
+            _emptyArray = new CheckedMessage[0];
+          }
+        }
+      }
+      return _emptyArray;
+    }
+
     // required bytes payload = 1;
-    public byte[] payload = com.google.protobuf.nano.WireFormatNano.EMPTY_BYTES;
-    
+    public byte[] payload;
+
     // required int64 checksum = 2;
-    public long checksum = 0L;
-    
-    public final CheckedMessage clear() {
+    public long checksum;
+
+    public CheckedMessage() {
+      clear();
+    }
+
+    public CheckedMessage clear() {
       payload = com.google.protobuf.nano.WireFormatNano.EMPTY_BYTES;
       checksum = 0L;
+      unknownFieldData = null;
       cachedSize = -1;
       return this;
     }
-    
+
     @Override
     public void writeTo(com.google.protobuf.nano.CodedOutputByteBufferNano output)
-                        throws java.io.IOException {
+        throws java.io.IOException {
       output.writeBytes(1, this.payload);
       output.writeInt64(2, this.checksum);
+      super.writeTo(output);
     }
-    
-    private int cachedSize = -1;
+
     @Override
-    public int getCachedSize() {
-      if (cachedSize < 0) {
-        // getSerializedSize sets cachedSize
-        getSerializedSize();
-      }
-      return cachedSize;
-    }
-    
-    @Override
-    public int getSerializedSize() {
-      int size = 0;
+    protected int computeSerializedSize() {
+      int size = super.computeSerializedSize();
       size += com.google.protobuf.nano.CodedOutputByteBufferNano
           .computeBytesSize(1, this.payload);
       size += com.google.protobuf.nano.CodedOutputByteBufferNano
           .computeInt64Size(2, this.checksum);
-      cachedSize = size;
       return size;
     }
-    
+
     @Override
     public CheckedMessage mergeFrom(
-        com.google.protobuf.nano.CodedInputByteBufferNano input)
+            com.google.protobuf.nano.CodedInputByteBufferNano input)
         throws java.io.IOException {
       while (true) {
         int tag = input.readTag();
@@ -188,7 +208,7 @@ public final class BackupProtos {
           case 0:
             return this;
           default: {
-            if (!com.google.protobuf.nano.WireFormatNano.parseUnknownField(input, tag)) {
+            if (!storeUnknownField(input, tag)) {
               return this;
             }
             break;
@@ -204,54 +224,69 @@ public final class BackupProtos {
         }
       }
     }
-    
+
     public static CheckedMessage parseFrom(byte[] data)
         throws com.google.protobuf.nano.InvalidProtocolBufferNanoException {
       return com.google.protobuf.nano.MessageNano.mergeFrom(new CheckedMessage(), data);
     }
-    
+
     public static CheckedMessage parseFrom(
             com.google.protobuf.nano.CodedInputByteBufferNano input)
         throws java.io.IOException {
       return new CheckedMessage().mergeFrom(input);
     }
-    
   }
-  
-  @SuppressWarnings("hiding")
+
   public static final class Journal extends
-      com.google.protobuf.nano.MessageNano {
-    public static final Journal EMPTY_ARRAY[] = {};
-    public Journal() {}
-    
+      com.google.protobuf.nano.ExtendableMessageNano<Journal> {
+
+    private static volatile Journal[] _emptyArray;
+    public static Journal[] emptyArray() {
+      // Lazily initializes the empty array
+      if (_emptyArray == null) {
+        synchronized (
+            com.google.protobuf.nano.InternalNano.LAZY_INIT_LOCK) {
+          if (_emptyArray == null) {
+            _emptyArray = new Journal[0];
+          }
+        }
+      }
+      return _emptyArray;
+    }
+
     // required int32 app_version = 1;
-    public int appVersion = 0;
-    
+    public int appVersion;
+
     // required int64 t = 2;
-    public long t = 0L;
-    
+    public long t;
+
     // optional int64 bytes = 3;
-    public long bytes = 0L;
-    
+    public long bytes;
+
     // optional int32 rows = 4;
-    public int rows = 0;
-    
+    public int rows;
+
     // repeated .launcher_backup.Key key = 5;
-    public com.nbehary.retribution.backup.BackupProtos.Key[] key = com.nbehary.retribution.backup.BackupProtos.Key.EMPTY_ARRAY;
-    
-    public final Journal clear() {
+    public com.nbehary.retribution.backup.BackupProtos.Key[] key;
+
+    public Journal() {
+      clear();
+    }
+
+    public Journal clear() {
       appVersion = 0;
       t = 0L;
       bytes = 0L;
       rows = 0;
-      key = com.nbehary.retribution.backup.BackupProtos.Key.EMPTY_ARRAY;
+      key = com.nbehary.retribution.backup.BackupProtos.Key.emptyArray();
+      unknownFieldData = null;
       cachedSize = -1;
       return this;
     }
-    
+
     @Override
     public void writeTo(com.google.protobuf.nano.CodedOutputByteBufferNano output)
-                        throws java.io.IOException {
+        throws java.io.IOException {
       output.writeInt32(1, this.appVersion);
       output.writeInt64(2, this.t);
       if (this.bytes != 0L) {
@@ -260,24 +295,20 @@ public final class BackupProtos {
       if (this.rows != 0) {
         output.writeInt32(4, this.rows);
       }
-      for (com.nbehary.retribution.backup.BackupProtos.Key element : this.key) {
-        output.writeMessage(5, element);
+      if (this.key != null && this.key.length > 0) {
+        for (int i = 0; i < this.key.length; i++) {
+          com.nbehary.retribution.backup.BackupProtos.Key element = this.key[i];
+          if (element != null) {
+            output.writeMessage(5, element);
+          }
+        }
       }
+      super.writeTo(output);
     }
-    
-    private int cachedSize = -1;
+
     @Override
-    public int getCachedSize() {
-      if (cachedSize < 0) {
-        // getSerializedSize sets cachedSize
-        getSerializedSize();
-      }
-      return cachedSize;
-    }
-    
-    @Override
-    public int getSerializedSize() {
-      int size = 0;
+    protected int computeSerializedSize() {
+      int size = super.computeSerializedSize();
       size += com.google.protobuf.nano.CodedOutputByteBufferNano
           .computeInt32Size(1, this.appVersion);
       size += com.google.protobuf.nano.CodedOutputByteBufferNano
@@ -290,17 +321,21 @@ public final class BackupProtos {
         size += com.google.protobuf.nano.CodedOutputByteBufferNano
             .computeInt32Size(4, this.rows);
       }
-      for (com.nbehary.retribution.backup.BackupProtos.Key element : this.key) {
-        size += com.google.protobuf.nano.CodedOutputByteBufferNano
-          .computeMessageSize(5, element);
+      if (this.key != null && this.key.length > 0) {
+        for (int i = 0; i < this.key.length; i++) {
+          com.nbehary.retribution.backup.BackupProtos.Key element = this.key[i];
+          if (element != null) {
+            size += com.google.protobuf.nano.CodedOutputByteBufferNano
+              .computeMessageSize(5, element);
+          }
+        }
       }
-      cachedSize = size;
       return size;
     }
-    
+
     @Override
     public Journal mergeFrom(
-        com.google.protobuf.nano.CodedInputByteBufferNano input)
+            com.google.protobuf.nano.CodedInputByteBufferNano input)
         throws java.io.IOException {
       while (true) {
         int tag = input.readTag();
@@ -308,7 +343,7 @@ public final class BackupProtos {
           case 0:
             return this;
           default: {
-            if (!com.google.protobuf.nano.WireFormatNano.parseUnknownField(input, tag)) {
+            if (!storeUnknownField(input, tag)) {
               return this;
             }
             break;
@@ -330,99 +365,117 @@ public final class BackupProtos {
             break;
           }
           case 42: {
-            int arrayLength = com.google.protobuf.nano.WireFormatNano.getRepeatedFieldArrayLength(input, 42);
-            int i = this.key.length;
-            com.nbehary.retribution.backup.BackupProtos.Key[] newArray = new com.nbehary.retribution.backup.BackupProtos.Key[i + arrayLength];
-            System.arraycopy(this.key, 0, newArray, 0, i);
-            this.key = newArray;
-            for (; i < this.key.length - 1; i++) {
-              this.key[i] = new com.nbehary.retribution.backup.BackupProtos.Key();
-              input.readMessage(this.key[i]);
+            int arrayLength = com.google.protobuf.nano.WireFormatNano
+                .getRepeatedFieldArrayLength(input, 42);
+            int i = this.key == null ? 0 : this.key.length;
+            com.nbehary.retribution.backup.BackupProtos.Key[] newArray =
+                new com.nbehary.retribution.backup.BackupProtos.Key[i + arrayLength];
+            if (i != 0) {
+              java.lang.System.arraycopy(this.key, 0, newArray, 0, i);
+            }
+            for (; i < newArray.length - 1; i++) {
+              newArray[i] = new com.nbehary.retribution.backup.BackupProtos.Key();
+              input.readMessage(newArray[i]);
               input.readTag();
             }
             // Last one without readTag.
-            this.key[i] = new com.nbehary.retribution.backup.BackupProtos.Key();
-            input.readMessage(this.key[i]);
+            newArray[i] = new com.nbehary.retribution.backup.BackupProtos.Key();
+            input.readMessage(newArray[i]);
+            this.key = newArray;
             break;
           }
         }
       }
     }
-    
+
     public static Journal parseFrom(byte[] data)
         throws com.google.protobuf.nano.InvalidProtocolBufferNanoException {
       return com.google.protobuf.nano.MessageNano.mergeFrom(new Journal(), data);
     }
-    
+
     public static Journal parseFrom(
             com.google.protobuf.nano.CodedInputByteBufferNano input)
         throws java.io.IOException {
       return new Journal().mergeFrom(input);
     }
-    
   }
-  
-  @SuppressWarnings("hiding")
+
   public static final class Favorite extends
-      com.google.protobuf.nano.MessageNano {
-    public static final Favorite EMPTY_ARRAY[] = {};
-    public Favorite() {}
-    
+      com.google.protobuf.nano.ExtendableMessageNano<Favorite> {
+
+    private static volatile Favorite[] _emptyArray;
+    public static Favorite[] emptyArray() {
+      // Lazily initializes the empty array
+      if (_emptyArray == null) {
+        synchronized (
+            com.google.protobuf.nano.InternalNano.LAZY_INIT_LOCK) {
+          if (_emptyArray == null) {
+            _emptyArray = new Favorite[0];
+          }
+        }
+      }
+      return _emptyArray;
+    }
+
     // required int64 id = 1;
-    public long id = 0L;
-    
+    public long id;
+
     // required int32 itemType = 2;
-    public int itemType = 0;
-    
+    public int itemType;
+
     // optional string title = 3;
-    public java.lang.String title = "";
-    
+    public java.lang.String title;
+
     // optional int32 container = 4;
-    public int container = 0;
-    
+    public int container;
+
     // optional int32 screen = 5;
-    public int screen = 0;
-    
+    public int screen;
+
     // optional int32 cellX = 6;
-    public int cellX = 0;
-    
+    public int cellX;
+
     // optional int32 cellY = 7;
-    public int cellY = 0;
-    
+    public int cellY;
+
     // optional int32 spanX = 8;
-    public int spanX = 0;
-    
+    public int spanX;
+
     // optional int32 spanY = 9;
-    public int spanY = 0;
-    
+    public int spanY;
+
     // optional int32 displayMode = 10;
-    public int displayMode = 0;
-    
+    public int displayMode;
+
     // optional int32 appWidgetId = 11;
-    public int appWidgetId = 0;
-    
+    public int appWidgetId;
+
     // optional string appWidgetProvider = 12;
-    public java.lang.String appWidgetProvider = "";
-    
+    public java.lang.String appWidgetProvider;
+
     // optional string intent = 13;
-    public java.lang.String intent = "";
-    
+    public java.lang.String intent;
+
     // optional string uri = 14;
-    public java.lang.String uri = "";
-    
+    public java.lang.String uri;
+
     // optional int32 iconType = 15;
-    public int iconType = 0;
-    
+    public int iconType;
+
     // optional string iconPackage = 16;
-    public java.lang.String iconPackage = "";
-    
+    public java.lang.String iconPackage;
+
     // optional string iconResource = 17;
-    public java.lang.String iconResource = "";
-    
+    public java.lang.String iconResource;
+
     // optional bytes icon = 18;
-    public byte[] icon = com.google.protobuf.nano.WireFormatNano.EMPTY_BYTES;
-    
-    public final Favorite clear() {
+    public byte[] icon;
+
+    public Favorite() {
+      clear();
+    }
+
+    public Favorite clear() {
       id = 0L;
       itemType = 0;
       title = "";
@@ -441,13 +494,14 @@ public final class BackupProtos {
       iconPackage = "";
       iconResource = "";
       icon = com.google.protobuf.nano.WireFormatNano.EMPTY_BYTES;
+      unknownFieldData = null;
       cachedSize = -1;
       return this;
     }
-    
+
     @Override
     public void writeTo(com.google.protobuf.nano.CodedOutputByteBufferNano output)
-                        throws java.io.IOException {
+        throws java.io.IOException {
       output.writeInt64(1, this.id);
       output.writeInt32(2, this.itemType);
       if (!this.title.equals("")) {
@@ -498,21 +552,12 @@ public final class BackupProtos {
       if (!java.util.Arrays.equals(this.icon, com.google.protobuf.nano.WireFormatNano.EMPTY_BYTES)) {
         output.writeBytes(18, this.icon);
       }
+      super.writeTo(output);
     }
-    
-    private int cachedSize = -1;
+
     @Override
-    public int getCachedSize() {
-      if (cachedSize < 0) {
-        // getSerializedSize sets cachedSize
-        getSerializedSize();
-      }
-      return cachedSize;
-    }
-    
-    @Override
-    public int getSerializedSize() {
-      int size = 0;
+    protected int computeSerializedSize() {
+      int size = super.computeSerializedSize();
       size += com.google.protobuf.nano.CodedOutputByteBufferNano
           .computeInt64Size(1, this.id);
       size += com.google.protobuf.nano.CodedOutputByteBufferNano
@@ -581,13 +626,12 @@ public final class BackupProtos {
         size += com.google.protobuf.nano.CodedOutputByteBufferNano
             .computeBytesSize(18, this.icon);
       }
-      cachedSize = size;
       return size;
     }
-    
+
     @Override
     public Favorite mergeFrom(
-        com.google.protobuf.nano.CodedInputByteBufferNano input)
+            com.google.protobuf.nano.CodedInputByteBufferNano input)
         throws java.io.IOException {
       while (true) {
         int tag = input.readTag();
@@ -595,7 +639,7 @@ public final class BackupProtos {
           case 0:
             return this;
           default: {
-            if (!com.google.protobuf.nano.WireFormatNano.parseUnknownField(input, tag)) {
+            if (!storeUnknownField(input, tag)) {
               return this;
             }
             break;
@@ -675,74 +719,79 @@ public final class BackupProtos {
         }
       }
     }
-    
+
     public static Favorite parseFrom(byte[] data)
         throws com.google.protobuf.nano.InvalidProtocolBufferNanoException {
       return com.google.protobuf.nano.MessageNano.mergeFrom(new Favorite(), data);
     }
-    
+
     public static Favorite parseFrom(
             com.google.protobuf.nano.CodedInputByteBufferNano input)
         throws java.io.IOException {
       return new Favorite().mergeFrom(input);
     }
-    
   }
-  
-  @SuppressWarnings("hiding")
+
   public static final class Screen extends
-      com.google.protobuf.nano.MessageNano {
-    public static final Screen EMPTY_ARRAY[] = {};
-    public Screen() {}
-    
+      com.google.protobuf.nano.ExtendableMessageNano<Screen> {
+
+    private static volatile Screen[] _emptyArray;
+    public static Screen[] emptyArray() {
+      // Lazily initializes the empty array
+      if (_emptyArray == null) {
+        synchronized (
+            com.google.protobuf.nano.InternalNano.LAZY_INIT_LOCK) {
+          if (_emptyArray == null) {
+            _emptyArray = new Screen[0];
+          }
+        }
+      }
+      return _emptyArray;
+    }
+
     // required int64 id = 1;
-    public long id = 0L;
-    
+    public long id;
+
     // optional int32 rank = 2;
-    public int rank = 0;
-    
-    public final Screen clear() {
+    public int rank;
+
+    public Screen() {
+      clear();
+    }
+
+    public Screen clear() {
       id = 0L;
       rank = 0;
+      unknownFieldData = null;
       cachedSize = -1;
       return this;
     }
-    
+
     @Override
     public void writeTo(com.google.protobuf.nano.CodedOutputByteBufferNano output)
-                        throws java.io.IOException {
+        throws java.io.IOException {
       output.writeInt64(1, this.id);
       if (this.rank != 0) {
         output.writeInt32(2, this.rank);
       }
+      super.writeTo(output);
     }
-    
-    private int cachedSize = -1;
+
     @Override
-    public int getCachedSize() {
-      if (cachedSize < 0) {
-        // getSerializedSize sets cachedSize
-        getSerializedSize();
-      }
-      return cachedSize;
-    }
-    
-    @Override
-    public int getSerializedSize() {
-      int size = 0;
+    protected int computeSerializedSize() {
+      int size = super.computeSerializedSize();
       size += com.google.protobuf.nano.CodedOutputByteBufferNano
           .computeInt64Size(1, this.id);
       if (this.rank != 0) {
         size += com.google.protobuf.nano.CodedOutputByteBufferNano
             .computeInt32Size(2, this.rank);
       }
-      cachedSize = size;
       return size;
     }
-    
+
     @Override
     public Screen mergeFrom(
-        com.google.protobuf.nano.CodedInputByteBufferNano input)
+            com.google.protobuf.nano.CodedInputByteBufferNano input)
         throws java.io.IOException {
       while (true) {
         int tag = input.readTag();
@@ -750,7 +799,7 @@ public final class BackupProtos {
           case 0:
             return this;
           default: {
-            if (!com.google.protobuf.nano.WireFormatNano.parseUnknownField(input, tag)) {
+            if (!storeUnknownField(input, tag)) {
               return this;
             }
             break;
@@ -766,70 +815,75 @@ public final class BackupProtos {
         }
       }
     }
-    
+
     public static Screen parseFrom(byte[] data)
         throws com.google.protobuf.nano.InvalidProtocolBufferNanoException {
       return com.google.protobuf.nano.MessageNano.mergeFrom(new Screen(), data);
     }
-    
+
     public static Screen parseFrom(
             com.google.protobuf.nano.CodedInputByteBufferNano input)
         throws java.io.IOException {
       return new Screen().mergeFrom(input);
     }
-    
   }
-  
-  @SuppressWarnings("hiding")
+
   public static final class Resource extends
-      com.google.protobuf.nano.MessageNano {
-    public static final Resource EMPTY_ARRAY[] = {};
-    public Resource() {}
-    
+      com.google.protobuf.nano.ExtendableMessageNano<Resource> {
+
+    private static volatile Resource[] _emptyArray;
+    public static Resource[] emptyArray() {
+      // Lazily initializes the empty array
+      if (_emptyArray == null) {
+        synchronized (
+            com.google.protobuf.nano.InternalNano.LAZY_INIT_LOCK) {
+          if (_emptyArray == null) {
+            _emptyArray = new Resource[0];
+          }
+        }
+      }
+      return _emptyArray;
+    }
+
     // required int32 dpi = 1;
-    public int dpi = 0;
-    
+    public int dpi;
+
     // required bytes data = 2;
-    public byte[] data = com.google.protobuf.nano.WireFormatNano.EMPTY_BYTES;
-    
-    public final Resource clear() {
+    public byte[] data;
+
+    public Resource() {
+      clear();
+    }
+
+    public Resource clear() {
       dpi = 0;
       data = com.google.protobuf.nano.WireFormatNano.EMPTY_BYTES;
+      unknownFieldData = null;
       cachedSize = -1;
       return this;
     }
-    
+
     @Override
     public void writeTo(com.google.protobuf.nano.CodedOutputByteBufferNano output)
-                        throws java.io.IOException {
+        throws java.io.IOException {
       output.writeInt32(1, this.dpi);
       output.writeBytes(2, this.data);
+      super.writeTo(output);
     }
-    
-    private int cachedSize = -1;
+
     @Override
-    public int getCachedSize() {
-      if (cachedSize < 0) {
-        // getSerializedSize sets cachedSize
-        getSerializedSize();
-      }
-      return cachedSize;
-    }
-    
-    @Override
-    public int getSerializedSize() {
-      int size = 0;
+    protected int computeSerializedSize() {
+      int size = super.computeSerializedSize();
       size += com.google.protobuf.nano.CodedOutputByteBufferNano
           .computeInt32Size(1, this.dpi);
       size += com.google.protobuf.nano.CodedOutputByteBufferNano
           .computeBytesSize(2, this.data);
-      cachedSize = size;
       return size;
     }
-    
+
     @Override
     public Resource mergeFrom(
-        com.google.protobuf.nano.CodedInputByteBufferNano input)
+            com.google.protobuf.nano.CodedInputByteBufferNano input)
         throws java.io.IOException {
       while (true) {
         int tag = input.readTag();
@@ -837,7 +891,7 @@ public final class BackupProtos {
           case 0:
             return this;
           default: {
-            if (!com.google.protobuf.nano.WireFormatNano.parseUnknownField(input, tag)) {
+            if (!storeUnknownField(input, tag)) {
               return this;
             }
             break;
@@ -853,59 +907,74 @@ public final class BackupProtos {
         }
       }
     }
-    
+
     public static Resource parseFrom(byte[] data)
         throws com.google.protobuf.nano.InvalidProtocolBufferNanoException {
       return com.google.protobuf.nano.MessageNano.mergeFrom(new Resource(), data);
     }
-    
+
     public static Resource parseFrom(
             com.google.protobuf.nano.CodedInputByteBufferNano input)
         throws java.io.IOException {
       return new Resource().mergeFrom(input);
     }
-    
   }
-  
-  @SuppressWarnings("hiding")
+
   public static final class Widget extends
-      com.google.protobuf.nano.MessageNano {
-    public static final Widget EMPTY_ARRAY[] = {};
-    public Widget() {}
-    
+      com.google.protobuf.nano.ExtendableMessageNano<Widget> {
+
+    private static volatile Widget[] _emptyArray;
+    public static Widget[] emptyArray() {
+      // Lazily initializes the empty array
+      if (_emptyArray == null) {
+        synchronized (
+            com.google.protobuf.nano.InternalNano.LAZY_INIT_LOCK) {
+          if (_emptyArray == null) {
+            _emptyArray = new Widget[0];
+          }
+        }
+      }
+      return _emptyArray;
+    }
+
     // required string provider = 1;
-    public java.lang.String provider = "";
-    
+    public java.lang.String provider;
+
     // optional string label = 2;
-    public java.lang.String label = "";
-    
+    public java.lang.String label;
+
     // optional bool configure = 3;
-    public boolean configure = false;
-    
+    public boolean configure;
+
     // optional .launcher_backup.Resource icon = 4;
-    public com.nbehary.retribution.backup.BackupProtos.Resource icon = null;
-    
+    public com.nbehary.retribution.backup.BackupProtos.Resource icon;
+
     // optional .launcher_backup.Resource preview = 5;
-    public com.nbehary.retribution.backup.BackupProtos.Resource preview = null;
-    
-    public final Widget clear() {
+    public com.nbehary.retribution.backup.BackupProtos.Resource preview;
+
+    public Widget() {
+      clear();
+    }
+
+    public Widget clear() {
       provider = "";
       label = "";
       configure = false;
       icon = null;
       preview = null;
+      unknownFieldData = null;
       cachedSize = -1;
       return this;
     }
-    
+
     @Override
     public void writeTo(com.google.protobuf.nano.CodedOutputByteBufferNano output)
-                        throws java.io.IOException {
+        throws java.io.IOException {
       output.writeString(1, this.provider);
       if (!this.label.equals("")) {
         output.writeString(2, this.label);
       }
-      if (this.configure) {
+      if (this.configure != false) {
         output.writeBool(3, this.configure);
       }
       if (this.icon != null) {
@@ -914,28 +983,19 @@ public final class BackupProtos {
       if (this.preview != null) {
         output.writeMessage(5, this.preview);
       }
+      super.writeTo(output);
     }
-    
-    private int cachedSize = -1;
+
     @Override
-    public int getCachedSize() {
-      if (cachedSize < 0) {
-        // getSerializedSize sets cachedSize
-        getSerializedSize();
-      }
-      return cachedSize;
-    }
-    
-    @Override
-    public int getSerializedSize() {
-      int size = 0;
+    protected int computeSerializedSize() {
+      int size = super.computeSerializedSize();
       size += com.google.protobuf.nano.CodedOutputByteBufferNano
           .computeStringSize(1, this.provider);
       if (!this.label.equals("")) {
         size += com.google.protobuf.nano.CodedOutputByteBufferNano
             .computeStringSize(2, this.label);
       }
-      if (this.configure) {
+      if (this.configure != false) {
         size += com.google.protobuf.nano.CodedOutputByteBufferNano
             .computeBoolSize(3, this.configure);
       }
@@ -947,13 +1007,12 @@ public final class BackupProtos {
         size += com.google.protobuf.nano.CodedOutputByteBufferNano
           .computeMessageSize(5, this.preview);
       }
-      cachedSize = size;
       return size;
     }
-    
+
     @Override
     public Widget mergeFrom(
-        com.google.protobuf.nano.CodedInputByteBufferNano input)
+            com.google.protobuf.nano.CodedInputByteBufferNano input)
         throws java.io.IOException {
       while (true) {
         int tag = input.readTag();
@@ -961,7 +1020,7 @@ public final class BackupProtos {
           case 0:
             return this;
           default: {
-            if (!com.google.protobuf.nano.WireFormatNano.parseUnknownField(input, tag)) {
+            if (!storeUnknownField(input, tag)) {
               return this;
             }
             break;
@@ -979,30 +1038,32 @@ public final class BackupProtos {
             break;
           }
           case 34: {
-            this.icon = new com.nbehary.retribution.backup.BackupProtos.Resource();
+            if (this.icon == null) {
+              this.icon = new com.nbehary.retribution.backup.BackupProtos.Resource();
+            }
             input.readMessage(this.icon);
             break;
           }
           case 42: {
-            this.preview = new com.nbehary.retribution.backup.BackupProtos.Resource();
+            if (this.preview == null) {
+              this.preview = new com.nbehary.retribution.backup.BackupProtos.Resource();
+            }
             input.readMessage(this.preview);
             break;
           }
         }
       }
     }
-    
+
     public static Widget parseFrom(byte[] data)
         throws com.google.protobuf.nano.InvalidProtocolBufferNanoException {
       return com.google.protobuf.nano.MessageNano.mergeFrom(new Widget(), data);
     }
-    
+
     public static Widget parseFrom(
             com.google.protobuf.nano.CodedInputByteBufferNano input)
         throws java.io.IOException {
       return new Widget().mergeFrom(input);
     }
-    
   }
-  
 }

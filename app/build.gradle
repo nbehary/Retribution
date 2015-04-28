@@ -12,6 +12,7 @@ dependencies {
     compile files('libs/androidmarketapi-0.6.jar')
     compile files('libs/AndroidMarketApi.jar')
     compile files('libs/protobuf-java-2.4.1.jar')
+    compile 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-2'
 }
 
 android {
@@ -94,4 +95,6 @@ dependencies {
     compile "com.android.support:palette-v7:22.1.1"
     compile files('libs/protobuf.jar')
     compile fileTree(dir: 'libs', include: '*.jar')
+    compile 'com.squareup.wire:wire-runtime:1.7.0'
+    compile 'ws.antonov.gradle.plugins:gradle-plugin-protobuf:0.9.1'
 }
