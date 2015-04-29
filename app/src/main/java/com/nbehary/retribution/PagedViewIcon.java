@@ -64,8 +64,8 @@ public class PagedViewIcon extends TextView {
         setTextSize(TypedValue.COMPLEX_UNIT_SP, grid.iconTextSize);
     }
 
-    public void applyFromApplicationInfo(AppInfo info, boolean scaleUp,
-            PagedViewIcon.PressedCallback cb) {
+    public void applyFromApplicationInfo(AppInfo info,
+                                         PressedCallback cb) {
         mIcon = info.iconBitmap;
         mPressedCallback = cb;
         setCompoundDrawables(null, Utilities.createIconDrawable(mIcon),

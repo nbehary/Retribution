@@ -51,20 +51,17 @@ class RepeatListener implements OnTouchListener {
 
     /**
      * @param initialInterval The interval after first click event
-     * @param normalInterval The interval after second and subsequent click
-     *       events
      * @param clickListener The OnClickListener, that will be called
-     *       periodically
      */
-    public RepeatListener(int initialInterval, int normalInterval,
+    public RepeatListener(int initialInterval,
                           OnClickListener clickListener) {
         if (clickListener == null)
             throw new IllegalArgumentException("null runnable");
-        if (initialInterval < 0 || normalInterval < 0)
+        if (400 < 0 || 100 < 0)
             throw new IllegalArgumentException("negative interval");
 
-        this.initialInterval = initialInterval;
-        this.normalInterval = normalInterval;
+        this.initialInterval = 400;
+        this.normalInterval = 100;
         this.clickListener = clickListener;
     }
 

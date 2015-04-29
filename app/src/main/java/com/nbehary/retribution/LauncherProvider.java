@@ -133,15 +133,15 @@ public class  LauncherProvider extends ContentProvider {
     }
 
     private static long dbInsertAndCheck(DatabaseHelper helper,
-            SQLiteDatabase db, String table, String nullColumnHack, ContentValues values) {
+                                         SQLiteDatabase db, String table, ContentValues values) {
         if (!values.containsKey(LauncherSettings.Favorites._ID)) {
             throw new RuntimeException("Error: attempting to add item without specifying an id");
         }
-        return db.insert(table, nullColumnHack, values);
+        return db.insert(table, null, values);
     }
 
     private static void deleteId(SQLiteDatabase db, long id) {
-        Uri uri = LauncherSettings.Favorites.getContentUri(id, false);
+        Uri uri = LauncherSettings.Favorites.getContentUri(id);
         SqlArguments args = new SqlArguments(uri, null, null);
         db.delete(args.table, args.where, args.args);
     }
@@ -152,7 +152,7 @@ public class  LauncherProvider extends ContentProvider {
 
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         addModifiedTime(initialValues);
-        final long rowId = dbInsertAndCheck(mOpenHelper, db, args.table, null, initialValues);
+        final long rowId = dbInsertAndCheck(mOpenHelper, db, args.table, initialValues);
         if (rowId <= 0) return null;
 
         uri = ContentUris.withAppendedId(uri, rowId);
@@ -171,7 +171,7 @@ public class  LauncherProvider extends ContentProvider {
             int numValues = values.length;
             for (int i = 0; i < numValues; i++) {
                 addModifiedTime(values[i]);
-                if (dbInsertAndCheck(mOpenHelper, db, args.table, null, values[i]) < 0) {
+                if (dbInsertAndCheck(mOpenHelper, db, args.table, values[i]) < 0) {
                     return 0;
                 }
             }
@@ -263,7 +263,7 @@ public class  LauncherProvider extends ContentProvider {
 
             SharedPreferences.Editor editor = sp.edit();
             editor.remove(UPGRADED_FROM_OLD_DATABASE);
-            editor.commit();
+            editor.apply();
             loadedOldDb = true;
         }
         return loadedOldDb;
@@ -293,7 +293,7 @@ public class  LauncherProvider extends ContentProvider {
 
             mOpenHelper.loadFavorites(mOpenHelper.getWritableDatabase(), workspaceResId);
             mOpenHelper.setFlagJustLoadedOldDb();
-            editor.commit();
+            editor.apply();
         }
     }
 
@@ -447,7 +447,7 @@ public class  LauncherProvider extends ContentProvider {
             SharedPreferences.Editor editor = sp.edit();
             editor.putBoolean(UPGRADED_FROM_OLD_DATABASE, true);
             editor.putBoolean(EMPTY_DATABASE_CREATED, false);
-            editor.commit();
+            editor.apply();
         }
 
         private void setFlagEmptyDbCreated() {
@@ -456,7 +456,7 @@ public class  LauncherProvider extends ContentProvider {
             SharedPreferences.Editor editor = sp.edit();
             editor.putBoolean(EMPTY_DATABASE_CREATED, true);
             editor.putBoolean(UPGRADED_FROM_OLD_DATABASE, false);
-            editor.commit();
+            editor.apply();
         }
 
         // We rearrange the screens from the old launcher
@@ -557,7 +557,7 @@ public class  LauncherProvider extends ContentProvider {
                 try {
                     int numValues = rows.length;
                     for (i = 0; i < numValues; i++) {
-                        if (dbInsertAndCheck(this, db, TABLE_FAVORITES, null, rows[i]) < 0) {
+                        if (dbInsertAndCheck(this, db, TABLE_FAVORITES, rows[i]) < 0) {
                             return 0;
                         } else {
                             total++;
@@ -772,7 +772,7 @@ public class  LauncherProvider extends ContentProvider {
         }
 
         private boolean updateContactsShortcuts(SQLiteDatabase db) {
-            final String selectWhere = buildOrWhereString(Favorites.ITEM_TYPE,
+            final String selectWhere = buildOrWhereString(
                     new int[] { Favorites.ITEM_TYPE_SHORTCUT });
 
             Cursor c = null;
@@ -1025,7 +1025,7 @@ public class  LauncherProvider extends ContentProvider {
                     Favorites.ITEM_TYPE_WIDGET_SEARCH,
             };
 
-            final String selectWhere = buildOrWhereString(Favorites.ITEM_TYPE, bindSources);
+            final String selectWhere = buildOrWhereString(bindSources);
 
             Cursor c = null;
 
@@ -1101,7 +1101,7 @@ public class  LauncherProvider extends ContentProvider {
             if (LOGD) Log.d(TAG, "mMaxItemId: " + mMaxItemId);
         }
 
-        private static final void beginDocument(XmlPullParser parser, String firstElementName)
+        private static final void beginDocument(XmlPullParser parser)
                 throws XmlPullParserException, IOException {
             int type;
             while ((type = parser.next()) != XmlPullParser.START_TAG
@@ -1112,9 +1112,9 @@ public class  LauncherProvider extends ContentProvider {
                 throw new XmlPullParserException("No start tag found");
             }
 
-            if (!parser.getName().equals(firstElementName)) {
+            if (!parser.getName().equals(DatabaseHelper.TAG_FAVORITES)) {
                 throw new XmlPullParserException("Unexpected start tag: found " + parser.getName() +
-                        ", expected " + firstElementName);
+                        ", expected " + DatabaseHelper.TAG_FAVORITES);
             }
         }
 
@@ -1136,7 +1136,7 @@ public class  LauncherProvider extends ContentProvider {
             try {
                 XmlResourceParser parser = mContext.getResources().getXml(workspaceResourceId);
                 AttributeSet attrs = Xml.asAttributeSet(parser);
-                beginDocument(parser, TAG_FAVORITES);
+                beginDocument(parser);
 
                 final int depth = parser.getDepth();
 
@@ -1324,7 +1324,7 @@ public class  LauncherProvider extends ContentProvider {
                 values.put(Favorites.SPANX, 1);
                 values.put(Favorites.SPANY, 1);
                 values.put(Favorites._ID, generateNewItemId());
-                if (dbInsertAndCheck(this, db, TABLE_FAVORITES, null, values) < 0) {
+                if (dbInsertAndCheck(this, db, TABLE_FAVORITES, values) < 0) {
                     return -1;
                 }
             } catch (PackageManager.NameNotFoundException e) {
@@ -1340,7 +1340,7 @@ public class  LauncherProvider extends ContentProvider {
             values.put(Favorites.SPANY, 1);
             long id = generateNewItemId();
             values.put(Favorites._ID, id);
-            if (dbInsertAndCheck(this, db, TABLE_FAVORITES, null, values) <= 0) {
+            if (dbInsertAndCheck(this, db, TABLE_FAVORITES, values) <= 0) {
                 return -1;
             } else {
                 return id;
@@ -1460,7 +1460,7 @@ public class  LauncherProvider extends ContentProvider {
                 values.put(Favorites.APPWIDGET_ID, appWidgetId);
                 values.put(Favorites.APPWIDGET_PROVIDER, cn.flattenToString());
                 values.put(Favorites._ID, generateNewItemId());
-                dbInsertAndCheck(this, db, TABLE_FAVORITES, null, values);
+                dbInsertAndCheck(this, db, TABLE_FAVORITES, values);
 
                 allocatedAppWidgets = true;
 
@@ -1518,7 +1518,7 @@ public class  LauncherProvider extends ContentProvider {
             values.put(Favorites.ICON_RESOURCE, r.getResourceName(iconResId));
             values.put(Favorites._ID, id);
 
-            if (dbInsertAndCheck(this, db, TABLE_FAVORITES, null, values) < 0) {
+            if (dbInsertAndCheck(this, db, TABLE_FAVORITES, values) < 0) {
                 return -1;
             }
             return id;
@@ -1529,10 +1529,10 @@ public class  LauncherProvider extends ContentProvider {
      * Build a query string that will match any row where the column matches
      * anything in the values list.
      */
-    private static String buildOrWhereString(String column, int[] values) {
+    private static String buildOrWhereString(int[] values) {
         StringBuilder selectWhere = new StringBuilder();
         for (int i = values.length - 1; i >= 0; i--) {
-            selectWhere.append(column).append("=").append(values[i]);
+            selectWhere.append(LauncherSettings.BaseLauncherColumns.ITEM_TYPE).append("=").append(values[i]);
             if (i > 0) {
                 selectWhere.append(" OR ");
             }

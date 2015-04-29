@@ -20,10 +20,8 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
-import android.app.WallpaperManager;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -41,7 +39,6 @@ import android.os.Build;
 import android.os.SystemClock;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.widget.AutoScrollHelper;
-import android.support.v7.graphics.Palette;
 import android.text.InputType;
 import android.text.Selection;
 import android.util.AttributeSet;
@@ -196,7 +193,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         mContent.setCellDimensions(grid.folderCellWidthPx, grid.folderCellHeightPx);
         mContent.setGridSize(0, 0);
         mContent.getShortcutsAndWidgets().setMotionEventSplittingEnabled(false);
-        mContent.setInvertIfRtl(true);
+        mContent.setInvertIfRtl();
         mFolderName = (FolderEditText) findViewById(R.id.folder_name);
         mFolderName.setFolder(this);
         mFolderName.setOnFocusChangeListener(this);
@@ -228,7 +225,6 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         LinearLayout folder = (LinearLayout) findViewById(R.id.user_folder);
 
         mFolderBackground = getBackground();
-        ;
 
         if (!PreferencesProvider.Interface.General.getDefaultFolderBG()) {
 
@@ -323,10 +319,10 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
 
     public void dismissEditingName() {
         mInputMethodManager.hideSoftInputFromWindow(getWindowToken(), 0);
-        doneEditingFolderName(true);
+        doneEditingFolderName();
     }
 
-    public void doneEditingFolderName(boolean commit) {
+    public void doneEditingFolderName() {
         mFolderName.setHint(sHintText);
         // Convert to a string here to ensure that no other state associated with the text field
         // gets saved.
@@ -334,8 +330,8 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         mInfo.setTitle(newTitle);
         LauncherModel.updateItemInDatabase(mLauncher, mInfo);
 
-        if (commit) {
-            sendCustomAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED,
+        if (true) {
+            sendCustomAccessibilityEvent(
                     String.format(getContext().getString(R.string.folder_renamed), newTitle));
         }
         // In order to clear the focus from the text field, we set the focus on ourself. This
@@ -541,7 +537,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         oa.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationStart(Animator animation) {
-                sendCustomAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED,
+                sendCustomAccessibilityEvent(
                         String.format(getContext().getString(R.string.folder_opened),
                                 mContent.getCountX(), mContent.getCountY()));
                 mState = STATE_ANIMATING;
@@ -565,11 +561,11 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         oa.start();
     }
 
-    private void sendCustomAccessibilityEvent(int type, String text) {
+    private void sendCustomAccessibilityEvent(String text) {
         AccessibilityManager accessibilityManager = (AccessibilityManager)
                 getContext().getSystemService(Context.ACCESSIBILITY_SERVICE);
         if (accessibilityManager.isEnabled()) {
-            AccessibilityEvent event = AccessibilityEvent.obtain(type);
+            AccessibilityEvent event = AccessibilityEvent.obtain(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
             onInitializeAccessibilityEvent(event);
             event.getText().add(text);
             accessibilityManager.sendAccessibilityEvent(event);
@@ -601,7 +597,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
 
             @Override
             public void onAnimationStart(Animator animation) {
-                sendCustomAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED,
+                sendCustomAccessibilityEvent(
                         getContext().getString(R.string.folder_closed));
                 mState = STATE_ANIMATING;
             }
@@ -638,7 +634,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         textView.setText(item.title);
         textView.setTag(item);
         textView.setTextColor(getResources().getColor(R.color.folder_items_text_color));
-        textView.setShadowsEnabled(false);
+        textView.setShadowsEnabled();
 
         SharedPreferences preferences = getContext().getSharedPreferences("com.nbehary.retribution_preferences", 0);
         //Here
@@ -739,7 +735,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
     public void onDragOver(DragObject d) {
         final DragView dragView = d.dragView;
         final int scrollOffset = mScrollView.getScrollY();
-        final float[] r = getDragViewVisualCenter(d.x, d.y, d.xOffset, d.yOffset, dragView, null);
+        final float[] r = getDragViewVisualCenter(d.x, d.y, d.xOffset, d.yOffset, dragView);
         r[0] -= getPaddingLeft();
         r[1] -= getPaddingTop();
 
@@ -780,12 +776,12 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
     // the visual center represents the user's interpretation of where the item is, and hence
     // is the appropriate point to use when determining drop location.
     private float[] getDragViewVisualCenter(int x, int y, int xOffset, int yOffset,
-                                            DragView dragView, float[] recycle) {
+                                            DragView dragView) {
         float res[];
-        if (recycle == null) {
+        if (null == null) {
             res = new float[2];
         } else {
-            res = recycle;
+            res = null;
         }
 
         // These represent the visual top and left of drag view if a dragRect was provided.
@@ -923,7 +919,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
             items.add(info);
         }
 
-        LauncherModel.moveItemsInDatabase(mLauncher, items, mInfo.id, 0);
+        LauncherModel.moveItemsInDatabase(mLauncher, items, mInfo.id);
     }
 
     public void addItemLocationsInDatabase() {
@@ -1105,7 +1101,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
 
         for (int i = 0; i < list.size(); i++) {
             View v = list.get(i);
-            mContent.getVacantCell(vacant, 1, 1);
+            mContent.getVacantCell(vacant);
             CellLayout.LayoutParams lp = (CellLayout.LayoutParams) v.getLayoutParams();
             lp.cellX = vacant[0];
             lp.cellY = vacant[1];
@@ -1164,7 +1160,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
                 // Move the item from the folder to the workspace, in the position of the folder
                 if (getItemCount() == 1) {
                     ShortcutInfo finalItem = mInfo.contents.get(0);
-                    child = mLauncher.createShortcut(R.layout.application, cellLayout,
+                    child = mLauncher.createShortcut(cellLayout,
                             finalItem);
                     LauncherModel.addOrMoveItemInDatabase(mLauncher, finalItem, mInfo.container,
                             mInfo.screenId, mInfo.cellX, mInfo.cellY);

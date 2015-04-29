@@ -38,7 +38,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
@@ -47,7 +46,6 @@ import android.view.WindowManager;
 
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.exif.ExifInterface;
-import com.nbehary.retribution.R;
 import com.android.photos.BitmapRegionTileSource;
 
 import java.io.BufferedInputStream;
@@ -227,7 +225,7 @@ Log.d("NBEHARY142", "WallCropInit");
     void setWallpaper(String filePath, final boolean finishActivityWhenDone) {
         int rotation = getRotationFromExif(filePath);
         BitmapCropTask cropTask = new BitmapCropTask(
-                this, filePath, null, rotation, 0, 0, true, false, null);
+                this, filePath, null, rotation, 0, 0, true, false);
         final Point bounds = cropTask.getImageBounds();
         Runnable onEndCrop = new Runnable() {
             public void run() {
@@ -239,7 +237,7 @@ Log.d("NBEHARY142", "WallCropInit");
             }
         };
         cropTask.setOnEndRunnable(onEndCrop);
-        cropTask.setNoCrop(true);
+        cropTask.setNoCrop();
         cropTask.execute();
     }
 
@@ -403,20 +401,20 @@ Log.d("NBEHARY142", "WallCropInit");
         boolean mNoCrop;
 
         public BitmapCropTask(Context c, String filePath,
-                RectF cropBounds, int rotation, int outWidth, int outHeight,
-                boolean setWallpaper, boolean saveCroppedBitmap, Runnable onEndRunnable) {
+                              RectF cropBounds, int rotation, int outWidth, int outHeight,
+                              boolean setWallpaper, boolean saveCroppedBitmap) {
             mContext = c;
             mInFilePath = filePath;
-            init(cropBounds, rotation,
-                    outWidth, outHeight, setWallpaper, saveCroppedBitmap, onEndRunnable);
+            init(null, rotation,
+                    0, 0, true, false, null);
         }
 
         public BitmapCropTask(byte[] imageBytes,
-                RectF cropBounds, int rotation, int outWidth, int outHeight,
-                boolean setWallpaper, boolean saveCroppedBitmap, Runnable onEndRunnable) {
+                              RectF cropBounds, int rotation, int outWidth, int outHeight,
+                              boolean setWallpaper, boolean saveCroppedBitmap) {
             mInImageBytes = imageBytes;
-            init(cropBounds, rotation,
-                    outWidth, outHeight, setWallpaper, saveCroppedBitmap, onEndRunnable);
+            init(null, rotation,
+                    outWidth, outHeight, false, true, null);
         }
 
         public BitmapCropTask(Context c, Uri inUri,
@@ -453,8 +451,8 @@ Log.d("NBEHARY142", "WallCropInit");
             mOnBitmapCroppedHandler = handler;
         }
 
-        public void setNoCrop(boolean value) {
-            mNoCrop = value;
+        public void setNoCrop() {
+            mNoCrop = true;
         }
 
         public void setOnEndRunnable(Runnable onEndRunnable) {
@@ -714,7 +712,7 @@ Log.d("NBEHARY142", "WallCropInit");
             editor.remove(WALLPAPER_WIDTH_KEY);
             editor.remove(WALLPAPER_HEIGHT_KEY);
         }
-        editor.commit();
+        editor.apply();
 
         suggestWallpaperDimension(getResources(),
                 sp, getWindowManager(), WallpaperManager.getInstance(this));

@@ -24,8 +24,6 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.ContentObserver;
 import android.os.Handler;
-import android.os.IBinder;
-import android.os.RemoteException;
 import android.util.Log;
 
 import java.lang.ref.WeakReference;
@@ -88,9 +86,7 @@ public class LauncherAppState {
 
         Log.v(Launcher.TAG, "LauncherAppState inited");
 
-        if (sContext.getResources().getBoolean(R.bool.debug_memory_enabled)) {
-            MemoryTracker.startTrackingMe(sContext, "L");
-        }
+
 
         // set sIsScreenXLarge and mScreenDensity *before* creating icon cache
         mIsScreenLarge = isScreenLarge(sContext.getResources());
@@ -156,7 +152,7 @@ public class LauncherAppState {
         public void onChange(boolean selfChange) {
             // If the database has ever changed, then we really need to force a reload of the
             // workspace on the next load
-            mModel.resetLoadedState(false, true);
+            mModel.resetLoadedState(false);
             mModel.startLoaderFromBackground();
         }
     };

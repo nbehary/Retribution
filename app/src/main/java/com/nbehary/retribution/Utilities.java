@@ -381,7 +381,7 @@ final class Utilities {
         return bitmap;
     }
 
-    public static int colorFromWallpaper(Context ctx,int color) {
+    public static int colorFromWallpaper(Context ctx) {
         PackageManager pm = ctx.getPackageManager();
 
 /*
@@ -389,7 +389,7 @@ final class Utilities {
  * is set, then get the drawable image from the package for the
  * live wallpaper
  */
-        Drawable wallpaperDrawable = null;
+        Drawable wallpaperDrawable;
         if (WallpaperManager.getInstance(ctx).getWallpaperInfo() != null) {
             wallpaperDrawable = WallpaperManager.getInstance(ctx).getWallpaperInfo().loadThumbnail(pm);
         }
@@ -407,7 +407,7 @@ final class Utilities {
 
         Bitmap bmp = Utilities.drawableToBitmap(wallpaperDrawable2);
         Palette pal = Palette.from(bmp).generate();
-        return pal.getDarkMutedColor(color);
+        return pal.getDarkMutedColor(0);
 
 
 

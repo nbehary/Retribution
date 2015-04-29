@@ -20,7 +20,6 @@ import com.google.protobuf.nano.InvalidProtocolBufferNanoException;
 import com.google.protobuf.nano.MessageNano;
 import com.nbehary.retribution.LauncherSettings.Favorites;
 import com.nbehary.retribution.LauncherSettings.WorkspaceScreens;
-import com.nbehary.retribution.backup.BackupProtos;
 import com.nbehary.retribution.backup.BackupProtos.CheckedMessage;
 import com.nbehary.retribution.backup.BackupProtos.Favorite;
 import com.nbehary.retribution.backup.BackupProtos.Journal;
@@ -327,7 +326,7 @@ class LauncherBackupHelper implements BackupHelper {
                 Base64.encodeToString(buffer, 0, dataSize, Base64.NO_WRAP));
 
         try {
-            Favorite favorite =  unpackFavorite(buffer, 0, dataSize);
+            Favorite favorite =  unpackFavorite(buffer, dataSize);
             if (DEBUG) Log.d(TAG, "unpacked " + favorite.itemType);
         } catch (InvalidProtocolBufferNanoException e) {
             Log.w(TAG, "failed to decode proto", e);
@@ -394,7 +393,7 @@ class LauncherBackupHelper implements BackupHelper {
         if (DEBUG) Log.d(TAG, "read (" + buffer.length + "): " +
                 Base64.encodeToString(buffer, 0, dataSize, Base64.NO_WRAP));
         try {
-            Screen screen = unpackScreen(buffer, 0, dataSize);
+            Screen screen = unpackScreen(buffer, dataSize);
             if (DEBUG) Log.d(TAG, "unpacked " + screen.rank);
         } catch (InvalidProtocolBufferNanoException e) {
             Log.w(TAG, "failed to decode proto", e);
@@ -504,7 +503,7 @@ class LauncherBackupHelper implements BackupHelper {
         if (DEBUG) Log.d(TAG, "read (" + buffer.length + "): " +
                 Base64.encodeToString(buffer, 0, dataSize, Base64.NO_WRAP));
         try {
-            Resource res = unpackIcon(buffer, 0, dataSize);
+            Resource res = unpackIcon(buffer, dataSize);
             if (DEBUG) Log.d(TAG, "unpacked " + res.dpi);
             if (DEBUG) Log.d(TAG, "read " +
                     Base64.encodeToString(res.data, 0, res.data.length,
@@ -619,7 +618,7 @@ class LauncherBackupHelper implements BackupHelper {
         if (DEBUG) Log.d(TAG, "read (" + buffer.length + "): " +
                 Base64.encodeToString(buffer, 0, dataSize, Base64.NO_WRAP));
         try {
-            Widget widget = unpackWidget(buffer, 0, dataSize);
+            Widget widget = unpackWidget(buffer, dataSize);
             if (DEBUG) Log.d(TAG, "unpacked " + widget.provider);
             if (widget.icon.data != null)  {
                 Bitmap icon = BitmapFactory
@@ -764,10 +763,10 @@ class LauncherBackupHelper implements BackupHelper {
     }
 
     /** Deserialize a Favorite from persistence, after verifying checksum wrapper. */
-    private Favorite unpackFavorite(byte[] buffer, int offset, int dataSize)
+    private Favorite unpackFavorite(byte[] buffer, int dataSize)
             throws InvalidProtocolBufferNanoException {
         Favorite favorite = new Favorite();
-        MessageNano.mergeFrom(favorite, readCheckedBytes(buffer, offset, dataSize));
+        MessageNano.mergeFrom(favorite, readCheckedBytes(buffer, 0, dataSize));
         return favorite;
     }
 
@@ -781,10 +780,10 @@ class LauncherBackupHelper implements BackupHelper {
     }
 
     /** Deserialize a Screen from persistence, after verifying checksum wrapper. */
-    private Screen unpackScreen(byte[] buffer, int offset, int dataSize)
+    private Screen unpackScreen(byte[] buffer, int dataSize)
             throws InvalidProtocolBufferNanoException {
         Screen screen = new Screen();
-        MessageNano.mergeFrom(screen, readCheckedBytes(buffer, offset, dataSize));
+        MessageNano.mergeFrom(screen, readCheckedBytes(buffer, 0, dataSize));
         return screen;
     }
 
@@ -800,10 +799,10 @@ class LauncherBackupHelper implements BackupHelper {
     }
 
     /** Deserialize an icon resource from persistence, after verifying checksum wrapper. */
-    private Resource unpackIcon(byte[] buffer, int offset, int dataSize)
+    private Resource unpackIcon(byte[] buffer, int dataSize)
             throws InvalidProtocolBufferNanoException {
         Resource res = new Resource();
-        MessageNano.mergeFrom(res, readCheckedBytes(buffer, offset, dataSize));
+        MessageNano.mergeFrom(res, readCheckedBytes(buffer, 0, dataSize));
         return res;
     }
 
@@ -838,10 +837,10 @@ class LauncherBackupHelper implements BackupHelper {
     }
 
     /** Deserialize a widget from persistence, after verifying checksum wrapper. */
-    private Widget unpackWidget(byte[] buffer, int offset, int dataSize)
+    private Widget unpackWidget(byte[] buffer, int dataSize)
             throws InvalidProtocolBufferNanoException {
         Widget widget = new Widget();
-        MessageNano.mergeFrom(widget, readCheckedBytes(buffer, offset, dataSize));
+        MessageNano.mergeFrom(widget, readCheckedBytes(buffer, 0, dataSize));
         return widget;
     }
 

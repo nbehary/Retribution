@@ -22,7 +22,7 @@ package com.nbehary.retribution.backup;
 @SuppressWarnings("hiding")
 public interface BackupProtos {
 
-  public static final class Key extends
+  final class Key extends
       com.google.protobuf.nano.ExtendableMessageNano<Key> {
 
     // enum Type
@@ -162,7 +162,7 @@ public interface BackupProtos {
     }
   }
 
-  public static final class CheckedMessage extends
+  final class CheckedMessage extends
       com.google.protobuf.nano.ExtendableMessageNano<CheckedMessage> {
 
     private static volatile CheckedMessage[] _emptyArray;
@@ -254,7 +254,7 @@ public interface BackupProtos {
     }
   }
 
-  public static final class Journal extends
+  final class Journal extends
       com.google.protobuf.nano.ExtendableMessageNano<Journal> {
 
     private static volatile Journal[] _emptyArray;
@@ -417,7 +417,7 @@ public interface BackupProtos {
     }
   }
 
-  public static final class Favorite extends
+  final class Favorite extends
       com.google.protobuf.nano.ExtendableMessageNano<Favorite> {
 
     private static volatile Favorite[] _emptyArray;
@@ -749,7 +749,7 @@ public interface BackupProtos {
     }
   }
 
-  public static final class Screen extends
+  final class Screen extends
       com.google.protobuf.nano.ExtendableMessageNano<Screen> {
 
     private static volatile Screen[] _emptyArray;
@@ -845,7 +845,7 @@ public interface BackupProtos {
     }
   }
 
-  public static final class Resource extends
+  final class Resource extends
       com.google.protobuf.nano.ExtendableMessageNano<Resource> {
 
     private static volatile Resource[] _emptyArray;
@@ -937,7 +937,7 @@ public interface BackupProtos {
     }
   }
 
-  public static final class Widget extends
+  final class Widget extends
       com.google.protobuf.nano.ExtendableMessageNano<Widget> {
 
     private static volatile Widget[] _emptyArray;

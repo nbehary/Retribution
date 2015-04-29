@@ -38,7 +38,6 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -53,8 +52,6 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Spinner;
 
 
@@ -151,9 +148,6 @@ public class FolderColorsActivity extends AppCompatActivity {
         this.mBgColor = mBgColor;
     }
 
-    private void setmFreeColor(String mFreeColor) {
-        this.mFreeColor = mFreeColor;
-    }
 
     private void setmTintIcon(boolean mTintIcon) {
         this.mTintIcon = mTintIcon;
@@ -166,18 +160,9 @@ public class FolderColorsActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
 
     @Override
     public void finish() {
@@ -205,7 +190,6 @@ public class FolderColorsActivity extends AppCompatActivity {
         int mBgColor;
         int mIconColor;
         int mNameColor;
-        String mFreeColor;
         boolean mDefaultBG;
         boolean mTintIcon;
         int mFolderType;
@@ -251,17 +235,21 @@ public class FolderColorsActivity extends AppCompatActivity {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     mChanging = (String) parent.getItemAtPosition(position);
-                    if (mChanging.equals("Background")) {
-                        mPicker.setColor(mBgColor);
-                    } else if (mChanging.equals("Folder Name")) {
-                        if (mNameColor != 0) {
-                            mPicker.setColor(mNameColor);
-                        }
-                    } else {
-                        if (mIconColor != 0) {
-                            mPicker.setColor(mIconColor);
-                        }
+                    switch (mChanging) {
+                        case "Background":
+                            mPicker.setColor(mBgColor);
+                            break;
+                        case "Folder Name":
+                            if (mNameColor != 0) {
+                                mPicker.setColor(mNameColor);
+                            }
+                            break;
+                        default:
+                            if (mIconColor != 0) {
+                                mPicker.setColor(mIconColor);
+                            }
 
+                            break;
                     }
                 }
 
@@ -284,7 +272,7 @@ public class FolderColorsActivity extends AppCompatActivity {
             Button wall = (Button) rootView.findViewById(R.id.folder_colors_wall);
             wall.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    int color = Utilities.colorFromWallpaper(mContext,0);
+                    int color = Utilities.colorFromWallpaper(mContext);
                     mPicker.setColor(color);
                     mBgColor = color;
                     mPreviewImage.setImageBitmap(generateFolderPreview(getResources(), mBgColor, mIconColor, mNameColor, mDefaultBG));
@@ -300,21 +288,25 @@ public class FolderColorsActivity extends AppCompatActivity {
             mPreviewImage.setImageBitmap(generateFolderPreview(getResources(), mBgColor, mIconColor, mNameColor, mDefaultBG));
 
             mPicker = (ColorPickerView) rootView.findViewById(R.id.picker);
-            mPicker.setAlphaSliderVisible(false);
+            mPicker.setAlphaSliderVisible();
 
             mPicker.setOnColorChangedListener(new ColorPickerView.OnColorChangedListener() {
                 @Override
                 public void onColorChanged(int i) {
                     FolderColorsActivity parent = (FolderColorsActivity) getActivity();
-                    if (mChanging.equals("Background")) {
-                        mBgColor = i;
-                        parent.setmBgColor(i);
-                    } else if (mChanging.equals("Folder Name")) {
-                        mNameColor = i;
-                        parent.setmNameColor(i);
-                    } else {
-                        mIconColor = i;
-                        parent.setmIconColor(i);
+                    switch (mChanging) {
+                        case "Background":
+                            mBgColor = i;
+                            parent.setmBgColor(i);
+                            break;
+                        case "Folder Name":
+                            mNameColor = i;
+                            parent.setmNameColor(i);
+                            break;
+                        default:
+                            mIconColor = i;
+                            parent.setmIconColor(i);
+                            break;
                     }
                     if (mDefaultBG) {
                         mDefaultBG = false;
@@ -344,23 +336,25 @@ public class FolderColorsActivity extends AppCompatActivity {
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     String iconType = (String) parent.getItemAtPosition(position);
                     FolderColorsActivity activity = (FolderColorsActivity) getActivity();
-                    if (iconType.equals("Default (White)")) {
-                        mTintIcon = false;
-                        activity.setmTintIcon(false);
-                        mFolderType = 0;
-                        activity.setmFolderType(0);
-                    } else if (iconType.equals("Tint with Background")) {
-                        mTintIcon = true;
-                        activity.setmTintIcon(true);
-                        mFolderType = 0;
-                        activity.setmFolderType(0);
-
-                    } else {
-                        mTintIcon = false;
-                        activity.setmTintIcon(false);
-                        mFolderType = 2;
-                        activity.setmFolderType(2);
-
+                    switch (iconType) {
+                        case "Default (White)":
+                            mTintIcon = false;
+                            activity.setmTintIcon(false);
+                            mFolderType = 0;
+                            activity.setmFolderType(0);
+                            break;
+                        case "Tint with Background":
+                            mTintIcon = true;
+                            activity.setmTintIcon(true);
+                            mFolderType = 0;
+                            activity.setmFolderType(0);
+                            break;
+                        default:
+                            mTintIcon = false;
+                            activity.setmTintIcon(false);
+                            mFolderType = 2;
+                            activity.setmFolderType(2);
+                            break;
                     }
                 }
 
@@ -437,11 +431,11 @@ public class FolderColorsActivity extends AppCompatActivity {
             width = bounds.width();
             x = (canvas.getWidth() - width) / 2;
             canvas.drawText("Folder Name", x, grid.folderCellHeightPx + 50, paint);
-            previewBitmap = getRoundedCornerBitmap(previewBitmap, 2);
+            previewBitmap = getRoundedCornerBitmap(previewBitmap);
             return previewBitmap;
         }
 
-        public static Bitmap getRoundedCornerBitmap(Bitmap bitmap, int pixels) {
+        public static Bitmap getRoundedCornerBitmap(Bitmap bitmap) {
             Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap
                     .getHeight(), Bitmap.Config.ARGB_8888);
             Canvas canvas = new Canvas(output);
@@ -455,7 +449,7 @@ public class FolderColorsActivity extends AppCompatActivity {
             paint.setAntiAlias(true);
             canvas.drawARGB(0, 0, 0, 0);
             paint.setColor(color);
-            canvas.drawRoundRect(rectF, (float) pixels, (float) pixels, paint);
+            canvas.drawRoundRect(rectF, (float) 2, (float) 2, paint);
 
             paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
             canvas.drawBitmap(bitmap, rect, rect, paint);
@@ -463,17 +457,13 @@ public class FolderColorsActivity extends AppCompatActivity {
             return output;
         }
 
-        public static void renderDrawableToBitmap(
-                Drawable d, Bitmap bitmap, int x, int y, int w, int h) {
-            renderDrawableToBitmap(d, bitmap, x, y, w, h, 1f);
-        }
+
 
         private static void renderDrawableToBitmap(
-                Drawable d, Bitmap bitmap, int x, int y, int w, int h,
-                float scale) {
+                Drawable d, Bitmap bitmap, int x, int y, int w, int h) {
             if (bitmap != null) {
                 Canvas c = new Canvas(bitmap);
-                c.scale(scale, scale);
+                c.scale(1f, 1f);
                 Rect oldBounds = d.copyBounds();
                 d.setBounds(x, y, x + w, y + h);
                 d.draw(c);

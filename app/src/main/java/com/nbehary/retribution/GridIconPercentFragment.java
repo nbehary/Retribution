@@ -65,15 +65,14 @@ public class GridIconPercentFragment extends Fragment {
      * this fragment using the provided parameters.
      *
      * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment GridIconPercentFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static GridIconPercentFragment newInstance(String param1, String param2) {
+    public static GridIconPercentFragment newInstance(String param1) {
         GridIconPercentFragment fragment = new GridIconPercentFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(ARG_PARAM1, "percent_fragment");
+        args.putString(ARG_PARAM2, "");
         fragment.setArguments(args);
         return fragment;
     }

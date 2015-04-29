@@ -31,8 +31,6 @@ import android.view.Gravity;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import com.nbehary.retribution.R;
-
 public class AppWidgetResizeFrame extends FrameLayout {
     private final LauncherAppWidgetHostView mWidgetView;
     private final CellLayout mCellLayout;
@@ -208,34 +206,7 @@ public class AppWidgetResizeFrame extends FrameLayout {
         }
     }
 
-    public void visualizeResizeForDelta(int deltaX, int deltaY) {
-        visualizeResizeForDelta(deltaX, deltaY, false);
-    }
 
-    /**
-     *  Based on the deltas, we resize the frame, and, if needed, we resize the widget.
-     */
-    private void visualizeResizeForDelta(int deltaX, int deltaY, boolean onDismiss) {
-        updateDeltas(deltaX, deltaY);
-        DragLayer.LayoutParams lp = (DragLayer.LayoutParams) getLayoutParams();
-
-        if (mLeftBorderActive) {
-            lp.x = mBaselineX + mDeltaX;
-            lp.width = mBaselineWidth - mDeltaX;
-        } else if (mRightBorderActive) {
-            lp.width = mBaselineWidth + mDeltaX;
-        }
-
-        if (mTopBorderActive) {
-            lp.y = mBaselineY + mDeltaY;
-            lp.height = mBaselineHeight - mDeltaY;
-        } else if (mBottomBorderActive) {
-            lp.height = mBaselineHeight + mDeltaY;
-        }
-
-        resizeWidgetIfNeeded(onDismiss);
-        requestLayout();
-    }
 
     /**
      *  Based on the current deltas, we determine if and how to resize the widget.

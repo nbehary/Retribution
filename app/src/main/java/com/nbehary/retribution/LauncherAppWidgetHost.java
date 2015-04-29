@@ -30,8 +30,8 @@ public class LauncherAppWidgetHost extends AppWidgetHost {
 
     private final Launcher mLauncher;
 
-    public LauncherAppWidgetHost(Launcher launcher, int hostId) {
-        super(launcher, hostId);
+    public LauncherAppWidgetHost(Launcher launcher) {
+        super(launcher, Launcher.APPWIDGET_HOST_ID);
         mLauncher = launcher;
     }
 

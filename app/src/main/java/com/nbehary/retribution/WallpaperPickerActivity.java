@@ -69,7 +69,6 @@ import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
-import com.nbehary.retribution.R;
 import com.android.photos.BitmapRegionTileSource;
 
 import org.xmlpull.v1.XmlPullParserException;
@@ -693,7 +692,7 @@ public class WallpaperPickerActivity extends WallpaperCropActivity {
                     context, uri, null, rotation, width, height, false, true, null);
         } else if (imageBytes != null) {
             cropTask = new BitmapCropTask(
-                    imageBytes, null, rotation, width, height, false, true, null);
+                    imageBytes, null, rotation, width, height, false, true);
         }  else {
             cropTask = new BitmapCropTask(
                     context, res, resId, null, rotation, width, height, false, true, null);

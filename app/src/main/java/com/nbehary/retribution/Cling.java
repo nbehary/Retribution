@@ -168,7 +168,7 @@ public class Cling extends FrameLayout implements Insettable, View.OnClickListen
         }
     }
 
-    void show(boolean animate, int duration) {
+    void show(boolean animate) {
         setVisibility(View.VISIBLE);
         setLayerType(View.LAYER_TYPE_HARDWARE, null);
         if (mDrawIdentifier.equals(WORKSPACE_PORTRAIT) ||
@@ -179,7 +179,7 @@ public class Cling extends FrameLayout implements Insettable, View.OnClickListen
             content.setAlpha(0f);
             content.animate()
                     .alpha(1f)
-                    .setDuration(duration)
+                    .setDuration(Launcher.SHOW_CLING_DURATION)
                     .setListener(null)
                     .start();
             setAlpha(1f);
@@ -190,7 +190,7 @@ public class Cling extends FrameLayout implements Insettable, View.OnClickListen
                 animate()
                     .alpha(1f)
                     .setInterpolator(new AccelerateInterpolator())
-                    .setDuration(duration)
+                    .setDuration(Launcher.SHOW_CLING_DURATION)
                     .setListener(null)
                     .start();
             } else {
@@ -204,7 +204,7 @@ public class Cling extends FrameLayout implements Insettable, View.OnClickListen
             mScrimView.setAlpha(0f);
             mScrimView.animate()
                     .alpha(1f)
-                    .setDuration(duration)
+                    .setDuration(Launcher.SHOW_CLING_DURATION)
                     .setListener(null)
                     .start();
         }
@@ -426,7 +426,6 @@ public class Cling extends FrameLayout implements Insettable, View.OnClickListen
                         mErasePaint);
                 canvas.drawBitmap(eraseBg, 0, 0, null);
                 eraseCanvas.setBitmap(null);
-                eraseBg = null;
 
                 // Draw the focused hotseat app icon
                 if (mFocusedHotseatAppBounds != null && mFocusedHotseatApp != null) {

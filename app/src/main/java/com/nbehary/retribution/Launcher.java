@@ -83,7 +83,6 @@ import android.text.method.TextKeyListener;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
-import android.view.Gravity;
 import android.view.HapticFeedbackConstants;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -108,16 +107,12 @@ import android.widget.AdapterView;
 import android.widget.Advanceable;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.nbehary.retribution.R;
 import com.nbehary.retribution.DropTarget.DragObject;
 import com.nbehary.retribution.preference.PreferencesProvider;
 import com.nbehary.retribution.settings.SettingsProvider;
@@ -242,7 +237,7 @@ public class Launcher extends AppCompatActivity
     static final int APPWIDGET_HOST_ID = 1024;
     private static final int EXIT_SPRINGLOADED_MODE_SHORT_TIMEOUT = 300;
     private static final int EXIT_SPRINGLOADED_MODE_LONG_TIMEOUT = 600;
-    private static final int SHOW_CLING_DURATION = 250;
+    static final int SHOW_CLING_DURATION = 250;
     private static final int DISMISS_CLING_DURATION = 200;
 
     private static final Object sLock = new Object();
@@ -263,7 +258,7 @@ public class Launcher extends AppCompatActivity
     private View mLauncherView;
     private DragLayer mDragLayer;
     private DragController mDragController;
-    private View mWeightWatcher;
+
 
     private AppWidgetManager mAppWidgetManager;
     private LauncherAppWidgetHost mAppWidgetHost;
@@ -330,7 +325,7 @@ public class Launcher extends AppCompatActivity
 
     private static LocaleConfiguration sLocaleConfiguration = null;
 
-    private static final HashMap<Long, FolderInfo> sFolders = new HashMap<Long, FolderInfo>();
+    static final HashMap<Long, FolderInfo> sFolders = new HashMap<Long, FolderInfo>();
 
     private View.OnTouchListener mHapticFeedbackTouchListener;
 
@@ -484,7 +479,7 @@ public class Launcher extends AppCompatActivity
 
         mAppWidgetManager = AppWidgetManager.getInstance(this);
 
-        mAppWidgetHost = new LauncherAppWidgetHost(this, APPWIDGET_HOST_ID);
+        mAppWidgetHost = new LauncherAppWidgetHost(this);
         mAppWidgetHost.startListening();
 
         // If we are getting an onCreate, we can actually preempt onResume and unset mPaused here,
@@ -563,7 +558,7 @@ public class Launcher extends AppCompatActivity
 
     }
 
-    private String updateToken(boolean invalidateToken) {
+    private String updateToken() {
         String authToken = "null";
         Context ctx = getApplicationContext();
 
@@ -580,9 +575,9 @@ public class Launcher extends AppCompatActivity
             }
             Bundle authTokenBundle = accountManagerFuture.getResult();
             authToken = authTokenBundle.getString(AccountManager.KEY_AUTHTOKEN);
-            if (invalidateToken) {
+            if (false) {
                 am.invalidateAuthToken("com.google", authToken);
-                authToken = updateToken(false);
+                authToken = updateToken();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -916,7 +911,7 @@ public class Launcher extends AppCompatActivity
                         final int intentIndex = c.getColumnIndexOrThrow
                                 (LauncherSettings.Favorites.INTENT);
                         String intentDescription = c.getString(intentIndex);
-                        Intent intent = null;
+                        Intent intent;
                         try {
                             intent = Intent.parseUri(intentDescription, 0);
                         } catch (URISyntaxException e) {
@@ -989,8 +984,8 @@ public class Launcher extends AppCompatActivity
         }
         mDragLayer.clearAnimatedView();
         // Exit spring loaded mode if necessary after cancelling the configuration of a widget
-        exitSpringLoadedDragModeDelayed((resultCode != RESULT_CANCELED), delayExitSpringLoadedMode,
-                null);
+        exitSpringLoadedDragModeDelayed((resultCode != RESULT_CANCELED), delayExitSpringLoadedMode
+        );
     }
 
     private void completeTwoStageWidgetDrop(final int resultCode, final int appWidgetId) {
@@ -1010,8 +1005,8 @@ public class Launcher extends AppCompatActivity
                 public void run() {
                     completeAddAppWidget(appWidgetId, mPendingAddInfo.container,
                             mPendingAddInfo.screenId, layout, null);
-                    exitSpringLoadedDragModeDelayed((resultCode != RESULT_CANCELED), false,
-                            null);
+                    exitSpringLoadedDragModeDelayed((resultCode != RESULT_CANCELED), false
+                    );
                 }
             };
         } else if (resultCode == RESULT_CANCELED) {
@@ -1019,8 +1014,8 @@ public class Launcher extends AppCompatActivity
             onCompleteRunnable = new Runnable() {
                 @Override
                 public void run() {
-                    exitSpringLoadedDragModeDelayed((resultCode != RESULT_CANCELED), false,
-                            null);
+                    exitSpringLoadedDragModeDelayed((resultCode != RESULT_CANCELED), false
+                    );
                 }
             };
         }
@@ -1065,7 +1060,7 @@ public class Launcher extends AppCompatActivity
             showAllApps(false, AppsCustomizePagedView.ContentType.IconPacks, false);
         } else if (mOnResumeState == State.FOLDERS_CUSTOMIZE) {
             mState = State.FOLDERS_CUSTOMIZE;
-            hideHotseat(false);
+            hideHotseat();
             mSearchDropTargetBar.setVisibility(View.INVISIBLE);
             mWorkspace.setVisibility(View.INVISIBLE);
 
@@ -1256,8 +1251,6 @@ public class Launcher extends AppCompatActivity
         popupMenu.inflate(R.menu.apps_customize_sort_mode);
         AppsCustomizePagedView.SortMode sortMode = mAppsCustomizeContent.getSortMode();
         boolean test = (sortMode == AppsCustomizePagedView.SortMode.Title);
-        test = (sortMode == AppsCustomizePagedView.SortMode.InstallTime);
-        test = (sortMode == AppsCustomizePagedView.SortMode.LaunchCount);
         menu.findItem(R.id.sort_mode_title).setCheckable(true)
                 .setChecked((sortMode == AppsCustomizePagedView.SortMode.Title));
         menu.findItem(R.id.sort_mode_launch_count).setCheckable(true)
@@ -1524,9 +1517,9 @@ public class Launcher extends AppCompatActivity
     private static State intToState(int stateOrdinal) {
         State state = State.WORKSPACE;
         final State[] stateValues = State.values();
-        for (int i = 0; i < stateValues.length; i++) {
-            if (stateValues[i].ordinal() == stateOrdinal) {
-                state = stateValues[i];
+        for (State stateValue : stateValues) {
+            if (stateValue.ordinal() == stateOrdinal) {
+                state = stateValue;
                 break;
             }
         }
@@ -1577,7 +1570,7 @@ public class Launcher extends AppCompatActivity
         boolean renameFolder = savedState.getBoolean(RUNTIME_STATE_PENDING_FOLDER_RENAME, false);
         if (renameFolder) {
             long id = savedState.getLong(RUNTIME_STATE_PENDING_FOLDER_RENAME_ID);
-            mFolderInfo = mModel.getFolderById(this, sFolders, id);
+            mFolderInfo = mModel.getFolderById(this, id);
             mRestoring = true;
         }
 
@@ -1758,20 +1751,7 @@ public class Launcher extends AppCompatActivity
             mSearchDropTargetBar.setup(this, dragController);
         }
 
-        if (getResources().getBoolean(R.bool.debug_memory_enabled)) {
-            Log.v(TAG, "adding WeightWatcher");
-            mWeightWatcher = new WeightWatcher(this);
-            mWeightWatcher.setAlpha(0.5f);
-            ((FrameLayout) mLauncherView).addView(mWeightWatcher,
-                    new FrameLayout.LayoutParams(
-                            FrameLayout.LayoutParams.MATCH_PARENT,
-                            FrameLayout.LayoutParams.WRAP_CONTENT,
-                            Gravity.BOTTOM)
-            );
 
-            boolean show = shouldShowWeightWatcher();
-            mWeightWatcher.setVisibility(show ? View.VISIBLE : View.GONE);
-        }
     }
 
     /**
@@ -1781,20 +1761,19 @@ public class Launcher extends AppCompatActivity
      * @return A View inflated from R.layout.application.
      */
     private View createShortcut(ShortcutInfo info) {
-        return createShortcut(R.layout.application,
+        return createShortcut(
                 (ViewGroup) mWorkspace.getChildAt(mWorkspace.getCurrentPage()), info);
     }
 
     /**
      * Creates a view representing a shortcut inflated from the specified resource.
      *
-     * @param layoutResId The id of the XML layout used to create the shortcut.
      * @param parent      The group the shortcut belongs to.
      * @param info        The data structure describing the shortcut.
      * @return A View inflated from layoutResId.
      */
-    View createShortcut(int layoutResId, ViewGroup parent, ShortcutInfo info) {
-        BubbleTextView favorite = (BubbleTextView) mInflater.inflate(layoutResId, parent, false);
+    View createShortcut(ViewGroup parent, ShortcutInfo info) {
+        BubbleTextView favorite = (BubbleTextView) mInflater.inflate(R.layout.application, parent, false);
         favorite.applyFromShortcutInfo(info, mIconCache);
         favorite.setOnClickListener(this);
         return favorite;
@@ -1842,9 +1821,9 @@ public class Launcher extends AppCompatActivity
         int[] touchXY = mPendingAddInfo.dropPos;
         CellLayout layout = getCellLayout(container, screenId);
 
-        boolean foundCellSpan = false;
+        boolean foundCellSpan;
 
-        ShortcutInfo info = mModel.infoFromShortcutIntent(this, data, null);
+        ShortcutInfo info = mModel.infoFromShortcutIntent(this, data);
         if (info == null) {
             return;
         }
@@ -1869,7 +1848,7 @@ public class Launcher extends AppCompatActivity
             }
         } else if (touchXY != null) {
             // when dragging and dropping, just find the closest free spot
-            int[] result = layout.findNearestVacantArea(touchXY[0], touchXY[1], 1, 1, cellXY);
+            int[] result = layout.findNearestVacantArea(touchXY[0], touchXY[1], cellXY);
             foundCellSpan = (result != null);
         } else {
             foundCellSpan = layout.findCellForSpan(cellXY, 1, 1);
@@ -1939,7 +1918,7 @@ public class Launcher extends AppCompatActivity
         int[] cellXY = mTmpAddItemCellCoordinates;
         int[] touchXY = mPendingAddInfo.dropPos;
         int[] finalSpan = new int[2];
-        boolean foundCellSpan = false;
+        boolean foundCellSpan;
         if (mPendingAddInfo.cellX >= 0 && mPendingAddInfo.cellY >= 0) {
             cellXY[0] = mPendingAddInfo.cellX;
             cellXY[1] = mPendingAddInfo.cellY;
@@ -2216,7 +2195,7 @@ public class Launcher extends AppCompatActivity
             mWorkspace.exitWidgetResizeMode();
             if (alreadyOnHome && mState == State.WORKSPACE && !mWorkspace.isTouchActive() &&
                     openFolder == null) {
-                mWorkspace.moveToDefaultScreen(true);
+                mWorkspace.moveToDefaultScreen();
             }
 
             closeFolder();
@@ -2472,7 +2451,7 @@ public class Launcher extends AppCompatActivity
             completeAddAppWidget(appWidgetId, info.container, info.screenId, boundWidget,
                     appWidgetInfo);
             // Exit spring loaded mode if necessary after adding the widget
-            exitSpringLoadedDragModeDelayed(true, false, null);
+            exitSpringLoadedDragModeDelayed(true, false);
         }
     }
 
@@ -2484,17 +2463,16 @@ public class Launcher extends AppCompatActivity
 
     /**
      * Process a shortcut drop.
-     *
-     * @param componentName The name of the component
+     *  @param componentName The name of the component
      * @param screenId      The ID of the screen where it should be added
      * @param cell          The cell it should be added to, optional
      */
     void processShortcutFromDrop(ComponentName componentName, long container, long screenId,
-                                 int[] cell, int[] loc) {
+                                 int[] cell) {
         resetAddInfo();
         mPendingAddInfo.container = container;
         mPendingAddInfo.screenId = screenId;
-        mPendingAddInfo.dropPos = loc;
+        mPendingAddInfo.dropPos = null;
 
         if (cell != null) {
             mPendingAddInfo.cellX = cell[0];
@@ -2612,7 +2590,7 @@ public class Launcher extends AppCompatActivity
 
         // Create the view
         FolderIcon newFolder =
-                FolderIcon.fromXml(R.layout.folder_icon, this, layout, folderInfo, mIconCache);
+                FolderIcon.fromXml(this, layout, folderInfo, mIconCache);
         mWorkspace.addInScreen(newFolder, container, screenId, cellX, cellY, 1, 1,
                 isWorkspaceLocked());
         // Force measure the new folder icon
@@ -2675,7 +2653,7 @@ public class Launcher extends AppCompatActivity
                     AppsCustomizePagedView.ContentType.Applications) {
                 showWorkspace(true);
             } else {
-                showOverviewMode(true);
+                showOverviewMode();
             }
         } else if (mWorkspace.isInOverviewMode()) {
             mWorkspace.exitOverviewMode(true);
@@ -2738,21 +2716,7 @@ public class Launcher extends AppCompatActivity
             final ShortcutInfo shortcut = (ShortcutInfo) tag;
             final Intent intent = shortcut.intent;
 
-            // Check for special shortcuts
-            if (intent.getComponent() != null) {
-                final String shortcutClass = intent.getComponent().getClassName();
 
-                if (shortcutClass.equals(WidgetAdder.class.getName())) {
-                    showAllApps(true, AppsCustomizePagedView.ContentType.Widgets, true);
-                    return;
-                } else if (shortcutClass.equals(MemoryDumpActivity.class.getName())) {
-                    MemoryDumpActivity.startDump(this);
-                    return;
-                } else if (shortcutClass.equals(ToggleWeightWatcher.class.getName())) {
-                    toggleShowWeightWatcher();
-                    return;
-                }
-            }
 
             // Start activities
             int[] pos = new int[2];
@@ -3696,11 +3660,11 @@ public class Launcher extends AppCompatActivity
         onWorkspaceShown(animated);
     }
 
-    private void showOverviewMode(boolean animated) {
+    private void showOverviewMode() {
         mWorkspace.setVisibility(View.VISIBLE);
-        hideAppsCustomizeHelper(Workspace.State.OVERVIEW, animated, false, null);
+        hideAppsCustomizeHelper(Workspace.State.OVERVIEW, true, false, null);
         mState = State.WORKSPACE;
-        onWorkspaceShown(animated);
+        onWorkspaceShown(true);
     }
 
     private void onWorkspaceShown(boolean animated) {
@@ -3887,8 +3851,7 @@ public class Launcher extends AppCompatActivity
         }
     }
 
-    void exitSpringLoadedDragModeDelayed(final boolean successfulDrop, boolean extendedDelay,
-                                         final Runnable onCompleteRunnable) {
+    void exitSpringLoadedDragModeDelayed(final boolean successfulDrop, boolean extendedDelay) {
         if (mState != State.APPS_CUSTOMIZE_SPRING_LOADED) return;
 
         mHandler.postDelayed(new Runnable() {
@@ -3899,7 +3862,7 @@ public class Launcher extends AppCompatActivity
                     // exitSpringLoadedDragMode made it visible. This is a bit hacky; we should
                     // clean up our state transition functions
                     mAppsCustomizeTabHost.setVisibility(View.GONE);
-                    showWorkspace(true, onCompleteRunnable);
+                    showWorkspace(true, null);
                 } else {
                     exitSpringLoadedDragMode();
                 }
@@ -3949,9 +3912,9 @@ public class Launcher extends AppCompatActivity
     /**
      * Hides the hotseat area.
      */
-    private void hideHotseat(boolean animated) {
+    private void hideHotseat() {
         if (!LauncherAppState.getInstance().isScreenLarge()) {
-            if (animated) {
+            if (false) {
                 if (mHotseat.getAlpha() != 0f) {
                     int duration = 0;
                     if (mSearchDropTargetBar != null) {
@@ -4097,7 +4060,7 @@ public class Launcher extends AppCompatActivity
 
         final SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        ComponentName activityName = null;
+        ComponentName activityName;
         if (Build.VERSION.SDK_INT >= 16) {
             activityName = searchManager.getGlobalSearchActivity();
         } else {
@@ -4151,7 +4114,7 @@ public class Launcher extends AppCompatActivity
         final SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
 
-        ComponentName globalSearchActivity = null;
+        ComponentName globalSearchActivity;
         if (Build.VERSION.SDK_INT >= 16) {
             globalSearchActivity = searchManager.getGlobalSearchActivity();
         } else {
@@ -4401,11 +4364,9 @@ public class Launcher extends AppCompatActivity
 
         SharedPreferences.Editor editor = sp.edit();
         editor.putBoolean(SHOW_WEIGHT_WATCHER, show);
-        editor.commit();
+        editor.apply();
 
-        if (mWeightWatcher != null) {
-            mWeightWatcher.setVisibility(show ? View.VISIBLE : View.GONE);
-        }
+
     }
 
     public void bindAppsAdded(final ArrayList<Long> newScreens,
@@ -4503,7 +4464,7 @@ public class Launcher extends AppCompatActivity
                     }
                     break;
                 case LauncherSettings.Favorites.ITEM_TYPE_FOLDER:
-                    FolderIcon newFolder = FolderIcon.fromXml(R.layout.folder_icon, this,
+                    FolderIcon newFolder = FolderIcon.fromXml(this,
                             (ViewGroup) workspace.getChildAt(workspace.getCurrentPage()),
                             (FolderInfo) item, mIconCache);
                     workspace.addInScreenFromBind(newFolder, item.container, item.screenId, item.cellX,
@@ -4639,8 +4600,8 @@ public class Launcher extends AppCompatActivity
 
         mWorkspaceLoading = false;
         if (upgradePath) {
-            mWorkspace.getUniqueComponents(true, null);
-            mIntentsOnWorkspaceFromUpgradePath = mWorkspace.getUniqueComponents(true, null);
+            mWorkspace.getUniqueComponents(true);
+            mIntentsOnWorkspaceFromUpgradePath = mWorkspace.getUniqueComponents(true);
         }
 
         mWorkspace.post(new Runnable() {
@@ -4851,7 +4812,7 @@ public class Launcher extends AppCompatActivity
         (Icon Pack and Folder Color changes, possibly others later.)
      */
     public void resetWorkspace() {
-        mModel.resetLoadedState(true, true);
+        mModel.resetLoadedState(true);
         recreate();
         showWorkspace();
     }
@@ -4919,8 +4880,7 @@ public class Launcher extends AppCompatActivity
         return true;
     }
 
-    private Cling initCling(int clingId, int scrimId, boolean animate,
-                            boolean dimNavBarVisibilty) {
+    private Cling initCling(int clingId, int scrimId, boolean animate) {
         Cling cling = (Cling) findViewById(clingId);
         View scrim = null;
         if (scrimId > 0) {
@@ -4928,9 +4888,9 @@ public class Launcher extends AppCompatActivity
         }
         if (cling != null) {
             cling.init(this, scrim);
-            cling.show(animate, SHOW_CLING_DURATION);
+            cling.show(animate);
 
-            if (dimNavBarVisibilty) {
+            if (true) {
                 cling.setSystemUiVisibility(cling.getSystemUiVisibility() |
                         View.SYSTEM_UI_FLAG_LOW_PROFILE);
             }
@@ -4939,7 +4899,7 @@ public class Launcher extends AppCompatActivity
     }
 
     private void dismissCling(final Cling cling, final Runnable postAnimationCb,
-                              final String flag, int duration, boolean restoreNavBarVisibilty) {
+                              final String flag, boolean restoreNavBarVisibilty) {
         // To catch cases where siblings of top-level views are made invisible, just check whether
         // the cling is directly set to GONE before dismissing it.
         if (cling != null && cling.getVisibility() != View.GONE) {
@@ -4951,7 +4911,7 @@ public class Launcher extends AppCompatActivity
                         public void run() {
                             SharedPreferences.Editor editor = mSharedPrefs.edit();
                             editor.putBoolean(flag, true);
-                            editor.commit();
+                            editor.apply();
                         }
                     }.start();
                     if (postAnimationCb != null) {
@@ -4959,10 +4919,10 @@ public class Launcher extends AppCompatActivity
                     }
                 }
             };
-            if (duration <= 0) {
+            if (Launcher.DISMISS_CLING_DURATION <= 0) {
                 cleanUpClingCb.run();
             } else {
-                cling.hide(duration, cleanUpClingCb);
+                cling.hide(Launcher.DISMISS_CLING_DURATION, cleanUpClingCb);
             }
             mHideFromAccessibilityHelper.restoreImportantForAccessibility(mDragLayer);
 
@@ -5140,7 +5100,7 @@ public class Launcher extends AppCompatActivity
                 }
                 setCustomContentHintVisibility(cling, ccHintStr, true, false);
             }
-            initCling(R.id.first_run_cling, 0, false, true);
+            initCling(R.id.first_run_cling, 0, false);
         } else {
             removeCling(R.id.first_run_cling);
         }
@@ -5178,7 +5138,7 @@ public class Launcher extends AppCompatActivity
         // Enable the clings only if they have not been dismissed before
         if (isClingsEnabled() &&
                 !mSharedPrefs.getBoolean(Cling.WORKSPACE_CLING_DISMISSED_KEY, false)) {
-            Cling c = initCling(R.id.workspace_cling, 0, false, true);
+            Cling c = initCling(R.id.workspace_cling, 0, false);
 
             // Set the focused hotseat app if there is one
             c.setFocusedHotseatApp(getFirstRunFocusedHotseatAppDrawableId(),
@@ -5196,7 +5156,7 @@ public class Launcher extends AppCompatActivity
         if (isClingsEnabled() &&
                 !mSharedPrefs.getBoolean(Cling.FOLDER_CLING_DISMISSED_KEY, false)) {
             return initCling(R.id.folder_cling, R.id.cling_scrim,
-                    true, true);
+                    true);
         } else {
             removeCling(R.id.folder_cling);
             return null;
@@ -5221,7 +5181,7 @@ public class Launcher extends AppCompatActivity
             }
         };
         dismissCling(cling, cb, Cling.FIRST_RUN_CLING_DISMISSED_KEY,
-                DISMISS_CLING_DURATION, false);
+                false);
 
         // Fade out the search bar for the workspace cling coming up
         mSearchDropTargetBar.hideSearchBar(true);
@@ -5238,7 +5198,7 @@ public class Launcher extends AppCompatActivity
             };
         }
         dismissCling(cling, cb, Cling.WORKSPACE_CLING_DISMISSED_KEY,
-                DISMISS_CLING_DURATION, true);
+                true);
 
         // Fade in the search bar
         mSearchDropTargetBar.showSearchBar(true);
@@ -5247,7 +5207,7 @@ public class Launcher extends AppCompatActivity
     public void dismissFolderCling(View v) {
         Cling cling = (Cling) findViewById(R.id.folder_cling);
         dismissCling(cling, null, Cling.FOLDER_CLING_DISMISSED_KEY,
-                DISMISS_CLING_DURATION, true);
+                true);
     }
 
     public boolean isTablet() {
@@ -5356,7 +5316,7 @@ public class Launcher extends AppCompatActivity
 
 
                     FileOutputStream fos = null;
-                    File outFile = null;
+                    File outFile;
                     try {
                         outFile = new File(getFilesDir(), FILENAME);
                         outFile.createNewFile();
@@ -5379,7 +5339,6 @@ public class Launcher extends AppCompatActivity
                     try {
                         if (fos != null) {
                             fos.close();
-                            success = true;
                         }
                     } catch (IOException e) {
                         e.printStackTrace();

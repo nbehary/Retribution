@@ -33,8 +33,6 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import com.nbehary.retribution.R;
-
 public class Hotseat extends FrameLayout {
     private static final String TAG = "Hotseat";
 
@@ -136,7 +134,7 @@ public class Hotseat extends FrameLayout {
         } else {
             mContent.setGridSize((int) grid.numHotseatIcons, 1);
         }
-        mContent.setIsHotseat(true);
+        mContent.setIsHotseat();
 
         resetLayout();
     }
@@ -201,7 +199,7 @@ public class Hotseat extends FrameLayout {
             fi.title = "More Apps";
             LauncherModel.addItemToDatabase(launcher, fi, fi.container, fi.screenId, fi.cellX,
                     fi.cellY, false);
-            FolderIcon folder = FolderIcon.fromXml(R.layout.folder_icon, launcher,
+            FolderIcon folder = FolderIcon.fromXml(launcher,
                     getLayout(), fi, iconCache);
             workspace.addInScreen(folder, fi.container, fi.screenId, fi.cellX, fi.cellY,
                     fi.spanX, fi.spanY);

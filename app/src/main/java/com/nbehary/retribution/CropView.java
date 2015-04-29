@@ -144,7 +144,7 @@ public class CropView extends TiledImageView implements OnScaleGestureListener {
         mRotateMatrix.setRotate(mRenderer.rotation);
         mInverseRotateMatrix.reset();
         mInverseRotateMatrix.setRotate(-mRenderer.rotation);
-        updateMinScale(getWidth(), getHeight(), source, true);
+        updateMinScale(getWidth(), getHeight(), source);
        // }
     }
 
@@ -158,9 +158,9 @@ public class CropView extends TiledImageView implements OnScaleGestureListener {
         }
     }
 
-    private void updateMinScale(int w, int h, TileSource source, boolean resetScale) {
+    private void updateMinScale(int w, int h, TileSource source) {
         synchronized (mLock) {
-            if (resetScale) {
+            if (true) {
                 mRenderer.scale = 1;
             }
             if (source != null) {

@@ -835,21 +835,14 @@ public class ColorPickerView extends View {
 		return Color.HSVToColor(mAlpha, new float[]{mHue,mSat,mVal});
 	}
 
-	/**
-	 * Set the color the view should show.
-	 * @param color The color that should be selected.
-	 */
-	public void setColor(int color){
-		setColor(color, false);
-	}
 
 	/**
 	 * Set the color this view should show.
-	 * @param color The color that should be selected.
 	 * @param callback If you want to get a callback to
 	 * your OnColorChangedListener.
+	 * @param color The color that should be selected.
 	 */
-	private void setColor(int color, boolean callback) {
+	void setColor(int color) {
 
 		int alpha = Color.alpha(color);
 
@@ -862,7 +855,7 @@ public class ColorPickerView extends View {
 		mSat = hsv[1];
 		mVal = hsv[2];
 
-		if (callback && mListener != null) {
+		if (false && mListener != null) {
 			mListener.onColorChanged(Color.HSVToColor(mAlpha, new float[] { mHue, mSat, mVal }));
 		}
 
@@ -884,12 +877,11 @@ public class ColorPickerView extends View {
 	/**
 	 * Set if the user is allowed to adjust the alpha panel. Default is false.
 	 * If it is set to false no alpha will be set.
-	 * @param visible
 	 */
-	public void setAlphaSliderVisible(boolean visible){
+	public void setAlphaSliderVisible(){
 
-		if(mShowAlphaPanel != visible){
-			mShowAlphaPanel = visible;
+		if(mShowAlphaPanel != false){
+			mShowAlphaPanel = false;
 
 			/*
 			 * Reset all shader to force a recreation.

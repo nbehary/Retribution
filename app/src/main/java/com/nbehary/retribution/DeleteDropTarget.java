@@ -42,8 +42,6 @@ import android.view.animation.LinearInterpolator;
 import java.util.List;
 import java.util.Set;
 
-import com.nbehary.retribution.R;
-
 public class DeleteDropTarget extends ButtonDropTarget {
     private static final int DELETE_ANIMATION_DURATION = 285;
     private static final int FLING_DELETE_ANIMATION_DURATION = 350;
@@ -438,12 +436,12 @@ public class DeleteDropTarget extends ButtonDropTarget {
         private final TimeInterpolator mAlphaInterpolator = new DecelerateInterpolator(0.75f);
 
         public FlingAlongVectorAnimatorUpdateListener(DragLayer dragLayer, PointF vel, Rect from,
-                long startTime, float friction) {
+                                                      long startTime) {
             mDragLayer = dragLayer;
             mVelocity = vel;
             mFrom = from;
             mPrevTime = startTime;
-            mFriction = 1f - (dragLayer.getResources().getDisplayMetrics().density * friction);
+            mFriction = 1f - (dragLayer.getResources().getDisplayMetrics().density * DeleteDropTarget.FLING_TO_DELETE_FRICTION);
         }
 
         @Override
@@ -481,8 +479,8 @@ public class DeleteDropTarget extends ButtonDropTarget {
         final Rect from = new Rect();
         dragLayer.getViewRectRelativeToSelf(d.dragView, from);
 
-        return new FlingAlongVectorAnimatorUpdateListener(dragLayer, vel, from, startTime,
-                FLING_TO_DELETE_FRICTION);
+        return new FlingAlongVectorAnimatorUpdateListener(dragLayer, vel, from, startTime
+        );
     }
 
     public void onFlingToDelete(final DragObject d, int x, int y, PointF vel) {

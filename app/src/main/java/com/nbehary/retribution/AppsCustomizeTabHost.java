@@ -297,9 +297,9 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
         });
     }
 
-    public void setCurrentTabFromContent(AppsCustomizePagedView.ContentType type) {
+    public void setCurrentTabFromContent() {
         setOnTabChangedListener(null);
-        setCurrentTabByTag(getTabTagForContentType(type));
+        setCurrentTabByTag(getTabTagForContentType(AppsCustomizePagedView.ContentType.Applications));
         setOnTabChangedListener(this);
     }
 

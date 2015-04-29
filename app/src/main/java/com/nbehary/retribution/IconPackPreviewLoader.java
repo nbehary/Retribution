@@ -50,9 +50,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import com.nbehary.retribution.R;
-
-
 
 class IconPackPreviewLoader {
     static final String TAG = "IconPackPreviewLoader";
@@ -495,17 +492,13 @@ class IconPackPreviewLoader {
     }
 
 
-    private static void renderDrawableToBitmap(
-            Drawable d, Bitmap bitmap, int x, int y, int w, int h) {
-        renderDrawableToBitmap(d, bitmap, x, y, w, h, 1f);
-    }
+
 
     private static void renderDrawableToBitmap(
-            Drawable d, Bitmap bitmap, int x, int y, int w, int h,
-            float scale) {
+            Drawable d, Bitmap bitmap, int x, int y, int w, int h) {
         if (bitmap != null) {
             Canvas c = new Canvas(bitmap);
-            c.scale(scale, scale);
+            c.scale(1f, 1f);
             Rect oldBounds = d.copyBounds();
             d.setBounds(x, y, x + w, y + h);
             d.draw(c);

@@ -28,8 +28,6 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import com.nbehary.retribution.R;
-
 public class UninstallShortcutReceiver extends BroadcastReceiver {
     private static final String ACTION_UNINSTALL_SHORTCUT =
             "com.android.launcher.action.UNINSTALL_SHORTCUT";
@@ -108,7 +106,7 @@ public class UninstallShortcutReceiver extends BroadcastReceiver {
                     try {
                         if (intent.filterEquals(Intent.parseUri(c.getString(intentIndex), 0))) {
                             final long id = c.getLong(idIndex);
-                            final Uri uri = LauncherSettings.Favorites.getContentUri(id, false);
+                            final Uri uri = LauncherSettings.Favorites.getContentUri(id);
                             cr.delete(uri, null, null);
                             changed = true;
                             if (!duplicate) {

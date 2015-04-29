@@ -35,7 +35,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-import com.nbehary.retribution.R;
 import com.nbehary.retribution.preference.PreferencesProvider;
 
 
@@ -272,7 +271,7 @@ class DeviceProfile {
         searchBarSpaceHeightPxDefault = searchBarHeightPxDefault + 2 * edgeMarginPx;
 
 
-        if (PreferencesProvider.checkKey(mContext,"pref_allow_land")) {
+        if (PreferencesProvider.checkKey(mContext)) {
             allowLandscape = PreferencesProvider.Interface.General.getAllowLand();
         } else {
 

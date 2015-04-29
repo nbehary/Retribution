@@ -78,17 +78,21 @@ public class FolderColorsDialogFragment extends DialogFragment implements ColorP
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 mChanging = (String) parent.getItemAtPosition(position);
-                if (mChanging.equals("Background")) {
-                    mPicker.setColor(mBgColor);
-                } else if (mChanging.equals("Folder Name")) {
-                    if (mNameColor != 0) {
-                        mPicker.setColor(mNameColor);
-                    }
-                } else {
-                    if (mIconColor != 0) {
-                        mPicker.setColor(mIconColor);
-                    }
+                switch (mChanging) {
+                    case "Background":
+                        mPicker.setColor(mBgColor);
+                        break;
+                    case "Folder Name":
+                        if (mNameColor != 0) {
+                            mPicker.setColor(mNameColor);
+                        }
+                        break;
+                    default:
+                        if (mIconColor != 0) {
+                            mPicker.setColor(mIconColor);
+                        }
 
+                        break;
                 }
             }
 
@@ -189,12 +193,16 @@ public class FolderColorsDialogFragment extends DialogFragment implements ColorP
 
     @Override
     public void onColorChanged(int color) {
-        if (mChanging.equals("Background")) {
-            mBgColor = color;
-        } else if (mChanging.equals("Folder Name")) {
-            mNameColor = color;
-        } else {
-            mLabelColor = color;
+        switch (mChanging) {
+            case "Background":
+                mBgColor = color;
+                break;
+            case "Folder Name":
+                mNameColor = color;
+                break;
+            default:
+                mLabelColor = color;
+                break;
         }
         if (mDefaultBG) {
             mDefaultBG = false;

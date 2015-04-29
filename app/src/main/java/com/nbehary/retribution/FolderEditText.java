@@ -46,7 +46,7 @@ public class FolderEditText extends EditText {
     public boolean onKeyPreIme(int keyCode, KeyEvent event) {
         // Catch the back button on the soft keyboard so that we can just close the activity
         if (event.getKeyCode() == android.view.KeyEvent.KEYCODE_BACK) {
-            mFolder.doneEditingFolderName(true);
+            mFolder.doneEditingFolderName();
         }
         return super.onKeyPreIme(keyCode, event);
     }

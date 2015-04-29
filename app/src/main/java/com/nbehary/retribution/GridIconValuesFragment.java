@@ -82,15 +82,14 @@ public class GridIconValuesFragment extends Fragment {
      * this fragment using the provided parameters.
      *
      * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment GridIconValuesFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static GridIconValuesFragment newInstance(String param1, String param2) {
+    public static GridIconValuesFragment newInstance(String param1) {
         GridIconValuesFragment fragment = new GridIconValuesFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(ARG_PARAM1, "values_fragment");
+        args.putString(ARG_PARAM2, "");
         fragment.setArguments(args);
         return fragment;
     }
@@ -139,7 +138,7 @@ public class GridIconValuesFragment extends Fragment {
         mFontLabel = (TextView) mRootView.findViewById(R.id.grid_font_label);
 
         ImageButton downSizeButton = (ImageButton) mRootView.findViewById(R.id.grid_icon_down);
-        downSizeButton.setOnTouchListener(new RepeatListener(400, 100, new View.OnClickListener() {
+        downSizeButton.setOnTouchListener(new RepeatListener(400, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 boolean showText = true;
@@ -171,7 +170,7 @@ public class GridIconValuesFragment extends Fragment {
         }));
 
         ImageButton upSizeButton = (ImageButton) mRootView.findViewById(R.id.grid_icon_up);
-        upSizeButton.setOnTouchListener(new RepeatListener(400, 100, new View.OnClickListener() {
+        upSizeButton.setOnTouchListener(new RepeatListener(400, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 boolean showText = true;
@@ -199,7 +198,7 @@ public class GridIconValuesFragment extends Fragment {
 
 
         mDownFontButton = (ImageButton) mRootView.findViewById(R.id.grid_font_down);
-        mDownFontButton.setOnTouchListener(new RepeatListener(400, 100, new View.OnClickListener() {
+        mDownFontButton.setOnTouchListener(new RepeatListener(400, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mTempProfile.iconTextSize -= 0.1f;
@@ -219,7 +218,7 @@ public class GridIconValuesFragment extends Fragment {
         }));
 
         mUpFontButton = (ImageButton) mRootView.findViewById(R.id.grid_font_up);
-        mUpFontButton.setOnTouchListener(new RepeatListener(400, 100, new View.OnClickListener() {
+        mUpFontButton.setOnTouchListener(new RepeatListener(400, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mTempProfile.iconTextSize += 0.1f;
@@ -342,16 +341,15 @@ public class GridIconValuesFragment extends Fragment {
     }
 
     private static void renderDrawableToBitmap(
-            Drawable d, Bitmap bitmap, int x, int y, int w, int h) {
-        renderDrawableToBitmap(d, bitmap, x, y, w, h, 1f);
+            Drawable d, Bitmap bitmap, int x, int w, int h) {
+        renderDrawableToBitmap(d, bitmap, 0, 0, w, h);
     }
 
     private static void renderDrawableToBitmap(
-            Drawable d, Bitmap bitmap, int x, int y, int w, int h,
-            float scale) {
+            Drawable d, Bitmap bitmap, int x, int y, int w, int h) {
         if (bitmap != null) {
             Canvas c = new Canvas(bitmap);
-            c.scale(scale, scale);
+            c.scale(1f, 1f);
             Rect oldBounds = d.copyBounds();
             d.setBounds(x, y, x + w, y + h);
             d.draw(c);

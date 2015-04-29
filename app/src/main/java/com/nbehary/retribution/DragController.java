@@ -34,8 +34,6 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.inputmethod.InputMethodManager;
 
-import com.nbehary.retribution.R;
-
 import java.util.ArrayList;
 
 /**
@@ -161,18 +159,16 @@ public class DragController {
 
     /**
      * Starts a drag.
-     *
+     *  @param dragAction The drag action: either {@link #DRAG_ACTION_MOVE} or
+     *        {@link #DRAG_ACTION_COPY}
+     * @param dragRegion Coordinates within the bitmap b for the position of item being dragged.
      * @param v The view that is being dragged
      * @param bmp The bitmap that represents the view being dragged
      * @param source An object representing where the drag originated
      * @param dragInfo The data associated with the object that is being dragged
-     * @param dragAction The drag action: either {@link #DRAG_ACTION_MOVE} or
-     *        {@link #DRAG_ACTION_COPY}
-     * @param dragRegion Coordinates within the bitmap b for the position of item being dragged.
-     *          Makes dragging feel more precise, e.g. you can clip out a transparent border
      */
-    public void startDrag(View v, Bitmap bmp, DragSource source, Object dragInfo, int dragAction,
-            Point extraPadding, float initialDragViewScale) {
+    public void startDrag(View v, Bitmap bmp, DragSource source, Object dragInfo,
+                          Point extraPadding, float initialDragViewScale) {
         int[] loc = mCoordinatesTemp;
         mLauncher.getDragLayer().getLocationInDragLayer(v, loc);
         int viewExtraPaddingLeft = extraPadding != null ? extraPadding.x : 0;
@@ -182,10 +178,10 @@ public class DragController {
         int dragLayerY = loc[1] + v.getPaddingTop() + viewExtraPaddingTop +
                 (int) ((initialDragViewScale * bmp.getHeight() - bmp.getHeight()) / 2);
 
-        startDrag(bmp, dragLayerX, dragLayerY, source, dragInfo, dragAction, null,
+        startDrag(bmp, dragLayerX, dragLayerY, source, dragInfo, DragController.DRAG_ACTION_COPY, null,
                 null, initialDragViewScale);
 
-        if (dragAction == DRAG_ACTION_MOVE) {
+        if (DragController.DRAG_ACTION_COPY == DRAG_ACTION_MOVE) {
             v.setVisibility(View.GONE);
         }
     }
@@ -239,7 +235,7 @@ public class DragController {
         mDragObject.dragInfo = dragInfo;
 
         final DragView dragView = mDragObject.dragView = new DragView(mLauncher, b, registrationX,
-                registrationY, 0, 0, b.getWidth(), b.getHeight(), initialDragViewScale);
+                registrationY, 0, b.getWidth(), b.getHeight(), initialDragViewScale);
 
         if (dragOffset != null) {
             dragView.setDragVisualizeOffset(new Point(dragOffset));

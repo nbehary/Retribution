@@ -375,8 +375,8 @@ public class BubbleTextView extends TextView {
         super.setTextColor(color);
     }
 
-    public void setShadowsEnabled(boolean enabled) {
-        mShadowsEnabled = enabled;
+    public void setShadowsEnabled() {
+        mShadowsEnabled = false;
         getPaint().clearShadowLayer();
         invalidate();
     }

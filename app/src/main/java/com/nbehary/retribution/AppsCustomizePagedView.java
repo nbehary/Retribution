@@ -360,8 +360,8 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
 
         // The padding on the non-matched dimension for the default widget preview icons
         // (top + bottom)
-        mAppsCustomizeFadeInAdjacentScreens = SettingsProvider.getBoolean(context, SettingsProvider.SETTINGS_UI_DRAWER_SCROLLING_FADE_ADJACENT,
-                R.bool.preferences_interface_drawer_scrolling_fade_adjacent_default);
+        mAppsCustomizeFadeInAdjacentScreens = SettingsProvider.getBoolean(context, SettingsProvider.SETTINGS_UI_DRAWER_SCROLLING_FADE_ADJACENT
+        );
 
         TransitionEffect.setFromString(this, SettingsProvider.getString(context,
                 SettingsProvider.SETTINGS_UI_DRAWER_SCROLLING_TRANSITION_EFFECT,
@@ -976,6 +976,7 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
 
             mCanvas.setBitmap(preview);
             mCanvas.save();
+            //TODO:kill all renderDrawabletoBitmap in favor of Utilities equivalent.
             WidgetPreviewLoader.renderDrawableToBitmap(icon, preview, 0, 0,
                     icon.getIntrinsicWidth(), icon.getIntrinsicHeight());
             mCanvas.restore();
@@ -995,7 +996,7 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         mLauncher.lockScreenOrientation();
         mLauncher.getWorkspace().onDragStartedWithItem(createItemInfo, outline, clipAlpha);
         mDragController.startDrag(image, preview, this, createItemInfo,
-                DragController.DRAG_ACTION_COPY, previewPadding, scale);
+                previewPadding, scale);
         outline.recycle();
         preview.recycle();
         return true;
@@ -1251,7 +1252,7 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
             AppInfo info = mApps.get(i);
             PagedViewIcon icon = (PagedViewIcon) mLayoutInflater.inflate(
                     R.layout.apps_customize_application, layout, false);
-            icon.applyFromApplicationInfo(info, true, this);
+            icon.applyFromApplicationInfo(info, this);
             icon.setOnClickListener(this);
             icon.setOnLongClickListener(this);
             icon.setOnTouchListener(this);
@@ -2110,12 +2111,12 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         String tag = tabHost.getCurrentTabTag();
         if (tag != null) {
             if (!tag.equals(tabHost.getTabTagForContentType(ContentType.Applications))) {
-                tabHost.setCurrentTabFromContent(ContentType.Applications);
+                tabHost.setCurrentTabFromContent();
             }
         }
 
         if (mCurrentPage != 0) {
-            invalidatePageData(0);
+            invalidatePageData();
         }
     }
 
@@ -2126,22 +2127,21 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
     public void dumpState() {
         // TODO: Dump information related to current list of Applications, Widgets, etc.
         AppInfo.dumpApplicationInfoList(TAG, "mApps", mApps);
-        dumpAppWidgetProviderInfoList(TAG, "mWidgets", mWidgets);
+        dumpAppWidgetProviderInfoList(mWidgets);
     }
 
-    private void dumpAppWidgetProviderInfoList(String tag, String label,
-                                               ArrayList<Object> list) {
-        Log.d(tag, label + " size=" + list.size());
+    private void dumpAppWidgetProviderInfoList(ArrayList<Object> list) {
+        Log.d(AppsCustomizePagedView.TAG, "mWidgets" + " size=" + list.size());
         for (Object i : list) {
             if (i instanceof AppWidgetProviderInfo) {
                 AppWidgetProviderInfo info = (AppWidgetProviderInfo) i;
-                Log.d(tag, "   label=\"" + info.label + "\" previewImage=" + info.previewImage
+                Log.d(AppsCustomizePagedView.TAG, "   label=\"" + info.label + "\" previewImage=" + info.previewImage
                         + " resizeMode=" + info.resizeMode + " configure=" + info.configure
                         + " initialLayout=" + info.initialLayout
                         + " minWidth=" + info.minWidth + " minHeight=" + info.minHeight);
             } else if (i instanceof ResolveInfo) {
                 ResolveInfo info = (ResolveInfo) i;
-                Log.d(tag, "   label=\"" + info.loadLabel(mPackageManager) + "\" icon="
+                Log.d(AppsCustomizePagedView.TAG, "   label=\"" + info.loadLabel(mPackageManager) + "\" icon="
                         + info.icon);
             }
         }

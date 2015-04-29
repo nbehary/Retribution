@@ -66,7 +66,7 @@ public class GroupsDialogFragment extends DialogFragment {
 
         AllAppsList apps = ((Launcher)getActivity()).getModel().getAllApps();
         ArrayList<String> strings = new ArrayList<String>();
-        final GroupsArrayAdapter adapter = new GroupsArrayAdapter(getActivity(),strings,apps,"All Apps");
+        final GroupsArrayAdapter adapter = new GroupsArrayAdapter(getActivity(),strings,apps);
         final ListView listView = (ListView) mRootView.findViewById(R.id.group_list);
         final LauncherModel model = ((Launcher) getActivity()).getModel();
         final AppCategories categories = model.getCategories();
@@ -202,11 +202,11 @@ public class GroupsDialogFragment extends DialogFragment {
      private final AllAppsList allApps;
     private String category;
 
-    public GroupsArrayAdapter(Context context, ArrayList<String>values,AllAppsList apps, String category) {
+    public GroupsArrayAdapter(Context context, ArrayList<String> values, AllAppsList apps) {
         super(context, R.layout.groups_list_item, values);
         this.context = context;
         this.apps = apps;
-        this.category = category;
+        this.category = "All Apps";
         this.allApps = ((Launcher)context).getModel().getAllApps();
         this.clear();
         this.values = new ArrayList<String>();

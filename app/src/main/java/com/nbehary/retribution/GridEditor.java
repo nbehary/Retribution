@@ -125,7 +125,7 @@ public class GridEditor extends AppCompatActivity
 
         if (!PreferencesProvider.Interface.General.getGridFirstRun()) {
             showHelp();
-            PreferencesProvider.Interface.General.setGridFirstRun(this, true);
+            PreferencesProvider.Interface.General.setGridFirstRun(this);
         }
 
     }
@@ -193,7 +193,7 @@ public class GridEditor extends AppCompatActivity
 
     private void setupFrames() {
         Fragment gridFragment = GridFragment.newInstance("grid_frgment");
-        Fragment iconFragment = GridIconFragment.newInstance("icon_fragment", "");
+        Fragment iconFragment = GridIconFragment.newInstance("icon_fragment");
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.add(R.id.grid_grid_frame, gridFragment, "grid_fragment")
                 .add(R.id.grid_icon_frame, iconFragment, "icon_fragment").commit();
@@ -206,7 +206,7 @@ public class GridEditor extends AppCompatActivity
 
     private void setupPager() {
         mViewPager = (ViewPager) findViewById(R.id.grid_editor);
-        mPagerAdapter = new GridPagerAdapter(getSupportFragmentManager(), Titles, 2);
+        mPagerAdapter = new GridPagerAdapter(getSupportFragmentManager(), Titles);
         mViewPager.setAdapter(mPagerAdapter);
     /*    mViewPager.setOnPageChangeListener(
                 new ViewPager.SimpleOnPageChangeListener() {
@@ -219,7 +219,7 @@ public class GridEditor extends AppCompatActivity
                 });
                 */
         mTabs = (SlidingTabLayout) findViewById(R.id.tabs);
-        mTabs.setDistributeEvenly(true); // To make the Tabs Fixed set this true, This makes the mTabs Space Evenly in Available width
+        mTabs.setDistributeEvenly(); // To make the Tabs Fixed set this true, This makes the mTabs Space Evenly in Available width
 
         // Setting Custom Color for the Scroll bar indicator of the Tab View
       /*  mTabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
@@ -312,7 +312,7 @@ public class GridEditor extends AppCompatActivity
         if (mViewPager == null) {
             iconFrag = (GridIconFragment) getSupportFragmentManager().findFragmentByTag("icon_fragment");
         } else {
-            iconFrag = (GridIconFragment) mPagerAdapter.getFragment("icon_fragment");
+            iconFrag = (GridIconFragment) mPagerAdapter.getFragment();
             //percentFragment = (GridIconPercentFragment) mPagerAdapter.getFragment("percent_fragment");
             //iconFrag = (GridIconFragment) getSupportFragmentManager().findFragmentByTag("icon_fragment");
         }
@@ -353,15 +353,15 @@ public class GridEditor extends AppCompatActivity
             switch (pos) {
 
                 case 0:
-                    fragment = GridIconFragment.newInstance("icon_fragment", "");
+                    fragment = GridIconFragment.newInstance("icon_fragment");
                     mPageReferenceMap.put("icon_fragment", new WeakReference<Fragment>(fragment));
                     return fragment;
                 case 1:
-                    fragment = GridIconPercentFragment.newInstance("percent_fragment", "");
+                    fragment = GridIconPercentFragment.newInstance("percent_fragment");
                     mPageReferenceMap.put("percent_fragment", new WeakReference<Fragment>(fragment));
                     return fragment;
                 default:
-                    fragment = GridIconFragment.newInstance("icon_fragment", "");
+                    fragment = GridIconFragment.newInstance("icon_fragment");
                     mPageReferenceMap.put("icon_fragment", new WeakReference<Fragment>(fragment));
                     return fragment;
             }
@@ -441,11 +441,11 @@ public class GridEditor extends AppCompatActivity
 
         private final Map<String, WeakReference<Fragment>> mPageReferenceMap = new HashMap<String, WeakReference<Fragment>>();
 
-        public GridPagerAdapter(FragmentManager fm, CharSequence mTitles[], int mNumbOfTabs) {
+        public GridPagerAdapter(FragmentManager fm, CharSequence mTitles[]) {
             super(fm);
 
             this.Titles = mTitles;
-            this.NumbOfTabs = mNumbOfTabs;
+            this.NumbOfTabs = 2;
         }
 
 
@@ -459,7 +459,7 @@ public class GridEditor extends AppCompatActivity
                     mPageReferenceMap.put("grid_fragment", new WeakReference<Fragment>(fragment));
                     return fragment;
                 case 1:
-                    fragment = GridIconFragment.newInstance("icon_fragment", "");
+                    fragment = GridIconFragment.newInstance("icon_fragment");
                     mPageReferenceMap.put("icon_fragment", new WeakReference<Fragment>(fragment));
                     return fragment;
 
@@ -475,9 +475,9 @@ public class GridEditor extends AppCompatActivity
             return 2;
         }
 
-        public Fragment getFragment(String key) {
+        public Fragment getFragment() {
 
-            WeakReference<Fragment> weakReference = mPageReferenceMap.get(key);
+            WeakReference<Fragment> weakReference = mPageReferenceMap.get("icon_fragment");
 
             if (null != weakReference) {
 

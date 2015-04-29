@@ -76,15 +76,14 @@ public class GridIconFragment extends Fragment {
      * this fragment using the provided parameters.
      *
      * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment GridIconFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static GridIconFragment newInstance(String param1, String param2) {
+    public static GridIconFragment newInstance(String param1) {
         GridIconFragment fragment = new GridIconFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(ARG_PARAM1, "icon_fragment");
+        args.putString(ARG_PARAM2, "");
         fragment.setArguments(args);
         return fragment;
     }
@@ -124,7 +123,7 @@ public class GridIconFragment extends Fragment {
         if (fm.findFragmentById(R.id.icon_fragment_container) == null) {
             //GridIconPercentFragment percentFragment = (GridIconPercentFragment) fm.findFragmentById(R.id.icon_fragment_container);
             FragmentTransaction ft = fm.beginTransaction();
-            ft.add(R.id.icon_fragment_container, GridIconPercentFragment.newInstance("percent_fragment", ""),"percent_fragment").commit();
+            ft.add(R.id.icon_fragment_container, GridIconPercentFragment.newInstance("percent_fragment"),"percent_fragment").commit();
 
         }
 
@@ -135,10 +134,10 @@ public class GridIconFragment extends Fragment {
                 FragmentManager fm = getFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
                 if (isChecked){
-                    ft.replace(R.id.icon_fragment_container, GridIconValuesFragment.newInstance("values_fragment", ""),"values_fragment")
+                    ft.replace(R.id.icon_fragment_container, GridIconValuesFragment.newInstance("values_fragment"),"values_fragment")
                     .commit();
                 } else {
-                    ft.replace(R.id.icon_fragment_container, GridIconPercentFragment.newInstance("percent_fragment", ""),"percent_fragment")
+                    ft.replace(R.id.icon_fragment_container, GridIconPercentFragment.newInstance("percent_fragment"),"percent_fragment")
                             .commit();
                 }
             }

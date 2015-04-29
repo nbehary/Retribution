@@ -51,8 +51,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import com.nbehary.retribution.R;
-
 abstract class SoftReferenceThreadLocal<T> {
     private final ThreadLocal<SoftReference<T>> mThreadLocal;
     SoftReferenceThreadLocal() {
@@ -627,17 +625,13 @@ class WidgetPreviewLoader {
     }
 
 
-    public static void renderDrawableToBitmap(
-            Drawable d, Bitmap bitmap, int x, int y, int w, int h) {
-        renderDrawableToBitmap(d, bitmap, x, y, w, h, 1f);
-    }
 
-    private static void renderDrawableToBitmap(
-            Drawable d, Bitmap bitmap, int x, int y, int w, int h,
-            float scale) {
+
+    static void renderDrawableToBitmap(
+            Drawable d, Bitmap bitmap, int x, int y, int w, int h) {
         if (bitmap != null) {
             Canvas c = new Canvas(bitmap);
-            c.scale(scale, scale);
+            c.scale(1f, 1f);
             Rect oldBounds = d.copyBounds();
             d.setBounds(x, y, x + w, y + h);
             d.draw(c);

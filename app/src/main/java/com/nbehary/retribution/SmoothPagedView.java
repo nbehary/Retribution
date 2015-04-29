@@ -120,11 +120,11 @@ public abstract class SmoothPagedView extends PagedView {
         if (mScrollMode == X_LARGE_MODE) {
             super.snapToPageWithVelocity(whichPage, velocity);
         } else {
-            snapToPageWithVelocity(whichPage, 0, true);
+            snapToPageWithVelocity(whichPage, true);
         }
     }
 
-    private void snapToPageWithVelocity(int whichPage, int velocity, boolean settle) {
+    private void snapToPageWithVelocity(int whichPage, boolean settle) {
             // if (!mScroller.isFinished()) return;
 
         whichPage = Math.max(0, Math.min(whichPage, getChildCount() - 1));
@@ -144,12 +144,9 @@ public abstract class SmoothPagedView extends PagedView {
             ((OvershootInterpolator) mScrollInterpolator).disableSettle();
         }
 
-        velocity = Math.abs(velocity);
-        if (velocity > 0) {
-            duration += (duration / (velocity / mBaseLineFlingVelocity)) * mFlingVelocityInfluence;
-        } else {
-            duration += 100;
-        }
+
+        duration += 100;
+
 
         snapToPage(whichPage, delta, duration);
     }
@@ -159,7 +156,7 @@ public abstract class SmoothPagedView extends PagedView {
        if (mScrollMode == X_LARGE_MODE) {
            super.snapToPage(whichPage);
        } else {
-           snapToPageWithVelocity(whichPage, 0, false);
+           snapToPageWithVelocity(whichPage, false);
        }
     }
 

@@ -20,7 +20,7 @@
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.nbehary.retribution"
-    android:versionCode="2287"
+    android:versionCode="2298"
     android:versionName="1.4.2_Dev">
 
     <permission
@@ -156,25 +156,6 @@
 
 
         <!-- Debugging tools -->
-        <activity
-            android:name="com.nbehary.retribution.MemoryDumpActivity"
-            android:theme="@android:style/Theme.NoDisplay"
-            android:label="@string/debug_memory_activity"
-            android:enabled="@bool/debug_memory_enabled"
-            android:excludeFromRecents="true"
-            android:icon="@mipmap/ic_launcher_home"
-            >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-        <service android:name="com.nbehary.retribution.MemoryTracker"
-            android:enabled="@bool/debug_memory_enabled"
-            >
-        </service>
 
         <!-- Intent received used to prepopulate the default workspace. -->
         <receiver

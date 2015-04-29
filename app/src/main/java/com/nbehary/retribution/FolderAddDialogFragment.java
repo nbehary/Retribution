@@ -72,7 +72,7 @@ public class FolderAddDialogFragment extends DialogFragment {
 
         AllAppsList apps = ((Launcher)getActivity()).getModel().getAllApps();
         ArrayList<String> strings = new ArrayList<String>();
-        mListAdapter = new FolderAddArrayAdapter(getActivity(),strings,apps,"All Apps",mFolderInfo, mLauncher,mFolder);
+        mListAdapter = new FolderAddArrayAdapter(getActivity(),strings,apps, mFolderInfo, mLauncher,mFolder);
         final ListView listView = (ListView) mRootView.findViewById(R.id.group_list);
         final LauncherModel model = ((Launcher) getActivity()).getModel();
         final AppCategories categories = model.getCategories();
@@ -223,13 +223,13 @@ public class FolderAddDialogFragment extends DialogFragment {
     private final Launcher mLauncher;
     private final Folder mFolder;
 
-    public FolderAddArrayAdapter(Context context, ArrayList<String>values,AllAppsList apps, String category, FolderInfo folderInfo, Launcher launcher,Folder folder) {
+    public FolderAddArrayAdapter(Context context, ArrayList<String> values, AllAppsList apps, FolderInfo folderInfo, Launcher launcher, Folder folder) {
         super(context, R.layout.groups_list_item, values);
         this.context = context;
         this.apps = apps;
         mLauncher =launcher;
         mFolder = folder;
-        this.category = category;
+        this.category = "All Apps";
         this.folderInfo = folderInfo;
         this.allApps = ((Launcher)context).getModel().getAllApps();
         this.clear();

@@ -180,14 +180,12 @@ class LauncherSettings {
          * The content:// style URL for a given row, identified by its id.
          *
          * @param id The row id.
-         * @param notify True to send a notification is the content changes.
-         *
          * @return The unique content URL for the specified row.
          */
-        static Uri getContentUri(long id, boolean notify) {
+        static Uri getContentUri(long id) {
             return Uri.parse("content://" + LauncherProvider.AUTHORITY +
                     "/" + LauncherProvider.TABLE_FAVORITES + "/" + id + "?" +
-                    LauncherProvider.PARAMETER_NOTIFY + "=" + notify);
+                    LauncherProvider.PARAMETER_NOTIFY + "=" + false);
         }
 
         /**

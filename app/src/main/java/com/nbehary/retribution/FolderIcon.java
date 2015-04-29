@@ -142,8 +142,8 @@ public class FolderIcon extends LinearLayout implements FolderListener {
 
     public BubbleTextView getmFolderName() {return mFolderName;}
 
-    static FolderIcon fromXml(int resId, Launcher launcher, ViewGroup group,
-            FolderInfo folderInfo, IconCache iconCache) {
+    static FolderIcon fromXml(Launcher launcher, ViewGroup group,
+                              FolderInfo folderInfo, IconCache iconCache) {
         @SuppressWarnings("all") // suppress dead code warning
         final boolean error = INITIAL_ITEM_ANIMATION_DURATION >= DROP_IN_ANIMATION_DURATION;
         if (error) {
@@ -151,7 +151,7 @@ public class FolderIcon extends LinearLayout implements FolderListener {
                     "INITIAL_ITEM_ANIMATION_DURATION, as sequencing of adding first two items " +
                     "is dependent on this");
         }
-        FolderIcon icon = (FolderIcon) LayoutInflater.from(launcher).inflate(resId, group, false);
+        FolderIcon icon = (FolderIcon) LayoutInflater.from(launcher).inflate(R.layout.folder_icon, group, false);
 
 
 
@@ -432,11 +432,9 @@ public class FolderIcon extends LinearLayout implements FolderListener {
                 onCompleteRunnable);
     }
 
-    public void onDragExit(Object dragInfo) {
-        onDragExit();
-    }
 
-    private void onDragExit() {
+
+    void onDragExit() {
         mFolderRingAnimator.animateToNaturalState();
     }
 

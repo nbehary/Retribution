@@ -62,8 +62,8 @@ public final class SettingsProvider {
         return get(context).getBoolean(key, def);
     }
 
-    public static boolean getBoolean(Context context, String key, int resource) {
-        return getBooleanCustomDefault(context, key, context.getResources().getBoolean(resource));
+    public static boolean getBoolean(Context context, String key) {
+        return getBooleanCustomDefault(context, SettingsProvider.SETTINGS_UI_DRAWER_SCROLLING_FADE_ADJACENT, context.getResources().getBoolean(com.nbehary.retribution.R.bool.preferences_interface_drawer_scrolling_fade_adjacent_default));
     }
 
     private static String getStringCustomDefault(Context context, String key, String def) {

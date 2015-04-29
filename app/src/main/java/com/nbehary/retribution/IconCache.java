@@ -120,7 +120,7 @@ class IconCache {
     }
 
     public Drawable getFullResIcon(ActivityInfo info) {
-        int iconId = 0;
+        int iconId;
         if (mIconPackHelper != null && mIconPackHelper.isIconPackLoaded()) {
             iconId = mIconPackHelper.getResourceIdForActivityIcon(info);
             if (iconId != 0) {

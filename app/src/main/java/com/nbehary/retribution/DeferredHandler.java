@@ -88,11 +88,9 @@ class DeferredHandler {
     }
 
     /** Schedule runnable to run when the queue goes idle. */
-    public void postIdle(final Runnable runnable) {
-        postIdle(runnable, 0);
-    }
-    private void postIdle(final Runnable runnable, int type) {
-        post(new IdleRunnable(runnable), type);
+
+    void postIdle(final Runnable runnable) {
+        post(new IdleRunnable(runnable), 0);
     }
 
     public void cancelRunnable(Runnable runnable) {
@@ -100,13 +98,13 @@ class DeferredHandler {
             while (mQueue.remove(runnable)) { }
         }
     }
-    public void cancelAllRunnablesOfType(int type) {
+    public void cancelAllRunnablesOfType() {
         synchronized (mQueue) {
             ListIterator<Pair<Runnable, Integer>> iter = mQueue.listIterator();
             Pair<Runnable, Integer> p;
             while (iter.hasNext()) {
                 p = iter.next();
-                if (p.second == type) {
+                if (p.second == LauncherModel.MAIN_THREAD_BINDING_RUNNABLE) {
                     iter.remove();
                 }
             }

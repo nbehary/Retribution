@@ -39,8 +39,6 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import com.nbehary.retribution.R;
-
 /**
  * A ViewGroup that coordinates dragging across its descendants
  */
@@ -294,7 +292,7 @@ public class DragLayer extends FrameLayout implements ViewGroup.OnHierarchyChang
             }
             mTouchCompleteListener = null;
         }
-
+/*
         if (mCurrentResizeFrame != null) {
             handled = true;
             switch (action) {
@@ -308,6 +306,7 @@ public class DragLayer extends FrameLayout implements ViewGroup.OnHierarchyChang
                     mCurrentResizeFrame = null;
             }
         }
+        */
         return handled || mDragController.onTouchEvent(ev);
     }
 
@@ -480,15 +479,15 @@ public class DragLayer extends FrameLayout implements ViewGroup.OnHierarchyChang
     }
 
     public void animateViewIntoPosition(DragView dragView, final int[] pos, float alpha,
-            float scaleX, float scaleY, int animationEndStyle, Runnable onFinishRunnable,
-            int duration) {
+                                        float scaleX, float scaleY, Runnable onFinishRunnable,
+                                        int duration) {
         Rect r = new Rect();
         getViewRectRelativeToSelf(dragView, r);
         final int fromX = r.left;
         final int fromY = r.top;
 
-        animateViewIntoPosition(dragView, fromX, fromY, pos[0], pos[1], alpha, 1, 1, scaleX, scaleY,
-                onFinishRunnable, animationEndStyle, duration, null);
+        animateViewIntoPosition(dragView, fromX, fromY, pos[0], pos[1], 0f, 1, 0.1f, 0.1f,
+                onFinishRunnable, DragLayer.ANIMATION_END_DISAPPEAR, duration, null);
     }
 
     public void animateViewIntoPosition(DragView dragView, final View child,
@@ -551,18 +550,18 @@ public class DragLayer extends FrameLayout implements ViewGroup.OnHierarchyChang
                 }
             }
         };
-        animateViewIntoPosition(dragView, fromX, fromY, toX, toY, 1, 1, 1, scale, scale,
+        animateViewIntoPosition(dragView, fromX, fromY, toX, toY, 1, 1, scale, scale,
                 onCompleteRunnable, ANIMATION_END_DISAPPEAR, duration, anchorView);
     }
 
     public void animateViewIntoPosition(final DragView view, final int fromX, final int fromY,
-            final int toX, final int toY, float finalAlpha, float initScaleX, float initScaleY,
-            float finalScaleX, float finalScaleY, Runnable onCompleteRunnable,
-            int animationEndStyle, int duration, View anchorView) {
+                                        final int toX, final int toY, float finalAlpha, float initScaleX,
+                                        float finalScaleX, float finalScaleY, Runnable onCompleteRunnable,
+                                        int animationEndStyle, int duration, View anchorView) {
         Rect from = new Rect(fromX, fromY, fromX +
                 view.getMeasuredWidth(), fromY + view.getMeasuredHeight());
         Rect to = new Rect(toX, toY, toX + view.getMeasuredWidth(), toY + view.getMeasuredHeight());
-        animateView(view, from, to, finalAlpha, initScaleX, initScaleY, finalScaleX, finalScaleY, duration,
+        animateView(view, from, to, finalAlpha, (float) 1, (float) 1, finalScaleX, finalScaleY, duration,
                 null, null, onCompleteRunnable, animationEndStyle, anchorView);
     }
 

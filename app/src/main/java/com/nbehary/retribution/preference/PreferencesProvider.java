@@ -35,14 +35,14 @@ public final class PreferencesProvider {
         sKeyValues = (Map<String, Object>)preferences.getAll();
     }
 
-    public static boolean checkKey(Context ctx, String key) {
+    public static boolean checkKey(Context ctx) {
         SharedPreferences preferences = ctx.getSharedPreferences(PREFERENCES_KEY, 0);
-        return preferences.contains(key);
+        return preferences.contains("pref_allow_land");
     }
 
-    private static int getInt(String key, int def) {
+    private static int getInt(String key) {
         return sKeyValues.containsKey(key) && sKeyValues.get(key) instanceof Integer ?
-                (Integer) sKeyValues.get(key) : def;
+                (Integer) sKeyValues.get(key) : 0;
     }
 
     private static void setInt(Context ctx, String key, int value) {
@@ -53,9 +53,9 @@ public final class PreferencesProvider {
         sKeyValues.put(key, value);
     }
 
-    private static float getFloat(String key, float def) {
+    private static float getFloat(String key) {
         return sKeyValues.containsKey(key) && sKeyValues.get(key) instanceof Float ?
-                (Float) sKeyValues.get(key) : def;
+                (Float) sKeyValues.get(key) : (float) 0;
     }
 
     private static void setFloat(Context ctx, String key, float value) {
@@ -76,7 +76,7 @@ public final class PreferencesProvider {
         Editor editor = preferences.edit();
         editor.putBoolean(key, value);
         editor.apply(); // For better performance
-        sKeyValues.put(key, Boolean.valueOf(value));
+        sKeyValues.put(key, value);
     }
 
     private static String getString(String key, String def) {
@@ -109,7 +109,7 @@ public final class PreferencesProvider {
             }
 
             public static int getFolderBackColor() {
-                return getInt("pref_folder_bg_color", 0);
+                return getInt("pref_folder_bg_color");
             }
 
             public static void setFolderBackColor(Context ctx, int color) {
@@ -117,7 +117,7 @@ public final class PreferencesProvider {
             }
 
             public static int getFolderIconColor() {
-                return getInt("pref_folder_icon_color", 0);
+                return getInt("pref_folder_icon_color");
             }
 
             public static void setFolderIconColor(Context ctx, int color) {
@@ -125,7 +125,7 @@ public final class PreferencesProvider {
             }
 
             public static int getFolderNameColor() {
-                return getInt("pref_folder_name_color", 0);
+                return getInt("pref_folder_name_color");
             }
 
             public static void setFolderNameColor(Context ctx, int color) {
@@ -133,7 +133,7 @@ public final class PreferencesProvider {
             }
 
             public static int getFolderType() {
-                return getInt("pref_folder_icon", 0);
+                return getInt("pref_folder_icon");
             }
 
             public static void setFolderType(Context ctx, int type) {
@@ -173,11 +173,11 @@ public final class PreferencesProvider {
             }
 
             public static int getWorkspaceColumns() {
-                return getInt("pref_workspace_cols",0);
+                return getInt("pref_workspace_cols");
             }
 
             public static int getWorkspaceRows() {
-                return getInt("pref_workspace_rows",0);
+                return getInt("pref_workspace_rows");
             }
 
             public static void setHotseatIcons(Context ctx, float icons){
@@ -185,7 +185,7 @@ public final class PreferencesProvider {
             }
 
             public static float getHotseatIcons() {
-                return getFloat("pref_hotseat_icons", 0);
+                return getFloat("pref_hotseat_icons");
             }
 
             public static void setIconSize(Context ctx, float size) {
@@ -193,7 +193,7 @@ public final class PreferencesProvider {
             }
 
             public static float getIconSize() {
-                return getFloat("pref_grid_icon_size", 0);
+                return getFloat("pref_grid_icon_size");
             }
 
             public static void setIconSizeCalc(Context ctx, float size) {
@@ -201,7 +201,7 @@ public final class PreferencesProvider {
             }
 
             public static float getIconSizeCalc() {
-                return getFloat("pref_grid_icon_size_calculated", 0);
+                return getFloat("pref_grid_icon_size_calculated");
             }
 
             public static void setIconTextSize(Context ctx, float size) {
@@ -209,7 +209,7 @@ public final class PreferencesProvider {
             }
 
             public static float getIconTextSize() {
-                return getFloat("pref_grid_icon_text_size",0);
+                return getFloat("pref_grid_icon_text_size");
             }
 
             public static void setIconTextSizeCalc(Context ctx, float size) {
@@ -217,7 +217,7 @@ public final class PreferencesProvider {
             }
 
             public static float getIconTextSizeCalc() {
-                return getFloat("pref_grid_icon_text_size_calculated",0);
+                return getFloat("pref_grid_icon_text_size_calculated");
             }
 
             public static void setHotseatIconSize(Context ctx, float size) {
@@ -225,7 +225,7 @@ public final class PreferencesProvider {
             }
 
             public static float getHotseatIconSize() {
-                return getFloat("pref_hotseat_icon_size",0);
+                return getFloat("pref_hotseat_icon_size");
             }
 
             public static void setHideHotSeat(Context ctx,boolean hideHotSeat) {
@@ -268,8 +268,8 @@ public final class PreferencesProvider {
                 return getBoolean("pref_auto_hotseat",false);
             }
 
-            public static void setGridFirstRun(Context ctx,boolean gridFirst) {
-                setBoolean(ctx,"pref_grid_first_run",gridFirst);
+            public static void setGridFirstRun(Context ctx) {
+                setBoolean(ctx,"pref_grid_first_run", true);
             }
 
             public static boolean getGridFirstRun() {
@@ -281,7 +281,7 @@ public final class PreferencesProvider {
             }
 
             public static int getLastWhatsNewCode(){
-                return getInt("pref_last_whats_new_code",0);
+                return getInt("pref_last_whats_new_code");
             }
 
             public static void setShowWhatsNew(Context ctx,boolean show){
@@ -297,7 +297,7 @@ public final class PreferencesProvider {
             }
 
             public static int getDrawerSort() {
-                return getInt("pref_drawer_sort",0 );
+                return getInt("pref_drawer_sort");
             }
 
         }

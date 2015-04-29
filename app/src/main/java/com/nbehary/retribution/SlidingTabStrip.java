@@ -18,12 +18,11 @@
 package com.nbehary.retribution;
 
 
-        import android.R;
+
         import android.content.Context;
         import android.graphics.Canvas;
         import android.graphics.Color;
         import android.graphics.Paint;
-        import android.util.AttributeSet;
         import android.util.TypedValue;
         import android.view.View;
         import android.widget.LinearLayout;
@@ -49,12 +48,10 @@ class SlidingTabStrip extends LinearLayout {
     private SlidingTabLayout.TabColorizer mCustomTabColorizer;
     private final SimpleTabColorizer mDefaultTabColorizer;
 
-    SlidingTabStrip(Context context) {
-        this(context, null);
-    }
 
-    private SlidingTabStrip(Context context, AttributeSet attrs) {
-        super(context, attrs);
+
+    SlidingTabStrip(Context context) {
+        super(context, null);
         setWillNotDraw(false);
 
         final float density = getResources().getDisplayMetrics().density;
@@ -63,8 +60,8 @@ class SlidingTabStrip extends LinearLayout {
         context.getTheme().resolveAttribute(R.attr.colorForeground, outValue, true);
         final int themeForegroundColor =  outValue.data;
 
-        mDefaultBottomBorderColor = setColorAlpha(themeForegroundColor,
-                DEFAULT_BOTTOM_BORDER_COLOR_ALPHA);
+        mDefaultBottomBorderColor = setColorAlpha(themeForegroundColor
+        );
 
         mDefaultTabColorizer = new SimpleTabColorizer();
         mDefaultTabColorizer.setIndicatorColors(DEFAULT_SELECTED_INDICATOR_COLOR);
@@ -137,8 +134,8 @@ class SlidingTabStrip extends LinearLayout {
     /**
      * Set the alpha value of the {@code color} to be the given {@code alpha} value.
      */
-    private static int setColorAlpha(int color, byte alpha) {
-        return Color.argb(alpha, Color.red(color), Color.green(color), Color.blue(color));
+    private static int setColorAlpha(int color) {
+        return Color.argb(SlidingTabStrip.DEFAULT_BOTTOM_BORDER_COLOR_ALPHA, Color.red(color), Color.green(color), Color.blue(color));
     }
 
     /**

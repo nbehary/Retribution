@@ -113,8 +113,8 @@ public class SlidingTabLayout extends HorizontalScrollView {
         mTabStrip.setCustomTabColorizer(tabColorizer);
     }
 
-    public void setDistributeEvenly(boolean distributeEvenly) {
-        mDistributeEvenly = distributeEvenly;
+    public void setDistributeEvenly() {
+        mDistributeEvenly = true;
     }
 
     /**

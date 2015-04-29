@@ -190,7 +190,9 @@ public class Stats {
             if (stats != null) {
                 try {
                     stats.close();
-                } catch (IOException e) { }
+                } catch (IOException e) {
+                    Log.e(TAG, "unable to close stats data: " + e);
+                }
             }
         }
     }

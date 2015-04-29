@@ -377,8 +377,10 @@ public abstract class PagedView extends ViewGroup implements ViewGroup.OnHierarc
         return null;
     }
 
+    @Override
     protected void onDetachedFromWindow() {
         // Unhook the page indicator
+        super.onDetachedFromWindow();
         mPageIndicator = null;
     }
 
@@ -2221,7 +2223,7 @@ public abstract class PagedView extends ViewGroup implements ViewGroup.OnHierarc
 
         final int newX = getScrollForPage(whichPage);
         int delta = newX - mUnboundedScrollX;
-        int duration = 0;
+        int duration;
 
         if (Math.abs(velocity) < mMinFlingVelocity) {
             // If the velocity is low enough, then treat this more as an automatic page advance
@@ -2451,11 +2453,9 @@ public abstract class PagedView extends ViewGroup implements ViewGroup.OnHierarc
      */
     protected abstract void syncPageItems(int page, boolean immediate);
 
+
     void invalidatePageData() {
-        invalidatePageData(-1, false);
-    }
-    void invalidatePageData(int currentPage) {
-        invalidatePageData(currentPage, false);
+        invalidatePageData(0, false);
     }
     void invalidatePageData(int currentPage, boolean immediateAndOnly) {
         if (!mIsDataReady) {
@@ -2652,7 +2652,7 @@ public abstract class PagedView extends ViewGroup implements ViewGroup.OnHierarc
 
         @Override
         public void onAnimationUpdate(ValueAnimator animation) {
-            float t = ((Float) animation.getAnimatedValue()).floatValue();
+            float t = (Float) animation.getAnimatedValue();
             long curTime = AnimationUtils.currentAnimationTimeMillis();
 
             mFrom.left += (mVelocity.x * (curTime - mPrevTime) / 1000f);
@@ -2701,8 +2701,8 @@ public abstract class PagedView extends ViewGroup implements ViewGroup.OnHierarc
                     // dragViewIndex < pageUnderPointIndex, so after we remove the
                     // drag view all subsequent views to pageUnderPointIndex will
                     // shift down.
-                    int oldX = 0;
-                    int newX = 0;
+                    int oldX;
+                    int newX;
                     if (slideFromLeft) {
                         if (i == 0) {
                             // Simulate the page being offscreen with the page spacing
@@ -2952,34 +2952,49 @@ public abstract class PagedView extends ViewGroup implements ViewGroup.OnHierarc
         }
 
         public static void setFromString(PagedView pagedView, String effect) {
-            if (effect.equals(PagedView.TransitionEffect.TRANSITION_EFFECT_NONE)) {
-                pagedView.setTransitionEffect(null);
-            } else if (effect.equals(PagedView.TransitionEffect.TRANSITION_EFFECT_ZOOM_IN)) {
-                pagedView.setTransitionEffect(new PagedView.TransitionEffect.Zoom(pagedView, true));
-            } else if (effect.equals(PagedView.TransitionEffect.TRANSITION_EFFECT_ZOOM_OUT)) {
-                pagedView.setTransitionEffect(new PagedView.TransitionEffect.Zoom(pagedView, false));
-            } else if (effect.equals(PagedView.TransitionEffect.TRANSITION_EFFECT_CUBE_IN)) {
-                pagedView.setTransitionEffect(new PagedView.TransitionEffect.Cube(pagedView, true));
-            } else if (effect.equals(PagedView.TransitionEffect.TRANSITION_EFFECT_CUBE_OUT)) {
-                pagedView.setTransitionEffect(new PagedView.TransitionEffect.Cube(pagedView, false));
-            } else if (effect.equals(PagedView.TransitionEffect.TRANSITION_EFFECT_ROTATE_UP)) {
-                pagedView.setTransitionEffect(new PagedView.TransitionEffect.Rotate(pagedView, true));
-            } else if (effect.equals(PagedView.TransitionEffect.TRANSITION_EFFECT_ROTATE_DOWN)) {
-                pagedView.setTransitionEffect(new PagedView.TransitionEffect.Rotate(pagedView, false));
-            } else if (effect.equals(PagedView.TransitionEffect.TRANSITION_EFFECT_STACK)) {
-                pagedView.setTransitionEffect(new PagedView.TransitionEffect.Stack(pagedView));
-            } else if (effect.equals(PagedView.TransitionEffect.TRANSITION_EFFECT_ACCORDION)) {
-                pagedView.setTransitionEffect(new PagedView.TransitionEffect.Accordion(pagedView));
-            } else if (effect.equals(PagedView.TransitionEffect.TRANSITION_EFFECT_FLIP)) {
-                pagedView.setTransitionEffect(new PagedView.TransitionEffect.Flip(pagedView));
-            } else if (effect.equals(PagedView.TransitionEffect.TRANSITION_EFFECT_CYLINDER_IN)) {
-                pagedView.setTransitionEffect(new PagedView.TransitionEffect.Cylinder(pagedView, true));
-            } else if (effect.equals(PagedView.TransitionEffect.TRANSITION_EFFECT_CYLINDER_OUT)) {
-                pagedView.setTransitionEffect(new PagedView.TransitionEffect.Cylinder(pagedView, false));
-            } else if (effect.equals(PagedView.TransitionEffect.TRANSITION_EFFECT_CAROUSEL)) {
-                pagedView.setTransitionEffect(new PagedView.TransitionEffect.Carousel(pagedView));
-            } else if (effect.equals(PagedView.TransitionEffect.TRANSITION_EFFECT_OVERVIEW)) {
-                pagedView.setTransitionEffect(new PagedView.TransitionEffect.Overview(pagedView));
+            switch (effect) {
+                case TransitionEffect.TRANSITION_EFFECT_NONE:
+                    pagedView.setTransitionEffect(null);
+                    break;
+                case TransitionEffect.TRANSITION_EFFECT_ZOOM_IN:
+                    pagedView.setTransitionEffect(new Zoom(pagedView, true));
+                    break;
+                case TransitionEffect.TRANSITION_EFFECT_ZOOM_OUT:
+                    pagedView.setTransitionEffect(new Zoom(pagedView, false));
+                    break;
+                case TransitionEffect.TRANSITION_EFFECT_CUBE_IN:
+                    pagedView.setTransitionEffect(new Cube(pagedView, true));
+                    break;
+                case TransitionEffect.TRANSITION_EFFECT_CUBE_OUT:
+                    pagedView.setTransitionEffect(new Cube(pagedView, false));
+                    break;
+                case TransitionEffect.TRANSITION_EFFECT_ROTATE_UP:
+                    pagedView.setTransitionEffect(new Rotate(pagedView, true));
+                    break;
+                case TransitionEffect.TRANSITION_EFFECT_ROTATE_DOWN:
+                    pagedView.setTransitionEffect(new Rotate(pagedView, false));
+                    break;
+                case TransitionEffect.TRANSITION_EFFECT_STACK:
+                    pagedView.setTransitionEffect(new Stack(pagedView));
+                    break;
+                case TransitionEffect.TRANSITION_EFFECT_ACCORDION:
+                    pagedView.setTransitionEffect(new Accordion(pagedView));
+                    break;
+                case TransitionEffect.TRANSITION_EFFECT_FLIP:
+                    pagedView.setTransitionEffect(new Flip(pagedView));
+                    break;
+                case TransitionEffect.TRANSITION_EFFECT_CYLINDER_IN:
+                    pagedView.setTransitionEffect(new Cylinder(pagedView, true));
+                    break;
+                case TransitionEffect.TRANSITION_EFFECT_CYLINDER_OUT:
+                    pagedView.setTransitionEffect(new Cylinder(pagedView, false));
+                    break;
+                case TransitionEffect.TRANSITION_EFFECT_CAROUSEL:
+                    pagedView.setTransitionEffect(new Carousel(pagedView));
+                    break;
+                case TransitionEffect.TRANSITION_EFFECT_OVERVIEW:
+                    pagedView.setTransitionEffect(new Overview(pagedView));
+                    break;
             }
         }
 

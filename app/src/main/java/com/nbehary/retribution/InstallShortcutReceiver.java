@@ -35,8 +35,6 @@ import java.util.Set;
 
 import org.json.*;
 
-import com.nbehary.retribution.R;
-
 public class InstallShortcutReceiver extends BroadcastReceiver {
     private static final String TAG = "InstallShortcutReceiver";
     private static final boolean DBG = false;
@@ -66,15 +64,15 @@ public class InstallShortcutReceiver extends BroadcastReceiver {
     private static final Object sLock = new Object();
 
     private static void addToStringSet(SharedPreferences sharedPrefs,
-            SharedPreferences.Editor editor, String key, String value) {
-        Set<String> strings = sharedPrefs.getStringSet(key, null);
+                                       SharedPreferences.Editor editor, String value) {
+        Set<String> strings = sharedPrefs.getStringSet(InstallShortcutReceiver.APPS_PENDING_INSTALL, null);
         if (strings == null) {
             strings = new HashSet<String>(0);
         } else {
             strings = new HashSet<String>(strings);
         }
         strings.add(value);
-        editor.putStringSet(key, strings);
+        editor.putStringSet(InstallShortcutReceiver.APPS_PENDING_INSTALL, strings);
     }
 
     private static void addToInstallQueue(
@@ -100,8 +98,8 @@ public class InstallShortcutReceiver extends BroadcastReceiver {
                 json = json.endObject();
                 SharedPreferences.Editor editor = sharedPrefs.edit();
                 if (DBG) Log.d(TAG, "Adding to APPS_PENDING_INSTALL: " + json);
-  					 addToStringSet(sharedPrefs, editor, APPS_PENDING_INSTALL, json.toString());
-                editor.commit();
+  					 addToStringSet(sharedPrefs, editor, json.toString());
+                editor.apply();
             } catch (org.json.JSONException e) {
                 Log.d(TAG, "Exception when adding shortcut: " + e);
             }
@@ -138,7 +136,7 @@ public class InstallShortcutReceiver extends BroadcastReceiver {
                     }
                 }
                 sharedPrefs.edit().putStringSet(APPS_PENDING_INSTALL,
-                        new HashSet<String>(newStrings)).commit();
+                        new HashSet<String>(newStrings)).apply();
             }
         }
     }
@@ -185,7 +183,7 @@ public class InstallShortcutReceiver extends BroadcastReceiver {
                     Log.d(TAG, "Exception reading shortcut to add: " + e);
                 }
             }
-            sharedPrefs.edit().putStringSet(APPS_PENDING_INSTALL, new HashSet<String>()).commit();
+            sharedPrefs.edit().putStringSet(APPS_PENDING_INSTALL, new HashSet<String>()).apply();
             return infos;
         }
     }
@@ -301,7 +299,7 @@ public class InstallShortcutReceiver extends BroadcastReceiver {
             // Add the new apps to the model and bind them
             if (!addShortcuts.isEmpty()) {
                 LauncherAppState app = LauncherAppState.getInstance();
-                app.getModel().addAndBindAddedApps(context, addShortcuts, null);
+                app.getModel().addAndBindAddedApps(context, addShortcuts);
             }
         }
     }
@@ -317,6 +315,6 @@ public class InstallShortcutReceiver extends BroadcastReceiver {
                     Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
         }
         LauncherAppState app = LauncherAppState.getInstance();
-        return app.getModel().infoFromShortcutIntent(context, data, null);
+        return app.getModel().infoFromShortcutIntent(context, data);
     }
 }
