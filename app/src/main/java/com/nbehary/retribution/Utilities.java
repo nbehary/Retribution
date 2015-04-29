@@ -17,9 +17,11 @@
 package com.nbehary.retribution;
 
 import android.app.Activity;
+import android.app.WallpaperManager;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BlurMaskFilter;
@@ -33,6 +35,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.PaintDrawable;
+import android.support.v7.graphics.Palette;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -363,5 +366,50 @@ final class Utilities {
                     ". Make sure to create a MAIN intent-filter for the corresponding activity " +
                     "or use the exported attribute for this activity.", e);
         }
+    }
+
+    public static Bitmap drawableToBitmap (Drawable drawable) {
+        if (drawable instanceof BitmapDrawable) {
+            return ((BitmapDrawable)drawable).getBitmap();
+        }
+
+        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+
+        return bitmap;
+    }
+
+    public static int colorFromWallpaper(Context ctx,int color) {
+        PackageManager pm = ctx.getPackageManager();
+
+/*
+ * Wallpaper info is not equal to null, that is if the live wallpaper
+ * is set, then get the drawable image from the package for the
+ * live wallpaper
+ */
+        Drawable wallpaperDrawable = null;
+        if (WallpaperManager.getInstance(ctx).getWallpaperInfo() != null) {
+            wallpaperDrawable = WallpaperManager.getInstance(ctx).getWallpaperInfo().loadThumbnail(pm);
+        }
+
+/*
+ * Else, if static wallpapers are set, then directly get the
+ * wallpaper image
+ */
+        else {
+            wallpaperDrawable = WallpaperManager.getInstance(ctx).getDrawable();
+        }
+        //Drawable wallpaperDrawable = WallpaperManager.getInstance(this).getDrawable();
+        //Toast.makeText(this,"Wallpaper Info: " + WallpaperManager.getInstance(this).getWallpaperInfo(), Toast.LENGTH_SHORT).show();
+        Drawable wallpaperDrawable2 = wallpaperDrawable;
+
+        Bitmap bmp = Utilities.drawableToBitmap(wallpaperDrawable2);
+        Palette pal = Palette.from(bmp).generate();
+        return pal.getDarkMutedColor(color);
+
+
+
     }
 }

@@ -20,8 +20,10 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
+import android.app.WallpaperManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -39,6 +41,7 @@ import android.os.Build;
 import android.os.SystemClock;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.widget.AutoScrollHelper;
+import android.support.v7.graphics.Palette;
 import android.text.InputType;
 import android.text.Selection;
 import android.util.AttributeSet;
@@ -225,17 +228,18 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         LinearLayout folder = (LinearLayout) findViewById(R.id.user_folder);
 
         mFolderBackground = getBackground();
-        SharedPreferences preferences = getContext().getSharedPreferences("com.nbehary.retribution_preferences", 0);
+        ;
 
         if (!PreferencesProvider.Interface.General.getDefaultFolderBG()) {
 
             Context ctx = getContext();
 
             if (!PreferencesProvider.Interface.General.getDefaultFolderBG()) {
-                //folder.setBackgroundColor(PreferencesProvider.Interface.General.getFolderBackColor());
-                // bg1.eraseColor(PreferencesProvider.Interface.General.getFolderBackColor());
-                //myIcon.setColorFilter(PreferencesProvider.Interface.General.getFolderBackColor(), PorterDuff.Mode.MULTIPLY);
                 int color = PreferencesProvider.Interface.General.getFolderBackColor();
+
+               // color = Utilities.colorFromWallpaper(ctx, 0);
+
+
                 ColorFilter filter = new LightingColorFilter(color, color);
                 mFolderBackground.setColorFilter(filter);
                 mFolderName.setHintTextColor(PreferencesProvider.Interface.General.getFolderNameColor());

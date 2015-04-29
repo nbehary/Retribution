@@ -20,8 +20,8 @@
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.nbehary.retribution"
-    android:versionCode="2286"
-    android:versionName="1.4.1">
+    android:versionCode="2287"
+    android:versionName="1.4.2_Dev">
 
     <permission
         android:name="com.nbehary.retribution.permission.PRELOAD_WORKSPACE"
@@ -232,5 +232,7 @@
 
         <meta-data android:name="android.nfc.disable_beam_default"
                        android:value="true" />
+
+        <meta-data android:name="com.google.android.backup.api_key" android:value="AEdPqrEAAAAIb8FSxH5zcGP8g6mrZ3n1ekrtAc7oub5zYRau9w" />
     </application>
 </manifest>

@@ -34,7 +34,7 @@
     <!-- Button label on Wallpaper picker screen; user selects this button to set a specific wallpaper -->
     <string name="wallpaper_instructions">Set wallpaper</string>
     <!-- Button label on Folder Colors screen; user selects this button to set folder colors -->
-    <string name="folder_colors_instructions">Set Folder Colors</string>
+    <string name="folder_colors_instructions">Set Colors</string>
     <!-- Shown when wallpapers are selected in Wallpaper picker -->
     <!--
          String indicating how many media item(s) is(are) selected
