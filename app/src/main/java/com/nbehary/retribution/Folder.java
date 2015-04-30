@@ -234,7 +234,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
                 int color = PreferencesProvider.Interface.General.getFolderBackColor();
 
                // color = Utilities.colorFromWallpaper(ctx, 0);
-
+Log.d("nbehary142","Folder Inflate");
 
                 ColorFilter filter = new LightingColorFilter(color, color);
                 mFolderBackground.setColorFilter(filter);

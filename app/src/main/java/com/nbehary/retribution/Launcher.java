@@ -144,7 +144,7 @@ public class Launcher extends AppCompatActivity
         View.OnTouchListener, GroupsDialogFragment.OnGroupsChangeListener,
         FolderAddDialogFragment.OnFolderShortcutsAddedListener {
     static final String TAG = "Launcher";
-    static final boolean LOGD = false;
+
 
     private static final boolean PROFILE_STARTUP = false;
     private static final boolean DEBUG_WIDGETS = false;
@@ -172,7 +172,7 @@ public class Launcher extends AppCompatActivity
      * IntentStarter uses request codes starting with this. This must be greater than all activity
      * request codes used internally.
      */
-    protected static final int REQUEST_LAST = 100;
+
 
     static final String EXTRA_SHORTCUT_DUPLICATE = "duplicate";
 
@@ -406,6 +406,8 @@ public class Launcher extends AppCompatActivity
     // Shortcut edit dialog
     private ImageView mDialogIcon;
     private String mSelectedDialogId;
+
+    private Handler wallTintHandler = new Handler();
 
     private static boolean isPropertyEnabled(String propertyName) {
         return Log.isLoggable(propertyName, Log.VERBOSE);
@@ -846,7 +848,12 @@ public class Launcher extends AppCompatActivity
             return;
         } else if (requestCode == REQUEST_SETTINGS) {
             mInFolderColors = false;
-            if (resultCode == RESULT_OK) {
+
+            mWorkspace.invalidate();
+            showWorkspace();
+            return;
+            //TODO:  Why the below? Is there something missing just using invalidate and showWorkspace?
+/*            if (resultCode == RESULT_OK) {
                 if (data.getBooleanExtra("resetWorkspace", false)) {
                     //reload the model to reset folder views to use new color.
                     //TODO:This kills the workspace highlight in the Overview Panel.
@@ -863,7 +870,7 @@ public class Launcher extends AppCompatActivity
                 //mOverviewPanel.setVisibility(View.VISIBLE);
 
             }
-            return;
+            return;*/
         } else if (requestCode == REQUEST_ABOUT) {
             //mWorkspace.exitOverviewMode(true);
             mOverviewPanel.setVisibility(View.VISIBLE);
@@ -4502,6 +4509,27 @@ public class Launcher extends AppCompatActivity
             }
         }
         workspace.requestLayout();
+
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                if (PreferencesProvider.Interface.General.getWallpaperTint()) {
+
+                    Context ctx = getApplicationContext();
+                    int color = Utilities.colorFromWallpaper(ctx);
+                    int oldColor = PreferencesProvider.Interface.General.getFolderBackColor();
+                    if (oldColor != color) {
+                        PreferencesProvider.Interface.General.setFolderBackColor(ctx, color);
+                        //Force the workspace to reload and use the new color.
+                        LauncherAppState.getInstance().getModel().startLoader(true, -1);
+                        //TODO: the above causes the workspace to "flash".  This may be unavoidable without just waiting for onResume.
+                    }
+
+                }
+                wallTintHandler.postDelayed(this, 300000);
+            }
+        };
+        wallTintHandler.postDelayed(runnable, 300000);
     }
 
     /**

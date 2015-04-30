@@ -93,12 +93,17 @@
                     android:text="@string/reset_default_button_text"
                     android:id="@+id/folder_color_reset" />
 
-                <Button
-                    android:layout_width="match_parent"
+                <!--<Button-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="@string/folder_colors_wall_text"-->
+                    <!--android:id="@+id/folder_colors_wall" />-->
+                <CheckBox
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/folder_colors_wall_text"
-                    android:id="@+id/folder_colors_wall" />
-
+                    android:id="@+id/folder_colors_wall"
+                    android:checked="false" />
             </LinearLayout>
 
         </LinearLayout>

@@ -49,6 +49,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -69,6 +71,7 @@ public class FolderColorsActivity extends AppCompatActivity {
     private String mFreeColor;
     private boolean mTintIcon;
     private int mFolderType;
+    private boolean mWallTint;
 
 
     @Override
@@ -76,7 +79,6 @@ public class FolderColorsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         if (getResources().getString(R.string.screen_type).equals("phone")) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            Log.d("nbehary345","BORK!");
         }
 
         mBgColor = PreferencesProvider.Interface.General.getFolderBackColor();
@@ -86,6 +88,7 @@ public class FolderColorsActivity extends AppCompatActivity {
         mFreeColor = PreferencesProvider.Interface.General.getFolderColor();
         mTintIcon = PreferencesProvider.Interface.General.getFolderIconTint();
         mFolderType = PreferencesProvider.Interface.General.getFolderType();
+        mWallTint = PreferencesProvider.Interface.General.getWallpaperTint();
         mContext = this;
         //No colors set.  Default to black text on white.  (sort of, but not the default)
         if (mBgColor == 0 && mIconColor == 0 && mNameColor == 0) {
@@ -117,6 +120,7 @@ public class FolderColorsActivity extends AppCompatActivity {
                         PreferencesProvider.Interface.General.setFolderColor(mContext, mFreeColor);
                         PreferencesProvider.Interface.General.setFolderIconTint(mContext, mTintIcon);
                         PreferencesProvider.Interface.General.setFolderType(mContext, mFolderType);
+                        PreferencesProvider.Interface.General.setWallpaperTint(mContext, mWallTint);
                         LauncherAppState.getInstance().getModel().startLoader(true, -1);
                         finish();
                         //do stuff
@@ -157,6 +161,10 @@ public class FolderColorsActivity extends AppCompatActivity {
         this.mFolderType = mFolderType;
     }
 
+    private void setmWallTint(boolean wall) {
+        this.mWallTint = wall;
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -193,6 +201,7 @@ public class FolderColorsActivity extends AppCompatActivity {
         boolean mDefaultBG;
         boolean mTintIcon;
         int mFolderType;
+        boolean mWallTint;
 
 
         public PlaceholderFragment() {
@@ -210,6 +219,7 @@ public class FolderColorsActivity extends AppCompatActivity {
             mDefaultBG = PreferencesProvider.Interface.General.getDefaultFolderBG();
             mTintIcon = PreferencesProvider.Interface.General.getFolderIconTint();
             mFolderType = PreferencesProvider.Interface.General.getFolderType();
+            mWallTint = PreferencesProvider.Interface.General.getWallpaperTint();
 
             mChanging = "Background";
             //No colors set.  Default to black text on white.  (sort of, but not the default)
@@ -269,15 +279,34 @@ public class FolderColorsActivity extends AppCompatActivity {
                 }
             });
 
-            Button wall = (Button) rootView.findViewById(R.id.folder_colors_wall);
-            wall.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    int color = Utilities.colorFromWallpaper(mContext);
-                    mPicker.setColor(color);
-                    mBgColor = color;
-                    mPreviewImage.setImageBitmap(generateFolderPreview(getResources(), mBgColor, mIconColor, mNameColor, mDefaultBG));
+//            Button wall = (Button) rootView.findViewById(R.id.folder_colors_wall);
+//            wall.setOnClickListener(new View.OnClickListener() {
+//                public void onClick(View v) {
+//                    int color = Utilities.colorFromWallpaper(mContext);
+//                    mPicker.setColor(color);
+//                    mBgColor = color;
+//                    mPreviewImage.setImageBitmap(generateFolderPreview(getResources(), mBgColor, mIconColor, mNameColor, mDefaultBG));
+//                    FolderColorsActivity parent = (FolderColorsActivity) getActivity();
+//                    parent.setmBgColor(color);
+//                }
+//            });
+
+            CheckBox wallBox = (CheckBox) rootView.findViewById(R.id.folder_colors_wall);
+            wallBox.setChecked(mWallTint);
+            wallBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    mWallTint = isChecked;
                     FolderColorsActivity parent = (FolderColorsActivity) getActivity();
-                    parent.setmBgColor(color);
+       ;            if (isChecked) {
+                        int color = Utilities.colorFromWallpaper(mContext);
+                        mPicker.setColor(color);
+                        mBgColor = color;
+                        mPreviewImage.setImageBitmap(generateFolderPreview(getResources(), mBgColor, mIconColor, mNameColor, mDefaultBG));
+
+                        parent.setmBgColor(color);
+                    }
+                    parent.setmWallTint(mWallTint);
                 }
             });
 

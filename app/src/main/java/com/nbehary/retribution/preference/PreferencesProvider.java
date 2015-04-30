@@ -300,6 +300,14 @@ public final class PreferencesProvider {
                 return getInt("pref_drawer_sort");
             }
 
+            public static void setWallpaperTint(Context ctx,boolean wall) {
+                setBoolean(ctx,"pref_wall_tint",wall);
+            }
+
+            public static boolean getWallpaperTint() {
+                return getBoolean("pref_wall_tint",false);
+            }
+
         }
     }
 
