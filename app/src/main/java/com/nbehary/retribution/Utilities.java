@@ -35,6 +35,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.PaintDrawable;
+import android.os.Build;
 import android.support.v7.graphics.Palette;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -48,7 +49,7 @@ import com.nbehary.retribution.R;
 /**
  * Various utilities shared amongst the Launcher's classes.
  */
-final class Utilities {
+public final class Utilities {
     private static final String TAG = "Launcher.Utilities";
 
     private static int sIconWidth = -1;
@@ -411,5 +412,12 @@ final class Utilities {
 
 
 
+    }
+
+    /**
+     * Indicates if the device is running LMP or higher.
+     */
+    public static boolean isLmpOrAbove() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     }
 }
