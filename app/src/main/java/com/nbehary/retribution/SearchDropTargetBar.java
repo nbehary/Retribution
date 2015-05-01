@@ -21,6 +21,7 @@ import com.nbehary.retribution.R;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -40,7 +41,7 @@ public class SearchDropTargetBar extends FrameLayout implements DragController.D
     private static final int sTransitionOutDuration = 175;
 
     private ObjectAnimator mDropTargetBarAnim;
-    private ObjectAnimator mQSBSearchBarAnim;
+    private ValueAnimator mQSBSearchBarAnim;
     private static final AccelerateInterpolator sAccelerateInterpolator =
             new AccelerateInterpolator();
 
@@ -88,7 +89,7 @@ public class SearchDropTargetBar extends FrameLayout implements DragController.D
         v.setLayerType(View.LAYER_TYPE_HARDWARE, null);
     }
 
-    private void setupAnimation(ObjectAnimator anim, final View v) {
+    private void setupAnimation(ValueAnimator anim, final View v) {
         anim.setInterpolator(sAccelerateInterpolator);
         anim.setDuration(sTransitionInDuration);
         anim.addListener(new AnimatorListenerAdapter() {
@@ -265,6 +266,23 @@ public class SearchDropTargetBar extends FrameLayout implements DragController.D
             return rect;
         } else {
             return null;
+        }
+    }
+
+    public void setQsbSearchBar(View qsb) {
+        mQSBSearchBar = qsb;
+        if (mQSBSearchBar != null) {
+            if (mEnableDropDownDropTargets) {
+                mQSBSearchBarAnim = LauncherAnimUtils.ofFloat(mQSBSearchBar, "translationY", 0,
+                        -mBarHeight);
+            } else {
+                mQSBSearchBarAnim = LauncherAnimUtils.ofFloat(mQSBSearchBar, "alpha", 1f, 0f);
+            }
+            setupAnimation(mQSBSearchBarAnim, mQSBSearchBar);
+        } else {
+            // Create a no-op animation of the search bar is null
+            mQSBSearchBarAnim = ValueAnimator.ofFloat(0, 0);
+            mQSBSearchBarAnim.setDuration(sTransitionInDuration);
         }
     }
 }

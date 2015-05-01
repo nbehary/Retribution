@@ -111,4 +111,8 @@
 
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
+
+    <!-- Sizes for managed profile badges -->
+    <dimen name="profile_badge_size">24dp</dimen>
+    <dimen name="profile_badge_margin">4dp</dimen>
 </resources>

@@ -58,27 +58,7 @@
     <string name="os_button_text">Notices</string>
     <string name="pitch_pro_colors">Full color choices available in the Pro Version!</string>
 
-    <string-array name="folder_colors_array">
-        <item>Background</item>
-        <item>Folder Name</item>
-        <item>Icon Labels</item>
-    </string-array>
 
-    <string-array name="grid_choices_array">
-        <item>Desktop</item>
-        <item>Dock</item>
-    </string-array>
-
-    <string-array name="folder_icons_array_pro">
-        <item>Default (White)</item>
-        <item>Tint with Background</item>
-        <item>Old style (Black/Holo)</item>
-    </string-array>
-
-    <string-array name="folder_icons_array_free">
-        <item>Default (White)</item>
-        <item>Old style (Black/Holo Blue)</item>
-    </string-array>
 
     <string name="grid_instructions">Set Grid</string>
     <string name="icon_fragment_header">Icon Sizes</string>

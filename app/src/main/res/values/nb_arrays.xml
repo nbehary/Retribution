@@ -44,4 +44,27 @@
         <item>System Apps</item>
     </string-array>
 
+
+    <string-array name="folder_colors_array">
+        <item>Backgrounds</item>
+        <item>Titles (ie. Folder Names)</item>
+        <item>Body Text (ie. Icon Labels)</item>
+    </string-array>
+
+    <string-array name="grid_choices_array">
+        <item>Desktop</item>
+        <item>Dock</item>
+    </string-array>
+
+    <string-array name="folder_icons_array_pro">
+        <item>Default (White)</item>
+        <item>Tint with Background</item>
+        <item>Old style (Black/Holo)</item>
+    </string-array>
+
+    <string-array name="folder_icons_array_free">
+        <item>Default (White)</item>
+        <item>Old style (Black/Holo Blue)</item>
+    </string-array>
+
 </resources>

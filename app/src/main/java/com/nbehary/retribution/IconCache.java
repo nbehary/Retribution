@@ -283,4 +283,8 @@ class IconCache {
             return set;
         }
     }
+
+    public int getFullResIconDpi() {
+        return mIconDpi;
+    }
 }

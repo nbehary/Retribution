@@ -25,7 +25,7 @@
     </facet>
     <facet type="protobuf" name="Protobuf Facet">
       <configuration>
-        <option name="COMPILER_OUTPUT_SOURCE_DIRECTORY" value="$MODULE_DIR$/src/main/java" />
+        <option name="COMPILER_OUTPUT_SOURCE_DIRECTORY" value="$MODULE_DIR$/src/main/java/com/nbehary/retribution/backup" />
       </configuration>
     </facet>
   </component>
