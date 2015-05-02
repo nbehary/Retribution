@@ -23,6 +23,12 @@
             android:id="@+id/folder_colors_ui"
             android:weightSum="1">
 
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/folder_colors_wall_text"
+                android:id="@+id/folder_colors_wall"
+                android:checked="false" />
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
@@ -86,12 +92,7 @@
                     <!--android:layout_height="wrap_content"-->
                     <!--android:text="@string/folder_colors_wall_text"-->
                     <!--android:id="@+id/folder_colors_wall" />-->
-                <CheckBox
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/folder_colors_wall_text"
-                    android:id="@+id/folder_colors_wall"
-                    android:checked="false" />
+
             </LinearLayout>
 
         </LinearLayout>

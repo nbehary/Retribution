@@ -40,6 +40,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.graphics.Palette;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -221,7 +222,7 @@ public class FolderColorsActivity extends AppCompatActivity {
             mFolderType = PreferencesProvider.Interface.General.getFolderType();
             mWallTint = PreferencesProvider.Interface.General.getWallpaperTint();
 
-            mChanging = "Background";
+            mChanging = "Backgrounds";
             //No colors set.  Default to black text on white.  (sort of, but not the default)
             if (mBgColor == 0 && mIconColor == 0 && mNameColor == 0) {
                 mBgColor = -109145601;
@@ -236,8 +237,8 @@ public class FolderColorsActivity extends AppCompatActivity {
             ui_pane.setBackgroundColor(Color.argb(128, 0, 0, 0));
             mPreviewImage = (ImageView) rootView.findViewById(R.id.folder_color_preview_image);
 
-            Spinner spinner = (Spinner) rootView.findViewById(R.id.folder_colors_item_spinner);
-            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(mContext,
+            final Spinner spinner = (Spinner) rootView.findViewById(R.id.folder_colors_item_spinner);
+            final ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(mContext,
                     R.array.folder_colors_array, android.R.layout.simple_spinner_item);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             spinner.setAdapter(adapter);
@@ -246,10 +247,10 @@ public class FolderColorsActivity extends AppCompatActivity {
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     mChanging = (String) parent.getItemAtPosition(position);
                     switch (mChanging) {
-                        case "Background":
+                        case "Backgrounds":
                             mPicker.setColor(mBgColor);
                             break;
-                        case "Folder Name":
+                        case "Titles (ie. Folder Names)":
                             if (mNameColor != 0) {
                                 mPicker.setColor(mNameColor);
                             }
@@ -299,12 +300,21 @@ public class FolderColorsActivity extends AppCompatActivity {
                     mWallTint = isChecked;
                     FolderColorsActivity parent = (FolderColorsActivity) getActivity();
        ;            if (isChecked) {
-                        int color = Utilities.colorFromWallpaper(mContext);
-                        mPicker.setColor(color);
-                        mBgColor = color;
+                        Palette.Swatch swatch = Utilities.swatchFromWallpaper(mContext);
+                        int back = swatch.getRgb();
+                        int title = swatch.getTitleTextColor();
+                        int icon = swatch.getBodyTextColor();
+                        mChanging = "Backgrounds";
+                        adapter.notifyDataSetChanged();
+                        mPicker.setColor(back);
+                        mBgColor = back;
+                        mIconColor = icon;
+                        mNameColor = title;
                         mPreviewImage.setImageBitmap(generateFolderPreview(getResources(), mBgColor, mIconColor, mNameColor, mDefaultBG));
 
-                        parent.setmBgColor(color);
+                        parent.setmBgColor(back);
+                        parent.setmIconColor(icon);
+                        parent.setmNameColor(title);
                     }
                     parent.setmWallTint(mWallTint);
                 }
@@ -324,11 +334,11 @@ public class FolderColorsActivity extends AppCompatActivity {
                 public void onColorChanged(int i) {
                     FolderColorsActivity parent = (FolderColorsActivity) getActivity();
                     switch (mChanging) {
-                        case "Background":
+                        case "Backgrounds":
                             mBgColor = i;
                             parent.setmBgColor(i);
                             break;
-                        case "Folder Name":
+                        case "Titles (ie. Folder Names)":
                             mNameColor = i;
                             parent.setmNameColor(i);
                             break;
@@ -487,7 +497,7 @@ public class FolderColorsActivity extends AppCompatActivity {
         }
 
 
-
+//TODO: Kill this.  (It is in Utilities)
         private static void renderDrawableToBitmap(
                 Drawable d, Bitmap bitmap, int x, int y, int w, int h) {
             if (bitmap != null) {

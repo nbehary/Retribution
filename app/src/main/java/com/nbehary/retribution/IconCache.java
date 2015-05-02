@@ -39,7 +39,7 @@ import com.nbehary.retribution.preference.PreferencesProvider;
 /**
  * Cache of application icons.  Icons can be made from any thread.
  */
-class IconCache {
+public class IconCache {
     @SuppressWarnings("unused")
     private static final String TAG = "Launcher.IconCache";
 

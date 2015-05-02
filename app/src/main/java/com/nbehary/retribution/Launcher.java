@@ -32,7 +32,10 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityOptions;
+import android.graphics.ColorFilter;
+import android.graphics.LightingColorFilter;
 import android.support.v4.content.res.ResourcesCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AlertDialog;
 import android.app.Dialog;
 import android.app.SearchManager;
@@ -76,6 +79,7 @@ import android.provider.Settings;
 import android.speech.RecognizerIntent;
 import android.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.graphics.Palette;
 import android.text.Selection;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -114,6 +118,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nbehary.retribution.DropTarget.DragObject;
+import com.nbehary.retribution.compat.AppWidgetManagerCompat;
 import com.nbehary.retribution.preference.PreferencesProvider;
 import com.nbehary.retribution.settings.SettingsProvider;
 
@@ -221,6 +226,9 @@ public class Launcher extends AppCompatActivity
     private static final String SHOW_WEIGHT_WATCHER = "debug.show_mem";
     private static final boolean SHOW_WEIGHT_WATCHER_DEFAULT = false;
 
+    private static final String QSB_WIDGET_ID = "qsb_widget_id";
+    private static final String QSB_WIDGET_PROVIDER = "qsb_widget_provider";
+
     private static final String EXTRA_CUSTOM_WIDGET = "custom_widget";
     private static final String SEARCH_WIDGET = "search_widget";
 
@@ -282,6 +290,7 @@ public class Launcher extends AppCompatActivity
     private AppsCustomizePagedView mAppsCustomizeContent;
     private boolean mAutoAdvanceRunning = false;
     private View mQsbBar;
+    private AppWidgetHostView mQsb;
 
     private Spinner mGroupsSpinner;
     private ArrayAdapter<String> mGroupsAdapter;
@@ -541,7 +550,7 @@ public class Launcher extends AppCompatActivity
         IntentFilter filter = new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
         registerReceiver(mCloseSystemDialogsReceiver, filter);
 
-        updateGlobalIcons();
+       // updateGlobalIcons();
 
 
         if (grid.allowLandscape) {
@@ -851,6 +860,11 @@ public class Launcher extends AppCompatActivity
 
             mWorkspace.invalidate();
             showWorkspace();
+//            mQsbBar.setBackgroundColor(PreferencesProvider.Interface.General.getFolderBackColor());
+            mQsbBar = Utilities.tintViewDrawable(mQsbBar);
+
+//            mQsbBar.setAlpha(0.5f);
+//            mQsbBar.setBackgroundColor(color);
             return;
             //TODO:  Why the below? Is there something missing just using invalidate and showWorkspace?
 /*            if (resultCode == RESULT_OK) {
@@ -1145,7 +1159,7 @@ public class Launcher extends AppCompatActivity
 
         // Again, as with the above scenario, it's possible that one or more of the global icons
         // were updated in the wrong orientation.
-        updateGlobalIcons();
+        //updateGlobalIcons();
         if (DEBUG_RESUME_TIME) {
             Log.d(TAG, "Time spent in onResume: " + (System.currentTimeMillis() - startTime));
         }
@@ -1757,6 +1771,7 @@ public class Launcher extends AppCompatActivity
         if (mSearchDropTargetBar != null) {
             mSearchDropTargetBar.setup(this, dragController);
         }
+
 
 
     }
@@ -4052,11 +4067,71 @@ public class Launcher extends AppCompatActivity
     }
 
     public View getQsbBar() {
+//        if (mQsbBar == null) {
+//            mQsbBar = mInflater.inflate(R.layout.search_bar, mSearchDropTargetBar, false);
+//
+//            mSearchDropTargetBar.addView(mQsbBar);
+//        }
+//        return mQsbBar;
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            if (mQsb == null) {
+//                AppWidgetProviderInfo searchProvider = Utilities.getSearchWidgetProvider(this);
+//                if (searchProvider == null) {
+//                    return null;
+//                }
+//
+//                Bundle opts = new Bundle();
+//                opts.putInt(AppWidgetManager.OPTION_APPWIDGET_HOST_CATEGORY,
+//                        AppWidgetProviderInfo.WIDGET_CATEGORY_SEARCHBOX);
+//
+//                SharedPreferences sp = getSharedPreferences(
+//                        LauncherAppState.getSharedPreferencesKey(), MODE_PRIVATE);
+//                int widgetId = sp.getInt(QSB_WIDGET_ID, -1);
+//                AppWidgetProviderInfo widgetInfo = mAppWidgetManager.getAppWidgetInfo(widgetId);
+//                if (!searchProvider.provider.flattenToString().equals(
+//                        sp.getString(QSB_WIDGET_PROVIDER, null))
+//                        || (widgetInfo == null)
+//                        || !widgetInfo.provider.equals(searchProvider.provider)) {
+//                     A valid widget is not already bound.
+//                    if (widgetId > -1) {
+//                        mAppWidgetHost.deleteAppWidgetId(widgetId);
+//                        widgetId = -1;
+//                    }
+//
+//                     Try to bind a new widget
+//                    widgetId = mAppWidgetHost.allocateAppWidgetId();
+//
+//                    if (!AppWidgetManagerCompat.getInstance(this)
+//                            .bindAppWidgetIdIfAllowed(widgetId, searchProvider, opts)) {
+//                        mAppWidgetHost.deleteAppWidgetId(widgetId);
+//                        widgetId = -1;
+//                    }
+//
+//                    sp.edit()
+//                            .putInt(QSB_WIDGET_ID, widgetId)
+//                            .putString(QSB_WIDGET_PROVIDER, searchProvider.provider.flattenToString())
+//                            .commit();
+//                }
+//
+//                if (widgetId != -1) {
+//                    mQsb = mAppWidgetHost.createView(this, widgetId, searchProvider);
+//                    mQsb.updateAppWidgetOptions(opts);
+//                    mQsb.setPadding(0, 0, 0, 0);
+//                    mQsb.setBackgroundColor(PreferencesProvider.Interface.General.getFolderBackColor());
+//
+//                    mSearchDropTargetBar.addView(mQsb);
+//                    Log.d("nbehary142","widget!");
+//                }
+//            }
+//            return mQsb;
+//        } else {
         if (mQsbBar == null) {
             mQsbBar = mInflater.inflate(R.layout.search_bar, mSearchDropTargetBar, false);
+            mQsbBar = Utilities.tintViewDrawable(mQsbBar);
             mSearchDropTargetBar.addView(mQsbBar);
         }
         return mQsbBar;
+//        }
     }
 
     private boolean updateGlobalSearchIcon() {
@@ -4516,10 +4591,16 @@ public class Launcher extends AppCompatActivity
                 if (PreferencesProvider.Interface.General.getWallpaperTint()) {
 
                     Context ctx = getApplicationContext();
-                    int color = Utilities.colorFromWallpaper(ctx);
+                    Palette.Swatch swatch = Utilities.swatchFromWallpaper(ctx);
+                    int color = swatch.getRgb();
                     int oldColor = PreferencesProvider.Interface.General.getFolderBackColor();
                     if (oldColor != color) {
+                        //Color the Search Bar (TODO: This needs to be a function)
+                       // mQsbBar.setBackgroundColor(PreferencesProvider.Interface.General.getFolderBackColor());
+                        mQsbBar = Utilities.tintViewDrawable(mQsbBar);
                         PreferencesProvider.Interface.General.setFolderBackColor(ctx, color);
+                        PreferencesProvider.Interface.General.setFolderIconColor(ctx, swatch.getBodyTextColor());
+                        PreferencesProvider.Interface.General.setFolderNameColor(ctx, swatch.getTitleTextColor());
                         //Force the workspace to reload and use the new color.
                         LauncherAppState.getInstance().getModel().startLoader(true, -1);
                         //TODO: the above causes the workspace to "flash".  This may be unavoidable without just waiting for onResume.
@@ -4662,11 +4743,16 @@ public class Launcher extends AppCompatActivity
 
     @Override
     public void bindSearchablesChanged() {
-        boolean searchVisible = updateGlobalSearchIcon();
-        boolean voiceVisible = updateVoiceSearchIcon(searchVisible);
-        if (mSearchDropTargetBar != null) {
-            mSearchDropTargetBar.onSearchPackagesChanged(searchVisible, voiceVisible);
+        if (mQsb != null) {
+            mSearchDropTargetBar.removeView(mQsb);
+            mQsb = null;
         }
+        mSearchDropTargetBar.setQsbSearchBar(getQsbBar());
+        //boolean searchVisible = updateGlobalSearchIcon();
+//        boolean voiceVisible = updateVoiceSearchIcon(searchVisible);
+//        if (mSearchDropTargetBar != null) {
+//            mSearchDropTargetBar.onSearchPackagesChanged(searchVisible, voiceVisible);
+//        }
     }
 
     /**

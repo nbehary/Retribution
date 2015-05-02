@@ -25,6 +25,7 @@ import android.graphics.Paint;
 import android.graphics.Paint.FontMetrics;
 import android.graphics.PointF;
 import android.graphics.Rect;
+import android.os.Build;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.View;
@@ -174,7 +175,7 @@ class DeviceProfile {
         numRowsDevice = numRows;
         numRowsCalc= numRows;
         numRows = PreferencesProvider.Interface.General.getWorkspaceRows();
-        if ( (numRows==0)|| ( (( numRows > numRowsCalc+1) || (numRows < numRowsCalc-1))) ) {
+        if ( (numRows==0) ) {
             numRows = numRowsCalc;
         }
 
@@ -186,7 +187,7 @@ class DeviceProfile {
         numColumns = Math.round(invDistWeightedInterpolate(minWidth, minHeight, points));
         numColumnsDevice = numColumnsCalc = numColumns;
         numColumns = PreferencesProvider.Interface.General.getWorkspaceColumns();
-        if ( (numColumns==0) || ( (( numColumns > numColumnsCalc+1) || (numColumns < numColumnsCalc-1))) ) {
+        if ( (numColumns==0)  ) {
             numColumns = numColumnsCalc;
         }
         // Interpolate the icon size
@@ -673,9 +674,11 @@ class DeviceProfile {
         lp = (FrameLayout.LayoutParams) searchBar.getLayoutParams();
         if ((hasVerticalBarLayout) ) {//&& (!hideQSB)) {
             // Vertical search bar
-            lp.gravity =  Gravity.LEFT;
+            //lp.gravity =  Gravity.LEFT;
+            lp.gravity = Gravity.TOP | Gravity.LEFT;
             lp.width = searchBarSpaceHeightPxDefault;
-            lp.height = LayoutParams.MATCH_PARENT;
+            //lp.height = LayoutParams.MATCH_PARENT;
+            lp.height = LayoutParams.WRAP_CONTENT;
             if (!hideQSB) {
                 searchBar.setPadding(
                         0, 2 * edgeMarginPx, 0,
@@ -688,22 +691,23 @@ class DeviceProfile {
             lp.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
             lp.width = searchBarSpaceWidthPxDefault;
             lp.height = searchBarSpaceHeightPxDefault;
-
-            searchBar.setPadding(
-                    2 * edgeMarginPx,
-                    2 * edgeMarginPx,
-                    2 * edgeMarginPx, 0);
+            //if(Build.VERSION.SDK_INT< Build.VERSION_CODES.LOLLIPOP) {
+                searchBar.setPadding(
+                        2 * edgeMarginPx,
+                        2 * edgeMarginPx,
+                        2 * edgeMarginPx, 0);
+            //}
         }
         searchBar.setLayoutParams(lp);
         searchBar.setVisibility(View.VISIBLE);
-
-        // Layout the search bar
-        View qsbBar = launcher.getQsbBar();
-        LayoutParams vglp = qsbBar.getLayoutParams();
-        vglp.width = LayoutParams.MATCH_PARENT;
-        vglp.height = LayoutParams.MATCH_PARENT;
-        qsbBar.setLayoutParams(vglp);
-
+        //if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            // Layout the search bar
+            View qsbBar = launcher.getQsbBar();
+            LayoutParams vglp = qsbBar.getLayoutParams();
+            vglp.width = LayoutParams.MATCH_PARENT;
+            vglp.height = LayoutParams.MATCH_PARENT;
+            qsbBar.setLayoutParams(vglp);
+        //}
         // Layout the voice proxy
         View voiceButtonProxy = launcher.findViewById(R.id.voice_button_proxy);
         if (voiceButtonProxy != null) {

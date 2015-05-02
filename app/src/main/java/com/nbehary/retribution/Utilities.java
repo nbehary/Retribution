@@ -16,9 +16,14 @@
 
 package com.nbehary.retribution;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.SearchManager;
 import android.app.WallpaperManager;
+import android.appwidget.AppWidgetManager;
+import android.appwidget.AppWidgetProviderInfo;
 import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -35,6 +40,8 @@ import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.PaintDrawable;
+import android.os.Build;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.graphics.Palette;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -44,11 +51,12 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import com.nbehary.retribution.R;
+import com.nbehary.retribution.preference.PreferencesProvider;
 
 /**
  * Various utilities shared amongst the Launcher's classes.
  */
-final class Utilities {
+public final class Utilities {
     private static final String TAG = "Launcher.Utilities";
 
     private static int sIconWidth = -1;
@@ -381,35 +389,80 @@ final class Utilities {
         return bitmap;
     }
 
-    public static int colorFromWallpaper(Context ctx) {
+    public static Palette.Swatch swatchFromWallpaper(Context ctx) {
         PackageManager pm = ctx.getPackageManager();
-
-/*
- * Wallpaper info is not equal to null, that is if the live wallpaper
- * is set, then get the drawable image from the package for the
- * live wallpaper
- */
         Drawable wallpaperDrawable;
         if (WallpaperManager.getInstance(ctx).getWallpaperInfo() != null) {
+            //TODO: We don't actually want to base this on the thumbnail.
             wallpaperDrawable = WallpaperManager.getInstance(ctx).getWallpaperInfo().loadThumbnail(pm);
-        }
-
-/*
- * Else, if static wallpapers are set, then directly get the
- * wallpaper image
- */
-        else {
+        } else {
             wallpaperDrawable = WallpaperManager.getInstance(ctx).getDrawable();
         }
-        //Drawable wallpaperDrawable = WallpaperManager.getInstance(this).getDrawable();
-        //Toast.makeText(this,"Wallpaper Info: " + WallpaperManager.getInstance(this).getWallpaperInfo(), Toast.LENGTH_SHORT).show();
         Drawable wallpaperDrawable2 = wallpaperDrawable;
-
         Bitmap bmp = Utilities.drawableToBitmap(wallpaperDrawable2);
         Palette pal = Palette.from(bmp).generate();
-        return pal.getDarkMutedColor(0);
+        //Todo: Better?
+        if (pal.getVibrantSwatch()!=null) {
+            return pal.getVibrantSwatch();
+        }
+        if (pal.getMutedSwatch()!=null) {
+            return pal.getVibrantSwatch();
+        }
+
+        return pal.getMutedSwatch();
+    }
+
+    public static View tintViewDrawable(View v){
+        Drawable d = v.getBackground();
+        if (d != null){
+            DrawableCompat.setTint(d, PreferencesProvider.Interface.General.getFolderBackColor());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                v.setBackground(d);
+            } else {
+                v.setBackgroundDrawable(d);
+            }
+        }
+        return v;
+    }
 
 
+    /**
+     * Returns a widget with category {@link AppWidgetProviderInfo#WIDGET_CATEGORY_SEARCHBOX}
+     * provided by the same package which is set to be global search activity.
+     * If widgetCategory is not supported, or no such widget is found, returns the first widget
+     * provided by the package.
+     */
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+    public static AppWidgetProviderInfo getSearchWidgetProvider(Context context) {
+        SearchManager searchManager =
+                (SearchManager) context.getSystemService(Context.SEARCH_SERVICE);
+        ComponentName searchComponent = searchManager.getGlobalSearchActivity();
+        if (searchComponent == null) return null;
+        String providerPkg = searchComponent.getPackageName();
 
+        AppWidgetProviderInfo defaultWidgetForSearchPackage = null;
+
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+        for (AppWidgetProviderInfo info : appWidgetManager.getInstalledProviders()) {
+            if (info.provider.getPackageName().equals(providerPkg)) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    if ((info.widgetCategory & AppWidgetProviderInfo.WIDGET_CATEGORY_SEARCHBOX) != 0) {
+                        return info;
+                    } else if (defaultWidgetForSearchPackage == null) {
+                        defaultWidgetForSearchPackage = info;
+                    }
+                } else {
+                    return info;
+                }
+            }
+        }
+        return defaultWidgetForSearchPackage;
+    }
+
+    /**
+     * Indicates if the device is running LMP or higher.
+     */
+    public static boolean isLmpOrAbove() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     }
 }
