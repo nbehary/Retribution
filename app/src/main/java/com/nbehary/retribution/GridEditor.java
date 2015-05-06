@@ -18,6 +18,7 @@
 package com.nbehary.retribution;
 
 import android.app.Activity;
+import android.content.pm.ActivityInfo;
 import android.support.v7.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -72,6 +73,9 @@ public class GridEditor extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getResources().getString(R.string.screen_type).equals("phone")) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
         setContentView(R.layout.activity_grid_editor);
         mProfile = new DeviceProfile(LauncherAppState.getInstance().getDynamicGrid().getDeviceProfile());
         mContext = this;
@@ -497,11 +501,6 @@ public class GridEditor extends AppCompatActivity
 
 
     }
-
-
-    /**
-     * A placeholder fragment containing a simple view.
-     */
 
 
 }

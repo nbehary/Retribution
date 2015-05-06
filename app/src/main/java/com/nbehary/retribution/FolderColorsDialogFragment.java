@@ -18,6 +18,7 @@
 package com.nbehary.retribution;
 
 
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
@@ -32,6 +33,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -67,7 +69,7 @@ public class FolderColorsDialogFragment extends DialogFragment implements ColorP
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        mRootView = (GridLayout) inflater.inflate(R.layout.folder_colors_dialog,null);
+        mRootView = (GridLayout) inflater.inflate(R.layout.folder_colors_dialog, null);
 
         mChangeSpinner = (Spinner) mRootView.findViewById(R.id.folder_colors_dialog_change);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
@@ -79,7 +81,7 @@ public class FolderColorsDialogFragment extends DialogFragment implements ColorP
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 mChanging = (String) parent.getItemAtPosition(position);
                 switch (mChanging) {
-                    case "Background":
+                    case "Backgrounds":
                         mPicker.setColor(mBgColor);
                         break;
                     case "Folder Name":
@@ -101,13 +103,7 @@ public class FolderColorsDialogFragment extends DialogFragment implements ColorP
 
             }
         });
-/*
-                mIconSpinner = (Spinner) mRootView.findViewById(R.id.folder_colors_dialog_icon);
-        ArrayAdapter<CharSequence> iconAdapter = ArrayAdapter.createFromResource(getActivity(),
-                R.array.folder_icons_array_pro, android.R.layout.simple_spinner_item);
-        iconAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mIconSpinner.setAdapter(iconAdapter);
-*/
+
         mPicker = (ColorPickerView) mRootView.findViewById(R.id.picker);
         mPicker.setOnColorChangedListener(this);
 
@@ -119,9 +115,10 @@ public class FolderColorsDialogFragment extends DialogFragment implements ColorP
         resetButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 mCustomColors = 0;
-                mBgColor = PreferencesProvider.Interface.General.getFolderBackColor();
-                mLabelColor = PreferencesProvider.Interface.General.getFolderIconColor();
-                mNameColor = PreferencesProvider.Interface.General.getFolderNameColor();
+                ColorTheme theme = LauncherAppState.getInstance().getColorTheme();
+                mBgColor = theme.getFolderBack();
+                mLabelColor = theme.getFolderIcon();
+                mNameColor = theme.getFolderName();
                 setColors();
 
             }
@@ -169,9 +166,10 @@ public class FolderColorsDialogFragment extends DialogFragment implements ColorP
             mNameColor = info.nameColor;
             mIconColor = info.iconColor;
         } else if (!mDefaultBG) {
-            mBgColor = PreferencesProvider.Interface.General.getFolderBackColor();
-            mLabelColor = PreferencesProvider.Interface.General.getFolderIconColor();
-            mNameColor = PreferencesProvider.Interface.General.getFolderNameColor();
+            ColorTheme theme = LauncherAppState.getInstance().getColorTheme();
+            mBgColor = theme.getFolderBack();
+            mLabelColor = theme.getFolderIcon();
+            mNameColor = theme.getFolderName();
             mCustomColors = 0;
         } else {
             mBgColor = Color.WHITE;
@@ -180,13 +178,11 @@ public class FolderColorsDialogFragment extends DialogFragment implements ColorP
             mCustomColors = 0;
         }
 
-        //mTintIcon = PreferencesProvider.Interface.General.getFolderIconTint();
-        //mFolderType = PreferencesProvider.Interface.General.getFolderType();
     }
 
     private void setColors() {
-        ColorFilter filter = new LightingColorFilter( mBgColor, mBgColor);
-        mPreviewBackground.setColorFilter(filter);
+        DrawableCompat.setTint(DrawableCompat.wrap(mPreviewBackground),mBgColor);
+        mPreview.invalidate();
         mLabelText.setTextColor(mLabelColor);
         mNameText.setTextColor(mNameColor);
     }
@@ -194,7 +190,7 @@ public class FolderColorsDialogFragment extends DialogFragment implements ColorP
     @Override
     public void onColorChanged(int color) {
         switch (mChanging) {
-            case "Background":
+            case "Backgrounds":
                 mBgColor = color;
                 break;
             case "Folder Name":

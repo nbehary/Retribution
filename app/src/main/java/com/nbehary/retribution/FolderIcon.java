@@ -33,6 +33,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Looper;
 import android.os.Parcelable;
 import android.support.v4.content.res.ResourcesCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -196,19 +197,7 @@ public class FolderIcon extends LinearLayout implements FolderListener {
 
         int icon_type = PreferencesProvider.Interface.General.getFolderType();
         if (PreferencesProvider.Interface.General.getFolderIconTint()){
-            int color = Color.WHITE;
-            boolean tint = PreferencesProvider.Interface.General.getFolderIconTint();
-            if (tint) {
-                color = PreferencesProvider.Interface.General.getFolderBackColor();
-            }
-
-
-            //Drawable myIcon = mContext.getResources().getDrawable(R.drawable.portal_ring_inner_holo);
-            //Drawable myIcon = icon.mPreviewBackground.getDrawable();
-            ColorFilter filter = new LightingColorFilter( color, color);
-            myIcon.setColorFilter(filter);
-            //icon.mPreviewBackground.setImageDrawable(myIcon);
-
+            DrawableCompat.setTint(DrawableCompat.wrap(myIcon),LauncherAppState.getInstance().getColorTheme().getFolderBack());
         }
 
         if (icon_type == 2){

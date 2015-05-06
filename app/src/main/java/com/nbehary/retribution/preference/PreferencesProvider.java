@@ -140,7 +140,7 @@ public final class PreferencesProvider {
             }
 
             public static boolean getDefaultFolderBG() {
-                return getBoolean("pref_folder_default_bg", true);
+                return getBoolean("pref_folder_default_bg", false);
             }
 
             public static void setDefaultFolderBG(Context ctx, boolean defBG){

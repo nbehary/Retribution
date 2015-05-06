@@ -39,6 +39,7 @@ import android.graphics.PaintFlagsDrawFilter;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.PaintDrawable;
 import android.os.Build;
 import android.support.v4.graphics.drawable.DrawableCompat;
@@ -83,7 +84,7 @@ public final class Utilities {
      * Returns a FastBitmapDrawable with the icon, accurately sized.
      */
     static Drawable createIconDrawable(Bitmap icon) {
-        FastBitmapDrawable d = new FastBitmapDrawable(icon);
+        Drawable d = new FastBitmapDrawable(icon);
         d.setFilterBitmap(true);
         resizeIconDrawable(d);
         return d;
@@ -377,6 +378,7 @@ public final class Utilities {
     }
 
     public static Bitmap drawableToBitmap (Drawable drawable) {
+        //TODO: I probably belong in ColorTheme. (and kill versions of me used for Previews)
         if (drawable instanceof BitmapDrawable) {
             return ((BitmapDrawable)drawable).getBitmap();
         }
@@ -390,23 +392,25 @@ public final class Utilities {
     }
 
     public static Palette.Swatch swatchFromWallpaper(Context ctx) {
-        PackageManager pm = ctx.getPackageManager();
+        //TODO: Switch all calls to the ColorTheme one.
         Drawable wallpaperDrawable;
+        PackageManager pm = ctx.getPackageManager();
+        //Check for live wallpaper.
         if (WallpaperManager.getInstance(ctx).getWallpaperInfo() != null) {
-            //TODO: We don't actually want to base this on the thumbnail.
+            //Get the Live Wallpaper's thumbnail, and use it.  This is horrible, but there is no other way.
             wallpaperDrawable = WallpaperManager.getInstance(ctx).getWallpaperInfo().loadThumbnail(pm);
         } else {
             wallpaperDrawable = WallpaperManager.getInstance(ctx).getDrawable();
+
         }
-        Drawable wallpaperDrawable2 = wallpaperDrawable;
-        Bitmap bmp = Utilities.drawableToBitmap(wallpaperDrawable2);
+        Bitmap bmp = Utilities.drawableToBitmap(wallpaperDrawable);
         Palette pal = Palette.from(bmp).generate();
-        //Todo: Better?
+        //Todo: Return ALL the Swatches!!!! (actually a new ColorTheme, which will contain those.)
         if (pal.getVibrantSwatch()!=null) {
             return pal.getVibrantSwatch();
         }
         if (pal.getMutedSwatch()!=null) {
-            return pal.getVibrantSwatch();
+            return pal.getMutedSwatch();
         }
 
         return pal.getMutedSwatch();
@@ -415,12 +419,8 @@ public final class Utilities {
     public static View tintViewDrawable(View v){
         Drawable d = v.getBackground();
         if (d != null){
-            DrawableCompat.setTint(d, PreferencesProvider.Interface.General.getFolderBackColor());
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                v.setBackground(d);
-            } else {
-                v.setBackgroundDrawable(d);
-            }
+          int c =  LauncherAppState.getInstance().getColorTheme().getFolderBack();
+            DrawableCompat.setTint(DrawableCompat.wrap(d), c);
         }
         return v;
     }
@@ -432,6 +432,7 @@ public final class Utilities {
      * If widgetCategory is not supported, or no such widget is found, returns the first widget
      * provided by the package.
      */
+    //TODO: We don't, and may not use this.  (Though, it may be good to set as user option)
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     public static AppWidgetProviderInfo getSearchWidgetProvider(Context context) {
         SearchManager searchManager =
@@ -459,10 +460,56 @@ public final class Utilities {
         return defaultWidgetForSearchPackage;
     }
 
+    //These are probably silly.  The Lmp one is used in new things from Launcher3, and I figured why not have them all?
+
+    /**
+     * Indicates if the device is running LMP MR1 (5.1) or higher.
+     */
+    public static boolean isLmp1OrAbove() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1;
+    }
+
     /**
      * Indicates if the device is running LMP or higher.
      */
     public static boolean isLmpOrAbove() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     }
+
+    /**
+     * Indicates if the device is running KitKat or higher.
+     */
+    public static boolean isKlpOrAbove() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
+    }
+
+    /**
+     * Indicates if the device is running JellyBean MR2 (4.3) or higher.
+     */
+    public static boolean isJb2OrAbove() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2;
+    }
+
+    /**
+     * Indicates if the device is running JellyBean MR1 (4.2) or higher.
+     */
+    public static boolean isJb1OrAbove() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
+    }
+
+    /**
+     * Indicates if the device is running JellyBean (4.1) or higher.
+     */
+    public static boolean isJbOrAbove() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
+    }
+
+    /**
+     * Indicates if the device is running ICS MR1 (4.0.3) or higher.
+     */
+    public static boolean isIcsOrAbove() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1;
+    }
+
+
 }

@@ -32,10 +32,8 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityOptions;
-import android.graphics.ColorFilter;
-import android.graphics.LightingColorFilter;
+import android.content.res.TypedArray;
 import android.support.v4.content.res.ResourcesCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AlertDialog;
 import android.app.Dialog;
 import android.app.SearchManager;
@@ -118,7 +116,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nbehary.retribution.DropTarget.DragObject;
-import com.nbehary.retribution.compat.AppWidgetManagerCompat;
 import com.nbehary.retribution.preference.PreferencesProvider;
 import com.nbehary.retribution.settings.SettingsProvider;
 
@@ -857,34 +854,13 @@ public class Launcher extends AppCompatActivity
             return;
         } else if (requestCode == REQUEST_SETTINGS) {
             mInFolderColors = false;
-
+            LauncherAppState.getInstance().getColorTheme().readFromFolderColors();
             mWorkspace.invalidate();
+            mHotseat.resetLayout();
             showWorkspace();
-//            mQsbBar.setBackgroundColor(PreferencesProvider.Interface.General.getFolderBackColor());
             mQsbBar = Utilities.tintViewDrawable(mQsbBar);
 
-//            mQsbBar.setAlpha(0.5f);
-//            mQsbBar.setBackgroundColor(color);
             return;
-            //TODO:  Why the below? Is there something missing just using invalidate and showWorkspace?
-/*            if (resultCode == RESULT_OK) {
-                if (data.getBooleanExtra("resetWorkspace", false)) {
-                    //reload the model to reset folder views to use new color.
-                    //TODO:This kills the workspace highlight in the Overview Panel.
-                    mModel.startLoader(true, -1);
-
-                    //mWorkspace.enterOverviewMode();
-                }
-                //mWorkspace.exitOverviewMode(false);
-                mOnResumeState = State.WORKSPACE;
-                onResume();
-                //mWorkspace.setVisibility(View.VISIBLE);
-                //showWorkspace();
-
-                //mOverviewPanel.setVisibility(View.VISIBLE);
-
-            }
-            return;*/
         } else if (requestCode == REQUEST_ABOUT) {
             //mWorkspace.exitOverviewMode(true);
             mOverviewPanel.setVisibility(View.VISIBLE);
@@ -1239,11 +1215,12 @@ public class Launcher extends AppCompatActivity
     }
 
     private void startSettings() {
+
         mWorkspace.setVisibility(View.INVISIBLE);
         mOverviewPanel.setVisibility(View.INVISIBLE);
         mState = State.FOLDERS_CUSTOMIZE;
         //mPaused = true;
-        Intent myIntent = new Intent(Launcher.this, com.nbehary.retribution.FolderColorsActivity.class);
+        Intent myIntent = new Intent(Launcher.this, ColorThemeActivity.class);
         Launcher.this.startActivityForResult(myIntent, REQUEST_SETTINGS);
 
 
@@ -1617,6 +1594,8 @@ public class Launcher extends AppCompatActivity
         final DragController dragController = mDragController;
         //here!
         mLauncherView = findViewById(R.id.launcher);
+        this.getWindow().getDecorView().getRootView().setDrawingCacheEnabled(true);
+        LauncherAppState.getInstance().setmLauncherView(mLauncherView);
         mDragLayer = (DragLayer) findViewById(R.id.drag_layer);
         mWorkspace = (Workspace) mDragLayer.findViewById(R.id.workspace);
 
@@ -2868,6 +2847,7 @@ public class Launcher extends AppCompatActivity
      * when the user is on the homescreen and not doing housekeeping.
      */
     void onInteractionBegin() {
+        Log.d("nbehary150","Overview!!!!");
     }
 
     void startApplicationDetailsActivity(ComponentName componentName) {
@@ -3132,10 +3112,15 @@ public class Launcher extends AppCompatActivity
     }
 
     public boolean onLongClick(View v) {
-
+        Log.d("nbehary150","Overview!!!!");
 
         if (v instanceof Workspace) {
+            Log.d("nbehary150","Overview!!!!");
             if (!mWorkspace.isInOverviewMode()) {
+                //Get a bitmap of the Workspace to use in Colors.
+                Bitmap bmp = mLauncherView.getDrawingCache();
+                LauncherAppState.getInstance().setmLauncherBitmap(bmp);
+
                 if (mWorkspace.enterOverviewMode()) {
                     mWorkspace.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS,
                             HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING);
@@ -4128,6 +4113,7 @@ public class Launcher extends AppCompatActivity
         if (mQsbBar == null) {
             mQsbBar = mInflater.inflate(R.layout.search_bar, mSearchDropTargetBar, false);
             mQsbBar = Utilities.tintViewDrawable(mQsbBar);
+//            mQsbBar.setBackgroundColor(LauncherAppState.getInstance().getColorTheme().getSearchBar());
             mSearchDropTargetBar.addView(mQsbBar);
         }
         return mQsbBar;
@@ -4584,23 +4570,18 @@ public class Launcher extends AppCompatActivity
             }
         }
         workspace.requestLayout();
-
+/* Wallpaper Runnable.  Useless for now,probably ever
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
                 if (PreferencesProvider.Interface.General.getWallpaperTint()) {
 
                     Context ctx = getApplicationContext();
-                    Palette.Swatch swatch = Utilities.swatchFromWallpaper(ctx);
+                    Palette.Swatch swatch = ColorTheme.swatchFromWallpaper(ctx);
                     int color = swatch.getRgb();
                     int oldColor = PreferencesProvider.Interface.General.getFolderBackColor();
                     if (oldColor != color) {
-                        //Color the Search Bar (TODO: This needs to be a function)
-                       // mQsbBar.setBackgroundColor(PreferencesProvider.Interface.General.getFolderBackColor());
-                        mQsbBar = Utilities.tintViewDrawable(mQsbBar);
                         PreferencesProvider.Interface.General.setFolderBackColor(ctx, color);
-                        PreferencesProvider.Interface.General.setFolderIconColor(ctx, swatch.getBodyTextColor());
-                        PreferencesProvider.Interface.General.setFolderNameColor(ctx, swatch.getTitleTextColor());
                         //Force the workspace to reload and use the new color.
                         LauncherAppState.getInstance().getModel().startLoader(true, -1);
                         //TODO: the above causes the workspace to "flash".  This may be unavoidable without just waiting for onResume.
@@ -4611,6 +4592,8 @@ public class Launcher extends AppCompatActivity
             }
         };
         wallTintHandler.postDelayed(runnable, 300000);
+        */
+
     }
 
     /**

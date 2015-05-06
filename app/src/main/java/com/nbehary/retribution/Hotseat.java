@@ -23,8 +23,6 @@ import android.content.res.Resources;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.res.ResourcesCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
-import android.support.v7.graphics.Palette;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,8 +30,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-
-import com.nbehary.retribution.preference.PreferencesProvider;
 
 import java.util.ArrayList;
 
@@ -153,10 +149,10 @@ public class Hotseat extends FrameLayout {
             LayoutInflater inflater = LayoutInflater.from(context);
             TextView allAppsButton = (TextView)
                     inflater.inflate(R.layout.all_apps_button, mContent, false);
-            Drawable d = ResourcesCompat.getDrawable(context.getResources(), R.drawable.all_apps_button_icon, null);
-            d.setAlpha(128);
-
-            DrawableCompat.setTint(d, PreferencesProvider.Interface.General.getFolderBackColor());
+            Drawable d = ResourcesCompat.getDrawable(context.getResources(), R.drawable.apps_button, null);
+            d = ColorTheme.tintedAppsButtonDrawable(context, LauncherAppState.getInstance().getColorTheme().getFolderBack(),
+                    LauncherAppState.getInstance().getColorTheme().getFolderIcon());
+            //DrawableCompat.setTint(d, LauncherAppState.getInstance().getColorTheme().getFolderBack());
             Utilities.resizeHotseatIconDrawable(d);
             allAppsButton.setCompoundDrawables(null, d, null, null);
 
