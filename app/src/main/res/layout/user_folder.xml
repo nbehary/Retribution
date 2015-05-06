@@ -82,7 +82,7 @@
                   android:layout_width="wrap_content"
                   android:layout_height="match_parent"
                   android:gravity="right"
-                  android:src="@drawable/ic_menu_moreoverflow_holo_light"
+                  android:src="@drawable/ic_menu_overflow_normal"
                   android:contentDescription="@string/descr_overflow_button"
                   android:layout_weight=".10"
                   android:background="#00000000"

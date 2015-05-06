@@ -78,7 +78,7 @@
     <string name="folder_icon_spinner_text">Icon Style</string>
     <string name="folder_colors_dialog_change_text">Change:</string>
     <string name="folder_colors_dialog_icon_text">Icon Type</string>
-    <string name="reset_default_button_text">Reset Defaults</string>
+    <string name="reset_default_button_text">Default</string>
     <string name="reset_system_button_text">Use Global</string>
     <string name="folder_colors_preview_icon_text">Icon Labels</string>
     <string name="folder_colors_preview_label_text">Folder Name</string>

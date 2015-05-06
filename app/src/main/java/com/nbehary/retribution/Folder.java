@@ -38,6 +38,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.SystemClock;
 import android.support.v4.content.res.ResourcesCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.widget.AutoScrollHelper;
 import android.text.InputType;
 import android.text.Selection;
@@ -220,32 +221,15 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
             }
         });
 
-
-        //Get color for background from shared preferences and set it
-        LinearLayout folder = (LinearLayout) findViewById(R.id.user_folder);
-
         mFolderBackground = getBackground();
 
         if (!PreferencesProvider.Interface.General.getDefaultFolderBG()) {
-
-            Context ctx = getContext();
-
-            if (!PreferencesProvider.Interface.General.getDefaultFolderBG()) {
-                int color = PreferencesProvider.Interface.General.getFolderBackColor();
-
-               // color = Utilities.colorFromWallpaper(ctx, 0);
-Log.d("nbehary142","Folder Inflate");
-
-                ColorFilter filter = new LightingColorFilter(color, color);
-                mFolderBackground.setColorFilter(filter);
-                mFolderName.setHintTextColor(PreferencesProvider.Interface.General.getFolderNameColor());
-                mFolderName.setTextColor(PreferencesProvider.Interface.General.getFolderNameColor());
-
-            }
-
-
+            ColorTheme theme = new ColorTheme(getContext());
+            DrawableCompat.setTint(DrawableCompat.wrap(mFolderBackground), theme.mFolderBack);
+            mFolderName.setHintTextColor(theme.mFolderName);
+            mFolderName.setTextColor(theme.mFolderName);
+            mFolderCustomize = (FolderCustomize) Utilities.tintViewDrawable(mFolderCustomize);
         }
-
 
         mAutoScrollHelper = new FolderAutoScrollHelper(mScrollView);
         // mFolderCustomize = (FolderCustomize) findViewById(R.id.folder_customize);
@@ -461,10 +445,10 @@ Log.d("nbehary142","Folder Inflate");
         } else {
             mFolderName.setText("");
         }
+        ColorTheme theme = LauncherAppState.getInstance().getColorTheme();
         if (mInfo.customColors == 1) {
             int color = mInfo.backColor;
-            ColorFilter filter = new LightingColorFilter(color, color);
-            mFolderBackground.setColorFilter(filter);
+            DrawableCompat.setTint(DrawableCompat.wrap(mFolderBackground), color);
             mFolderName.setHintTextColor(mInfo.nameColor);
             mFolderName.setTextColor(mInfo.nameColor);
 
@@ -474,22 +458,12 @@ Log.d("nbehary142","Folder Inflate");
         //Drawable myIcon = mFolderIcon.getPreviewBackground().getDrawable();
 
         int icon_type = PreferencesProvider.Interface.General.getFolderType();
-        if (PreferencesProvider.Interface.General.getFolderIconTint()) {
-            int color = Color.WHITE;
-            boolean tint = PreferencesProvider.Interface.General.getFolderIconTint();
-            if (tint) {
-                color = PreferencesProvider.Interface.General.getFolderBackColor();
-            }
 
-
+        if (theme.getFolderIconTint()) {
+            int color = theme.getFolderBack();
             Drawable myIcon = ResourcesCompat.getDrawable(mLauncher.getResources(), R.drawable.portal_ring_inner_holo, null);
-            //Drawable myIcon = icon.mPreviewBackground.getDrawable();
-            ColorFilter filter = new LightingColorFilter(color, color);
-
-            myIcon.setColorFilter(filter);
+            DrawableCompat.setTint(DrawableCompat.wrap(myIcon),color);
             mFolderIcon.getPreviewBackground().setImageDrawable(myIcon);
-
-
         }
 
         if (icon_type == 2) {
@@ -639,11 +613,11 @@ Log.d("nbehary142","Folder Inflate");
         SharedPreferences preferences = getContext().getSharedPreferences("com.nbehary.retribution_preferences", 0);
         //Here
 
-            if (mInfo.customColors == 1) {
-                textView.setTextColor(mInfo.labelColor);
-            } else if (!PreferencesProvider.Interface.General.getDefaultFolderBG()) {
-                textView.setTextColor(PreferencesProvider.Interface.General.getFolderIconColor());
-            }
+        if (mInfo.customColors == 1) {
+            textView.setTextColor(mInfo.labelColor);
+        } else if (!PreferencesProvider.Interface.General.getDefaultFolderBG()) {
+            textView.setTextColor(LauncherAppState.getInstance().getColorTheme().getFolderIcon());
+        }
 
 
         textView.setOnClickListener(this);

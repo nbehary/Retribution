@@ -26,9 +26,14 @@ import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.support.v4.content.res.ResourcesCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.text.TextUtils;
+import android.util.Log;
+import android.view.Gravity;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -97,7 +102,15 @@ public class IconCache {
             d = null;
         }
 
-        return (d != null) ? d : getFullResDefaultActivityIcon();
+        //return (d != null) ? d : getFullResDefaultActivityIcon();
+        if (d!=null){
+//            BitmapDrawable outer = (BitmapDrawable) resources.getDrawable(R.drawable.ic_allapps_new);
+//            Drawable drawableArray[]= new Drawable[]{outer,d};
+//            LayerDrawable layerDraw = new LayerDrawable(drawableArray);
+            return d;//layerDraw;
+        } else {
+            return getFullResDefaultActivityIcon();
+        }
     }
 
     public Drawable getFullResIcon(String packageName, int iconId) {

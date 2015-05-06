@@ -23,8 +23,10 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.ContentObserver;
+import android.graphics.Bitmap;
 import android.os.Handler;
 import android.util.Log;
+import android.view.View;
 
 import java.lang.ref.WeakReference;
 
@@ -41,7 +43,10 @@ public class LauncherAppState {
     private IconPackPreviewLoader.CacheDb mIconPackPreviewCacheDb;
     private boolean mIsScreenLarge;
     private float mScreenDensity;
+    private ColorTheme mColorTheme;
     private final int mLongPressTimeout = 300;
+    private View mLauncherView;
+    private Bitmap mLauncherBitmap;
 
     private static WeakReference<LauncherProvider> sLauncherProvider;
     private static Context sContext;
@@ -132,6 +137,7 @@ public class LauncherAppState {
         }
         mVersionName = pInfo.versionName;
         mVersionCode = pInfo.versionCode;
+        mColorTheme = new ColorTheme(sContext);
     }
 
     /**
@@ -168,6 +174,14 @@ public class LauncherAppState {
         return mModel;
     }
 
+    public Bitmap getmLauncherBitmap() {
+        return mLauncherBitmap;
+    }
+
+    public void setmLauncherBitmap(Bitmap mLauncherBitmap) {
+        this.mLauncherBitmap = mLauncherBitmap;
+    }
+
     IconCache getIconCache() {
         return mIconCache;
     }
@@ -191,6 +205,14 @@ public class LauncherAppState {
     String getVersionName() {return mVersionName;}
 
     int getVersionCode() {return mVersionCode;}
+
+    public View getmLauncherView() {
+        return mLauncherView;
+    }
+
+    public void setmLauncherView(View mLauncherView) {
+        this.mLauncherView = mLauncherView;
+    }
 
     static void setLauncherProvider(LauncherProvider provider) {
         sLauncherProvider = new WeakReference<LauncherProvider>(provider);
@@ -226,6 +248,13 @@ public class LauncherAppState {
         return mDynamicGrid;
     }
 
+    public ColorTheme getColorTheme() {
+        return mColorTheme;
+    }
+
+    public void setColorTheme(ColorTheme mColorTheme) {
+        this.mColorTheme = mColorTheme;
+    }
 
     public boolean isScreenLarge() {
         return mIsScreenLarge;

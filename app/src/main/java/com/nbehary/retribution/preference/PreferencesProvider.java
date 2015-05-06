@@ -36,8 +36,7 @@ public final class PreferencesProvider {
     }
 
     public static boolean checkKey(Context ctx) {
-        SharedPreferences preferences = ctx.getSharedPreferences(PREFERENCES_KEY, 0);
-        return preferences.contains("pref_allow_land");
+        return true;  //TODO: Get rid of calls to this.
     }
 
     private static int getInt(String key) {
@@ -141,7 +140,7 @@ public final class PreferencesProvider {
             }
 
             public static boolean getDefaultFolderBG() {
-                return getBoolean("pref_folder_default_bg", true);
+                return getBoolean("pref_folder_default_bg", false);
             }
 
             public static void setDefaultFolderBG(Context ctx, boolean defBG){
@@ -307,6 +306,12 @@ public final class PreferencesProvider {
             public static boolean getWallpaperTint() {
                 return getBoolean("pref_wall_tint",false);
             }
+
+            public static void setAllAppsColor(Context ctx,int color) {
+                setInt(ctx,"pref_all_apps_color",color);
+            }
+
+            public static int getAllAppsColor(){ return getInt("pref_all_apps_color");}
 
         }
     }
