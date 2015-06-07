@@ -63,12 +63,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class  LauncherProvider extends ContentProvider {
-    private static final String TAG = "Launcher.LauncherProvider";
+    private static final String TAG = "LauncherProvider";
     private static final boolean LOGD = false;
 
     private static final String DATABASE_NAME = "launcher.db";
 
-    private static final int DATABASE_VERSION = 21;
+    private static final int DATABASE_VERSION = 22;
 
     static final String OLD_AUTHORITY = "com.android.launcher2.settings";
     static final String AUTHORITY = ProviderConfig.AUTHORITY;
@@ -76,6 +76,7 @@ public class  LauncherProvider extends ContentProvider {
     static final String TABLE_FAVORITES = "favorites";
     static final String TABLE_WORKSPACE_SCREENS = "workspaceScreens";
     static final String TABLE_CATEGORIES= "categories";
+    static final String TABLE_COLORTHEMES = "colorThemes";
 
     static final String PARAMETER_NOTIFY = "notify";
     private static final String UPGRADED_FROM_OLD_DATABASE =
@@ -249,6 +250,10 @@ public class  LauncherProvider extends ContentProvider {
         mOpenHelper.updateMaxCategoryId(maxScreenId);
     }
 
+    public void updateMaxColorThemeId(long maxColorThemeId) {
+        mOpenHelper.updateMaxColorThemeId(maxColorThemeId);
+    }
+
     /**
      * @param Should we load the old db for upgrade? first run only.
      */
@@ -317,6 +322,7 @@ public class  LauncherProvider extends ContentProvider {
         private long mMaxItemId = -1;
         private long mMaxScreenId = -1;
         private long mMaxCategoryId = -1;
+        private long mMaxColorThemeId = -1;
 
         DatabaseHelper(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -333,6 +339,10 @@ public class  LauncherProvider extends ContentProvider {
             }
             if (mMaxCategoryId == -1) {
                 mMaxCategoryId = initializeMaxCategoryId(getWritableDatabase());
+            }
+
+            if (mMaxColorThemeId == -1) {
+                mMaxColorThemeId = initializeMaxColorThemeId(getWritableDatabase());
             }
         }
 
@@ -437,6 +447,27 @@ public class  LauncherProvider extends ContentProvider {
                     LauncherSettings.Categories._ID + " INTEGER PRIMARY KEY," +
                     LauncherSettings.Categories.APP_NAME + " TEXT," +
                     LauncherSettings.Categories.APP_CATEGORY + " TEXT," +
+                    LauncherSettings.ChangeLogColumns.MODIFIED + " INTEGER NOT NULL DEFAULT 0" +
+                    ");");
+        }
+
+        private void addColorThemesTable(SQLiteDatabase db) {
+            db.execSQL("CREATE TABLE " + TABLE_COLORTHEMES + " (" +
+                    LauncherSettings.ColorThemes._ID + " INTEGER PRIMARY KEY, " +
+                    LauncherSettings.ColorThemes.NAME + " TEXT, " +
+                    LauncherSettings.ColorThemes.FOLDER_BACKGROUND + " INTEGER, " +
+                    LauncherSettings.ColorThemes.FOLDER_LABELS + " INTEGER, " +
+                    LauncherSettings.ColorThemes.FOLDER_NAME + " INTEGER, " +
+                    LauncherSettings.ColorThemes.FOLDER_ICON_TINT + " INTEGER, " +
+                    LauncherSettings.ColorThemes.FOLDER_ICON_TYPE + " INTEGER, " +
+                    LauncherSettings.ColorThemes.SEARCH_BAR_BACKGROUND + " INTEGER, " +
+                    LauncherSettings.ColorThemes.SEARCH_BAR_GLASS + " INTEGER, " +
+                    LauncherSettings.ColorThemes.SEARCH_BAR_MIC + " INTEGER, " +
+                    LauncherSettings.ColorThemes.ALLAPPS_BUTTON_OUTER + " INTEGER, " +
+                    LauncherSettings.ColorThemes.ALLAPPS_BUTTON_INNER + " INTEGER, " +
+                    LauncherSettings.ColorThemes.ALLAPPS_BACKGROUND + " INTEGER, " +
+                    LauncherSettings.ColorThemes.ALLAPPS_LABELS + " INTEGER, " +
+                    LauncherSettings.ColorThemes.WIDGETS_CARDS + "INTEGER" +
                     LauncherSettings.ChangeLogColumns.MODIFIED + " INTEGER NOT NULL DEFAULT 0" +
                     ");");
         }
@@ -758,8 +789,14 @@ public class  LauncherProvider extends ContentProvider {
                 version = 18;
             }
 
-            if (version < 21){
+            if (version < 21){ //Because of Roll-back from abandoned 1.5.  Beta users were at 20.
                 version = 21;
+            }
+
+            if (version < 22){
+                mMaxCategoryId = 0;
+                addColorThemesTable(db);
+                version = 22;
             }
 
             if (version != DATABASE_VERSION) {
@@ -989,6 +1026,8 @@ public class  LauncherProvider extends ContentProvider {
             return mMaxCategoryId;
         }
 
+
+
         public void updateMaxCategoryId(long maxScreenId) {
             mMaxCategoryId = maxScreenId;
         }
@@ -1011,6 +1050,38 @@ public class  LauncherProvider extends ContentProvider {
             }
 
             return id;
+        }
+
+        public void updateMaxColorThemeId(long maxColorThemeId) {
+            mMaxColorThemeId = maxColorThemeId;
+        }
+
+        private long initializeMaxColorThemeId(SQLiteDatabase db) {
+            Cursor c = db.rawQuery("SELECT MAX(" + LauncherSettings.ColorThemes._ID + ") FROM " + TABLE_COLORTHEMES, null);
+
+            // get the result
+            final int maxIdIndex = 0;
+            long id = -1;
+            if (c != null && c.moveToNext()) {
+                id = c.getLong(maxIdIndex);
+            }
+            if (c != null) {
+                c.close();
+            }
+
+            if (id == -1) {
+                throw new RuntimeException("Error: could not query max screen id");
+            }
+
+            return id;
+        }
+
+        public long generateNewColorThemeId() {
+            if (mMaxColorThemeId < 0) {
+                throw new RuntimeException("Error: max screen id was not initialized");
+            }
+            mMaxColorThemeId += 1;
+            return mMaxColorThemeId;
         }
 
         /**

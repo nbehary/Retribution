@@ -56,27 +56,11 @@ public class SettingsActivity extends Activity implements AdapterView.OnItemSele
         mFolderColorStart = PreferenceManager.getDefaultSharedPreferences(this).getString("pref_folder_color", "1");
         mFolderIconStart = PreferenceManager.getDefaultSharedPreferences(this).getString("pref_folder_icon", "1");
 
-        // Display the fragment as the main content.
-       // if (LauncherAppState.getInstance().getProVersion()){
-
-      //  } else {
+        
             getFragmentManager().beginTransaction()
                     .replace(android.R.id.content, new SettingsFragment())
                     .commit();
-       // }
-     /*     setContentView(R.layout.fragment_folder_colors);
-        Spinner spinner = (Spinner) findViewById(R.id.folder_colors_item_spinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.folder_colors_array, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-        spinner.setOnItemSelectedListener(this);
 
-        FrameLayout preview = (FrameLayout) findViewById(R.id.folder_color_preview);
-
-        Log.d("nbehary546","debug placeholder");
-
-*/
     }
 
     @Override

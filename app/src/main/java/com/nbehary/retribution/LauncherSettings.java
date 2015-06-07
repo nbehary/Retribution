@@ -126,6 +126,47 @@ class LauncherSettings {
         static final String APP_NAME = "appName";
 
         static final String APP_CATEGORY = "appCategory";
+    }
+
+    static final class ColorThemes implements ChangeLogColumns {
+
+        static final Uri CONTENT_URI = Uri.parse("content://" +
+                LauncherProvider.AUTHORITY + "/" + LauncherProvider.TABLE_COLORTHEMES +
+                "?" + LauncherProvider.PARAMETER_NOTIFY + "=true");
+
+        static final String NAME = "name";
+
+        static final String FOLDER_BACKGROUND = "folderBack";
+
+        static final String FOLDER_LABELS = "folderLabels";
+
+        static final String FOLDER_NAME = "folderName";
+
+        static final String FOLDER_ICON_TINT = "folderIconTint";
+
+        static final String FOLDER_ICON_TYPE = "folderIconType";
+
+        static final String SEARCH_BAR_BACKGROUND= "searchBarBack";
+
+        static final String SEARCH_BAR_GLASS = "searchBarGlass";
+
+        static final String SEARCH_BAR_MIC = "searchBarMic";
+
+        static final String ALLAPPS_BUTTON_OUTER = "allappsOuter";
+
+        static final String ALLAPPS_BUTTON_INNER = "allappsInner";
+
+        // The next 2 AllApps plus WidgetCards items are for PagedViews in general.
+        // It is this way to make transitioning to making the 3 separate
+        // better if I do.  (so I'm not removing columns)
+
+        static final String ALLAPPS_BACKGROUND = "allappsBackground";
+
+        static final String ALLAPPS_LABELS = "allappsLabels";
+
+        static final String WIDGETS_CARDS = "widgetsCards";
+
+
 
 
     }

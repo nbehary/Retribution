@@ -20,12 +20,14 @@ import android.app.Application;
 import android.content.pm.ApplicationInfo;
 
 import com.nbehary.retribution.preference.PreferencesProvider;
+import com.squareup.leakcanary.LeakCanary;
 
 public class LauncherApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
         // Load all preferences
+        LeakCanary.install(this);
         PreferencesProvider.load(this);
         LauncherAppState.setApplicationContext(this);
         LauncherAppState.getInstance();

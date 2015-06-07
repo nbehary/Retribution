@@ -862,17 +862,11 @@ public class Launcher extends AppCompatActivity
 
             return;
         } else if (requestCode == REQUEST_ABOUT) {
-            //mWorkspace.exitOverviewMode(true);
             mOverviewPanel.setVisibility(View.VISIBLE);
             mWorkspace.setVisibility(View.VISIBLE);
-            //mState=State.WORKSPACE;
-
-
         } else if (requestCode == REQUEST_GRID) {
             if (resultCode == RESULT_OK) {
-                Log.d("nbehary121", "RequestGrid Ok");
                 Intent intent = getIntent();
-                //finish();
                 try {
                     Thread.sleep(250);
                 } catch (InterruptedException e) {
@@ -1279,16 +1273,6 @@ public class Launcher extends AppCompatActivity
         builder.setView(getLayoutInflater().inflate(R.layout.new_folder_dialog, null));
         Dialog dialog = builder.create();
         dialog.show();
-//		CellLayout layout = (CellLayout) mWorkspace.getChildAt(0);
-//		int[] coords = layout.getEmptyCell();
-//		PackageManager pm = getPackageManager();
-//		Log.d("nbehary121",String.format("%d,%d",coords[0],coords[1]));
-//		long id = addGroupFolder("A Folder",2,coords[0],coords[1]);
-//		Intent intent = pm.getLaunchIntentForPackage("com.android.settings");
-//		intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT,intent);
-//		mModel.addShortcut((Context)Launcher.this, intent, id, 0, 0, 0, false);
-//		mModel.startLoader(true, -1);
-//here!!
     }
 
     private void onClickTransitionEffectButton() {
@@ -2847,7 +2831,7 @@ public class Launcher extends AppCompatActivity
      * when the user is on the homescreen and not doing housekeeping.
      */
     void onInteractionBegin() {
-        Log.d("nbehary150","Overview!!!!");
+
     }
 
     void startApplicationDetailsActivity(ComponentName componentName) {
@@ -3112,10 +3096,10 @@ public class Launcher extends AppCompatActivity
     }
 
     public boolean onLongClick(View v) {
-        Log.d("nbehary150","Overview!!!!");
+
 
         if (v instanceof Workspace) {
-            Log.d("nbehary150","Overview!!!!");
+
             if (!mWorkspace.isInOverviewMode()) {
                 //Get a bitmap of the Workspace to use in Colors.
                 Bitmap bmp = mLauncherView.getDrawingCache();
@@ -3786,7 +3770,7 @@ public class Launcher extends AppCompatActivity
                                 return true;
 //							case R.id.apps_customize_temp_folder:
 //								onClickFolderButton();
-//								Log.d("nbehary121","Test Folder");
+//
 //								return true;
 
 
@@ -4105,7 +4089,7 @@ public class Launcher extends AppCompatActivity
 //                    mQsb.setBackgroundColor(PreferencesProvider.Interface.General.getFolderBackColor());
 //
 //                    mSearchDropTargetBar.addView(mQsb);
-//                    Log.d("nbehary142","widget!");
+//
 //                }
 //            }
 //            return mQsb;
@@ -4113,7 +4097,7 @@ public class Launcher extends AppCompatActivity
         if (mQsbBar == null) {
             mQsbBar = mInflater.inflate(R.layout.search_bar, mSearchDropTargetBar, false);
             mQsbBar = Utilities.tintViewDrawable(mQsbBar);
-//            mQsbBar.setBackgroundColor(LauncherAppState.getInstance().getColorTheme().getSearchBar());
+//            mQsbBar.setBackgroundColor(LauncherAppState.getInstance().getColorTheme().getSearchBarBack());
             mSearchDropTargetBar.addView(mQsbBar);
         }
         return mQsbBar;

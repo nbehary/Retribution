@@ -52,7 +52,7 @@ public class AppCategories  {
 
     public AppCategories(IconCache iconCache, AppFilter appFilter) {
 
-        mList2 = new ArrayList<CategoryEntry>();
+        mList2 = new ArrayList<>();
         mIconCache = iconCache;
         mAppFilter = appFilter;
     }

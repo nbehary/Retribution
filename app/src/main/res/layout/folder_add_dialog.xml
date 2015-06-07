@@ -24,19 +24,17 @@
             android:layout_height="wrap_content"
             android:layout_weight="1.5"
             android:id="@+id/groups_spinner" />
-<!---->
-        <!--<Button-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_weight="1"-->
-            <!--android:text="@string/groups_new_button_label"-->
-            <!--android:id="@+id/groups_new_button" />-->
-<!---->
+
     </LinearLayout>
 
-    <ListView
+    <!--<ListView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@+id/group_list" />-->
+
+    <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/group_list" />
+        android:id="@+id/group_list2"/>
 
 </LinearLayout>

@@ -31,6 +31,7 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Environment;
@@ -122,7 +123,7 @@ public class LauncherModel extends BroadcastReceiver {
     private final AllAppsList mAll;
     private final AppCategories mCategories;
 
-    ArrayMap<String, String > mCats;
+    //private final ArrayList<ColorTheme> mColorThemes;
 
     private String mAuthToken;
     private Launcher mLauncher;
@@ -208,6 +209,7 @@ public class LauncherModel extends BroadcastReceiver {
         mCategories = new AppCategories(iconCache,appFilter);
         mIconCache = iconCache;
         mAppFilter = appFilter;
+
 
         mDefaultIcon = Utilities.createIconBitmap(
                 mIconCache.getFullResDefaultActivityIcon(), context);
@@ -548,42 +550,21 @@ public class LauncherModel extends BroadcastReceiver {
     }
 
     //TODO:  update categories routine.....
-    //
+    // Why did I put that todo there?
     public void updateCategoryInDatabase(Context context, String appName, String appCategory){
         final Uri uri = LauncherSettings.Categories.CONTENT_URI;
         final ContentResolver cr = context.getContentResolver();
         final ContentValues values = new ContentValues();
         values.put(LauncherSettings.Categories.APP_NAME,appName);
         values.put(LauncherSettings.Categories.APP_CATEGORY,appCategory);
-
-//        Strin?g[] projection = new String[]{LauncherSettings.Categories._ID,LauncherSettings.Categories.APP_NAME};
-//        final String selection = LauncherSettings.Categories.APP_NAME + "='" +appName+"'";
-        //try {
-//            Cursor cursor = cr.query(uri,projection,selection,null,null);
-//            if(cursor.moveToFirst()){
-//                values.put(LauncherSettings.Categories._ID,cursor.getLong(0));
-//
-//                Runnable r = new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        cr.delete(uri,selection,null);
-//
-//                        cr.insert(uri, values);
-//                    }
-//                };
-//                runOnWorkerThread(r);
-//            } else {//catch (SQLiteException e) {
-            values.put(LauncherSettings.Categories._ID,LauncherAppState.getLauncherProvider().generateNewCategoryId());
-
-            Runnable r = new Runnable() {
-                @Override
-                public void run() {
-                    cr.insert(uri,values);
-                }
-            };
-            runOnWorkerThread(r);
-//        }
-
+        values.put(LauncherSettings.Categories._ID,LauncherAppState.getLauncherProvider().generateNewCategoryId());
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                cr.insert(uri,values);
+            }
+        };
+        runOnWorkerThread(r);
     }
 
     public void deleteCategoryFromAppInDatabse(Context context, String appName, String appCategory){
@@ -613,22 +594,64 @@ public class LauncherModel extends BroadcastReceiver {
         cursor.close();
     }
 
-    public void deleteCategoryInDatabase(Context context, String appCategory){
-        final Uri uri = LauncherSettings.Categories.CONTENT_URI;
+    public void updateColorThemeInDatabase(Context context, ColorTheme theme){
+        final Uri uri = LauncherSettings.ColorThemes.CONTENT_URI;
         final ContentResolver cr = context.getContentResolver();
         final ContentValues values = new ContentValues();
+        values.put(LauncherSettings.ColorThemes.NAME, theme.getName());
+        values.put(LauncherSettings.ColorThemes.FOLDER_BACKGROUND, theme.getFolderBack());
+        values.put(LauncherSettings.ColorThemes.FOLDER_LABELS, theme.getFolderLabel());
+        values.put(LauncherSettings.ColorThemes.FOLDER_NAME, theme.getFolderName());
+        values.put(LauncherSettings.ColorThemes.FOLDER_ICON_TINT, theme.getFolderIconTint());
+        values.put(LauncherSettings.ColorThemes.FOLDER_ICON_TYPE, theme.getFolderType());
+        values.put(LauncherSettings.ColorThemes.SEARCH_BAR_BACKGROUND, theme.getSearchBarBack());
+        values.put(LauncherSettings.ColorThemes.SEARCH_BAR_GLASS, theme.getSearchBarGlass());
+        values.put(LauncherSettings.ColorThemes.SEARCH_BAR_MIC, theme.getSearchBarMic());
+        values.put(LauncherSettings.ColorThemes.ALLAPPS_BUTTON_OUTER, theme.getAllAppsOuter());
+        values.put(LauncherSettings.ColorThemes.ALLAPPS_BUTTON_INNER, theme.getAllAppsInner());
+        values.put(LauncherSettings.ColorThemes.ALLAPPS_BACKGROUND, theme.getPagedViewBack());
+        values.put(LauncherSettings.ColorThemes.ALLAPPS_LABELS, theme.getPagedViewLabels());
+        values.put(LauncherSettings.ColorThemes.WIDGETS_CARDS, theme.getPagedViewCards());
+        values.put(LauncherSettings.ColorThemes._ID,LauncherAppState.getLauncherProvider().generateNewCategoryId());
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                cr.insert(uri,values);
+            }
+        };
+        runOnWorkerThread(r);
+    }
 
+    public void deleteColorThemeFromDatabase(Context context,ColorTheme theme ){
+        final Uri uri = LauncherSettings.ColorThemes.CONTENT_URI;
+        final ContentResolver cr = context.getContentResolver();
+        final ContentValues values = new ContentValues();
+        values.put(LauncherSettings.ColorThemes.NAME, theme.getName());
+        values.put(LauncherSettings.ColorThemes.FOLDER_BACKGROUND, theme.getFolderBack());
+        values.put(LauncherSettings.ColorThemes.FOLDER_LABELS, theme.getFolderLabel());
+        values.put(LauncherSettings.ColorThemes.FOLDER_NAME, theme.getFolderName());
+        values.put(LauncherSettings.ColorThemes.FOLDER_ICON_TINT, theme.getFolderIconTint());
+        values.put(LauncherSettings.ColorThemes.FOLDER_ICON_TYPE, theme.getFolderType());
+        values.put(LauncherSettings.ColorThemes.SEARCH_BAR_BACKGROUND, theme.getSearchBarBack());
+        values.put(LauncherSettings.ColorThemes.SEARCH_BAR_GLASS, theme.getSearchBarGlass());
+        values.put(LauncherSettings.ColorThemes.SEARCH_BAR_MIC, theme.getSearchBarMic());
+        values.put(LauncherSettings.ColorThemes.ALLAPPS_BUTTON_OUTER, theme.getAllAppsOuter());
+        values.put(LauncherSettings.ColorThemes.ALLAPPS_BUTTON_INNER, theme.getAllAppsInner());
+        values.put(LauncherSettings.ColorThemes.ALLAPPS_BACKGROUND, theme.getPagedViewBack());
+        values.put(LauncherSettings.ColorThemes.ALLAPPS_LABELS, theme.getPagedViewLabels());
+        values.put(LauncherSettings.ColorThemes.WIDGETS_CARDS, theme.getPagedViewCards());
 
-        String[] projection = new String[]{LauncherSettings.Categories._ID,LauncherSettings.Categories.APP_CATEGORY};
-        final String selection = LauncherSettings.Categories.APP_CATEGORY + "='" +appCategory+"'";
+        String[] projection = new String[]{LauncherSettings.Categories._ID,LauncherSettings.ColorThemes.NAME};
+        final String selection = LauncherSettings.ColorThemes.NAME + "='" +theme.getName()+"'";
+        //try {
         Cursor cursor = cr.query(uri,projection,selection,null,null);
         if(cursor.moveToFirst()){
-            values.put(LauncherSettings.Categories._ID,cursor.getLong(0));
+            values.put(LauncherSettings.ColorThemes._ID,cursor.getLong(0));
 
             Runnable r = new Runnable() {
                 @Override
                 public void run() {
-                    cr.delete(uri,selection,null);
+                    cr.delete(uri, selection, null);
 
                     //cr.insert(uri, values);
                 }
@@ -637,6 +660,8 @@ public class LauncherModel extends BroadcastReceiver {
         }
         cursor.close();
     }
+
+
 
     private static void updateItemInDatabaseHelper(Context context, final ContentValues values,
                                                    final ItemInfo item, final String callingFunction) {

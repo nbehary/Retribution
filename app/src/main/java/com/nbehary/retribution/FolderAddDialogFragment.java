@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Nathan A. Behary
+ * Copyright (c) 2014-2015. Nathan A. Behary
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,22 +67,23 @@ public class FolderAddDialogFragment extends DialogFragment {
         mRootView = (LinearLayout) inflater.inflate(R.layout.folder_add_dialog,null);
         mLauncher = ((Launcher)getActivity());
 
-//        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
-//                android.R.layout.simple_list_item_multiple_choice, GENRES);
-
-
-
         AllAppsList apps = ((Launcher)getActivity()).getModel().getAllApps();
         ArrayList<String> strings = new ArrayList<String>();
         mListAdapter = new FolderAddArrayAdapter(getActivity(),strings,apps, mFolderInfo, mLauncher,mFolder);
-        final ListView listView = (ListView) mRootView.findViewById(R.id.group_list);
+//        final ListView listView = (ListView) mRootView.findViewById(R.id.group_list);
+        final RecyclerView recyclerView = (RecyclerView) mRootView.findViewById(R.id.group_list2);
+        recyclerView.setHasFixedSize(true);
         final LauncherModel model = ((Launcher) getActivity()).getModel();
         final AppCategories categories = model.getCategories();
 
-        listView.setAdapter(mListAdapter);
+        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(llm);
+        FolderAddAdapter adapter = new FolderAddAdapter(apps, mFolderInfo, mLauncher,mFolder);
+        recyclerView.setAdapter(adapter);
+//        listView.setAdapter(mListAdapter);
 
-        listView.setItemsCanFocus(false);
-        listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+//        listView.setItemsCanFocus(false);
+//        listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 
 
 
@@ -96,7 +99,6 @@ public class FolderAddDialogFragment extends DialogFragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selected = (String) parent.getItemAtPosition(position);
-                //mListAdapter.setApps( ((Launcher) getActivity()).getModel().getCategories().getCategoryList(selected),selected);
                 if (!selected.equals("All Apps")) {
                     mListAdapter.setCategoryAndReload(((Launcher) getActivity()).getModel().getCategories().getCategoryList(selected), selected);
                 } else {
@@ -113,73 +115,22 @@ public class FolderAddDialogFragment extends DialogFragment {
             }
         });
 
-//        Button newButton = (Button) mRootView.findViewById(R.id.groups_new_button);
-//        newButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-//                LayoutInflater inflater = getActivity().getLayoutInflater();
-//                LinearLayout dialogView = (LinearLayout) inflater.inflate(R.layout.group_new_dialog, null);
-//                final EditText editText = (EditText) dialogView.findViewById(R.id.groups_new_name);
-//
-//                Inflate and set the layout for the dialog
-//                Pass null as the parent view because its going in the dialog layout
-//                builder.setView(dialogView);
-//                builder.setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int id) {
-//                        User clicked OK button
-//                        String newCategory = editText.getText().toString();
-//                        categories.addEmptyCategory(newCategory);
-//                        model.updateCategoryInDatabase(getActivity(),"",newCategory);
-//
-//                        adapter.setApps(categories.getCategoryList(newCategory),newCategory);
-//                        adapter.notifyDataSetChanged();
-//                        spinnerAdapter.add(newCategory);
-//                        spinnerAdapter.notifyDataSetChanged();
-//                        spinner.invalidate();
-//                        spinner.setSelection(spinnerAdapter.getPosition(newCategory));
-//                        mCategory = newCategory;
-//
-//
-//                    }
-//                });
-//                builder.setNegativeButton(R.string.cancel_action, new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int id) {
-//                        User cancelled the dialog
-//                    }
-//                });
-//                AlertDialog dialog = builder.create();
-//                dialog.show();
-
-
-//           }
-//        });
 
         builder.setPositiveButton(R.string.dialog_done, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                boolean newCat = false;
                 String result = ((Launcher) getActivity()).getModel().getCategories().clearEmptyCategories();
                 if (!result.equals("")) {
-                    //((Launcher) getActivity()).getModel().deleteCategoryInDatabase(getActivity(),result);
                     model.deleteCategoryFromAppInDatabse(getActivity(), "", result);
-                    newCat = true;
                 }
-//                adapter.setApps(((Launcher) getActivity()).getModel().getCategories().getCategoryList(result),result);
-//                adapter.notifyDataSetChanged();
-//                spinnerAdapter.add(result);
-//                spinnerAdapter.notifyDataSetChanged();
-//                spinner.setSelection(spinner.getLastVisiblePosition());
+               spinner.setSelection(spinner.getLastVisiblePosition());
                 mListAdapter.setApps(categories.getCategoryList(mCategory),mCategory);
                 mListAdapter.notifyDataSetChanged();
 
                 //mListener.onGroupsChange(mCategory,newCat);
             }
         });
-
         builder.setView(mRootView);
-
         return builder.create();
-
     }
 
     @Override
@@ -188,8 +139,7 @@ public class FolderAddDialogFragment extends DialogFragment {
         try {
             mListener = (OnFolderShortcutsAddedListener) activity;
         } catch (ClassCastException e) {
-//              throw new ClassCastException(activity.toString()
-//                     + " must implement OnFragmentInteractionListener");
+
         }
     }
 
@@ -212,13 +162,96 @@ public class FolderAddDialogFragment extends DialogFragment {
     }
 }
 
+class FolderAddAdapter extends RecyclerView.Adapter<FolderAddAdapter.ViewHolder> {
+
+    public AllAppsList mAllAppsList;
+    public FolderInfo mFolderInfo;
+    public Launcher mLauncher;
+    public Folder mFolder;
+
+    public FolderAddAdapter(AllAppsList list,FolderInfo info, Launcher launcher, Folder folder){
+        mAllAppsList = list;
+        mFolderInfo = info;
+        mLauncher = launcher;
+        mFolder = folder;
+    }
+
+    @Override
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from (parent.getContext()).
+                inflate(R.layout.groups_list_item, parent, false);
+//        ViewHolder vh = new ViewHolder(itemView);
+        return new ViewHolder(itemView);
+    }
+
+    @Override
+    public void onBindViewHolder(ViewHolder holder, final int position) {
+        holder.iconView.setImageBitmap(mAllAppsList.get(position).iconBitmap);
+        holder.nameView.setText(mAllAppsList.get(position).title);
+        if (mFolderInfo.titles.contains(mAllAppsList.get(position).title)) {
+            holder.selectView.setChecked(true);
+        } else {
+            holder.selectView.setChecked(false);
+        }
+        holder.selectView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CheckBox checkBox = (CheckBox) v;
+                if (checkBox.isChecked()) {
+                    mFolderInfo.add(new ShortcutInfo(mAllAppsList.get(position)));
+//                    checkBox.setChecked(true);
+                } else {
+                    int index2 = mFolderInfo.titles.indexOf(mAllAppsList.get(position).title);
+                    ShortcutInfo item = mFolderInfo.contents.get(index2);
+                    mFolderInfo.remove(item);
+                    LauncherModel.deleteItemFromDatabase(
+                            mLauncher, item);
+                    if (mFolderInfo.contents.size() == 1) {
+                        mFolder.animateClosed();
+                    }
+//                    checkBox.setChecked(false);
+                }
+            }
+        });
+
+
+
+
+    }
+
+    @Override
+    public int getItemCount() {
+        return mAllAppsList.size();
+    }
+
+    class ViewHolder extends RecyclerView.ViewHolder {
+
+        public ImageView iconView;
+        public TextView nameView;
+        public CheckBox selectView;
+
+
+
+        public ViewHolder(View itemView) {
+            super(itemView);
+            iconView = (ImageView) itemView.findViewById(R.id.icon);
+            nameView = (TextView) itemView.findViewById(R.id.label);
+            selectView = (CheckBox) itemView.findViewById(R.id.checkbox);
+
+        }
+
+
+
+    }
+}
+
  class FolderAddArrayAdapter extends ArrayAdapter<String> {
 
     private final Context context;
     private ArrayList<String> values;
     private AllAppsList apps;
-     private final AllAppsList allApps;
-    private String category;
+    private final AllAppsList allApps;
+
     private final FolderInfo folderInfo;
     private final Launcher mLauncher;
     private final Folder mFolder;
@@ -229,7 +262,6 @@ public class FolderAddDialogFragment extends DialogFragment {
         this.apps = apps;
         mLauncher =launcher;
         mFolder = folder;
-        this.category = "All Apps";
         this.folderInfo = folderInfo;
         this.allApps = ((Launcher)context).getModel().getAllApps();
         this.clear();
@@ -263,17 +295,10 @@ public class FolderAddDialogFragment extends DialogFragment {
         rowView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LauncherModel model = ((Launcher) context).getModel();
-                AppCategories cats = model.getCategories();
-                String packageName = allApps.get(index).componentName.getPackageName();
                 if (!checkBox.isChecked()) {
-                    //cats.addAppToCategory(allApps.get(index), category);
-                    //model.updateCategoryInDatabase(context, packageName, category);
                     folderInfo.add(new ShortcutInfo(allApps.get(index)));
                     checkBox.setChecked(true);
                 } else {
-                    //cats.removeAppFromCategory(allApps.get(index), category);
-                   // model.deleteCategoryFromAppInDatabse(context, packageName, category);
                     int index2 = folderInfo.titles.indexOf(allApps.get(index).title);
                     ShortcutInfo item = folderInfo.contents.get(index2);
                     folderInfo.remove(item);
@@ -292,13 +317,11 @@ public class FolderAddDialogFragment extends DialogFragment {
 
     public void setApps(AllAppsList apps, String category){
         this.apps = apps;
-        this.category = category;
     }
 
     public void setCategoryAndReload(AllAppsList apps,String category) {
         this.clear();
         this.apps = apps;
-        this.category = category;
         this.values = new ArrayList<String>();
         for (AppInfo info: apps.data){
             this.add((String)info.title);

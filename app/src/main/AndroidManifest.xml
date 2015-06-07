@@ -20,8 +20,8 @@
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.nbehary.retribution"
-    android:versionCode="2298"
-    android:versionName="1.4.5">
+    android:versionCode="2304"
+    android:versionName="1.4.99_dev">
 
     <permission
         android:name="com.android.launcher.permission.INSTALL_SHORTCUT"

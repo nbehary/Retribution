@@ -24,8 +24,6 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.LightingColorFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -33,7 +31,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -117,7 +114,7 @@ public class FolderColorsDialogFragment extends DialogFragment implements ColorP
                 mCustomColors = 0;
                 ColorTheme theme = LauncherAppState.getInstance().getColorTheme();
                 mBgColor = theme.getFolderBack();
-                mLabelColor = theme.getFolderIcon();
+                mLabelColor = theme.getFolderLabel();
                 mNameColor = theme.getFolderName();
                 setColors();
 
@@ -168,7 +165,7 @@ public class FolderColorsDialogFragment extends DialogFragment implements ColorP
         } else if (!mDefaultBG) {
             ColorTheme theme = LauncherAppState.getInstance().getColorTheme();
             mBgColor = theme.getFolderBack();
-            mLabelColor = theme.getFolderIcon();
+            mLabelColor = theme.getFolderLabel();
             mNameColor = theme.getFolderName();
             mCustomColors = 0;
         } else {

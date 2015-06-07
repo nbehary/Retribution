@@ -26,11 +26,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.graphics.Palette;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 
 import com.nbehary.retribution.preference.PreferencesProvider;
@@ -53,7 +49,9 @@ public class ColorTheme {
 
 
 
-    int mSearchBar;
+    int mSearchBarBack;
+    int mSearchBarGlass;
+    int mSearchBarMic;
     //TODO: Maybe.  Split the PagedView items into separate ones (Apps, Widgets, IconPacks) where applicable.
     int mPagedViewBack;
     int mPagedViewCards;
@@ -86,10 +84,12 @@ public class ColorTheme {
 
         //Uses getRgb().
         mPagedViewBack = mFolderBack;
-        mSearchBar = mFolderBack;
+        mSearchBarBack = mFolderBack;
 
         //Uses getBodyTextColor()
         mPagedViewLabels = mFolderLabels;
+        mSearchBarGlass = mFolderLabels;
+        mSearchBarMic = mFolderLabels;
 
         //Uses getTitleColor()
         mPagedViewCards = mFolderName;
@@ -142,12 +142,20 @@ public class ColorTheme {
         this.mPagedViewBack = mPagedViewBack;
     }
 
-    public int getAllAppsButton() {
+    public int getAllAppsOuter() {
         return mAllAppsOuter;
     }
 
-    public void setAllAppsButton(int mAllAppsButton) {
+    public void setAllAppsOuter(int mAllAppsButton) {
         this.mAllAppsOuter = mAllAppsButton;
+    }
+
+    public int getAllAppsInner() {
+        return mAllAppsInner;
+    }
+
+    public void setAllAppsInner(int mAllAppsInner) {
+        this.mAllAppsInner = mAllAppsInner;
     }
 
     public int getFolderName() {
@@ -158,7 +166,7 @@ public class ColorTheme {
         this.mFolderName = mFolderName;
     }
 
-    public int getFolderIcon() {
+    public int getFolderLabel() {
         return mFolderLabels;
     }
 
@@ -174,14 +182,29 @@ public class ColorTheme {
         this.mFolderBack = mFolderBack;
     }
 
-    public int getSearchBar() {
-        return mSearchBar;
+    public int getSearchBarBack() {
+        return mSearchBarBack;
     }
 
-    public void setSearchBar(int mSearchBar) {
-        this.mSearchBar = mSearchBar;
+    public void setSearchBarBack(int mSearchBar) {
+        this.mSearchBarBack = mSearchBar;
     }
 
+    public int getSearchBarGlass() {
+        return mSearchBarGlass;
+    }
+
+    public void setSearchBarGlass(int mSearchBarGlass) {
+        this.mSearchBarGlass = mSearchBarGlass;
+    }
+
+    public int getSearchBarMic() {
+        return mSearchBarMic;
+    }
+
+    public void setSearchBarMic(int mSearchBarMic) {
+        this.mSearchBarMic = mSearchBarMic;
+    }
 
     public boolean getFolderIconTint() {
         return mFolderIconTint;
@@ -191,11 +214,11 @@ public class ColorTheme {
         this.mFolderIconTint = mFolderIconTint;
     }
 
-    public boolean ismWallTint() {
+    public boolean ismallTint() {
         return mWallTint;
     }
 
-    public void setmWallTint(boolean mWallTint) {
+    public void setWallTint(boolean mWallTint) {
         this.mWallTint = mWallTint;
     }
 
@@ -215,7 +238,13 @@ public class ColorTheme {
         this.id = id;
     }
 
+    public int getFolderType() {
+        return mFolderType;
+    }
 
+    public void setFolderType(int mFolderType) {
+        this.mFolderType = mFolderType;
+    }
 
     static public Palette.Swatch swatchFromWallpaper(Context ctx) {
 
@@ -253,7 +282,7 @@ public class ColorTheme {
 /*        outer.setGravity(Gravity.CENTER);
         DrawableCompat.setTint(DrawableCompat.wrap(outer), outerColor);
 
-Log.d("nbehary150","tintedApps!!!");
+
         Drawable drawableArray[]= new Drawable[]{outer,inner};
         LayerDrawable layerDraw = new LayerDrawable(drawableArray);
         return layerDraw;

@@ -25,9 +25,6 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.LightingColorFilter;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.PorterDuff;
@@ -616,7 +613,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         if (mInfo.customColors == 1) {
             textView.setTextColor(mInfo.labelColor);
         } else if (!PreferencesProvider.Interface.General.getDefaultFolderBG()) {
-            textView.setTextColor(LauncherAppState.getInstance().getColorTheme().getFolderIcon());
+            textView.setTextColor(LauncherAppState.getInstance().getColorTheme().getFolderLabel());
         }
 
 

@@ -264,12 +264,13 @@ public class GridEditor extends AppCompatActivity
 
     public void onLandscapeChanged() {
         landscapeChanged = true;
+        //TODO:What's up here?
         if (mProfile.allowLandscape) {
             //mProfile.allowLandscape = false;
-            Log.d("nbehary121", "False!!!");
+
         } else {
             //mProfile.allowLandscape = true;
-            Log.d("nbehary121", "True!!!");
+
         }
         LauncherAppState.getInstance().getDynamicGrid().setDeviceProfile(mProfile);
     }
