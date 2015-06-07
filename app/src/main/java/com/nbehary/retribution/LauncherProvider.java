@@ -397,6 +397,7 @@ public class  LauncherProvider extends ContentProvider {
             addWorkspacesTable(db);
 
             addCategoriesTable(db);
+            addColorThemesTable(db);
          //   db.beginTransaction();
 
 

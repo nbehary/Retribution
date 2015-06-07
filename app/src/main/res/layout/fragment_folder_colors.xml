@@ -6,7 +6,7 @@
     android:id="@+id/folder_colors_ui"
     android:tag="small">
 
-    <CheckBox
+    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/folder_colors_wall_text"

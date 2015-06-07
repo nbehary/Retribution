@@ -62,14 +62,6 @@ public class ColorThemeFragment extends Fragment {
 
     ColorPickerView mPicker;
     ColorTheme mColorTheme;
-
-
-
-
-
-
-
-
     View rootView;
     LinearLayout preview;
     TextView labelText;
@@ -161,15 +153,14 @@ public class ColorThemeFragment extends Fragment {
 
 //
 
-        CheckBox wallBox = (CheckBox) rootView.findViewById(R.id.folder_colors_wall);
-        wallBox.setChecked(mColorTheme.mWallTint);
-        wallBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        Button wallBox = (Button) rootView.findViewById(R.id.folder_colors_wall);
+        wallBox.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                mColorTheme.mWallTint = isChecked;
+            public void onClick(View v) {
+//                mColorTheme.mWallTint = isChecked;
                 ColorThemeActivity parent = (ColorThemeActivity) getActivity();
 
-                if (isChecked) {
+//                if (isChecked) {
                     Palette.Swatch swatch = Utilities.swatchFromWallpaper(mParent);
                     int back = swatch.getRgb();
                     int title = swatch.getTitleTextColor();
@@ -188,7 +179,7 @@ public class ColorThemeFragment extends Fragment {
                     //parent.setmBgColor(back);
                    // parent.setmIconColor(icon);
                    // parent.setmNameColor(title);
-                }
+//                }
                // parent.setmWallTint(mColorTheme.mWallTint);
             }
         });
