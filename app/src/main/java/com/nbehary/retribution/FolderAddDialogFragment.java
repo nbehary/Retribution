@@ -55,7 +55,7 @@ public class FolderAddDialogFragment extends DialogFragment {
     private Folder mFolder;
     private FolderInfo mFolderInfo;
 
-    private FolderAddArrayAdapter mListAdapter;
+
 
     private Launcher mLauncher;
 
@@ -68,25 +68,13 @@ public class FolderAddDialogFragment extends DialogFragment {
         mLauncher = ((Launcher)getActivity());
 
         AllAppsList apps = ((Launcher)getActivity()).getModel().getAllApps();
-        ArrayList<String> strings = new ArrayList<String>();
-        mListAdapter = new FolderAddArrayAdapter(getActivity(),strings,apps, mFolderInfo, mLauncher,mFolder);
-//        final ListView listView = (ListView) mRootView.findViewById(R.id.group_list);
         final RecyclerView recyclerView = (RecyclerView) mRootView.findViewById(R.id.group_list2);
         recyclerView.setHasFixedSize(true);
         final LauncherModel model = ((Launcher) getActivity()).getModel();
-        final AppCategories categories = model.getCategories();
-
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(llm);
-        FolderAddAdapter adapter = new FolderAddAdapter(apps, mFolderInfo, mLauncher,mFolder);
+        final FolderAddAdapter adapter = new FolderAddAdapter(apps, mFolderInfo, mLauncher,mFolder);
         recyclerView.setAdapter(adapter);
-//        listView.setAdapter(mListAdapter);
-
-//        listView.setItemsCanFocus(false);
-//        listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-
-
-
         final Spinner spinner = (Spinner) mRootView.findViewById(R.id.groups_spinner);
         final ArrayList<String> cats = ((Launcher) getActivity()).getModel().getCategories().getCategories();
         cats.add(0,"All Apps");
@@ -100,13 +88,11 @@ public class FolderAddDialogFragment extends DialogFragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selected = (String) parent.getItemAtPosition(position);
                 if (!selected.equals("All Apps")) {
-                    mListAdapter.setCategoryAndReload(((Launcher) getActivity()).getModel().getCategories().getCategoryList(selected), selected);
+                    adapter.setCategoryAndReload(((Launcher) getActivity()).getModel().getCategories().getCategoryList(selected));
                 } else {
-                    mListAdapter.setCategoryAndReload(((Launcher)getActivity()).getModel().getAllApps(),selected);
+                    adapter.setCategoryAndReload(((Launcher) getActivity()).getModel().getAllApps());
                 }
-                mListAdapter.notifyDataSetChanged();
                 mCategory = selected;
-
             }
 
             @Override
@@ -123,10 +109,6 @@ public class FolderAddDialogFragment extends DialogFragment {
                     model.deleteCategoryFromAppInDatabse(getActivity(), "", result);
                 }
                spinner.setSelection(spinner.getLastVisiblePosition());
-                mListAdapter.setApps(categories.getCategoryList(mCategory),mCategory);
-                mListAdapter.notifyDataSetChanged();
-
-                //mListener.onGroupsChange(mCategory,newCat);
             }
         });
         builder.setView(mRootView);
@@ -180,7 +162,6 @@ class FolderAddAdapter extends RecyclerView.Adapter<FolderAddAdapter.ViewHolder>
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from (parent.getContext()).
                 inflate(R.layout.groups_list_item, parent, false);
-//        ViewHolder vh = new ViewHolder(itemView);
         return new ViewHolder(itemView);
     }
 
@@ -199,7 +180,6 @@ class FolderAddAdapter extends RecyclerView.Adapter<FolderAddAdapter.ViewHolder>
                 CheckBox checkBox = (CheckBox) v;
                 if (checkBox.isChecked()) {
                     mFolderInfo.add(new ShortcutInfo(mAllAppsList.get(position)));
-//                    checkBox.setChecked(true);
                 } else {
                     int index2 = mFolderInfo.titles.indexOf(mAllAppsList.get(position).title);
                     ShortcutInfo item = mFolderInfo.contents.get(index2);
@@ -209,7 +189,6 @@ class FolderAddAdapter extends RecyclerView.Adapter<FolderAddAdapter.ViewHolder>
                     if (mFolderInfo.contents.size() == 1) {
                         mFolder.animateClosed();
                     }
-//                    checkBox.setChecked(false);
                 }
             }
         });
@@ -222,6 +201,11 @@ class FolderAddAdapter extends RecyclerView.Adapter<FolderAddAdapter.ViewHolder>
     @Override
     public int getItemCount() {
         return mAllAppsList.size();
+    }
+
+    public void setCategoryAndReload(AllAppsList apps){
+        this.mAllAppsList = apps;
+        notifyDataSetChanged();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -245,87 +229,4 @@ class FolderAddAdapter extends RecyclerView.Adapter<FolderAddAdapter.ViewHolder>
     }
 }
 
- class FolderAddArrayAdapter extends ArrayAdapter<String> {
 
-    private final Context context;
-    private ArrayList<String> values;
-    private AllAppsList apps;
-    private final AllAppsList allApps;
-
-    private final FolderInfo folderInfo;
-    private final Launcher mLauncher;
-    private final Folder mFolder;
-
-    public FolderAddArrayAdapter(Context context, ArrayList<String> values, AllAppsList apps, FolderInfo folderInfo, Launcher launcher, Folder folder) {
-        super(context, R.layout.groups_list_item, values);
-        this.context = context;
-        this.apps = apps;
-        mLauncher =launcher;
-        mFolder = folder;
-        this.folderInfo = folderInfo;
-        this.allApps = ((Launcher)context).getModel().getAllApps();
-        this.clear();
-        this.values = new ArrayList<String>();
-        for (AppInfo info: allApps.data){
-            this.add((String)info.title);
-            this.values.add((String)info.title);
-        }
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        LayoutInflater inflater = (LayoutInflater) context
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-        LinearLayout rowView = (LinearLayout) inflater.inflate(R.layout.groups_list_item, parent, false);
-        TextView textView = (TextView) rowView.findViewById(R.id.label);
-        ImageView imageView = (ImageView) rowView.findViewById(R.id.icon);
-        textView.setText(values.get(position));
-        Bitmap b = this.apps.get(position).iconBitmap;
-
-        imageView.setImageBitmap(b);
-        final int index = position;
-
-        final CheckBox checkBox = (CheckBox) rowView.findViewById(R.id.checkbox);
-
-        if (this.folderInfo.titles.contains(this.apps.get(position).title)) {
-            checkBox.setChecked(true);
-        }
-
-        rowView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!checkBox.isChecked()) {
-                    folderInfo.add(new ShortcutInfo(allApps.get(index)));
-                    checkBox.setChecked(true);
-                } else {
-                    int index2 = folderInfo.titles.indexOf(allApps.get(index).title);
-                    ShortcutInfo item = folderInfo.contents.get(index2);
-                    folderInfo.remove(item);
-                    LauncherModel.deleteItemFromDatabase(
-                            mLauncher, item);
-                    if (folderInfo.contents.size() == 1){
-                        mFolder.animateClosed();
-                    }
-                    checkBox.setChecked(false);
-                }
-            }
-        });
-        return rowView;
-
-    }
-
-    public void setApps(AllAppsList apps, String category){
-        this.apps = apps;
-    }
-
-    public void setCategoryAndReload(AllAppsList apps,String category) {
-        this.clear();
-        this.apps = apps;
-        this.values = new ArrayList<String>();
-        for (AppInfo info: apps.data){
-            this.add((String)info.title);
-            this.values.add((String)info.title);
-        }
-    }
-}

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015. Nathan A. Behary
+ * Copyright (c) 2014-2015. Nathan A. Behary
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,29 +57,17 @@ public class GroupsDialogFragment extends DialogFragment {
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-
         LayoutInflater inflater = getActivity().getLayoutInflater();
         mRootView = (LinearLayout) inflater.inflate(R.layout.groups_dialog,null);
-
-//        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
-//                android.R.layout.simple_list_item_multiple_choice, GENRES);
-
-
-
         AllAppsList apps = ((Launcher)getActivity()).getModel().getAllApps();
-        ArrayList<String> strings = new ArrayList<String>();
-        final GroupsArrayAdapter adapter = new GroupsArrayAdapter(getActivity(),strings,apps);
-        final ListView listView = (ListView) mRootView.findViewById(R.id.group_list);
         final LauncherModel model = ((Launcher) getActivity()).getModel();
         final AppCategories categories = model.getCategories();
-
-        listView.setAdapter(adapter);
-
-        listView.setItemsCanFocus(false);
-        listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-
-
-
+        final RecyclerView recyclerView = (RecyclerView) mRootView.findViewById(R.id.group_list2);
+        recyclerView.setHasFixedSize(true);
+        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(llm);
+        final GroupsAdapter adapter = new GroupsAdapter(apps, (Launcher)getActivity());
+        recyclerView.setAdapter(adapter);
         final Spinner spinner = (Spinner) mRootView.findViewById(R.id.groups_spinner);
         final ArrayList<String> cats = ((Launcher) getActivity()).getModel().getCategories().getCategories();
         final ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_dropdown_item,
@@ -92,7 +82,6 @@ public class GroupsDialogFragment extends DialogFragment {
                 adapter.setApps( ((Launcher) getActivity()).getModel().getCategories().getCategoryList(selected),selected);
                 adapter.notifyDataSetChanged();
                 mCategory = selected;
-
             }
 
             @Override
@@ -109,7 +98,6 @@ public class GroupsDialogFragment extends DialogFragment {
                 LayoutInflater inflater = getActivity().getLayoutInflater();
                 LinearLayout dialogView = (LinearLayout) inflater.inflate(R.layout.group_new_dialog, null);
                 final EditText editText = (EditText) dialogView.findViewById(R.id.groups_new_name);
-
                 // Inflate and set the layout for the dialog
                 // Pass null as the parent view because its going in the dialog layout
                 builder.setView(dialogView);
@@ -119,7 +107,6 @@ public class GroupsDialogFragment extends DialogFragment {
                         String newCategory = editText.getText().toString();
                         categories.addEmptyCategory(newCategory);
                         model.updateCategoryInDatabase(getActivity(),"",newCategory);
-
                         adapter.setApps(categories.getCategoryList(newCategory),newCategory);
                         adapter.notifyDataSetChanged();
                         spinnerAdapter.add(newCategory);
@@ -127,8 +114,6 @@ public class GroupsDialogFragment extends DialogFragment {
                         spinner.invalidate();
                         spinner.setSelection(spinnerAdapter.getPosition(newCategory));
                         mCategory = newCategory;
-
-
                     }
                 });
                 builder.setNegativeButton(R.string.cancel_action, new DialogInterface.OnClickListener() {
@@ -148,16 +133,10 @@ public class GroupsDialogFragment extends DialogFragment {
                 boolean newCat = false;
                 String result = ((Launcher) getActivity()).getModel().getCategories().clearEmptyCategories();
                 if (!result.equals("")) {
-                    //((Launcher) getActivity()).getModel().deleteCategoryInDatabase(getActivity(),result);
                     model.deleteCategoryFromAppInDatabse(getActivity(), "", result);
                     newCat = true;
                 }
-//                adapter.setApps(((Launcher) getActivity()).getModel().getCategories().getCategoryList(result),result);
-//                adapter.notifyDataSetChanged();
-//                spinnerAdapter.add(result);
-//                spinnerAdapter.notifyDataSetChanged();
-//                spinner.setSelection(spinner.getLastVisiblePosition());
-                adapter.setApps(categories.getCategoryList(mCategory),mCategory);
+                categories.getCategoryList(mCategory);
                 adapter.notifyDataSetChanged();
 
                 mListener.onGroupsChange(mCategory,newCat);
@@ -176,8 +155,6 @@ public class GroupsDialogFragment extends DialogFragment {
         try {
             mListener = (OnGroupsChangeListener) activity;
         } catch (ClassCastException e) {
-            //  throw new ClassCastException(activity.toString()
-            //         + " must implement OnFragmentInteractionListener");
         }
     }
 
@@ -194,70 +171,89 @@ public class GroupsDialogFragment extends DialogFragment {
     }
 }
 
- class GroupsArrayAdapter extends ArrayAdapter<String> {
 
-    private final Context context;
-    private final ArrayList<String> values;
-    private AllAppsList apps;
-     private final AllAppsList allApps;
+class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.GroupsViewHolder> {
+
+    public AllAppsList mAllAppsList;
+    public AllAppsList mCatList;
+    public Launcher mLauncher;
+
     private String category;
 
-    public GroupsArrayAdapter(Context context, ArrayList<String> values, AllAppsList apps) {
-        super(context, R.layout.groups_list_item, values);
-        this.context = context;
-        this.apps = apps;
-        this.category = "All Apps";
-        this.allApps = ((Launcher)context).getModel().getAllApps();
-        this.clear();
-        this.values = new ArrayList<String>();
-        for (AppInfo info: allApps.data){
-            this.add((String)info.title);
-            this.values.add((String)info.title);
-        }
+    public GroupsAdapter(AllAppsList apps, Launcher launcher){
+
+        mLauncher = launcher;
+        mAllAppsList = launcher.getModel().getAllApps();
+        category = "All Apps";
+        mCatList = apps;
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        LayoutInflater inflater = (LayoutInflater) context
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    public GroupsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from (parent.getContext()).
+                inflate(R.layout.groups_list_item, parent, false);
+        return new GroupsViewHolder(itemView);
+    }
 
-        LinearLayout rowView = (LinearLayout) inflater.inflate(R.layout.groups_list_item, parent, false);
-        TextView textView = (TextView) rowView.findViewById(R.id.label);
-        ImageView imageView = (ImageView) rowView.findViewById(R.id.icon);
-        textView.setText(values.get(position));
-        Bitmap b = this.allApps.get(position).iconBitmap;
-        imageView.setImageBitmap(b);
-        final int index = position;
-
-        final CheckBox checkBox = (CheckBox) rowView.findViewById(R.id.checkbox);
-
-        if (this.apps.data.contains(this.allApps.get(position))) {
-            checkBox.setChecked(true);
+    @Override
+    public void onBindViewHolder(GroupsViewHolder holder, final int position) {
+        holder.iconView.setImageBitmap(mAllAppsList.get(position).iconBitmap);
+        holder.nameView.setText(mAllAppsList.get(position).title);
+        if (mCatList.data.contains(mAllAppsList.get(position))) {
+            holder.selectView.setChecked(true);
+        } else {
+            holder.selectView.setChecked(false);
         }
-
-        rowView.setOnClickListener(new View.OnClickListener() {
+//        if (mFolderInfo.titles.contains(mAllAppsList.get(position).title)) {
+//            holder.selectView.setChecked(true);
+//        } else {
+//            holder.selectView.setChecked(false);
+//        }
+        holder.selectView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                CheckBox checkBox = (CheckBox) v;
+                Context context = mLauncher;
                 LauncherModel model = ((Launcher) context).getModel();
                 AppCategories cats = model.getCategories();
-                String packageName = allApps.get(index).componentName.getPackageName();
-                if (!checkBox.isChecked()) {
-                    cats.addAppToCategory(allApps.get(index), category);
+                String packageName = mAllAppsList.get(position).componentName.getPackageName();
+                if (checkBox.isChecked()) {
+                    cats.addAppToCategory(mAllAppsList.get(position), category);
                     model.updateCategoryInDatabase(context, packageName, category);
-                    checkBox.setChecked(true);
                 } else {
-                    cats.removeAppFromCategory(allApps.get(index), category);
+                    cats.removeAppFromCategory(mAllAppsList.get(position), category);
                     model.deleteCategoryFromAppInDatabse(context, packageName, category);
-                    checkBox.setChecked(false);
                 }
             }
         });
-        return rowView;
+
+
+
 
     }
 
-    public void setApps(AllAppsList apps, String category){
-        this.apps = apps;
-        this.category = category;
+    @Override
+    public int getItemCount() {
+        return mAllAppsList.size();
+    }
+
+    public void setApps(AllAppsList apps, String cat){
+        mCatList = apps;
+        category = cat;
+    }
+
+    class GroupsViewHolder extends RecyclerView.ViewHolder {
+
+        public ImageView iconView;
+        public TextView nameView;
+        public CheckBox selectView;
+
+        public GroupsViewHolder(View itemView) {
+            super(itemView);
+            iconView = (ImageView) itemView.findViewById(R.id.icon);
+            nameView = (TextView) itemView.findViewById(R.id.label);
+            selectView = (CheckBox) itemView.findViewById(R.id.checkbox);
+
+        }
     }
 }
