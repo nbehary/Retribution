@@ -36,6 +36,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.PaintDrawable;
 import android.os.Build;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.graphics.Palette;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -412,6 +413,41 @@ public final class Utilities {
 
 
 
+    }
+
+
+    public static Palette.Swatch swatchFromWallpaper(Context ctx) {
+        //TODO: Switch all calls to the ColorTheme one.
+        Drawable wallpaperDrawable;
+        PackageManager pm = ctx.getPackageManager();
+        //Check for live wallpaper.
+        if (WallpaperManager.getInstance(ctx).getWallpaperInfo() != null) {
+            //Get the Live Wallpaper's thumbnail, and use it.  This is horrible, but there is no other way.
+            wallpaperDrawable = WallpaperManager.getInstance(ctx).getWallpaperInfo().loadThumbnail(pm);
+        } else {
+            wallpaperDrawable = WallpaperManager.getInstance(ctx).getDrawable();
+
+        }
+        Bitmap bmp = Utilities.drawableToBitmap(wallpaperDrawable);
+        Palette pal = Palette.from(bmp).generate();
+        //Todo: Return ALL the Swatches!!!! (actually a new ColorTheme, which will contain those.)
+        if (pal.getVibrantSwatch()!=null) {
+            return pal.getVibrantSwatch();
+        }
+        if (pal.getMutedSwatch()!=null) {
+            return pal.getMutedSwatch();
+        }
+
+        return pal.getMutedSwatch();
+    }
+
+    public static View tintViewDrawable(View v){
+        Drawable d = v.getBackground();
+        if (d != null){
+            int c =  LauncherAppState.getInstance().getColorTheme().getFolderBack();
+            DrawableCompat.setTint(DrawableCompat.wrap(d), c);
+        }
+        return v;
     }
 
     /**

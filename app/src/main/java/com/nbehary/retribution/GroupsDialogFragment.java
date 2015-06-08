@@ -204,11 +204,6 @@ class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.GroupsViewHolder>
         } else {
             holder.selectView.setChecked(false);
         }
-//        if (mFolderInfo.titles.contains(mAllAppsList.get(position).title)) {
-//            holder.selectView.setChecked(true);
-//        } else {
-//            holder.selectView.setChecked(false);
-//        }
         holder.selectView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
