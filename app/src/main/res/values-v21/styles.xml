@@ -37,7 +37,8 @@
         <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>
 
-    <style name="Theme.Launcher" parent="Theme.AppCompat.NoActionBar">
+
+    <style name="Theme.Launcher" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowTranslucentStatus">false</item>-->
         <item name="android:windowTranslucentNavigation">false</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
@@ -47,7 +48,8 @@
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
         <item name="android:windowShowWallpaper">true</item>
-
+        <item name="colorPrimary">@color/ColorPrimary</item>
+        <item name="colorPrimaryDark">@color/ColorPrimaryDark</item>
 
     </style>
 
@@ -190,15 +192,25 @@
         <item name="android:windowBackground">@android:color/transparent</item>
     </style>
 
-    <style name="Theme.FolderCustomize" parent="android:Theme.Material.Light">
-        <item name="android:background">#00000000</item>
-        <item name="android:popupMenuStyle">@android:style/Widget.Material.Light.PopupMenu</item>
-        <item name="popupMenuStyle">@android:style/Widget.Material.Light.PopupMenu</item>
-    </style>
+
 
     <!-- Overridden in device overlays -->
     <style name="CustomClingTitleText">
     </style>
     <style name="CustomClingText">
+    </style>
+
+    <style name="Theme.Transparent.Material" parent="@style/Theme.AppCompat.Light.NoActionBar">
+        <!--<item name="android:windowIsTranslucent">true</item>-->
+        <!--<item name="android:windowBackground">@android:color/transparent</item>-->
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowShowWallpaper">true</item>
+        <item name="android:textColor">@color/primary_text</item>
+
+        <item name="android:actionBarStyle">@style/WallpaperCropperActionBar</item>
+        <item name="colorPrimary">@color/ColorPrimary</item>
+        <item name="colorPrimaryDark">@color/ColorPrimaryDark</item>
+        <item name="android:statusBarColor">@color/statusBarColor</item>
     </style>
 </resources>

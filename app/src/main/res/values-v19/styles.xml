@@ -174,11 +174,7 @@
         <item name="android:windowBackground">@android:color/transparent</item>
     </style>
 
-    <style name="Theme.FolderCustomize" parent="android:Theme.Holo.Light">
-        <item name="android:background">#00000000</item>
-        <item name="android:popupMenuStyle">@android:style/Widget.Holo.Light.PopupMenu</item>
-        <item name="popupMenuStyle">@android:style/Widget.Holo.Light.PopupMenu</item>
-    </style>
+
 
     <style name="Theme.Launcher" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowTranslucentStatus">true</item>-->

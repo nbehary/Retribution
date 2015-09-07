@@ -197,7 +197,7 @@ public class FolderIcon extends LinearLayout implements FolderListener {
 
         int icon_type = PreferencesProvider.Interface.General.getFolderType();
         if (PreferencesProvider.Interface.General.getFolderIconTint()){
-            DrawableCompat.setTint(DrawableCompat.wrap(myIcon),LauncherAppState.getInstance().getColorTheme().getFolderBack());
+            DrawableCompat.setTint(DrawableCompat.wrap(myIcon),LauncherAppState.getInstance().getColorTheme().getmFolderBack());
         }
 
         if (icon_type == 2){
@@ -233,8 +233,9 @@ public class FolderIcon extends LinearLayout implements FolderListener {
 
             // We need to reload the static values when configuration changes in case they are
             // different in another configuration
-            //TODO: Why did you do this?
-            if (true){ //(sStaticValuesDirty) {
+            //TODO: Not a todo, but you set this to always true for some reason.  If FolderIcon breaks, look here...
+            //It was probably just to force re-loading for Folder Colors.  It seems to not need it.
+            if (sStaticValuesDirty) {
                 if (Looper.myLooper() != Looper.getMainLooper()) {
                     throw new RuntimeException("FolderRingAnimator loading drawables on non-UI thread "
                             + Thread.currentThread());

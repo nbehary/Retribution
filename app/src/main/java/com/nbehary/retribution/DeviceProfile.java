@@ -150,6 +150,7 @@ class DeviceProfile {
                   int wPx, int hPx,
                   int awPx, int ahPx,
                   Resources resources) {
+
        DisplayMetrics dm = resources.getDisplayMetrics();
         ArrayList<DeviceProfileQuery> points =
                 new ArrayList<DeviceProfileQuery>();

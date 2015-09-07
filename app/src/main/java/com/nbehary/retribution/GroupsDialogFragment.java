@@ -56,7 +56,7 @@ public class GroupsDialogFragment extends DialogFragment {
 
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.MyDialogTheme );
         LayoutInflater inflater = getActivity().getLayoutInflater();
         mRootView = (LinearLayout) inflater.inflate(R.layout.groups_dialog,null);
         AllAppsList apps = ((Launcher)getActivity()).getModel().getAllApps();

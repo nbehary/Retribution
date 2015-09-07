@@ -113,9 +113,9 @@ public class FolderColorsDialogFragment extends DialogFragment implements ColorP
             public void onClick(View v) {
                 mCustomColors = 0;
                 ColorTheme theme = LauncherAppState.getInstance().getColorTheme();
-                mBgColor = theme.getFolderBack();
-                mLabelColor = theme.getFolderLabel();
-                mNameColor = theme.getFolderName();
+                mBgColor = theme.getmFolderBack();
+                mLabelColor = theme.getmFolderLabel();
+                mNameColor = theme.getmFolderName();
                 setColors();
 
             }
@@ -164,9 +164,9 @@ public class FolderColorsDialogFragment extends DialogFragment implements ColorP
             mIconColor = info.iconColor;
         } else if (!mDefaultBG) {
             ColorTheme theme = LauncherAppState.getInstance().getColorTheme();
-            mBgColor = theme.getFolderBack();
-            mLabelColor = theme.getFolderLabel();
-            mNameColor = theme.getFolderName();
+            mBgColor = theme.getmFolderBack();
+            mLabelColor = theme.getmFolderLabel();
+            mNameColor = theme.getmFolderName();
             mCustomColors = 0;
         } else {
             mBgColor = Color.WHITE;

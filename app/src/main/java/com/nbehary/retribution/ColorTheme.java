@@ -118,107 +118,107 @@ public class ColorTheme {
         PreferencesProvider.Interface.General.setWallpaperTint(mContext, mWallTint);
     }
 
-    public int getPagedViewLabels() {
+    public int getmPagedViewLabels() {
         return mPagedViewLabels;
     }
 
-    public void setPagedViewLabels(int mPagedViewLabels) {
+    public void setmPagedViewLabels(int mPagedViewLabels) {
         this.mPagedViewLabels = mPagedViewLabels;
     }
 
-    public int getPagedViewCards() {
+    public int getmPagedViewCards() {
         return mPagedViewCards;
     }
 
-    public void setPagedViewCards(int mPagedViewCards) {
+    public void setmPagedViewCards(int mPagedViewCards) {
         this.mPagedViewCards = mPagedViewCards;
     }
 
-    public int getPagedViewBack() {
+    public int getmPagedViewBack() {
         return mPagedViewBack;
     }
 
-    public void setPagedViewBack(int mPagedViewBack) {
+    public void setmPagedViewBack(int mPagedViewBack) {
         this.mPagedViewBack = mPagedViewBack;
     }
 
-    public int getAllAppsOuter() {
+    public int getmAllAppsOuter() {
         return mAllAppsOuter;
     }
 
-    public void setAllAppsOuter(int mAllAppsButton) {
+    public void setmAllAppsOuter(int mAllAppsButton) {
         this.mAllAppsOuter = mAllAppsButton;
     }
 
-    public int getAllAppsInner() {
+    public int getmAllAppsInner() {
         return mAllAppsInner;
     }
 
-    public void setAllAppsInner(int mAllAppsInner) {
+    public void setmAllAppsInner(int mAllAppsInner) {
         this.mAllAppsInner = mAllAppsInner;
     }
 
-    public int getFolderName() {
+    public int getmFolderName() {
         return mFolderName;
     }
 
-    public void setFolderName(int mFolderName) {
+    public void setmFolderName(int mFolderName) {
         this.mFolderName = mFolderName;
     }
 
-    public int getFolderLabel() {
+    public int getmFolderLabel() {
         return mFolderLabels;
     }
 
-    public void setFolderIcon(int mFolderIcon) {
+    public void setmFolderIcon(int mFolderIcon) {
         this.mFolderLabels = mFolderIcon;
     }
 
-    public int getFolderBack() {
+    public int getmFolderBack() {
         return mFolderBack;
     }
 
-    public void setFolderBack(int mFolderBack) {
+    public void setmFolderBack(int mFolderBack) {
         this.mFolderBack = mFolderBack;
     }
 
-    public int getSearchBarBack() {
+    public int getmSearchBarBack() {
         return mSearchBarBack;
     }
 
-    public void setSearchBarBack(int mSearchBar) {
+    public void setmSearchBarBack(int mSearchBar) {
         this.mSearchBarBack = mSearchBar;
     }
 
-    public int getSearchBarGlass() {
+    public int getmSearchBarGlass() {
         return mSearchBarGlass;
     }
 
-    public void setSearchBarGlass(int mSearchBarGlass) {
+    public void setmSearchBarGlass(int mSearchBarGlass) {
         this.mSearchBarGlass = mSearchBarGlass;
     }
 
-    public int getSearchBarMic() {
+    public int getmSearchBarMic() {
         return mSearchBarMic;
     }
 
-    public void setSearchBarMic(int mSearchBarMic) {
+    public void setmSearchBarMic(int mSearchBarMic) {
         this.mSearchBarMic = mSearchBarMic;
     }
 
-    public boolean getFolderIconTint() {
+    public boolean getmFolderIconTint() {
         return mFolderIconTint;
     }
 
-    public void setFolderIconTint(boolean mFolderIconTint) {
+    public void setmFolderIconTint(boolean mFolderIconTint) {
         this.mFolderIconTint = mFolderIconTint;
     }
 
-    public boolean ismallTint() {
+    public boolean ismWallTint() {
         return mWallTint;
     }
 
-    public void setWallTint(boolean mWallTint) {
+    public void setmWallTint(boolean mWallTint) {
         this.mWallTint = mWallTint;
     }
 
@@ -238,11 +238,11 @@ public class ColorTheme {
         this.id = id;
     }
 
-    public int getFolderType() {
+    public int getmFolderType() {
         return mFolderType;
     }
 
-    public void setFolderType(int mFolderType) {
+    public void setmFolderType(int mFolderType) {
         this.mFolderType = mFolderType;
     }
 

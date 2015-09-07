@@ -36,6 +36,8 @@
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
         <item name="android:windowShowWallpaper">true</item>
+        <item name="colorPrimary">@color/ColorPrimary</item>
+        <item name="colorPrimaryDark">@color/ColorPrimaryDark</item>
     </style>
 
     <style name="ClingButton">
@@ -173,37 +175,42 @@
         <item name="android:actionBarStyle">@style/WallpaperCropperActionBar</item>
     </style>
 
-    <style name="Theme.Transparent.Material" parent="Theme.AppCompat">
+    <style name="Theme.Transparent.Material" parent="@style/Theme.AppCompat.Light.NoActionBar">
         <!--<item name="android:windowIsTranslucent">true</item>-->
         <!--<item name="android:windowBackground">@android:color/transparent</item>-->
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
         <item name="android:windowShowWallpaper">true</item>
+        <item name="android:textColor">@color/primary_text</item>
 
         <item name="android:actionBarStyle">@style/WallpaperCropperActionBar</item>
+        <item name="colorPrimary">@color/ColorPrimary</item>
+        <item name="colorPrimaryDark">@color/ColorPrimaryDark</item>
     </style>
 
-    <style name="Theme.Launcher" parent="Theme.AppCompat.NoActionBar">
+    <style name="Theme.Launcher" parent="Theme.AppCompat.Light.NoActionBar">
 
-        <!--<item name="android:windowIsTranslucent">true</item>-->
-        <!--<item name="android:windowBackground">@android:color/transparent</item>-->
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="android:windowShowWallpaper">true</item>
-
-
-
+    <!--<item name="android:windowIsTranslucent">true</item>-->
+    <!--<item name="android:windowBackground">@android:color/transparent</item>-->
+    <item name="android:windowBackground">@android:color/transparent</item>
+    <item name="android:colorBackgroundCacheHint">@null</item>
+    <item name="android:windowShowWallpaper">true</item>
+        <item name="colorPrimary">@color/ColorPrimary</item>
+        <item name="colorPrimaryDark">@color/ColorPrimaryDark</item>
 
     </style>
-    <style name="Theme.GridEditor" parent="Theme.AppCompat.NoActionBar">
+
+    <style name="Theme.GridEditor" parent="Theme.AppCompat.Light.NoActionBar">
         <!--<item name="android:windowIsTranslucent">true</item>-->
         <!--<item name="android:windowBackground">@android:color/transparent</item>-->
 
         <item name="toolbarStyle">@style/Widget.AppCompat.Toolbar</item>
         <item name="android:actionBarStyle">@style/WallpaperCropperActionBar</item>
+        <item name="colorPrimary">@color/ColorPrimary</item>
+        <item name="colorPrimaryDark">@color/ColorPrimaryDark</item>
     </style>
 
-    <style name="Theme.AppCompat.GridEditor" parent="Theme.AppCompat.NoActionBar"/>
+    <style name="Theme.About" parent="Theme.AppCompat.Light.NoActionBar"/>
 
     <style name="Theme.Transparent" parent="android:Theme.Holo.Wallpaper.NoTitleBar">
         <!--<item name="android:windowIsTranslucent">true</item>-->
@@ -211,9 +218,13 @@
         <!--<item name="android:windowBackground">@android:color/transparent</item>-->
     </style>
 
-    <style name="Theme.FolderCustomize" parent="android:Theme.Holo.Light">
+    <style name="Theme.FolderCustomize" parent="Theme.AppCompat.Light">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:background">#00000000</item>
-        <item name="android:popupMenuStyle">@android:style/Widget.Holo.Light.PopupMenu</item>
+        <item name="android:popupMenuStyle">@style/Widget.AppCompat.Light.PopupMenu</item>
+        <item name="colorPrimary">@color/ColorPrimary</item>
+        <item name="colorPrimaryDark">@color/ColorPrimaryDark</item>
     </style>
 
     <style name="ToolBarStyle" parent="ToolBarStyle.Base"/>
@@ -238,5 +249,14 @@
     <style name="CustomClingTitleText">
     </style>
     <style name="CustomClingText">
+    </style>
+
+    <style name="MyDialogTheme" parent="@android:style/Theme.Panel">
+        <item name="android:windowAnimationStyle">@style/MyAnimation.Window</item>
+    </style>
+
+    <style name="MyAnimation.Window" parent="@android:style/Animation.Activity">
+        <item name="android:windowEnterAnimation">@anim/fade_in_fast</item>
+        <item name="android:windowExitAnimation">@anim/fade_out_fast</item>
     </style>
 </resources>

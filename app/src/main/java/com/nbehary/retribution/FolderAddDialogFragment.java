@@ -41,12 +41,16 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
+
 /**
  * Created by nate on 4/21/14.
  */
 public class FolderAddDialogFragment extends DialogFragment {
 
-    private LinearLayout mRootView;
+    public LinearLayout mRootView;
 
     private OnFolderShortcutsAddedListener mListener;
 
@@ -55,7 +59,8 @@ public class FolderAddDialogFragment extends DialogFragment {
     private Folder mFolder;
     private FolderInfo mFolderInfo;
 
-
+    @Bind(R.id.group_list2) RecyclerView recyclerView;
+    @Bind(R.id.groups_spinner) Spinner spinner;
 
     private Launcher mLauncher;
 
@@ -66,19 +71,20 @@ public class FolderAddDialogFragment extends DialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         mRootView = (LinearLayout) inflater.inflate(R.layout.folder_add_dialog,null);
         mLauncher = ((Launcher)getActivity());
+        ButterKnife.bind(this,mRootView);
 
         AllAppsList apps = ((Launcher)getActivity()).getModel().getAllApps();
-        final RecyclerView recyclerView = (RecyclerView) mRootView.findViewById(R.id.group_list2);
+
         recyclerView.setHasFixedSize(true);
         final LauncherModel model = ((Launcher) getActivity()).getModel();
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(llm);
         final FolderAddAdapter adapter = new FolderAddAdapter(apps, mFolderInfo, mLauncher,mFolder);
         recyclerView.setAdapter(adapter);
-        final Spinner spinner = (Spinner) mRootView.findViewById(R.id.groups_spinner);
+
         final ArrayList<String> cats = ((Launcher) getActivity()).getModel().getCategories().getCategories();
         cats.add(0,"All Apps");
-        final ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_dropdown_item,
+        final ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item,
                 cats);
         mCategory = ((Launcher) getActivity()).getAllAppsGroup();
         spinner.setAdapter(spinnerAdapter);
@@ -102,16 +108,13 @@ public class FolderAddDialogFragment extends DialogFragment {
         });
 
 
-        builder.setPositiveButton(R.string.dialog_done, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                String result = ((Launcher) getActivity()).getModel().getCategories().clearEmptyCategories();
-                if (!result.equals("")) {
-                    model.deleteCategoryFromAppInDatabse(getActivity(), "", result);
-                }
-               spinner.setSelection(spinner.getLastVisiblePosition());
+        builder.setPositiveButton(R.string.dialog_done, (dialog, id) -> {
+            String result = ((Launcher) getActivity()).getModel().getCategories().clearEmptyCategories();
+            if (!result.equals("")) {
+                model.deleteCategoryFromAppInDatabse(getActivity(), "", result);
             }
-        });
-        builder.setView(mRootView);
+            spinner.setSelection(spinner.getLastVisiblePosition());
+        }).setView(mRootView);
         return builder.create();
     }
 
@@ -174,28 +177,21 @@ class FolderAddAdapter extends RecyclerView.Adapter<FolderAddAdapter.ViewHolder>
         } else {
             holder.selectView.setChecked(false);
         }
-        holder.selectView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                CheckBox checkBox = (CheckBox) v;
-                if (checkBox.isChecked()) {
-                    mFolderInfo.add(new ShortcutInfo(mAllAppsList.get(position)));
-                } else {
-                    int index2 = mFolderInfo.titles.indexOf(mAllAppsList.get(position).title);
-                    ShortcutInfo item = mFolderInfo.contents.get(index2);
-                    mFolderInfo.remove(item);
-                    LauncherModel.deleteItemFromDatabase(
-                            mLauncher, item);
-                    if (mFolderInfo.contents.size() == 1) {
-                        mFolder.animateClosed();
-                    }
+        holder.selectView.setOnClickListener(v -> {
+            CheckBox checkBox = (CheckBox) v;
+            if (checkBox.isChecked()) {
+                mFolderInfo.add(new ShortcutInfo(mAllAppsList.get(position)));
+            } else {
+                int index2 = mFolderInfo.titles.indexOf(mAllAppsList.get(position).title);
+                ShortcutInfo item = mFolderInfo.contents.get(index2);
+                mFolderInfo.remove(item);
+                LauncherModel.deleteItemFromDatabase(
+                        mLauncher, item);
+                if (mFolderInfo.contents.size() < 1) {
+                    mFolder.animateClosed();
                 }
             }
         });
-
-
-
-
     }
 
     @Override
@@ -210,22 +206,16 @@ class FolderAddAdapter extends RecyclerView.Adapter<FolderAddAdapter.ViewHolder>
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        public ImageView iconView;
+        public  ImageView iconView;
         public TextView nameView;
         public CheckBox selectView;
-
-
 
         public ViewHolder(View itemView) {
             super(itemView);
             iconView = (ImageView) itemView.findViewById(R.id.icon);
             nameView = (TextView) itemView.findViewById(R.id.label);
             selectView = (CheckBox) itemView.findViewById(R.id.checkbox);
-
         }
-
-
-
     }
 }
 

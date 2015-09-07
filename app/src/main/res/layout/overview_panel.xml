@@ -48,6 +48,7 @@
         android:drawableTop="@drawable/folders_button"
         android:fontFamily="sans-serif-condensed"
         android:textAllCaps="true"
+        android:textColor="@color/workspace_icon_text_color"
         android:textSize="@dimen/overview_panel_text_size" />
 
     <TextView
@@ -63,6 +64,7 @@
         android:gravity="center_horizontal"
         android:fontFamily="sans-serif-condensed"
         android:textAllCaps="true"
+        android:textColor="@color/workspace_icon_text_color"
         android:textSize="@dimen/overview_panel_text_size"  />
 
     <!--<Space-->
@@ -83,6 +85,7 @@
         android:drawableTop="@drawable/grid_button"
         android:fontFamily="sans-serif-condensed"
         android:textAllCaps="true"
+        android:textColor="@color/workspace_icon_text_color"
         android:textSize="@dimen/overview_panel_text_size"
 
         />
@@ -104,6 +107,7 @@
         android:drawableTop="@drawable/icon_pack_button"
         android:fontFamily="sans-serif-condensed"
         android:textAllCaps="true"
+        android:textColor="@color/workspace_icon_text_color"
         android:textSize="@dimen/overview_panel_text_size"
         />
 
@@ -143,6 +147,7 @@
             android:drawableTop="@drawable/apps_button"
             android:fontFamily="sans-serif-condensed"
             android:textAllCaps="true"
+            android:textColor="@color/workspace_icon_text_color"
             android:textSize="@dimen/overview_panel_text_size"
             android:visibility="gone" />
 
@@ -164,6 +169,7 @@
         android:drawableTop="@drawable/widget_button"
         android:fontFamily="sans-serif-condensed"
         android:textAllCaps="true"
+            android:textColor="@color/workspace_icon_text_color"
             android:textSize="@dimen/overview_panel_text_size" />
 
         <!--<Space-->
@@ -183,6 +189,7 @@
             android:gravity="center_horizontal"
             android:fontFamily="sans-serif-condensed"
             android:textAllCaps="true"
+            android:textColor="@color/workspace_icon_text_color"
             android:textSize="@dimen/overview_panel_text_size"  />
 
 
@@ -204,6 +211,7 @@
             android:drawableTop="@drawable/about_button"
             android:fontFamily="sans-serif-condensed"
             android:textAllCaps="true"
+        android:textColor="@color/workspace_icon_text_color"
         android:textSize="@dimen/overview_panel_text_size"  />
 
 </LinearLayout>

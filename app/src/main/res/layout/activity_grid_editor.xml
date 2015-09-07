@@ -17,11 +17,11 @@
         />
 <android.support.v4.view.ViewPager
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:theme="@style/Theme.AppCompat.GridEditor"
+    android:theme="@style/Theme.GridEditor"
     android:id="@+id/grid_editor"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:theme="@style/ThemeOverlay.AppCompat.Dark">
+    app:theme="@style/ThemeOverlay.AppCompat.Light">
 
 
     <FrameLayout

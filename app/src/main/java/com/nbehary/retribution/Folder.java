@@ -18,6 +18,7 @@ package com.nbehary.retribution;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.content.Context;
@@ -50,6 +51,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
+import android.view.animation.AccelerateInterpolator;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
@@ -83,6 +85,8 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
     private static final int STATE_OPEN = 2;
 
     private final int mExpandDuration;
+    private int mMaterialExpandDuration;
+    private int mMaterialExpandStagger;
     private CellLayout mContent;
     private ScrollView mScrollView;
     private final LayoutInflater mInflater;
@@ -163,6 +167,8 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
                 getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
 
         mExpandDuration = res.getInteger(R.integer.config_folderAnimDuration);
+        mMaterialExpandDuration = res.getInteger(R.integer.config_materialFolderExpandDuration);
+        mMaterialExpandStagger = res.getInteger(R.integer.config_materialFolderExpandStagger);
 
         if (sDefaultFolderName == null) {
             sDefaultFolderName = res.getString(R.string.folder_name);
@@ -312,7 +318,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         LauncherModel.updateItemInDatabase(mLauncher, mInfo);
 
         if (true) {
-            sendCustomAccessibilityEvent(
+            sendCustomAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED,
                     String.format(getContext().getString(R.string.folder_renamed), newTitle));
         }
         // In order to clear the focus from the text field, we set the focus on ourself. This
@@ -456,8 +462,8 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
 
         int icon_type = PreferencesProvider.Interface.General.getFolderType();
 
-        if (theme.getFolderIconTint()) {
-            int color = theme.getFolderBack();
+        if (theme.getmFolderIconTint()) {
+            int color = theme.getmFolderBack();
             Drawable myIcon = ResourcesCompat.getDrawable(mLauncher.getResources(), R.drawable.portal_ring_inner_holo, null);
             DrawableCompat.setTint(DrawableCompat.wrap(myIcon),color);
             mFolderIcon.getPreviewBackground().setImageDrawable(myIcon);
@@ -494,54 +500,127 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         mState = STATE_SMALL;
     }
 
+    private void prepareReveal() {
+        setScaleX(1f);
+        setScaleY(1f);
+        setAlpha(1f);
+        mState = STATE_SMALL;
+    }
+
+
     public void animateOpen() {
-        positionAndSizeAsIcon();
-
         if (!(getParent() instanceof DragLayer)) return;
-        centerAboutIcon();
-        PropertyValuesHolder alpha = PropertyValuesHolder.ofFloat("alpha", 1);
-        PropertyValuesHolder scaleX = PropertyValuesHolder.ofFloat("scaleX", 1.0f);
-        PropertyValuesHolder scaleY = PropertyValuesHolder.ofFloat("scaleY", 1.0f);
-        final ObjectAnimator oa =
-                LauncherAnimUtils.ofPropertyValuesHolder(this, alpha, scaleX, scaleY);
 
-        oa.addListener(new AnimatorListenerAdapter() {
+
+        final Runnable onCompleteRunnable;
+
+            positionAndSizeAsIcon();
+            centerAboutIcon();
+            AnimatorSet anim = LauncherAnimUtils.createAnimatorSet();
+            int width = getPaddingLeft() + getPaddingRight() + mContent.getDesiredWidth();
+            int height = getFolderHeight();
+
+            float transX = - 0.075f * (width / 2 - getPivotX());
+            float transY = - 0.075f * (height / 2 - getPivotY());
+            setTranslationX(transX);
+            setTranslationY(transY);
+            PropertyValuesHolder tx = PropertyValuesHolder.ofFloat("translationX", transX, 0);
+            PropertyValuesHolder ty = PropertyValuesHolder.ofFloat("translationY", transY, 0);
+
+            PropertyValuesHolder alpha = PropertyValuesHolder.ofFloat("alpha", 1);
+            PropertyValuesHolder scaleX = PropertyValuesHolder.ofFloat("scaleX", 1.0f);
+            PropertyValuesHolder scaleY = PropertyValuesHolder.ofFloat("scaleY", 1.0f);
+            final ObjectAnimator oa =
+                    LauncherAnimUtils.ofPropertyValuesHolder(this, alpha, scaleX, scaleY);
+            oa.setDuration(mExpandDuration);
+            mContent.setAlpha(0f);
+            Animator iconsAlpha = LauncherAnimUtils.ofFloat(mContent, "alpha", 0f, 1f);
+            iconsAlpha.setDuration(mMaterialExpandDuration);
+            iconsAlpha.setStartDelay(mMaterialExpandStagger);
+            iconsAlpha.setInterpolator(new AccelerateInterpolator(1.0f));
+
+            mFolderName.setAlpha(0f);
+            Animator textAlpha = LauncherAnimUtils.ofFloat(mFolderName, "alpha", 0f, 1f);
+            textAlpha.setDuration(mMaterialExpandDuration);
+            textAlpha.setStartDelay(mMaterialExpandStagger);
+            textAlpha.setInterpolator(new AccelerateInterpolator(1.5f));
+
+            mFolderCustomize.setAlpha(0f);
+            mFolderName.setAlpha(0f);
+            Animator custAlpha = LauncherAnimUtils.ofFloat(mFolderCustomize, "alpha", 0f, 1f);
+            custAlpha.setDuration(mMaterialExpandDuration);
+            custAlpha.setStartDelay(mMaterialExpandStagger);
+            custAlpha.setInterpolator(new AccelerateInterpolator(1.5f));
+
+            Animator drift = LauncherAnimUtils.ofPropertyValuesHolder(this, tx, ty);
+            drift.setDuration(mMaterialExpandDuration);
+            drift.setStartDelay(mMaterialExpandStagger);
+            drift.setInterpolator(new LogDecelerateInterpolator(60, 0));
+
+            anim.play(drift);
+            anim.play(iconsAlpha);
+            anim.play(textAlpha);
+            anim.play(custAlpha);
+            anim.play(oa);
+
+            setLayerType(LAYER_TYPE_HARDWARE, null);
+            onCompleteRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    setLayerType(LAYER_TYPE_NONE, null);
+                }
+            };
+
+        anim.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationStart(Animator animation) {
-                sendCustomAccessibilityEvent(
+                sendCustomAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED,
                         String.format(getContext().getString(R.string.folder_opened),
                                 mContent.getCountX(), mContent.getCountY()));
                 mState = STATE_ANIMATING;
             }
-
             @Override
             public void onAnimationEnd(Animator animation) {
                 mState = STATE_OPEN;
-                setLayerType(LAYER_TYPE_NONE, null);
-                Cling cling = mLauncher.showFirstRunFoldersCling();
-                if (cling != null) {
-                    cling.bringScrimToFront();
-                    bringToFront();
-                    cling.bringToFront();
+
+                if (onCompleteRunnable != null) {
+                    onCompleteRunnable.run();
                 }
+
                 setFocusOnFirstChild();
             }
         });
-        oa.setDuration(mExpandDuration);
-        setLayerType(LAYER_TYPE_HARDWARE, null);
-        oa.start();
+        anim.start();
+
+        // Make sure the folder picks up the last drag move even if the finger doesn't move.
+        if (mDragController.isDragging()) {
+            mDragController.forceTouchMove();
+        }
     }
 
-    private void sendCustomAccessibilityEvent(String text) {
+    public void beginExternalDrag(ShortcutInfo item) {
+        setupContentForNumItems(getItemCount() + 1);
+        findAndSetEmptyCells(item);
+
+        mCurrentDragInfo = item;
+        mEmptyCell[0] = item.cellX;
+        mEmptyCell[1] = item.cellY;
+//        mIsExternalDrag = true;
+
+        mDragInProgress = true;
+    }
+
+    private void sendCustomAccessibilityEvent(int type, String text) {
         AccessibilityManager accessibilityManager = (AccessibilityManager)
                 getContext().getSystemService(Context.ACCESSIBILITY_SERVICE);
         if (accessibilityManager.isEnabled()) {
-            AccessibilityEvent event = AccessibilityEvent.obtain(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
+            AccessibilityEvent event = AccessibilityEvent.obtain(type);
             onInitializeAccessibilityEvent(event);
             event.getText().add(text);
             accessibilityManager.sendAccessibilityEvent(event);
         }
     }
+
 
     private void setFocusOnFirstChild() {
         View firstChild = mContent.getChildAt(0, 0);
@@ -558,6 +637,48 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         final ObjectAnimator oa =
                 LauncherAnimUtils.ofPropertyValuesHolder(this, alpha, scaleX, scaleY);
 
+        AnimatorSet anim = LauncherAnimUtils.createAnimatorSet();
+        int width = getPaddingLeft() + getPaddingRight() + mContent.getDesiredWidth();
+        int height = getFolderHeight();
+
+        float transX =  0.075f * (width / 2 - getPivotX());
+        float transY =  0.075f * (height / 2 - getPivotY());
+        setTranslationX(transX);
+        setTranslationY(transY);
+        PropertyValuesHolder tx = PropertyValuesHolder.ofFloat("translationX", transX, 0);
+        PropertyValuesHolder ty = PropertyValuesHolder.ofFloat("translationY", transY, 0);
+
+
+        oa.setDuration(mExpandDuration);
+        mContent.setAlpha(1f);
+        Animator iconsAlpha = LauncherAnimUtils.ofFloat(mContent, "alpha", 0.9f, 0f);
+        iconsAlpha.setDuration(mMaterialExpandDuration);
+        iconsAlpha.setStartDelay(mMaterialExpandStagger);
+        iconsAlpha.setInterpolator(new AccelerateInterpolator(1.0f));
+
+        mFolderName.setAlpha(1f);
+        Animator textAlpha = LauncherAnimUtils.ofFloat(mFolderName, "alpha", 0.9f, 0f);
+        textAlpha.setDuration(mMaterialExpandDuration);
+        textAlpha.setStartDelay(mMaterialExpandStagger);
+        textAlpha.setInterpolator(new AccelerateInterpolator(1.0f));
+
+        mFolderCustomize.setAlpha(1f);
+        Animator custAlpha = LauncherAnimUtils.ofFloat(mFolderCustomize, "alpha", 0.9f, 0f);
+        custAlpha.setDuration(mMaterialExpandDuration);
+        custAlpha.setStartDelay(mMaterialExpandStagger);
+        custAlpha.setInterpolator(new AccelerateInterpolator(1.0f));
+
+        Animator drift = LauncherAnimUtils.ofPropertyValuesHolder(this, tx, ty);
+        drift.setDuration(mMaterialExpandDuration);
+        drift.setStartDelay(mMaterialExpandStagger);
+        drift.setInterpolator(new LogDecelerateInterpolator(0, 60));
+
+        anim.play(oa);
+        anim.play(custAlpha);
+        anim.play(textAlpha);
+        anim.play(iconsAlpha);
+        anim.play(drift);
+
         oa.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
@@ -568,14 +689,14 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
 
             @Override
             public void onAnimationStart(Animator animation) {
-                sendCustomAccessibilityEvent(
+                sendCustomAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED,
                         getContext().getString(R.string.folder_closed));
                 mState = STATE_ANIMATING;
             }
         });
         oa.setDuration(mExpandDuration);
         setLayerType(LAYER_TYPE_HARDWARE, null);
-        oa.start();
+        anim.start();
     }
 
     public boolean acceptDrop(DragObject d) {
@@ -613,7 +734,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         if (mInfo.customColors == 1) {
             textView.setTextColor(mInfo.labelColor);
         } else if (!PreferencesProvider.Interface.General.getDefaultFolderBG()) {
-            textView.setTextColor(LauncherAppState.getInstance().getColorTheme().getFolderLabel());
+            textView.setTextColor(LauncherAppState.getInstance().getColorTheme().getmFolderLabel());
         }
 
 

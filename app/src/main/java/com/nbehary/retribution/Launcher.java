@@ -4097,7 +4097,7 @@ public class Launcher extends AppCompatActivity
         if (mQsbBar == null) {
             mQsbBar = mInflater.inflate(R.layout.search_bar, mSearchDropTargetBar, false);
             mQsbBar = Utilities.tintViewDrawable(mQsbBar);
-//            mQsbBar.setBackgroundColor(LauncherAppState.getInstance().getColorTheme().getSearchBarBack());
+//            mQsbBar.setBackgroundColor(LauncherAppState.getInstance().getColorTheme().getmSearchBarBack());
             mSearchDropTargetBar.addView(mQsbBar);
         }
         return mQsbBar;

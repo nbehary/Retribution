@@ -22,15 +22,17 @@ import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.ViewTreeObserver;
 
 import java.util.HashSet;
+import java.util.WeakHashMap;
 
-class LauncherAnimUtils {
-    private static final HashSet<Animator> sAnimators = new HashSet<Animator>();
-    private static final Animator.AnimatorListener sEndAnimListener = new Animator.AnimatorListener() {
+public class LauncherAnimUtils {
+    static WeakHashMap<Animator, Object> sAnimators = new WeakHashMap<Animator, Object>();
+    static Animator.AnimatorListener sEndAnimListener = new Animator.AnimatorListener() {
         public void onAnimationStart(Animator animation) {
-            sAnimators.add(animation);
+            sAnimators.put(animation, null);
         }
 
         public void onAnimationRepeat(Animator animation) {
@@ -53,34 +55,33 @@ class LauncherAnimUtils {
     // it should be cancelled
     public static void startAnimationAfterNextDraw(final Animator animator, final View view) {
         view.getViewTreeObserver().addOnDrawListener(new ViewTreeObserver.OnDrawListener() {
-                private boolean mStarted = false;
-                public void onDraw() {
-                    if (mStarted) return;
-                    mStarted = true;
-                    // Use this as a signal that the animation was cancelled
-                    if (animator.getDuration() == 0) {
-                        return;
-                    }
-                    animator.start();
-
-                    final ViewTreeObserver.OnDrawListener listener = this;
-                    view.post(new Runnable() {
-                            public void run() {
-                                view.getViewTreeObserver().removeOnDrawListener(listener);
-                            }
-                        });
+            private boolean mStarted = false;
+            public void onDraw() {
+                if (mStarted) return;
+                mStarted = true;
+                // Use this as a signal that the animation was cancelled
+                if (animator.getDuration() == 0) {
+                    return;
                 }
-            });
+                animator.start();
+
+                final ViewTreeObserver.OnDrawListener listener = this;
+                view.post(new Runnable() {
+                    public void run() {
+                        view.getViewTreeObserver().removeOnDrawListener(listener);
+                    }
+                });
+            }
+        });
     }
 
     public static void onDestroyActivity() {
-        HashSet<Animator> animators = new HashSet<Animator>(sAnimators);
+        HashSet<Animator> animators = new HashSet<Animator>(sAnimators.keySet());
         for (Animator a : animators) {
             if (a.isRunning()) {
                 a.cancel();
-            } else {
-                sAnimators.remove(a);
             }
+            sAnimators.remove(a);
         }
     }
 
@@ -108,7 +109,7 @@ class LauncherAnimUtils {
     }
 
     public static ObjectAnimator ofPropertyValuesHolder(View target,
-            PropertyValuesHolder... values) {
+                                                        PropertyValuesHolder... values) {
         ObjectAnimator anim = new ObjectAnimator();
         anim.setTarget(target);
         anim.setValues(values);
@@ -118,12 +119,22 @@ class LauncherAnimUtils {
     }
 
     public static ObjectAnimator ofPropertyValuesHolder(Object target,
-            View view, PropertyValuesHolder... values) {
+                                                        View view, PropertyValuesHolder... values) {
         ObjectAnimator anim = new ObjectAnimator();
         anim.setTarget(target);
         anim.setValues(values);
         cancelOnDestroyActivity(anim);
         new FirstFrameAnimatorHelper(anim, view);
+        return anim;
+    }
+
+    public static Animator createCircularReveal(View view, int centerX,
+                                                int centerY, float startRadius, float endRadius) {
+        Animator anim = ViewAnimationUtils.createCircularReveal(view, centerX,
+                centerY, startRadius, endRadius);
+        if (anim instanceof ValueAnimator) {
+            new FirstFrameAnimatorHelper((ValueAnimator) anim, view);
+        }
         return anim;
     }
 }

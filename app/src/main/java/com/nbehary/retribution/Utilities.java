@@ -45,8 +45,6 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import com.nbehary.retribution.R;
-
 /**
  * Various utilities shared amongst the Launcher's classes.
  */
@@ -444,7 +442,7 @@ public final class Utilities {
     public static View tintViewDrawable(View v){
         Drawable d = v.getBackground();
         if (d != null){
-            int c =  LauncherAppState.getInstance().getColorTheme().getFolderBack();
+            int c =  LauncherAppState.getInstance().getColorTheme().getmFolderBack();
             DrawableCompat.setTint(DrawableCompat.wrap(d), c);
         }
         return v;
