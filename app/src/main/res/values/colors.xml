@@ -51,6 +51,8 @@
     <color name="divider">#B6B6B6</color>
     <color name="accent_material_light">#8fe5af</color>
     <color name="statusBarColor">#40d440</color>
+
+    <color name="focused_background">#80c6c5c5</color>
 </resources>
 
 
