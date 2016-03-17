@@ -468,7 +468,6 @@ public class Workspace extends SmoothPagedView
         setLayoutTransition(null);
     }
 
-    @Override
     protected int getScrollMode() {
         return SmoothPagedView.X_LARGE_MODE;
     }
@@ -2276,7 +2275,6 @@ public class Workspace extends SmoothPagedView
         showCustomContentIfNecessary();
     }
 
-    @Override
     public View getContent() {
         return this;
     }

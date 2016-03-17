@@ -240,7 +240,7 @@ public class Launcher extends AppCompatActivity
     private AnimatorSet mStateAnimation;
 
     static final int APPWIDGET_HOST_ID = 1024;
-    private static final int EXIT_SPRINGLOADED_MODE_SHORT_TIMEOUT = 300;
+    public static final int EXIT_SPRINGLOADED_MODE_SHORT_TIMEOUT = 300;
     private static final int EXIT_SPRINGLOADED_MODE_LONG_TIMEOUT = 600;
     static final int SHOW_CLING_DURATION = 250;
     private static final int DISMISS_CLING_DURATION = 200;
@@ -380,6 +380,9 @@ public class Launcher extends AppCompatActivity
     private Canvas mFolderIconCanvas;
     private final Rect mRectForFolderAnimation = new Rect();
 
+
+    private DeviceProfile mDeviceProfile;
+    
     private BubbleTextView mWaitingForResume;
 
     private final HideFromAccessibilityHelper mHideFromAccessibilityHelper
@@ -457,6 +460,9 @@ public class Launcher extends AppCompatActivity
         display.getMetrics(dm);
         DeviceProfile grid;
 
+
+
+
         // Lazy-initialize the dynamic grid
         if (Build.VERSION.SDK_INT >= 16) {
             display.getCurrentSizeRange(smallestSize, largestSize);//16
@@ -473,6 +479,7 @@ public class Launcher extends AppCompatActivity
                     realSize.x, realSize.y,
                     dm.widthPixels - getStatusBarHeight(), dm.heightPixels - getStatusBarHeight());
         }
+        mDeviceProfile = grid;
         // the LauncherApplication should call this, but in case of Instrumentation it might not be present yet
         mSharedPrefs = getSharedPreferences(LauncherAppState.getSharedPreferencesKey(),
                 Context.MODE_PRIVATE);
@@ -611,6 +618,16 @@ public class Launcher extends AppCompatActivity
         super.onUserLeaveHint();
         sPausedFromUserAction = true;
     }
+
+
+    /**
+     * Updates the bounds of all the overlays to match the new fixed bounds.
+     */
+    public void updateOverlayBounds(Rect newBounds) {
+//        mAppsView.setSearchBarBounds(newBounds);
+//        mWidgetsView.setSearchBarBounds(newBounds);
+    }
+
 
     /**
      * To be overriden by subclasses to hint to Launcher that we have custom content
@@ -2135,7 +2152,7 @@ public class Launcher extends AppCompatActivity
         launcherInfo.hostView = null;
     }
 
-    void showOutOfSpaceMessage(boolean isHotseatLayout) {
+    public void showOutOfSpaceMessage(boolean isHotseatLayout) {
         int strId = (isHotseatLayout ? R.string.hotseat_out_of_space : R.string.out_of_space);
         Toast.makeText(this, getString(strId), Toast.LENGTH_SHORT).show();
     }
@@ -2146,6 +2163,10 @@ public class Launcher extends AppCompatActivity
 
     public LauncherModel getModel() {
         return mModel;
+    }
+
+    public DeviceProfile getDeviceProfile() {
+        return mDeviceProfile;
     }
 
     private void closeSystemDialogs() {
@@ -2390,6 +2411,21 @@ public class Launcher extends AppCompatActivity
         } catch (ActivityNotFoundException ex) {
             Toast.makeText(this, "No search provider found.", Toast.LENGTH_SHORT).show();
         }
+    }
+
+
+    public void startSearchFromAllApps(View v, Intent searchIntent, String searchQuery) {
+        //TODO:Implement LauncherCallbacks......
+//        if (mLauncherCallbacks != null && mLauncherCallbacks.startSearchFromAllApps(searchQuery)) {
+//            return;
+//        }
+
+        // If not handled, then just start the provided search intent
+        startActivitySafely(v, searchIntent, null);
+    }
+
+    public boolean isOnCustomContent() {
+        return mWorkspace.isOnOrMovingToCustomContent();
     }
 
     @Override
@@ -2711,7 +2747,7 @@ public class Launcher extends AppCompatActivity
 
             boolean success = startActivitySafely(v, intent, tag);
 
-            mStats.recordLaunch(intent, shortcut);
+            mStats.recordLaunch(v,intent, shortcut);
 
             if (success && v instanceof BubbleTextView) {
                 mWaitingForResume = (BubbleTextView) v;
@@ -2890,7 +2926,7 @@ public class Launcher extends AppCompatActivity
         return false;
     }
 
-    boolean startActivitySafely(View v, Intent intent, Object tag) {
+    public boolean startActivitySafely(View v, Intent intent, Object tag) {
         boolean success = false;
         try {
             success = startActivity(v, intent, tag);
@@ -3189,7 +3225,7 @@ public class Launcher extends AppCompatActivity
         }
     }
 
-    Workspace getWorkspace() {
+    public Workspace getWorkspace() {
         return mWorkspace;
     }
 
@@ -3608,15 +3644,15 @@ public class Launcher extends AppCompatActivity
         }
     }
 
-    private void showWorkspace(boolean animated) {
+    public void showWorkspace(boolean animated) {
         showWorkspace(animated, null);
     }
 
-    private void showWorkspace() {
+    public void showWorkspace() {
         showWorkspace(true);
     }
 
-    private void showWorkspace(boolean animated, Runnable onCompleteRunnable) {
+    public void showWorkspace(boolean animated, Runnable onCompleteRunnable) {
         if (mWorkspace.isInOverviewMode()) {
             mWorkspace.exitOverviewMode(animated);
         }
@@ -3842,7 +3878,7 @@ public class Launcher extends AppCompatActivity
         }
     }
 
-    void exitSpringLoadedDragModeDelayed(final boolean successfulDrop, boolean extendedDelay) {
+    public void exitSpringLoadedDragModeDelayed(final boolean successfulDrop, boolean extendedDelay) {
         if (mState != State.APPS_CUSTOMIZE_SPRING_LOADED) return;
 
         mHandler.postDelayed(new Runnable() {
@@ -5322,6 +5358,25 @@ public class Launcher extends AppCompatActivity
 
     }
 
+
+    /**
+     * Returns a FastBitmapDrawable with the icon, accurately sized.
+     */
+    public FastBitmapDrawable createIconDrawable(Bitmap icon) {
+        FastBitmapDrawable d = new FastBitmapDrawable(icon);
+        d.setFilterBitmap(true);
+        resizeIconDrawable(d);
+        return d;
+    }
+
+    /**
+     * Resizes an icon drawable to the correct icon size.
+     */
+    public void resizeIconDrawable(Drawable icon) {
+        icon.setBounds(0, 0, mDeviceProfile.iconSizePx, mDeviceProfile.iconSizePx);
+    }
+
+
     /**
      * Prints out out state for debugging.
      */
@@ -5430,14 +5485,3 @@ public class Launcher extends AppCompatActivity
     }
 }
 
-interface LauncherTransitionable {
-    View getContent();
-
-    void onLauncherTransitionPrepare(Launcher l, boolean animated, boolean toWorkspace);
-
-    void onLauncherTransitionStart(Launcher l, boolean animated, boolean toWorkspace);
-
-    void onLauncherTransitionStep(Launcher l, float t);
-
-    void onLauncherTransitionEnd(Launcher l, boolean animated, boolean toWorkspace);
-}

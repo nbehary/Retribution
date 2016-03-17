@@ -300,4 +300,7 @@ public class IconCache {
     public int getFullResIconDpi() {
         return mIconDpi;
     }
+
+
+
 }

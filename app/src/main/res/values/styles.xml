@@ -18,6 +18,41 @@
 -->
 
 <resources>
+
+    <style name="Theme.Light.CustomOverscroll" parent="@android:style/Theme.DeviceDefault">
+        <item name="android:colorEdgeEffect">@color/folder_edge_effect_color</item>
+    </style>
+
+    <style name="Theme.Dark.CustomOverscroll" parent="@android:style/Theme.DeviceDefault">
+        <item name="android:colorEdgeEffect">@color/workspace_edge_effect_color</item>
+    </style>
+
+    <style name="Icon">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">marquee</item>
+        <item name="android:textColor">@color/workspace_icon_text_color</item>
+        <item name="android:shadowRadius">2.0</item>
+        <item name="android:shadowColor">#B0000000</item>
+        <item name="android:fontFamily">sans-serif-condensed</item>
+    </style>
+
+    <style name="Icon.AllApps">
+        <item name="android:background">@null</item>
+        <item name="android:textColor">@color/quantum_panel_text_color</item>
+        <item name="android:drawablePadding">@dimen/dynamic_grid_icon_drawable_padding</item>
+        <item name="android:shadowRadius">0</item>
+    </style>
+
+    <style name="Icon.Folder">
+        <item name="android:background">@null</item>
+        <item name="android:textColor">@color/quantum_panel_text_color</item>
+        <item name="android:shadowRadius">0</item>
+    </style>
+
     <style name="Theme.WallpaperCropper" parent="@android:style/Theme.Holo">
         <item name="android:actionBarStyle">@style/WallpaperCropperActionBar</item>
         <item name="android:windowFullscreen">true</item>

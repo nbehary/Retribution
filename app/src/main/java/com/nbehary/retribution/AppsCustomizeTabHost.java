@@ -364,7 +364,7 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
         }
     }
 
-    @Override
+
     public View getContent() {
         return mContent;
     }

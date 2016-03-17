@@ -25,13 +25,16 @@ import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.util.Log;
 
+import com.nbehary.retribution.compat.UserHandleCompat;
+import com.nbehary.retribution.util.ComponentKey;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
  * Represents an app in AllAppsView.
  */
-class AppInfo extends ItemInfo {
+public class AppInfo extends ItemInfo {
     private static final String TAG = "Launcher3.AppInfo";
 
     /**
@@ -49,7 +52,7 @@ class AppInfo extends ItemInfo {
      */
     long firstInstallTime;
 
-    ComponentName componentName;
+    public ComponentName componentName;
 
     String appCategory;
 
@@ -65,6 +68,8 @@ class AppInfo extends ItemInfo {
     protected Intent getIntent() {
         return intent;
     }
+
+    UserHandleCompat user;
 
     /**
      * Must not hold the Context.
@@ -87,6 +92,7 @@ class AppInfo extends ItemInfo {
         }
 
         iconCache.getTitleAndIcon(this, info, labelCache);
+        this.user = UserHandleCompat.myUserHandle();
     }
 
     public static int initFlags(PackageInfo pi) {
@@ -151,4 +157,10 @@ class AppInfo extends ItemInfo {
     public ShortcutInfo makeShortcut() {
         return new ShortcutInfo(this);
     }
+
+
+    public ComponentKey toComponentKey() {
+        return new ComponentKey(componentName, user);
+    }
+
 }

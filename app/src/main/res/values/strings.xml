@@ -139,6 +139,17 @@ s
     <!-- Title of dialog when user is selecting an application to add to homescreen -->
     <string name="title_select_application">Choose app</string>
 
+    <!-- All Apps -->
+    <!-- Search bar text in the apps view. [CHAR_LIMIT=50] -->
+    <string name="all_apps_search_bar_hint">Search Apps</string>
+    <!-- Loading apps text. [CHAR_LIMIT=50] -->
+    <string name="all_apps_loading_message">Loading Apps&#8230;</string>
+    <!-- No-search-results text. [CHAR_LIMIT=50] -->
+    <string name="all_apps_no_search_results">No Apps found matching \"<xliff:g id="query" example="Android">%1$s</xliff:g>\"</string>
+    <!-- Search market text.  This is a format string where the first argument is the name of the activity
+         handling the search.  The format string does not need to handle both of these arguments. [CHAR_LIMIT=50] -->
+    <string name="all_apps_search_market_message">Go to <xliff:g id="query" example="Play Store">%1$s</xliff:g></string>
+
     <!-- All applications label -->
     <string name="all_apps_button_label">Apps</string>
     <!--
@@ -281,6 +292,21 @@ s
     <string name="folder_cling_create_folder">To create one like this, touch &amp; hold an app, then move it over another.</string>
     <!-- The text on the button to dismiss a cling [CHAR_LIMIT=30] -->
     <string name="cling_dismiss">OK</string>
+    <!-- The title text for the migration cling [CHAR_LIMIT=30] -->
+    <string name="migration_cling_title">Copy your app icons</string>
+    <!-- The description of what migration does [CHAR_LIMIT=70] -->
+    <string name="migration_cling_description">Import icons and folders from your old Home screens?</string>
+    <!-- The description of the button to migrate apps from another launcher [CHAR_LIMIT=30] -->
+    <string name="migration_cling_copy_apps">COPY ICONS</string>
+    <!-- The description of the button to use the default launcher layout [CHAR_LIMIT=30] -->
+    <string name="migration_cling_use_default">START FRESH</string>
+    <!-- The title text for workspace longpress action [CHAR_LIMIT=40] -->
+    <!-- The title text for workspace longpress action [CHAR_LIMIT=40] -->
+    <string name="workspace_cling_longpress_title">Wallpapers, widgets, &amp; settings</string>
+    <!-- The description of how to use the workspace [CHAR_LIMIT=70] -->
+    <string name="workspace_cling_longpress_description">Touch &amp; hold background to customize</string>
+    <!-- The description of the button to dismiss the cling [CHAR_LIMIT=30] -->
+    <string name="workspace_cling_longpress_dismiss">GOT IT</string>
     <!-- Error message on dummy custom cling layout [DO NOT TRANSLATE] -->
     <string name="dummy_custom_cling_error_message">Error: custom workspace layout passed in but custom cling was not overwritten</string>
 
@@ -328,5 +354,12 @@ s
     <string name="folder_cling_custom_text">You can choose different folder colors by long pressing an open workspace area and selecting Folders.</string>
     <string name="title_activity_grid_editor">GridEditor</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+    <!-- Permission to receive the com.nbehary.retribution.action.LAUNCH intent. [DO NOT TRANSLATE] -->
+    <string name="receive_launch_broadcasts_permission" translatable="false">com.nbehary.retribution.permission.RECEIVE_LAUNCH_BROADCASTS</string>
+
+    <!-- Permission to receive the com.nbehary.retribution.action.FIRST_LOAD_COMPLETE intent. [DO NOT TRANSLATE] -->
+    <string name="receive_first_load_broadcast_permission" translatable="false">com.nbehary.retribution.permission.RECEIVE_FIRST_LOAD_BROADCAST</string>
 
 </resources>

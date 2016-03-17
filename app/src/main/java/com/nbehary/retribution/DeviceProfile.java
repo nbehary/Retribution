@@ -38,6 +38,7 @@ import java.util.Comparator;
 
 import com.nbehary.retribution.preference.PreferencesProvider;
 
+//TODO: Implement InvariantDeviceProfile and clean this up.
 
 class DeviceProfileQuery {
     private final float widthDps;
@@ -53,7 +54,7 @@ class DeviceProfileQuery {
     }
 }
 
-class DeviceProfile {
+public class DeviceProfile {
     private String name;
     float minWidthDps;
     float minHeightDps;
@@ -85,8 +86,8 @@ class DeviceProfile {
     int widthPx;
     int heightPx;
     int availableWidthPx;
-    int availableHeightPx;
-    int iconSizePx;
+    public int availableHeightPx;
+    public int iconSizePx;
     int iconSizePxDevice;
     int iconTextSizePx;
 
@@ -103,8 +104,16 @@ class DeviceProfile {
     private int hotseatBarHeightPx;
     private int hotseatBarHeightPxDefault;
     int hotseatAllAppsRank;
-    int allAppsNumRows;
-    int allAppsNumCols;
+    public int allAppsNumRows;
+    public int allAppsNumCols;
+
+    public int allAppsNumPredictiveCols;
+    public int allAppsButtonVisualSize;
+    public int allAppsIconSizePx;
+    public int allAppsIconTextSizePx;
+
+
+
     private int searchBarSpaceWidthPx;
     private int searchBarSpaceMaxWidthPx;
     private int searchBarSpaceHeightPx;
@@ -218,6 +227,12 @@ class DeviceProfile {
             points.add(new DeviceProfileQuery(p.minWidthDps, p.minHeightDps, p.iconTextSize));
         }
         iconTextSizeDevice = invDistWeightedInterpolate(minWidth, minHeight, points);
+
+        // AllApps uses the original non-scaled icon text size
+        allAppsIconTextSizePx = Utilities.pxFromDp(iconTextSizeDevice, dm);
+
+        // AllApps uses the original non-scaled icon size
+        allAppsIconSizePx = Utilities.pxFromDp(iconSize, dm);
 
         //hideLabels = PreferencesProvider.Interface.General.getHideLabels();
         hideLabels = false;
@@ -344,8 +359,8 @@ class DeviceProfile {
         this.hotseatBarHeightPx = profile.hotseatBarHeightPx;
         this.hotseatBarHeightPxDefault = profile.hotseatBarHeightPxDefault;
         this.hotseatAllAppsRank = profile.hotseatAllAppsRank;
-        this.allAppsNumRows = profile.allAppsNumCols;
-        this.allAppsNumCols = profile.allAppsNumRows;
+        this.allAppsNumRows = profile.allAppsNumRows;
+        this.allAppsNumCols = profile.allAppsNumCols;
         this.searchBarSpaceWidthPx = profile.searchBarSpaceWidthPx;
         this.searchBarSpaceMaxWidthPx = profile.searchBarSpaceMaxWidthPx;
         this.searchBarSpaceHeightPx = profile.searchBarSpaceHeightPx;
@@ -408,6 +423,7 @@ class DeviceProfile {
 
         }
 
+        allAppsNumPredictiveCols = allAppsNumCols; //TODO: Invaiant!
 
     }
 
@@ -591,7 +607,7 @@ class DeviceProfile {
         return height / countY;
     }
 
-    boolean isPhone() {
+    public boolean isPhone() {
         return !isTablet && !isLargeTablet;
     }
     boolean isTablet() {
@@ -798,6 +814,19 @@ class DeviceProfile {
     }
 
 
+    public void updateAppsViewNumCols(Resources res, int recyclerViewWidth) {
+        int appsViewLeftMarginPx =
+                res.getDimensionPixelSize(R.dimen.all_apps_grid_view_start_margin);
+        int allAppsCellWidthGap =
+                res.getDimensionPixelSize(R.dimen.all_apps_icon_width_gap);
+        int availableAppsWidthPx = (recyclerViewWidth > 0) ? recyclerViewWidth : availableWidthPx;
+        int numAppsCols = (availableAppsWidthPx - appsViewLeftMarginPx) /
+                (allAppsIconSizePx + allAppsCellWidthGap);
+//        int numPredictiveAppCols = Math.max(inv.minAllAppsPredictionColumns, numAppsCols);
+        int numPredictiveAppCols = numAppsCols; //TODO: Invariant!!!
+        allAppsNumCols = numAppsCols;
+        allAppsNumPredictiveCols = numPredictiveAppCols;
+    }
 
     public boolean adjustSizesAuto(Resources res) {
         DisplayMetrics dm = res.getDisplayMetrics();

@@ -16,6 +16,7 @@
 
 package com.nbehary.retribution;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.WallpaperManager;
 import android.content.ActivityNotFoundException;
@@ -40,10 +41,13 @@ import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.graphics.Palette;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Various utilities shared amongst the Launcher's classes.
@@ -64,12 +68,34 @@ public final class Utilities {
     private static final Rect sOldBounds = new Rect();
     private static final Canvas sCanvas = new Canvas();
 
+
+    private static final Pattern sTrimPattern =
+            Pattern.compile("^[\\s|\\p{javaSpaceChar}]*(.*)[\\s|\\p{javaSpaceChar}]*$");
+    
     static {
         sCanvas.setDrawFilter(new PaintFlagsDrawFilter(Paint.DITHER_FLAG,
                 Paint.FILTER_BITMAP_FLAG));
     }
     private static final int[] sColors = { 0xffff0000, 0xff00ff00, 0xff0000ff };
     private static int sColorIndex = 0;
+
+    // TODO: use Build.VERSION_CODES when available
+    public static final boolean ATLEAST_MARSHMALLOW = Build.VERSION.SDK_INT >= 23;
+
+    public static final boolean ATLEAST_LOLLIPOP_MR1 =
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1;
+
+    public static final boolean ATLEAST_LOLLIPOP =
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
+
+    public static final boolean ATLEAST_KITKAT =
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
+
+    public static final boolean ATLEAST_JB_MR1 =
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1;
+
+    public static final boolean ATLEAST_JB_MR2 =
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2;
 
     /**
      * Returns a FastBitmapDrawable with the icon, accurately sized.
@@ -454,4 +480,41 @@ public final class Utilities {
     public static boolean isLmpOrAbove() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     }
+
+
+    public static float dpiFromPx(int size, DisplayMetrics metrics){
+        float densityRatio = (float) metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT;
+        return (size / densityRatio);
+    }
+    public static int pxFromDp(float size, DisplayMetrics metrics) {
+        return (int) Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                size, metrics));
+    }
+    public static int pxFromSp(float size, DisplayMetrics metrics) {
+        return (int) Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,
+                size, metrics));
+    }
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+    public static boolean isRtl(Resources res) {
+        return ATLEAST_JB_MR1 &&
+                (res.getConfiguration().getLayoutDirection() == View.LAYOUT_DIRECTION_RTL);
+    }
+
+
+    /**
+     * Trims the string, removing all whitespace at the beginning and end of the string.
+     * Non-breaking whitespaces are also removed.
+     */
+    public static String trim(CharSequence s) {
+        if (s == null) {
+            return null;
+        }
+
+        // Just strip any sequence of whitespace or java space characters from the beginning and end
+        Matcher m = sTrimPattern.matcher(s);
+        return m.replaceAll("$1");
+    }
+
+
 }

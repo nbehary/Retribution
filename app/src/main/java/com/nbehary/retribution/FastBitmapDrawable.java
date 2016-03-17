@@ -16,15 +16,52 @@
 
 package com.nbehary.retribution;
 
+import android.animation.ObjectAnimator;
+import android.animation.TimeInterpolator;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
+import android.graphics.ColorMatrix;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.util.SparseArray;
 
 class FastBitmapDrawable extends Drawable {
+
+
+    static final TimeInterpolator CLICK_FEEDBACK_INTERPOLATOR = new TimeInterpolator() {
+
+        @Override
+        public float getInterpolation(float input) {
+            if (input < 0.05f) {
+                return input / 0.05f;
+            } else if (input < 0.3f){
+                return 1;
+            } else {
+                return (1 - input) / 0.7f;
+            }
+        }
+    };
+    static final long CLICK_FEEDBACK_DURATION = 2000;
+
+    private static final int PRESSED_BRIGHTNESS = 100;
+    private static ColorMatrix sGhostModeMatrix;
+    private static final ColorMatrix sTempMatrix = new ColorMatrix();
+
+    /**
+     * Store the brightness colors filters to optimize animations during icon press. This
+     * only works for non-ghost-mode icons.
+     */
+    private static final SparseArray<ColorFilter> sCachedBrightnessFilter =
+            new SparseArray<ColorFilter>();
+
+    private static final int GHOST_MODE_MIN_COLOR_RANGE = 130;
+
+
+
+
     private Bitmap mBitmap;
     private int mAlpha;
     private int mWidth;

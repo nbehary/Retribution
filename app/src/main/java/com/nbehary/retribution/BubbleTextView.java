@@ -17,9 +17,12 @@
 package com.nbehary.retribution;
 
 import com.nbehary.retribution.R;
+import com.nbehary.retribution.model.PackageItemInfo;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
@@ -28,6 +31,7 @@ import android.graphics.Region.Op;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.MotionEvent;
@@ -46,6 +50,10 @@ public class BubbleTextView extends TextView {
     static final int SHADOW_SMALL_COLOUR = 0xCC000000;
     static final float PADDING_H = 8.0f;
     static final float PADDING_V = 3.0f;
+
+
+    private static final int DISPLAY_WORKSPACE = 0;
+    private static final int DISPLAY_ALL_APPS = 1;
 
     private int mPrevAlpha = -1;
 
@@ -69,22 +77,55 @@ public class BubbleTextView extends TextView {
     private Drawable mBackground;
 
     private boolean mStayPressed;
+
+
+    private final boolean mDeferShadowGenerationOnTouch;
+    private final boolean mCustomShadowsEnabled;
+    private final boolean mLayoutHorizontal;
+    private final int mIconSize;
+
+    private final Launcher mLauncher;
+    private Drawable mIcon;
+    
     private CheckLongPressHelper mLongPressHelper;
 
     private boolean isHotseatItem;
 
+    
     public BubbleTextView(Context context) {
-        super(context);
-        init();
+        this(context, null, 0);
     }
 
     public BubbleTextView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init();
+        this(context, attrs, 0);
     }
 
     public BubbleTextView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        mLauncher = (Launcher) context;
+
+        DeviceProfile grid = mLauncher.getDeviceProfile();
+
+        TypedArray a = context.obtainStyledAttributes(attrs,
+                R.styleable.BubbleTextView, defStyle, 0);
+        mCustomShadowsEnabled = a.getBoolean(R.styleable.BubbleTextView_customShadows, true);
+        mLayoutHorizontal = a.getBoolean(R.styleable.BubbleTextView_layoutHorizontal, false);
+        mDeferShadowGenerationOnTouch =
+                a.getBoolean(R.styleable.BubbleTextView_deferShadowGeneration, false);
+
+        int display = a.getInteger(R.styleable.BubbleTextView_iconDisplay, DISPLAY_WORKSPACE);
+        int defaultIconSize = grid.iconSizePx;
+        if (display == DISPLAY_WORKSPACE) {
+            setTextSize(TypedValue.COMPLEX_UNIT_PX, grid.iconTextSizePx);
+        } else if (display == DISPLAY_ALL_APPS) {
+            setTextSize(TypedValue.COMPLEX_UNIT_PX, grid.allAppsIconTextSizePx);
+            defaultIconSize = grid.allAppsIconSizePx;
+        }
+
+        mIconSize = a.getDimensionPixelSize(R.styleable.BubbleTextView_iconSizeOverride,
+                defaultIconSize);
+
+        a.recycle();
         init();
     }
 
@@ -125,6 +166,34 @@ public class BubbleTextView extends TextView {
         mInfo = info;
     }
 
+
+    public void applyFromApplicationInfo(AppInfo info) {
+        setIcon(mLauncher.createIconDrawable(info.iconBitmap), mIconSize);
+        setText(info.title);
+        if (info.contentDescription != null) {
+            setContentDescription(info.contentDescription);
+        }
+        // We don't need to check the info since it's not a ShortcutInfo
+        super.setTag(info);
+
+        // Verify high res immediately
+        verifyHighRes();
+    }
+
+    public void applyFromPackageItemInfo(PackageItemInfo info) {
+        setIcon(mLauncher.createIconDrawable(info.iconBitmap), mIconSize);
+        setText(info.title);
+        if (info.contentDescription != null) {
+            setContentDescription(info.contentDescription);
+        }
+        // We don't need to check the info since it's not a ShortcutInfo
+        super.setTag(info);
+
+        // Verify high res immediately
+        verifyHighRes();
+    }
+
+
     public void setHotseatItem(boolean flag) {
         if (mInfo == null){
             return;
@@ -137,6 +206,10 @@ public class BubbleTextView extends TextView {
             setCompoundDrawables(null,
                     Utilities.createIconDrawable(b), null, null);
         }
+    }
+
+    public void setLongPressTimeout(int longPressTimeout) {
+        mLongPressHelper.setLongPressTimeout(longPressTimeout);
     }
 
     @Override
@@ -414,4 +487,71 @@ public class BubbleTextView extends TextView {
 
         mLongPressHelper.cancelLongPress();
     }
+
+    /**
+     * Sets the icon for this view based on the layout direction.
+     */
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+    private Drawable setIcon(Drawable icon, int iconSize) {
+        mIcon = icon;
+        if (iconSize != -1) {
+            mIcon.setBounds(0, 0, iconSize, iconSize);
+        }
+        if (mLayoutHorizontal) {
+            if (Utilities.ATLEAST_JB_MR1) {
+                setCompoundDrawablesRelative(mIcon, null, null, null);
+            } else {
+                setCompoundDrawables(mIcon, null, null, null);
+            }
+        } else {
+            setCompoundDrawables(null, mIcon, null, null);
+        }
+        return icon;
+    }
+
+
+    /** Returns the icon for this view. */
+    public Drawable getIcon() {
+        return mIcon;
+    }
+
+    /**
+     * Verifies that the current icon is high-res otherwise posts a request to load the icon.
+     */
+    public void verifyHighRes() {
+    /*  TODO: Fix me.
+
+        if (mIconLoadRequest != null) {
+            mIconLoadRequest.cancel();
+            mIconLoadRequest = null;
+        }
+        if (getTag() instanceof AppInfo) {
+            AppInfo info = (AppInfo) getTag();
+            if (info.usingLowResIcon) {
+                mIconLoadRequest = LauncherAppState.getInstance().getIconCache()
+                        .updateIconInBackground(BubbleTextView.this, info);
+            }
+        } else if (getTag() instanceof ShortcutInfo) {
+            ShortcutInfo info = (ShortcutInfo) getTag();
+            if (info.usingLowResIcon) {
+                mIconLoadRequest = LauncherAppState.getInstance().getIconCache()
+                        .updateIconInBackground(BubbleTextView.this, info);
+            }
+        } else if (getTag() instanceof PackageItemInfo) {
+            PackageItemInfo info = (PackageItemInfo) getTag();
+            if (info.usingLowResIcon) {
+                mIconLoadRequest = LauncherAppState.getInstance().getIconCache()
+                        .updateIconInBackground(BubbleTextView.this, info);
+            }
+        }
+*/
+
+    }
+    /**
+     * Interface to be implemented by the grand parent to allow click shadow effect.
+     */
+    public static interface BubbleTextShadowHandler {
+        void setPressedIcon(BubbleTextView icon, Bitmap background);
+    }
+
 }

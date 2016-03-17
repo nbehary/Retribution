@@ -20,86 +20,115 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewParent;
 
-import java.io.*;
 import java.util.ArrayList;
 
 public class Stats {
+
+    /**
+     * Implemented by containers to provide a launch source for a given child.
+     */
+    public interface LaunchSourceProvider {
+        void fillInLaunchSourceData(Bundle sourceData);
+    }
+
+    /**
+     * Helpers to add the source to a launch intent.
+     */
+    public static class LaunchSourceUtils {
+        /**
+         * Create a default bundle for LaunchSourceProviders to fill in their data.
+         */
+        public static Bundle createSourceData() {
+            Bundle sourceData = new Bundle();
+            sourceData.putString(SOURCE_EXTRA_CONTAINER, CONTAINER_HOMESCREEN);
+            // Have default container/sub container pages
+            sourceData.putInt(SOURCE_EXTRA_CONTAINER_PAGE, 0);
+            sourceData.putInt(SOURCE_EXTRA_SUB_CONTAINER_PAGE, 0);
+            return sourceData;
+        }
+
+        /**
+         * Finds the next launch source provider in the parents of the view hierarchy and populates
+         * the source data from that provider.
+         */
+        public static void populateSourceDataFromAncestorProvider(View v, Bundle sourceData) {
+            if (v == null) {
+                return;
+            }
+
+            Stats.LaunchSourceProvider provider = null;
+            ViewParent parent = v.getParent();
+            while (parent != null && parent instanceof View) {
+                if (parent instanceof Stats.LaunchSourceProvider) {
+                    provider = (Stats.LaunchSourceProvider) parent;
+                    break;
+                }
+                parent = parent.getParent();
+            }
+
+            if (provider != null) {
+                provider.fillInLaunchSourceData(sourceData);
+//            } else if (LauncherAppState.isDogfoodBuild()) {
+            }else if (false){ //TODO: This is silly.  But, what is special about dogfood builds?  N thing?
+                throw new RuntimeException("Expected LaunchSourceProvider");
+            }
+        }
+    }
+
     private static final boolean DEBUG_BROADCASTS = false;
-    private static final String TAG = "Launcher3/Stats";
 
-    private static final boolean LOCAL_LAUNCH_LOG = true;
+    public static final String ACTION_LAUNCH = "com.nbehary.retribution.action.LAUNCH";
+    public static final String EXTRA_INTENT = "intent";
+    public static final String EXTRA_CONTAINER = "container";
+    public static final String EXTRA_SCREEN = "screen";
+    public static final String EXTRA_CELLX = "cellX";
+    public static final String EXTRA_CELLY = "cellY";
+    public static final String EXTRA_SOURCE = "source";
 
-    private static final String ACTION_LAUNCH = "com.nbehary.retribution.action.LAUNCH";
-    private static final String PERM_LAUNCH = "com.nbehary.retribution.permission.RECEIVE_LAUNCH_BROADCASTS";
-    private static final String EXTRA_INTENT = "intent";
-    private static final String EXTRA_CONTAINER = "container";
-    private static final String EXTRA_SCREEN = "screen";
-    private static final String EXTRA_CELLX = "cellX";
-    private static final String EXTRA_CELLY = "cellY";
+    public static final String SOURCE_EXTRA_CONTAINER = "container";
+    public static final String SOURCE_EXTRA_CONTAINER_PAGE = "container_page";
+    public static final String SOURCE_EXTRA_SUB_CONTAINER = "sub_container";
+    public static final String SOURCE_EXTRA_SUB_CONTAINER_PAGE = "sub_container_page";
 
-    private static final String LOG_FILE_NAME = "launches.log";
-    private static final int LOG_VERSION = 1;
-    private static final int LOG_TAG_VERSION = 0x1;
-    private static final int LOG_TAG_LAUNCH = 0x1000;
+    public static final String CONTAINER_SEARCH_BOX = "search_box";
+    public static final String CONTAINER_ALL_APPS = "all_apps";
+    public static final String CONTAINER_HOMESCREEN = "homescreen"; // aka. Workspace
+    public static final String CONTAINER_HOTSEAT = "hotseat";
 
-    private static final String STATS_FILE_NAME = "stats.log";
-    private static final int STATS_VERSION = 1;
-    private static final int INITIAL_STATS_SIZE = 100;
-
-    // TODO: delayed/batched writes
-    private static final boolean FLUSH_IMMEDIATELY = true;
+    public static final String SUB_CONTAINER_FOLDER = "folder";
+    public static final String SUB_CONTAINER_ALL_APPS_A_Z = "a-z";
+    public static final String SUB_CONTAINER_ALL_APPS_PREDICTION = "prediction";
+    public static final String SUB_CONTAINER_ALL_APPS_SEARCH = "search";
 
     private final Launcher mLauncher;
-
-    private DataOutputStream mLog;
+    private final String mLaunchBroadcastPermission;
 
     private ArrayList<String> mIntents;
     private ArrayList<Integer> mHistogram;
 
     public Stats(Launcher launcher) {
         mLauncher = launcher;
-
-        loadStats();
-
-        if (LOCAL_LAUNCH_LOG) {
-            try {
-                mLog = new DataOutputStream(mLauncher.openFileOutput(LOG_FILE_NAME, Context.MODE_APPEND));
-                mLog.writeInt(LOG_TAG_VERSION);
-                mLog.writeInt(LOG_VERSION);
-            } catch (FileNotFoundException e) {
-                Log.e(TAG, "unable to create stats log: " + e);
-                mLog = null;
-            } catch (IOException e) {
-                Log.e(TAG, "unable to write to stats log: " + e);
-                mLog = null;
-            }
-        }
+        mLaunchBroadcastPermission =
+                launcher.getResources().getString(R.string.receive_launch_broadcasts_permission);
 
         if (DEBUG_BROADCASTS) {
             launcher.registerReceiver(
                     new BroadcastReceiver() {
                         @Override
                         public void onReceive(Context context, Intent intent) {
-                            android.util.Log.v("Stats", "got broadcast: " + intent + " for launched intent: "
+                            Log.v("Stats", "got broadcast: " + intent + " for launched intent: "
                                     + intent.getStringExtra(EXTRA_INTENT));
                         }
                     },
                     new IntentFilter(ACTION_LAUNCH),
-                    PERM_LAUNCH,
+                    mLaunchBroadcastPermission,
                     null
             );
-        }
-    }
-
-    private void incrementLaunch(String intentStr) {
-        int pos = mIntents.indexOf(intentStr);
-        if (pos < 0) {
-            mIntents.add(intentStr);
-            mHistogram.add(1);
-        } else {
-            mHistogram.set(pos, mHistogram.get(pos) + 1);
         }
     }
 
@@ -117,16 +146,11 @@ public class Stats {
         }
     }
 
-    public void recordLaunch(Intent intent) {
-        recordLaunch(intent, null);
-    }
-
-    public void recordLaunch(Intent intent, ShortcutInfo shortcut) {
+    public void recordLaunch(View v, Intent intent, ShortcutInfo shortcut) {
         intent = new Intent(intent);
         intent.setSourceBounds(null);
 
         final String flat = intent.toUri(0);
-
         Intent broadcastIntent = new Intent(ACTION_LAUNCH).putExtra(EXTRA_INTENT, flat);
         if (shortcut != null) {
             broadcastIntent.putExtra(EXTRA_CONTAINER, shortcut.container)
@@ -134,96 +158,10 @@ public class Stats {
                     .putExtra(EXTRA_CELLX, shortcut.cellX)
                     .putExtra(EXTRA_CELLY, shortcut.cellY);
         }
-        mLauncher.sendBroadcast(broadcastIntent, PERM_LAUNCH);
 
-        incrementLaunch(flat);
-
-        if (FLUSH_IMMEDIATELY) {
-            saveStats();
-        }
-
-        if (LOCAL_LAUNCH_LOG && mLog != null) {
-            try {
-                mLog.writeInt(LOG_TAG_LAUNCH);
-                mLog.writeLong(System.currentTimeMillis());
-                if (shortcut == null) {
-                    mLog.writeShort(0);
-                    mLog.writeShort(0);
-                    mLog.writeShort(0);
-                    mLog.writeShort(0);
-                } else {
-                    mLog.writeShort((short) shortcut.container);
-                    mLog.writeShort((short) shortcut.screenId);
-                    mLog.writeShort((short) shortcut.cellX);
-                    mLog.writeShort((short) shortcut.cellY);
-                }
-                mLog.writeUTF(flat);
-                if (FLUSH_IMMEDIATELY) {
-                    mLog.flush(); // TODO: delayed writes
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private void saveStats() {
-        DataOutputStream stats = null;
-        try {
-            stats = new DataOutputStream(mLauncher.openFileOutput(STATS_FILE_NAME + ".tmp", Context.MODE_PRIVATE));
-            stats.writeInt(STATS_VERSION);
-            final int N = mHistogram.size();
-            stats.writeInt(N);
-            for (int i=0; i<N; i++) {
-                stats.writeUTF(mIntents.get(i));
-                stats.writeInt(mHistogram.get(i));
-            }
-            stats.close();
-            stats = null;
-            mLauncher.getFileStreamPath(STATS_FILE_NAME + ".tmp")
-                     .renameTo(mLauncher.getFileStreamPath(STATS_FILE_NAME));
-        } catch (FileNotFoundException e) {
-            Log.e(TAG, "unable to create stats data: " + e);
-        } catch (IOException e) {
-            Log.e(TAG, "unable to write to stats data: " + e);
-        } finally {
-            if (stats != null) {
-                try {
-                    stats.close();
-                } catch (IOException e) {
-                    Log.e(TAG, "unable to close stats data: " + e);
-                }
-            }
-        }
-    }
-
-    private void loadStats() {
-        mIntents = new ArrayList<String>(INITIAL_STATS_SIZE);
-        mHistogram = new ArrayList<Integer>(INITIAL_STATS_SIZE);
-        DataInputStream stats = null;
-        try {
-            stats = new DataInputStream(mLauncher.openFileInput(STATS_FILE_NAME));
-            final int version = stats.readInt();
-            if (version == STATS_VERSION) {
-                final int N = stats.readInt();
-                for (int i=0; i<N; i++) {
-                    final String pkg = stats.readUTF();
-                    final int count = stats.readInt();
-                    mIntents.add(pkg);
-                    mHistogram.add(count);
-                }
-            }
-        } catch (FileNotFoundException e) {
-            // not a problem
-        } catch (IOException e) {
-            // more of a problem
-
-        } finally {
-            if (stats != null) {
-                try {
-                    stats.close();
-                } catch (IOException e) { }
-            }
-        }
+        Bundle sourceExtras = LaunchSourceUtils.createSourceData();
+        LaunchSourceUtils.populateSourceDataFromAncestorProvider(v, sourceExtras);
+        broadcastIntent.putExtra(EXTRA_SOURCE, sourceExtras);
+        mLauncher.sendBroadcast(broadcastIntent, mLaunchBroadcastPermission);
     }
 }
