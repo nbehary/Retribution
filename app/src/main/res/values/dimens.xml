@@ -178,5 +178,9 @@
     <dimen name="widget_row_padding">8dp</dimen>
     <dimen name="widget_row_divider">2dp</dimen>
 
+    <!-- Elevation for the drag view. It should be larger than elevation of all other drag sources
+         and drop targets like all-apps and folders -->
+    <dimen name="drag_elevation">30dp</dimen>
+
 
 </resources>

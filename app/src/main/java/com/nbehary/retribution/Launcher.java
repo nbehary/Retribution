@@ -116,8 +116,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nbehary.retribution.DropTarget.DragObject;
+import com.nbehary.retribution.allapps.AllAppsContainerView;
 import com.nbehary.retribution.preference.PreferencesProvider;
 import com.nbehary.retribution.settings.SettingsProvider;
+import com.nbehary.retribution.util.ComponentKey;
+import com.nbehary.retribution.util.Thunk;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -232,11 +235,13 @@ public class Launcher extends AppCompatActivity
     /**
      * The different states that Launcher can be in.
      */
-    private enum State {
-        NONE, WORKSPACE, APPS_CUSTOMIZE, APPS_CUSTOMIZE_SPRING_LOADED, WIDGETS_CUSTOMIZE, ICONPACKS_CUSTOMIZE, FOLDERS_CUSTOMIZE
+    enum State {
+        NONE, WORKSPACE, APPS, APPS_SPRING_LOADED, WIDGETS, WIDGETS_SPRING_LOADED, ICONPACKS_CUSTOMIZE, FOLDERS_CUSTOMIZE
     }
 
-    private State mState = State.WORKSPACE;
+    @Thunk State mState = State.WORKSPACE;
+    @Thunk LauncherStateTransitionAnimation mStateTransitionAnimation;
+
     private AnimatorSet mStateAnimation;
 
     static final int APPWIDGET_HOST_ID = 1024;
@@ -276,13 +281,21 @@ public class Launcher extends AppCompatActivity
     private FolderInfo mFolderInfo;
 
     private Hotseat mHotseat;
-    private View mOverviewPanel;
+    private ViewGroup mOverviewPanel;
 
     private View mAllAppsButton;
 
     private String mAllAppsGroup;
 
     private SearchDropTargetBar mSearchDropTargetBar;
+    
+    // Main container view for the all apps screen.
+    @Thunk AllAppsContainerView mAppsView;
+
+    // Main container view and the model for the widget tray screen.
+//    @Thunk WidgetsContainerView mWidgetsView;
+//    @Thunk WidgetsModel mWidgetsModel;
+    
     private AppsCustomizeTabHost mAppsCustomizeTabHost;
     private AppsCustomizePagedView mAppsCustomizeContent;
     private boolean mAutoAdvanceRunning = false;
@@ -489,7 +502,8 @@ public class Launcher extends AppCompatActivity
         mIconCache.flushInvalidIcons(grid);
         mDragController = new DragController(this);
         mInflater = getLayoutInflater();
-
+        mStateTransitionAnimation = new LauncherStateTransitionAnimation(this);
+        
         mStats = new Stats(this);
 
         mAppWidgetManager = AppWidgetManager.getInstance(this);
@@ -800,7 +814,7 @@ public class Launcher extends AppCompatActivity
         return mDragLayer;
     }
 
-    boolean isDraggingEnabled() {
+    public boolean isDraggingEnabled() {
         // We prevent dragging when we are loading the workspace as it is possible to pick up a view
         // that is subsequently removed from the workspace in startBinding().
         return !mModel.isLoadingWorkspace();
@@ -1060,9 +1074,9 @@ public class Launcher extends AppCompatActivity
         // Restore the previous launcher state
         if (mOnResumeState == State.WORKSPACE) {
             showWorkspace(false);
-        } else if (mOnResumeState == State.APPS_CUSTOMIZE) {
+        } else if (mOnResumeState == State.APPS) {
             showAllApps(false, AppsCustomizePagedView.ContentType.Applications, false);
-        } else if (mOnResumeState == State.WIDGETS_CUSTOMIZE) {
+        } else if (mOnResumeState == State.WIDGETS) {
             showAllApps(false, AppsCustomizePagedView.ContentType.Widgets, false);
         } else if (mOnResumeState == State.ICONPACKS_CUSTOMIZE) {
             showAllApps(false, AppsCustomizePagedView.ContentType.IconPacks, false);
@@ -1535,10 +1549,10 @@ public class Launcher extends AppCompatActivity
             return;
         }
         State state = intToState(savedState.getInt(RUNTIME_STATE, State.WORKSPACE.ordinal()));
-        if (state == State.APPS_CUSTOMIZE) {
-            mOnResumeState = State.APPS_CUSTOMIZE;
-        } else if (state == State.WIDGETS_CUSTOMIZE) {
-            mOnResumeState = State.WIDGETS_CUSTOMIZE;
+        if (state == State.APPS) {
+            mOnResumeState = State.APPS;
+        } else if (state == State.WIDGETS) {
+            mOnResumeState = State.WIDGETS;
         } else if (state == State.ICONPACKS_CUSTOMIZE) {
             mOnResumeState = State.ICONPACKS_CUSTOMIZE;
         } else if (state == State.FOLDERS_CUSTOMIZE) {
@@ -1575,7 +1589,7 @@ public class Launcher extends AppCompatActivity
 
         // Restore the AppsCustomize tab
         if (mAppsCustomizeTabHost != null) {
-            String curTab = savedState.getString("apps_customize_currentTab");
+            String curTab = savedState.getString("APPS_currentTab");
             if (curTab != null) {
                 mAppsCustomizeTabHost.setContentTypeImmediate(
                         mAppsCustomizeTabHost.getContentTypeForTabTag(curTab));
@@ -1583,7 +1597,7 @@ public class Launcher extends AppCompatActivity
                         mAppsCustomizeContent.getCurrentPage());
             }
 
-            int currentIndex = savedState.getInt("apps_customize_currentIndex");
+            int currentIndex = savedState.getInt("APPS_currentIndex");
             mAppsCustomizeContent.restorePageForIndex(currentIndex);
         }
     }
@@ -1614,7 +1628,7 @@ public class Launcher extends AppCompatActivity
             mHotseat.setOnLongClickListener(this);
         }
 
-        mOverviewPanel = findViewById(R.id.overview_panel);
+        mOverviewPanel = (ViewGroup) findViewById(R.id.overview_panel);
         View widgetButton = findViewById(R.id.widget_button);
         widgetButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -1736,6 +1750,9 @@ public class Launcher extends AppCompatActivity
             mSearchDropTargetBar.setVisibility(View.INVISIBLE);
         }
 
+
+        mAppsView = (AllAppsContainerView) findViewById(R.id.apps_view);
+
         // Setup AppsCustomize
         mAppsCustomizeTabHost = (AppsCustomizeTabHost) findViewById(R.id.apps_customize_pane);
         mAppsCustomizeContent = (AppsCustomizePagedView)
@@ -1754,6 +1771,16 @@ public class Launcher extends AppCompatActivity
 
 
 
+    }
+
+
+
+    public View getAllAppsButton() {
+        return mAllAppsButton;
+    }
+
+    public View getWidgetsButton() {
+        return mAllAppsButton; //TODO: Fix me.
     }
 
     /**
@@ -2088,6 +2115,27 @@ public class Launcher extends AppCompatActivity
         mAutoAdvanceSentTime = System.currentTimeMillis();
     }
 
+
+
+    @Thunk void updateAutoAdvanceState() {
+        boolean autoAdvanceRunning = mVisible && mUserPresent && !mWidgetsToAdvance.isEmpty();
+        if (autoAdvanceRunning != mAutoAdvanceRunning) {
+            mAutoAdvanceRunning = autoAdvanceRunning;
+            if (autoAdvanceRunning) {
+                long delay = mAutoAdvanceTimeLeft == -1 ? mAdvanceInterval : mAutoAdvanceTimeLeft;
+                sendAdvanceMessage(delay);
+            } else {
+                if (!mWidgetsToAdvance.isEmpty()) {
+                    mAutoAdvanceTimeLeft = Math.max(0, mAdvanceInterval -
+                            (System.currentTimeMillis() - mAutoAdvanceSentTime));
+                }
+                mHandler.removeMessages(ADVANCE_MSG);
+                mHandler.removeMessages(0); // Remove messages sent using postDelayed()
+            }
+        }
+    }
+
+
     private void updateRunning() {
         boolean autoAdvanceRunning = mVisible && mUserPresent && !mWidgetsToAdvance.isEmpty();
         if (autoAdvanceRunning != mAutoAdvanceRunning) {
@@ -2272,10 +2320,10 @@ public class Launcher extends AppCompatActivity
         if (mAppsCustomizeTabHost != null) {
             String currentTabTag = mAppsCustomizeTabHost.getCurrentTabTag();
             if (currentTabTag != null) {
-                outState.putString("apps_customize_currentTab", currentTabTag);
+                outState.putString("APPS_currentTab", currentTabTag);
             }
             int currentIndex = mAppsCustomizeContent.getSaveInstanceStateIndex();
-            outState.putInt("apps_customize_currentIndex", currentIndex);
+            outState.putInt("APPS_currentIndex", currentIndex);
         }
     }
 
@@ -2542,7 +2590,7 @@ public class Launcher extends AppCompatActivity
             Bundle options = info.bindOptions;
 
             boolean success = false;
-            if (Build.VERSION.SDK_INT >= 16) {
+            if (Build.VERSION.SDK_INT >= 17) {
 
                 if (options != null) {
                     success = mAppWidgetManager.bindAppWidgetIdIfAllowed(appWidgetId,
@@ -2818,7 +2866,10 @@ public class Launcher extends AppCompatActivity
      * @param v The view that was clicked.
      */
     public void onClickAllAppsButton(View v) {
-        showAllApps(true, AppsCustomizePagedView.ContentType.Applications, true);
+      //  showAllApps(true, AppsCustomizePagedView.ContentType.Applications, true);
+        Log.d("onClickAllAppsButton", "Yep");
+      showAppsView(true,true,true,false); //TODO: all whatever for testing.
+    
     }
 
     public void onTouchDownAllAppsButton(View v) {
@@ -2850,6 +2901,20 @@ public class Launcher extends AppCompatActivity
 
     }
 
+
+    public void onDragStarted(View view) {
+        if (isOnCustomContent()) {
+            // Custom content screen doesn't participate in drag and drop. If on custom
+            // content screen, move to default.
+//            moveWorkspaceToDefaultScreen();  TODO: This may matter
+        }
+
+//        if (mLauncherCallbacks != null) {
+//            mLauncherCallbacks.onDragStarted(view);
+//        }
+    }
+
+
     /**
      * Called when the user stops interacting with the launcher.
      * This implies that the user is now on the homescreen and is not doing housekeeping.
@@ -2868,6 +2933,20 @@ public class Launcher extends AppCompatActivity
      */
     void onInteractionBegin() {
 
+    }
+
+
+    /** Updates the interaction state. */
+    public void updateInteraction(Workspace.State fromState, Workspace.State toState) {
+        // Only update the interacting state if we are transitioning to/from a view with an
+        // overlay
+        boolean fromStateWithOverlay = fromState != Workspace.State.NORMAL;
+        boolean toStateWithOverlay = toState != Workspace.State.NORMAL;
+        if (toStateWithOverlay) {
+            onInteractionBegin();
+        } else if (fromStateWithOverlay) {
+            onInteractionEnd();
+        }
     }
 
     void startApplicationDetailsActivity(ComponentName componentName) {
@@ -3202,7 +3281,7 @@ public class Launcher extends AppCompatActivity
         return mHotseat;
     }
 
-    View getOverviewPanel() {
+    ViewGroup getOverviewPanel() {
         return mOverviewPanel;
     }
 
@@ -3223,6 +3302,26 @@ public class Launcher extends AppCompatActivity
         } else {
             return mWorkspace.getScreenWithId(screenId);
         }
+    }
+
+
+    /**
+     * For overridden classes.
+     */
+    public boolean isAllAppsVisible() {
+        return isAppsViewVisible();
+    }
+
+    public boolean isAppsViewVisible() {
+        return (mState == State.APPS) || (mOnResumeState == State.APPS);
+    }
+
+    public boolean isWidgetsViewVisible() {
+        return (mState == State.WIDGETS) || (mOnResumeState == State.WIDGETS);
+    }
+
+    public AllAppsContainerView getAppsView() {
+        return mAppsView;
     }
 
     public Workspace getWorkspace() {
@@ -3260,13 +3359,13 @@ public class Launcher extends AppCompatActivity
         mOverviewPanel.bringToFront();
     }
 
-
+/*
     public boolean isAllAppsVisible() {
-        return (mState == State.APPS_CUSTOMIZE) || (mOnResumeState == State.APPS_CUSTOMIZE) ||
-                (mState == State.WIDGETS_CUSTOMIZE) || (mOnResumeState == State.WIDGETS_CUSTOMIZE) ||
+        return (mState == State.APPS) || (mOnResumeState == State.APPS) ||
+                (mState == State.WIDGETS) || (mOnResumeState == State.WIDGETS) ||
                 (mState == State.ICONPACKS_CUSTOMIZE) || (mOnResumeState == State.ICONPACKS_CUSTOMIZE);
     }
-
+*/
     /**
      * Helper method for the cameraZoomIn/cameraZoomOut animations
      *
@@ -3401,7 +3500,7 @@ public class Launcher extends AppCompatActivity
 
         // Shrink workspaces away if going to AppsCustomize from workspace
         Animator workspaceAnim =
-                mWorkspace.getChangeStateAnimation(Workspace.State.SMALL, animated);
+                mWorkspace.getChangeStateAnimation(Workspace.State.OVERVIEW, animated);
         if (!AppsCustomizePagedView.DISABLE_ALL_APPS) {
             // Set the content type for the all apps space
             mAppsCustomizeTabHost.setContentTypeImmediate(contentType);
@@ -3758,6 +3857,83 @@ public class Launcher extends AppCompatActivity
 */
     }
 
+
+
+    /**
+     * Shows the apps view.
+     */
+    void showAppsView(boolean animated, boolean resetListToTop, boolean updatePredictedApps,
+            boolean focusSearchBar) {
+        if (resetListToTop) {
+            mAppsView.scrollToTop();
+        }
+        if (updatePredictedApps) {
+            tryAndUpdatePredictedApps();
+        }
+        showAppsOrWidgets(State.APPS, animated, focusSearchBar);
+    }
+
+    /**
+     * Shows the widgets view.
+     */
+    void showWidgetsView(boolean animated, boolean resetPageToZero) {
+      /*
+        if (LOGD) Log.d(TAG, "showWidgetsView:" + animated + " resetPageToZero:" + resetPageToZero);
+        if (resetPageToZero) {
+            mWidgetsView.scrollToTop();
+        }
+        showAppsOrWidgets(State.WIDGETS, animated, false);
+
+        mWidgetsView.post(new Runnable() {
+            @Override
+            public void run() {
+                mWidgetsView.requestFocus();
+            }
+        });
+        */
+    }
+
+
+    /**
+     * Sets up the transition to show the apps/widgets view.
+     *
+     * @return whether the current from and to state allowed this operation
+     */
+   // TODO: calling method should use the return value so that when {@code false} is returned
+    // the workspace transition doesn't fall into invalid state.
+    private boolean showAppsOrWidgets(State toState, boolean animated, boolean focusSearchBar) {
+        if (mState != State.WORKSPACE &&  mState != State.APPS_SPRING_LOADED &&
+                mState != State.WIDGETS_SPRING_LOADED) {
+            Log.d("showAppsOrWidgets", "first if fails");
+            return false;
+        }
+        if (toState != State.APPS && toState != State.WIDGETS) {
+            Log.d("showAppsOrWidgets", "second if fails");
+            return false;
+        }
+
+        if (toState == State.APPS) {
+            mStateTransitionAnimation.startAnimationToAllApps(mWorkspace.getState(), animated,
+                    focusSearchBar);
+        } else {
+            //mStateTransitionAnimation.startAnimationToWidgets(mWorkspace.getState(), animated);
+        }
+
+        // Change the state *after* we've called all the transition code
+        mState = toState;
+
+        // Pause the auto-advance of widgets until we are out of AllApps
+        mUserPresent = false;
+        updateAutoAdvanceState();
+        closeFolder();
+
+        // Send an accessibility event to announce the context change
+        getWindow().getDecorView()
+                .sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
+        return true;
+    }
+
+
     private void showAllApps(boolean animated, AppsCustomizePagedView.ContentType contentType,
                              boolean resetPageToZero) {
         if (mState != State.WORKSPACE) return;
@@ -3771,13 +3947,13 @@ public class Launcher extends AppCompatActivity
         View tabsContainer = findViewById(R.id.tabs_container);
         // Change the state *after* we've called all the transition code
         if (contentType == AppsCustomizePagedView.ContentType.Widgets) {
-            mState = State.WIDGETS_CUSTOMIZE;
+            mState = State.WIDGETS;
             tabsContainer.setVisibility(View.GONE);
         } else if (contentType == AppsCustomizePagedView.ContentType.IconPacks) {
             mState = State.ICONPACKS_CUSTOMIZE;
             tabsContainer.setVisibility(View.GONE);
         } else {
-            mState = State.APPS_CUSTOMIZE;
+            mState = State.APPS;
             tabsContainer.setVisibility(View.VISIBLE);
         }
         View appsCustomizeMenuButton = findViewById(R.id.apps_customize_menu_button);
@@ -3804,7 +3980,7 @@ public class Launcher extends AppCompatActivity
                             case R.id.apps_customize_menu_effect:
                                 onClickTransitionEffectButton();
                                 return true;
-//							case R.id.apps_customize_temp_folder:
+//							case R.id.APPS_temp_folder:
 //								onClickFolderButton();
 //
 //								return true;
@@ -3868,18 +4044,32 @@ public class Launcher extends AppCompatActivity
                 .sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
     }
 
-    void enterSpringLoadedDragMode() {
+    public void enterSpringLoadedDragMode() {
         if (isAllAppsVisible()) {
 
             hideAppsCustomizeHelper(Workspace.State.SPRING_LOADED, true, true, null);
             //showWorkspace();
             mSearchDropTargetBar.setVisibility(View.VISIBLE);
-            mState = State.APPS_CUSTOMIZE_SPRING_LOADED;
+            mState = State.APPS_SPRING_LOADED;
         }
     }
 
+
+
+    /**
+     * Updates the workspace and interaction state on state change, and return the animation to this
+     * new state.
+     */
+    public Animator startWorkspaceStateChangeAnimation(Workspace.State toState, int toPage,
+            boolean animated, HashMap<View, Integer> layerViews) {
+        Workspace.State fromState = mWorkspace.getState();
+        Animator anim = mWorkspace.setStateWithAnimation(toState, toPage, animated, layerViews);
+        updateInteraction(fromState, toState);
+        return anim;
+    }
+    
     public void exitSpringLoadedDragModeDelayed(final boolean successfulDrop, boolean extendedDelay) {
-        if (mState != State.APPS_CUSTOMIZE_SPRING_LOADED) return;
+        if (mState != State.APPS_SPRING_LOADED) return;
 
         mHandler.postDelayed(new Runnable() {
             @Override
@@ -3900,13 +4090,29 @@ public class Launcher extends AppCompatActivity
     }
 
     void exitSpringLoadedDragMode() {
-        if (mState == State.APPS_CUSTOMIZE_SPRING_LOADED) {
+        if (mState == State.APPS_SPRING_LOADED) {
             final boolean animated = true;
             final boolean springLoaded = true;
             showAppsCustomizeHelper(animated, springLoaded);
-            mState = State.APPS_CUSTOMIZE;
+            mState = State.APPS;
         }
         // Otherwise, we are not in spring loaded mode, so don't do anything.
+    }
+
+
+    /**
+     * Updates the set of predicted apps if it hasn't been updated since the last time Launcher was
+     * resumed.
+     */
+    private void tryAndUpdatePredictedApps() {
+/* TODO: Implement LauncherCallbacks
+        if (mLauncherCallbacks != null) {
+            List<ComponentKey> apps = mLauncherCallbacks.getPredictedApps();
+            if (apps != null) {
+                mAppsView.setPredictedApps(apps);
+            }
+        }
+        */
     }
 
     private void lockAllApps() {
@@ -4288,7 +4494,7 @@ public class Launcher extends AppCompatActivity
         final List<CharSequence> text = event.getText();
         text.clear();
         // Populate event with a fake title based on the current state.
-        if (mState == State.APPS_CUSTOMIZE) {
+        if (mState == State.APPS) {
             text.add(mAppsCustomizeTabHost.getCurrentTabView().getContentDescription());
         } else {
             text.add(getString(R.string.all_apps_home_button_label));
@@ -4764,7 +4970,16 @@ public class Launcher extends AppCompatActivity
      * Implementation of the method from LauncherModel.Callbacks.
      */
     public void bindAllApplications(final ArrayList<AppInfo> apps) {
-        if (AppsCustomizePagedView.DISABLE_ALL_APPS) {
+
+
+
+        if (mAppsView != null) {
+            mAppsView.setApps(apps);
+        }
+
+/* TODO: probably safe to delete all this.
+ *
+      if (AppsCustomizePagedView.DISABLE_ALL_APPS) {
             if (mIntentsOnWorkspaceFromUpgradePath != null) {
                 if (LauncherModel.UPGRADE_USE_MORE_APPS_FOLDER) {
                     getHotseat().addAllAppsFolder(mIconCache, apps,
@@ -4777,6 +4992,7 @@ public class Launcher extends AppCompatActivity
                 mAppsCustomizeContent.setApps(apps);
             }
         }
+        */
     }
 
     /**
@@ -4831,8 +5047,8 @@ public class Launcher extends AppCompatActivity
             mWorkspace.removeItemsByApplicationInfo(appInfos);
         }
 
-        // Notify the drag controller
-        mDragController.onAppsRemoved(appInfos, this);
+        // TODO: Dont, Notify the drag controller, for now.
+        //mDragController.onAppsRemoved(appInfos, this);
 
         if (!AppsCustomizePagedView.DISABLE_ALL_APPS &&
                 mAppsCustomizeContent != null) {

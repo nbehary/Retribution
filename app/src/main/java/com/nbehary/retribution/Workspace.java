@@ -71,13 +71,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * The workspace is a wide area with a wallpaper and a finite number of pages.
  * Each page contains a number of icons, folders or widgets the user can
  * interact with. A workspace is meant to be used with a fixed width only.
  */
-public class Workspace extends SmoothPagedView
+public class Workspace extends PagedView
         implements DropTarget, DragSource, DragScroller, View.OnTouchListener,
         DragController.DragListener, LauncherTransitionable, ViewGroup.OnHierarchyChangeListener,
         Insettable {
@@ -185,7 +186,26 @@ public class Workspace extends SmoothPagedView
     // State variable that indicates whether the pages are small (ie when you're
     // in all apps or customize mode)
 
-    enum State { NORMAL, SPRING_LOADED, SMALL, OVERVIEW}
+//    enum State { NORMAL, SPRING_LOADED, SMALL, OVERVIEW}
+
+
+    enum State {
+        NORMAL          (SearchDropTargetBar.State.SEARCH_BAR),
+        NORMAL_HIDDEN   (SearchDropTargetBar.State.INVISIBLE),
+        SPRING_LOADED   (SearchDropTargetBar.State.DROP_TARGET),
+        OVERVIEW        (SearchDropTargetBar.State.INVISIBLE),
+        OVERVIEW_HIDDEN (SearchDropTargetBar.State.INVISIBLE);
+
+        private final SearchDropTargetBar.State mBarState;
+
+        State(SearchDropTargetBar.State searchBarState) {
+            mBarState = searchBarState;
+        }
+
+        public SearchDropTargetBar.State getSearchDropTargetBarState() {
+            return mBarState;
+        }
+    };
 
     private State mState = State.NORMAL;
     private boolean mIsSwitchingState = false;
@@ -227,6 +247,8 @@ public class Workspace extends SmoothPagedView
     private final DropTarget.DragEnforcer mDragEnforcer;
     private float mMaxDistanceForFolderCreation;
 
+    private final Canvas mCanvas = new Canvas();
+    
     // Variables relating to touch disambiguation (scrolling workspace vs. scrolling a widget)
     private float mXDown;
     private float mYDown;
@@ -271,6 +293,10 @@ public class Workspace extends SmoothPagedView
     private boolean mDeferDropAfterUninstall;
     private boolean mUninstallSuccessful;
 
+
+    // Handles workspace state transitions
+    private WorkspaceStateTransitionAnimation mStateTransitionAnimation;
+
     private final Runnable mBindPages = new Runnable() {
         @Override
         public void run() {
@@ -311,6 +337,7 @@ public class Workspace extends SmoothPagedView
                 R.string.preferences_interface_homescreen_scrolling_transition_effect));
 
         mLauncher = (Launcher) context;
+        mStateTransitionAnimation = new WorkspaceStateTransitionAnimation(mLauncher, this);
         final Resources res = getResources();
         mWorkspaceFadeInAdjacentScreens = res.getBoolean(R.bool.config_workspaceFadeAdjacentScreens);
         mFadeInAdjacentScreens = false;
@@ -481,7 +508,7 @@ public class Workspace extends SmoothPagedView
         cl.setOnInterceptTouchListener(this);
         cl.setClickable(true);
         if (Build.VERSION.SDK_INT >=16) {
-            cl.setImportantForAccessibility(ViewCompat.IMPORTANT_FOR_ACCESSIBILITY_NO);
+            cl.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
         }
         super.onChildViewAdded(parent, child);
     }
@@ -1639,7 +1666,7 @@ public class Workspace extends SmoothPagedView
     }
 
     public boolean isSmall() {
-        return mState == State.SMALL || mState == State.SPRING_LOADED || mState == State.OVERVIEW;
+        return mState == State.OVERVIEW || mState == State.SPRING_LOADED || mState == State.OVERVIEW;
     }
 
     void enableChildrenCache(int fromPage, int toPage) {
@@ -1674,7 +1701,7 @@ public class Workspace extends SmoothPagedView
     }
 
     private void updateChildrenLayersEnabled(boolean force) {
-        boolean small = mState == State.SMALL || mState == State.OVERVIEW || mIsSwitchingState;
+        boolean small = mState == State.OVERVIEW || mState == State.OVERVIEW || mIsSwitchingState;
         boolean enableChildrenLayers = force || small || mAnimatingViewIntoPlace || isPageMoving();
 
         if (enableChildrenLayers != mChildrenLayersEnabled) {
@@ -1743,6 +1770,24 @@ public class Workspace extends SmoothPagedView
                 ev.getAction() == MotionEvent.ACTION_UP
                         ? WallpaperManager.COMMAND_TAP : WallpaperManager.COMMAND_SECONDARY_TAP,
                 position[0], position[1], 0, null);
+    }
+
+
+
+    private static Rect getDrawableBounds(Drawable d) {
+        Rect bounds = new Rect();
+        d.copyBounds(bounds);
+        if (bounds.width() == 0 || bounds.height() == 0) {
+            bounds.set(0, 0, d.getIntrinsicWidth(), d.getIntrinsicHeight());
+        } else {
+            bounds.offsetTo(0, 0);
+        }
+        //TODO: If we put in PreLoadIconDrawable, // FIXME: 3/17/16
+//        if (d instanceof PreloadIconDrawable) {
+//            int inset = -((PreloadIconDrawable) d).getOutset();
+//            bounds.inset(inset, inset);
+//        }
+        return bounds;
     }
 
     /*
@@ -1816,7 +1861,7 @@ public class Workspace extends SmoothPagedView
         final Canvas canvas = new Canvas();
 
         // The outline is used to visualize where the item will land if dropped
-        mDragOutline = createDragOutline(v, canvas);
+        mDragOutline = createDragOutline(v, DRAG_BITMAP_PADDING);
     }
 
     public void onDragStartedWithItem(PendingAddItemInfo info, Bitmap b, boolean clipAlpha) {
@@ -1825,7 +1870,7 @@ public class Workspace extends SmoothPagedView
         int[] size = estimateItemSize(info.spanX, info.spanY, info, false);
 
         // The outline is used to visualize where the item will land if dropped
-        mDragOutline = createDragOutline(b, canvas, size[0],
+        mDragOutline = createDragOutline(b, DRAG_BITMAP_PADDING, size[0],
                 size[1], clipAlpha);
     }
 
@@ -1961,10 +2006,31 @@ public class Workspace extends SmoothPagedView
         }
     }
 
+    /**
+     * Sets the current workspace {@link State}, returning an animation transitioning the workspace
+     * to that new state.
+     */
+    public Animator setStateWithAnimation(State toState, int toPage, boolean animated,
+            HashMap<View, Integer> layerViews) {
+        // Create the animation to the new state
+        Animator workspaceAnim =  mStateTransitionAnimation.getAnimationToState(mState,
+                toState, toPage, animated, layerViews);
+
+        // Update the current state
+        mState = toState;
+        updateAccessibilityFlags();
+
+        return workspaceAnim;
+    }
+
+    State getState() {
+        return mState;
+    }
+
     private void updateAccessibilityFlags() {
         int accessible = mState == State.NORMAL ?
-                ViewCompat.IMPORTANT_FOR_ACCESSIBILITY_YES :
-                ViewCompat.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS;
+                View.IMPORTANT_FOR_ACCESSIBILITY_YES :
+                View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS;
         setImportantForAccessibility(accessible);
     }
 
@@ -1981,12 +2047,12 @@ public class Workspace extends SmoothPagedView
         final State oldState = mState;
         final boolean oldStateIsNormal = (oldState == State.NORMAL);
         final boolean oldStateIsSpringLoaded = (oldState == State.SPRING_LOADED);
-        final boolean oldStateIsSmall = (oldState == State.SMALL);
+        final boolean oldStateIsSmall = (oldState == State.OVERVIEW);
         final boolean oldStateIsOverview = (oldState == State.OVERVIEW);
         setState(state);
         final boolean stateIsNormal = (state == State.NORMAL);
         final boolean stateIsSpringLoaded = (state == State.SPRING_LOADED);
-        final boolean stateIsSmall = (state == State.SMALL);
+        final boolean stateIsSmall = (state == State.OVERVIEW);
         final boolean stateIsOverview = (state == State.OVERVIEW);
         float finalBackgroundAlpha = (stateIsSpringLoaded || stateIsOverview) ? 1.0f : 0f;
         float finalHotseatAndPageIndicatorAlpha = (stateIsOverview || stateIsSmall) ? 0f : 1f;
@@ -2002,7 +2068,7 @@ public class Workspace extends SmoothPagedView
         mNewScale = 1.0f;
 
         if (oldStateIsOverview) {
-            disableFreeScroll(snapPage);
+            disableFreeScroll();
         } else if (stateIsOverview) {
             enableFreeScroll();
         }
@@ -2279,6 +2345,20 @@ public class Workspace extends SmoothPagedView
         return this;
     }
 
+
+    /**
+     * Returns the drawable for the given text view.
+     */
+    public static Drawable getTextViewIcon(TextView tv) {
+        final Drawable[] drawables = tv.getCompoundDrawables();
+        for (int i = 0; i < drawables.length; i++) {
+            if (drawables[i] != null) {
+                return drawables[i];
+            }
+        }
+        return null;
+    }
+
     /**
      * Draw the View v into the given Canvas.
      *  @param v the view to draw
@@ -2330,55 +2410,58 @@ public class Workspace extends SmoothPagedView
      * Returns a new bitmap to show when the given View is being dragged around.
      * Responsibility for the bitmap is transferred to the caller.
      */
-    public Bitmap createDragBitmap(View v, Canvas canvas) {
+
+    public Bitmap createDragBitmap(View v, AtomicInteger expectedPadding) {
         Bitmap b;
 
+        int padding = expectedPadding.get();
         if (v instanceof TextView) {
-            Drawable[] e = ((TextView) v).getCompoundDrawables();
-            Drawable d = ((TextView) v).getCompoundDrawables()[1];
-            b = Bitmap.createBitmap(d.getIntrinsicWidth() + Workspace.DRAG_BITMAP_PADDING,
-                    d.getIntrinsicHeight() + Workspace.DRAG_BITMAP_PADDING, Bitmap.Config.ARGB_8888);
+            Drawable d = getTextViewIcon((TextView) v);
+            Rect bounds = getDrawableBounds(d);
+            b = Bitmap.createBitmap(bounds.width() + padding,
+                    bounds.height() + padding, Bitmap.Config.ARGB_8888);
+            expectedPadding.set(padding - bounds.left - bounds.top);
         } else {
             b = Bitmap.createBitmap(
-                    v.getWidth() + Workspace.DRAG_BITMAP_PADDING, v.getHeight() + Workspace.DRAG_BITMAP_PADDING, Bitmap.Config.ARGB_8888);
+                    v.getWidth() + padding, v.getHeight() + padding, Bitmap.Config.ARGB_8888);
         }
 
-        canvas.setBitmap(b);
-        drawDragView(v, canvas, Workspace.DRAG_BITMAP_PADDING);
-        canvas.setBitmap(null);
+        mCanvas.setBitmap(b);
+        drawDragView(v, mCanvas, padding);
+        mCanvas.setBitmap(null);
 
         return b;
     }
-
     /**
      * Returns a new bitmap to be used as the object outline, e.g. to visualize the drop location.
      * Responsibility for the bitmap is transferred to the caller.
      */
-    private Bitmap createDragOutline(View v, Canvas canvas) {
+
+    private Bitmap createDragOutline(View v, int padding) {
         final int outlineColor = getResources().getColor(R.color.outline_color);
         final Bitmap b = Bitmap.createBitmap(
-                v.getWidth() + Workspace.DRAG_BITMAP_PADDING, v.getHeight() + Workspace.DRAG_BITMAP_PADDING, Bitmap.Config.ARGB_8888);
+                v.getWidth() + padding, v.getHeight() + padding, Bitmap.Config.ARGB_8888);
 
-        canvas.setBitmap(b);
-        drawDragView(v, canvas, Workspace.DRAG_BITMAP_PADDING);
-        mOutlineHelper.applyMediumExpensiveOutlineWithBlur(b, canvas, outlineColor, outlineColor);
-        canvas.setBitmap(null);
+        mCanvas.setBitmap(b);
+        drawDragView(v, mCanvas, padding);
+        mOutlineHelper.applyExpensiveOutlineWithBlur(b, mCanvas, outlineColor, outlineColor,1);
+        mCanvas.setBitmap(null);
         return b;
     }
-
     /**
      * Returns a new bitmap to be used as the object outline, e.g. to visualize the drop location.
      * Responsibility for the bitmap is transferred to the caller.
      */
-    private Bitmap createDragOutline(Bitmap orig, Canvas canvas, int w, int h,
-                                     boolean clipAlpha) {
+
+    private Bitmap createDragOutline(Bitmap orig, int padding, int w, int h,
+            boolean clipAlpha) {
         final int outlineColor = getResources().getColor(R.color.outline_color);
         final Bitmap b = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-        canvas.setBitmap(b);
+        mCanvas.setBitmap(b);
 
         Rect src = new Rect(0, 0, orig.getWidth(), orig.getHeight());
-        float scaleFactor = Math.min((w - Workspace.DRAG_BITMAP_PADDING) / (float) orig.getWidth(),
-                (h - Workspace.DRAG_BITMAP_PADDING) / (float) orig.getHeight());
+        float scaleFactor = Math.min((w - padding) / (float) orig.getWidth(),
+                (h - padding) / (float) orig.getHeight());
         int scaledWidth = (int) (scaleFactor * orig.getWidth());
         int scaledHeight = (int) (scaleFactor * orig.getHeight());
         Rect dst = new Rect(0, 0, scaledWidth, scaledHeight);
@@ -2386,10 +2469,10 @@ public class Workspace extends SmoothPagedView
         // center the image
         dst.offset((w - scaledWidth) / 2, (h - scaledHeight) / 2);
 
-        canvas.drawBitmap(orig, src, dst, null);
-        mOutlineHelper.applyMediumExpensiveOutlineWithBlur(b, canvas, outlineColor, outlineColor,
-                clipAlpha);
-        canvas.setBitmap(null);
+        mCanvas.drawBitmap(orig, src, dst, null);
+        mOutlineHelper.applyExpensiveOutlineWithBlur(b, mCanvas, outlineColor, outlineColor,
+                1);//TODO: ??
+        mCanvas.setBitmap(null);
 
         return b;
     }
@@ -2407,19 +2490,99 @@ public class Workspace extends SmoothPagedView
         CellLayout layout = (CellLayout) child.getParent().getParent();
         layout.prepareChildForDrag(child);
 
+        beginDragShared(child, this,false,isHot);
+    }
+
+
+    public void beginDragShared(View child, DragSource source, boolean accessible, boolean isHot) {
+        beginDragShared(child, new Point(), source, accessible, isHot);
+    }
+   
+
+    public void beginDragShared(View child, Point relativeTouchPos, DragSource source,
+            boolean accessible,boolean isHot) {
         child.clearFocus();
         child.setPressed(false);
 
-        final Canvas canvas = new Canvas();
-
         // The outline is used to visualize where the item will land if dropped
-        mDragOutline = createDragOutline(child, canvas);
-        beginDragShared(child, this,isHot);
+        mDragOutline = createDragOutline(child, DRAG_BITMAP_PADDING);
+
+        mLauncher.onDragStarted(child);
+        // The drag bitmap follows the touch point around on the screen
+        AtomicInteger padding = new AtomicInteger(DRAG_BITMAP_PADDING);
+        final Bitmap b = createDragBitmap(child, padding);
+
+        final int bmpWidth = b.getWidth();
+        final int bmpHeight = b.getHeight();
+
+        float scale = mLauncher.getDragLayer().getLocationInDragLayer(child, mTempXY);
+        int dragLayerX = Math.round(mTempXY[0] - (bmpWidth - scale * child.getWidth()) / 2);
+        int dragLayerY = Math.round(mTempXY[1] - (bmpHeight - scale * bmpHeight) / 2
+                        - padding.get() / 2);
+
+        DeviceProfile grid = mLauncher.getDeviceProfile();
+        Point dragVisualizeOffset = null;
+        Rect dragRect = null;
+        if (child instanceof BubbleTextView) {
+            BubbleTextView icon = (BubbleTextView) child;
+            int iconSize = grid.iconSizePx;
+            int top = child.getPaddingTop();
+            int left = (bmpWidth - iconSize) / 2;
+            int right = left + iconSize;
+            int bottom = top + iconSize;
+            if (icon.isLayoutHorizontal()) {
+                // If the layout is horizontal, then if we are just picking up the icon, then just
+                // use the child position since the icon is top-left aligned.  Otherwise, offset
+                // the drag layer position horizontally so that the icon is under the current
+                // touch position.
+                if (icon.getIcon().getBounds().contains(relativeTouchPos.x, relativeTouchPos.y)) {
+                    dragLayerX = Math.round(mTempXY[0]);
+                } else {
+                    dragLayerX = Math.round(mTempXY[0] + relativeTouchPos.x - (bmpWidth / 2));
+                }
+            }
+            dragLayerY += top;
+            // Note: The drag region is used to calculate drag layer offsets, but the
+            // dragVisualizeOffset in addition to the dragRect (the size) to position the outline.
+            dragVisualizeOffset = new Point(-padding.get() / 2, padding.get() / 2);
+            dragRect = new Rect(left, top, right, bottom);
+        } else if (child instanceof FolderIcon) {
+            int previewSize = grid.folderIconSizePx;
+            dragVisualizeOffset = new Point(-padding.get() / 2,
+                    padding.get() / 2 - child.getPaddingTop());
+            dragRect = new Rect(0, child.getPaddingTop(), child.getWidth(), previewSize);
+        }
+
+        // Clear the pressed state if necessary
+        if (child instanceof BubbleTextView) {
+            BubbleTextView icon = (BubbleTextView) child;
+            icon.clearPressedBackground();
+        }
+
+        if (child.getTag() == null || !(child.getTag() instanceof ItemInfo)) {
+            String msg = "Drag started with a view that has no tag set. This "
+                    + "will cause a crash (issue 11627249) down the line. "
+                    + "View: " + child + "  tag: " + child.getTag();
+            throw new IllegalStateException(msg);
+        }
+
+        if (child.getParent() instanceof ShortcutAndWidgetContainer) {
+            mDragSourceInternal = (ShortcutAndWidgetContainer) child.getParent();
+        }
+
+        DragView dv = mDragController.startDrag(b, dragLayerX, dragLayerY, source, child.getTag(),
+                DragController.DRAG_ACTION_MOVE, dragVisualizeOffset, dragRect, scale, accessible);
+        dv.setIntrinsicIconScaleFactor(source.getIntrinsicIconScaleFactor());
+
+        b.recycle();
     }
 
-    public void beginDragShared(View child, DragSource source,boolean isHot) {
+
+
+/* TODO: Old
+    public void beginDragShared(View child, Point relativeTouchPos, DragSource source,boolean accessible,boolean isHot) {
         // The drag bitmap follows the touch point around on the screen
-        if (mState == State.SMALL) {
+        if (mState == State.OVERVIEW) {
             exitOverviewMode(true);
         }
         if (child instanceof BubbleTextView && isHot) {
@@ -2473,6 +2636,9 @@ public class Workspace extends SmoothPagedView
 
         b.recycle();
     }
+*/
+
+
 
     void addApplicationShortcut(ShortcutInfo info, CellLayout target, long container, long screenId,
             int cellX, int cellY, boolean insertAtFirst, int intersectX, int intersectY) {
@@ -2487,7 +2653,7 @@ public class Workspace extends SmoothPagedView
     }
 
     public boolean transitionStateShouldAllowDrop() {
-        return ((!isSwitchingState() || mTransitionProgress > 0.5f) && mState != State.SMALL);
+        return ((!isSwitchingState() || mTransitionProgress > 0.5f) && mState != State.OVERVIEW);
     }
 
     /**
@@ -3255,7 +3421,7 @@ public class Workspace extends SmoothPagedView
 
     public void onDragOver(DragObject d) {
         // Skip drag over events while we are dragging over side pages
-        if (mInScrollArea || mIsSwitchingState || mState == State.SMALL) return;
+        if (mInScrollArea || mIsSwitchingState || mState == State.OVERVIEW) return;
 
         Rect r = new Rect();
         CellLayout layout = null;
@@ -4071,6 +4237,11 @@ public class Workspace extends SmoothPagedView
     }
 
     @Override
+    public float getIntrinsicIconScaleFactor() {
+        return 1f;
+    }
+
+    @Override
     public void onFlingToDelete(DragObject d, int x, int y, PointF vec) {
         // Do nothing
     }
@@ -4078,6 +4249,16 @@ public class Workspace extends SmoothPagedView
     @Override
     public void onFlingToDeleteCompleted() {
         // Do nothing
+    }
+
+    @Override
+    public boolean supportsAppInfoDropTarget() {
+        return false;
+    }
+
+    @Override
+    public boolean supportsDeleteDropTarget() {
+        return true;
     }
 
     public boolean isDropEnabled() {

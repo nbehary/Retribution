@@ -770,7 +770,7 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
 
     private void beginDraggingApplication(View v) {
         mLauncher.getWorkspace().onDragStartedWithItem(v);
-        mLauncher.getWorkspace().beginDragShared(v, this, false);
+        mLauncher.getWorkspace().beginDragShared(v, this, false, false);
     }
 
     private Bundle getDefaultOptionsForWidget(Launcher launcher, PendingAddWidgetInfo info) {
@@ -995,8 +995,8 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         // Start the drag
         mLauncher.lockScreenOrientation();
         mLauncher.getWorkspace().onDragStartedWithItem(createItemInfo, outline, clipAlpha);
-        mDragController.startDrag(image, preview, this, createItemInfo,
-                previewPadding, scale);
+//        mDragController.startDrag(image, preview, this, createItemInfo,
+//                previewPadding, scale);
         outline.recycle();
         preview.recycle();
         return true;
@@ -1140,6 +1140,21 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
     @Override
     public boolean supportsFlingToDelete() {
         return true;
+    }
+
+    @Override
+    public boolean supportsAppInfoDropTarget() {
+        return false;
+    }
+
+    @Override
+    public boolean supportsDeleteDropTarget() {
+        return false;
+    }
+
+    @Override
+    public float getIntrinsicIconScaleFactor() {
+        return 0;
     }
 
     @Override

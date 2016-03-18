@@ -99,6 +99,19 @@ public class DeleteDropTarget extends ButtonDropTarget {
         }
     }
 
+
+    public static boolean supportsDrop(Object info) {
+        return (info instanceof ShortcutInfo)
+                || (info instanceof LauncherAppWidgetInfo)
+                || (info instanceof FolderInfo);
+    }
+
+
+    protected boolean supportsDrop(DragSource source, Object info) {
+        return source.supportsDeleteDropTarget() && supportsDrop(info);
+    }
+
+
     private boolean isAllAppsApplication(DragSource source, Object info) {
         return (source instanceof AppsCustomizePagedView) && (info instanceof AppInfo);
     }

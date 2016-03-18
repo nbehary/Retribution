@@ -37,6 +37,30 @@ import android.widget.FrameLayout;
  */
 public class SearchDropTargetBar extends FrameLayout implements DragController.DragListener {
 
+
+    /** The different states that the search bar space can be in. */
+    public enum State {
+        INVISIBLE   (0f, 0f),
+        SEARCH_BAR  (1f, 0f),
+        DROP_TARGET (0f, 1f);
+
+        private final float mSearchBarAlpha;
+        private final float mDropTargetBarAlpha;
+
+        State(float sbAlpha, float dtbAlpha) {
+            mSearchBarAlpha = sbAlpha;
+            mDropTargetBarAlpha = dtbAlpha;
+        }
+
+        float getSearchBarAlpha() {
+            return mSearchBarAlpha;
+        }
+
+        float getDropTargetBarAlpha() {
+            return mDropTargetBarAlpha;
+        }
+    }
+
     private static final int sTransitionInDuration = 200;
     private static final int sTransitionOutDuration = 175;
 

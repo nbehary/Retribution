@@ -74,6 +74,9 @@ public class DragLayer extends FrameLayout implements ViewGroup.OnHierarchyChang
 
     private final Rect mInsets = new Rect();
 
+    // Darkening scrim
+    private float mBackgroundAlpha = 0;
+
     /**
      * Used to create a new DragLayer from XML.
      *
@@ -824,6 +827,17 @@ public class DragLayer extends FrameLayout implements ViewGroup.OnHierarchyChang
                 mRightHoverDrawable.draw(canvas);
             }
         }
+    }
+
+    public void setBackgroundAlpha(float alpha) {
+        if (alpha != mBackgroundAlpha) {
+            mBackgroundAlpha = alpha;
+            invalidate();
+        }
+    }
+
+    public float getBackgroundAlpha() {
+        return mBackgroundAlpha;
     }
 
     public void setTouchCompleteListener(TouchCompleteListener listener) {

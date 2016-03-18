@@ -1201,6 +1201,11 @@ public abstract class PagedView extends ViewGroup implements ViewGroup.OnHierarc
         range[1] = Math.max(0, getChildCount() - 1);
     }
 
+    protected void getFreeScrollPageRange(int[] range) {
+        range[0] = 0;
+        range[1] = Math.max(0, getChildCount() - 1);
+    }
+
     void getVisiblePages(int[] range) {
         final int pageCount = getChildCount();
         mTmpIntPoint[0] = mTmpIntPoint[1] = 0;
@@ -1709,11 +1714,11 @@ public abstract class PagedView extends ViewGroup implements ViewGroup.OnHierarc
     }
 
     void enableFreeScroll() {
-        setEnableFreeScroll(true, -1);
+        setEnableFreeScroll(true);
     }
 
-    void disableFreeScroll(int snapPage) {
-        setEnableFreeScroll(false, snapPage);
+    void disableFreeScroll() {
+        setEnableFreeScroll(false);
     }
 
     private void updateFreescrollBounds() {
@@ -1727,18 +1732,12 @@ public abstract class PagedView extends ViewGroup implements ViewGroup.OnHierarc
         }
     }
 
-    private void setEnableFreeScroll(boolean freeScroll, int snapPage) {
+    private void setEnableFreeScroll(boolean freeScroll) {
         mFreeScroll = freeScroll;
 
-        if (snapPage == -1) {
-            snapPage = getPageNearestToCenterOfScreen();
-        }
-
-        if (!mFreeScroll) {
-            snapToPage(snapPage);
-        } else {
+        if (mFreeScroll) {
             updateFreescrollBounds();
-            getOverviewModePages(mTempVisiblePagesRange);
+            getFreeScrollPageRange(mTempVisiblePagesRange);
             if (getCurrentPage() < mTempVisiblePagesRange[0]) {
                 setCurrentPage(mTempVisiblePagesRange[0]);
             } else if (getCurrentPage() > mTempVisiblePagesRange[1]) {
@@ -2559,7 +2558,7 @@ public abstract class PagedView extends ViewGroup implements ViewGroup.OnHierarc
             mDragView = getChildAt(dragViewIndex);
             mDragView.animate().scaleX(1.15f).scaleY(1.15f).setDuration(100).start();
             mDragViewBaselineLeft = mDragView.getLeft();
-            disableFreeScroll(-1);
+            disableFreeScroll();
             onStartReordering();
             return true;
         }

@@ -21,7 +21,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.nbehary.retribution"
     android:versionCode="2319"
-    android:versionName="1.4.7_Dev">
+    android:versionName="1.4.99_Dev">
 
     <permission
         android:name="com.android.launcher.permission.INSTALL_SHORTCUT"
@@ -71,8 +71,8 @@
     <uses-permission android:name="com.nbehary.retribution.permission.READ_SETTINGS" />
     <uses-permission android:name="com.nbehary.retribution.permission.WRITE_SETTINGS" />
     <uses-permission android:name="com.nbehary.retribution.permission.RECEIVE_LAUNCH_BROADCASTS" />
-    <!--<uses-permission android:name="android.permission.MANAGE_ACCOUNTS"/>-->
-    <!--<uses-permission android:name="android.permission.USE_CREDENTIALS"/>-->
+    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.USE_CREDENTIALS"/>
     <!--<uses-permission android:name="android.permission.INTERNET"/>-->
 
 

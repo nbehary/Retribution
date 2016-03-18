@@ -459,7 +459,7 @@ public class AllAppsContainerView extends BaseContainerView implements DragSourc
     @Override
     public boolean onLongClick(View v) {
         //TODO: This needs the view to be openable.
-/*
+
         // Return early if this is not initiated from a touch
         if (!v.isInTouchMode()) return false;
         // When we have exited all apps or are in transition, disregard long clicks
@@ -469,10 +469,9 @@ public class AllAppsContainerView extends BaseContainerView implements DragSourc
         if (!mLauncher.isDraggingEnabled()) return false;
 
         // Start the drag
-        mLauncher.getWorkspace().beginDragShared(v, mIconLastTouchPos, this, false);
+        mLauncher.getWorkspace().beginDragShared(v, mIconLastTouchPos, this, false, false);
         // Enter spring loaded mode
         mLauncher.enterSpringLoadedDragMode();
-*/
         return false;
     }
 
@@ -514,6 +513,7 @@ public class AllAppsContainerView extends BaseContainerView implements DragSourc
             // Exit spring loaded mode if we have not successfully dropped or have not handled the
             // drop in Workspace
             //TODO: Fix w/ Launcher....
+            mLauncher.enterSpringLoadedDragMode();
 //            mLauncher.exitSpringLoadedDragModeDelayed(true,
 //                    Launcher.EXIT_SPRINGLOADED_MODE_SHORT_TIMEOUT, null);
         }

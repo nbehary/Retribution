@@ -515,6 +515,16 @@ public class BubbleTextView extends TextView {
         return mIcon;
     }
 
+    /** Returns whether the layout is horizontal. */
+    public boolean isLayoutHorizontal() {
+        return mLayoutHorizontal;
+    }
+
+    void clearPressedBackground() {
+        setPressed(false);
+        setStayPressed(false);
+    }
+
     /**
      * Verifies that the current icon is high-res otherwise posts a request to load the icon.
      */

@@ -19,6 +19,7 @@ package com.nbehary.retribution;
 
 import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
+import android.annotation.TargetApi;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -27,6 +28,7 @@ import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.Rect;
+import android.os.Build;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 
@@ -62,12 +64,13 @@ public class DragView extends View {
      * @param registrationX The x coordinate of the registration point.
      * @param registrationY The y coordinate of the registration point.
      */
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public DragView(Launcher launcher, Bitmap bitmap, int registrationX, int registrationY,
                     int left, int width, int height, final float initialScale) {
         super(launcher);
         mDragLayer = launcher.getDragLayer();
         mInitialScale = initialScale;
-
+        width = left; //// FIXME: 3/18/16 this is a signature change problem
         final Resources res = getResources();
         final float offsetX = res.getDimensionPixelSize(R.dimen.dragViewOffsetX);
         final float offsetY = res.getDimensionPixelSize(R.dimen.dragViewOffsetY);
@@ -106,7 +109,7 @@ public class DragView extends View {
             }
         });
 
-        mBitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height);
+        mBitmap = Bitmap.createBitmap(bitmap, 1, 1, width, height);//// FIXME: 3/18/16 
         setDragRegion(new Rect(0, 0, width, height));
 
         // The point in our scaled bitmap that the touch events are located
@@ -117,6 +120,20 @@ public class DragView extends View {
         int ms = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
         measure(ms, ms);
         mPaint = new Paint(Paint.FILTER_BITMAP_FLAG);
+
+        if (Utilities.ATLEAST_LOLLIPOP) {
+            setElevation(getResources().getDimension(R.dimen.drag_elevation));
+        }
+    }
+
+    /** Sets the scale of the view over the normal workspace icon size. */
+    public void setIntrinsicIconScaleFactor(float scale) {
+//        mIntrinsicIconScale = scale;
+    }
+
+    public float getIntrinsicIconScaleFactor() {
+//        return mIntrinsicIconScale;
+        return 1;
     }
 
     public float getOffsetY() {

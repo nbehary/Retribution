@@ -20,7 +20,7 @@ package com.nbehary.retribution;
  * Handles scrolling while dragging
  *
  */
-interface DragScroller {
+public interface DragScroller {
     void scrollLeft();
     void scrollRight();
 

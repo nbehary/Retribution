@@ -279,7 +279,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
             mLauncher.dismissFolderCling(null);
 
             mLauncher.getWorkspace().onDragStartedWithItem(v);
-            mLauncher.getWorkspace().beginDragShared(v, this, false);
+            mLauncher.getWorkspace().beginDragShared(v, this, false,false);
             mIconDrawable = ((TextView) v).getCompoundDrawables()[1];
 
             mCurrentDragInfo = item;
@@ -977,10 +977,25 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
             mDeferredAction.run();
         }
     }
-
+//TODO:Check these.
     @Override
     public boolean supportsFlingToDelete() {
         return true;
+    }
+
+    @Override
+    public boolean supportsAppInfoDropTarget() {
+        return false;
+    }
+
+    @Override
+    public boolean supportsDeleteDropTarget() {
+        return false;
+    }
+
+    @Override
+    public float getIntrinsicIconScaleFactor() {
+        return 0;
     }
 
     public void onFlingToDelete(DragObject d, int x, int y, PointF vec) {
