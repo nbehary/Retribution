@@ -20,8 +20,8 @@ package com.nbehary.retribution;
 import android.app.Activity;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.res.ResourcesCompat;
+import androidx.fragment.app.Fragment;
+import androidx.core.content.res.ResourcesCompat;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,7 +32,7 @@ import android.widget.TextView;
 
 
 /**
- * A simple {@link android.support.v4.app.Fragment} subclass.
+ * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
  * {@link GridIconPercentFragment.OnPercentInteractionListener} interface
  * to handle interaction events.

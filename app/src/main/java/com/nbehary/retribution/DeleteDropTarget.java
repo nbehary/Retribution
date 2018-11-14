@@ -30,7 +30,7 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.drawable.TransitionDrawable;
 import android.os.Build;
-import android.support.v4.content.res.ResourcesCompat;
+import androidx.core.content.res.ResourcesCompat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewConfiguration;

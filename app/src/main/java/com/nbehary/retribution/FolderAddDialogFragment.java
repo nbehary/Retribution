@@ -18,15 +18,15 @@
 package com.nbehary.retribution;
 
 import android.app.Activity;
-import android.support.v7.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,8 +41,6 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
 
 
 /**
@@ -59,8 +57,8 @@ public class FolderAddDialogFragment extends DialogFragment {
     private Folder mFolder;
     private FolderInfo mFolderInfo;
 
-    @Bind(R.id.group_list2) RecyclerView recyclerView;
-    @Bind(R.id.groups_spinner) Spinner spinner;
+    RecyclerView recyclerView;
+    Spinner spinner;
 
     private Launcher mLauncher;
 
@@ -71,7 +69,9 @@ public class FolderAddDialogFragment extends DialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         mRootView = (LinearLayout) inflater.inflate(R.layout.folder_add_dialog,null);
         mLauncher = ((Launcher)getActivity());
-        ButterKnife.bind(this,mRootView);
+        recyclerView = mRootView.findViewById(R.id.group_list2);
+        spinner = mRootView.findViewById(R.id.groups_spinner);
+//        ButterKnife.bind(this,mRootView);
 
         AllAppsList apps = ((Launcher)getActivity()).getModel().getAllApps();
 

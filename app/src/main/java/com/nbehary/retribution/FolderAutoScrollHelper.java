@@ -16,7 +16,7 @@
 
 package com.nbehary.retribution;
 
-import android.support.v4.widget.AutoScrollHelper;
+import androidx.core.widget.AutoScrollHelper;
 import android.widget.ScrollView;
 
 /**

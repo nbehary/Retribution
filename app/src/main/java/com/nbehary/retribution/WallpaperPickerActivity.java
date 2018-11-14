@@ -46,7 +46,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.service.wallpaper.WallpaperService;
-import android.support.v4.content.res.ResourcesCompat;
+import androidx.core.content.res.ResourcesCompat;
 import android.util.Log;
 import android.util.Pair;
 import android.view.ActionMode;

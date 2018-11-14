@@ -21,7 +21,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.nbehary.retribution"
     android:versionCode="2319"
-    android:versionName="1.4.7_Dev">
+    android:versionName="1.4.8_Dev">
 
     <permission
         android:name="com.android.launcher.permission.INSTALL_SHORTCUT"
@@ -64,7 +64,7 @@
     <uses-permission android:name="android.permission.SET_WALLPAPER_HINTS" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <!--<uses-permission android:name="android.permission.BIND_APPWIDGET" />-->
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <!--<uses-permission android:name="android.permission.GET_ACCOUNTS" />-->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS" />
     <uses-permission android:name="com.android.launcher.permission.WRITE_SETTINGS" />

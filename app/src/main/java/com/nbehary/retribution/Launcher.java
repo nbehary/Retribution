@@ -33,8 +33,8 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityOptions;
 import android.content.res.TypedArray;
-import android.support.v4.content.res.ResourcesCompat;
-import android.support.v7.app.AlertDialog;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.appcompat.app.AlertDialog;
 import android.app.Dialog;
 import android.app.SearchManager;
 import android.appwidget.AppWidgetHostView;
@@ -76,8 +76,8 @@ import android.os.SystemClock;
 import android.provider.Settings;
 import android.speech.RecognizerIntent;
 import android.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.graphics.Palette;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.palette.graphics.Palette;
 import android.text.Selection;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -4097,8 +4097,14 @@ public class Launcher extends AppCompatActivity
         if (mQsbBar == null) {
             mQsbBar = mInflater.inflate(R.layout.search_bar, mSearchDropTargetBar, false);
             mQsbBar = Utilities.tintViewDrawable(mQsbBar);
+
+            if (PreferencesProvider.Interface.General.getHideQSB()) {
+                mQsbBar.setVisibility(View.GONE);
+            } else {
 //            mQsbBar.setBackgroundColor(LauncherAppState.getInstance().getColorTheme().getmSearchBarBack());
-            mSearchDropTargetBar.addView(mQsbBar);
+                mQsbBar.setVisibility(View.VISIBLE);
+                mSearchDropTargetBar.addView(mQsbBar);
+            }
         }
         return mQsbBar;
 //        }

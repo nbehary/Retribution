@@ -22,7 +22,9 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.support.v4.content.res.ResourcesCompat;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
+
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -152,7 +154,7 @@ public class Hotseat extends FrameLayout {
             Drawable d = ResourcesCompat.getDrawable(context.getResources(), R.drawable.apps_button, null);
             d = ColorTheme.tintedAppsButtonDrawable(context, LauncherAppState.getInstance().getColorTheme().getmFolderBack(),
                     LauncherAppState.getInstance().getColorTheme().getmFolderLabel());
-            //DrawableCompat.setTint(d, LauncherAppState.getInstance().getColorTheme().getmFolderBack());
+            DrawableCompat.setTint(d, LauncherAppState.getInstance().getColorTheme().getmFolderBack());
             Utilities.resizeHotseatIconDrawable(d);
             allAppsButton.setCompoundDrawables(null, d, null, null);
 

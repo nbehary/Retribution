@@ -27,8 +27,8 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.res.ResourcesCompat;
+import androidx.fragment.app.Fragment;
+import androidx.core.content.res.ResourcesCompat;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -42,7 +42,7 @@ import java.text.DecimalFormat;
 
 
 /**
- * A simple {@link android.support.v4.app.Fragment} subclass.
+ * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
  * {@link GridIconValuesFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.

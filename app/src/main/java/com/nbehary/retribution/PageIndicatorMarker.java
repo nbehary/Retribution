@@ -18,7 +18,7 @@ package com.nbehary.retribution;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.support.v4.content.res.ResourcesCompat;
+import androidx.core.content.res.ResourcesCompat;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 import android.widget.FrameLayout;

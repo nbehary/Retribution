@@ -26,7 +26,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.support.v7.graphics.Palette;
+import androidx.palette.graphics.Palette;
 import android.view.View;
 
 import com.nbehary.retribution.preference.PreferencesProvider;
@@ -105,7 +105,7 @@ public class ColorTheme {
     }
 
     //TODO: This is VERY temporary for the conversion from Folder Colors to Color Theme. DO NOT ADD others.
-    //  Color Themes will be saved to the database.
+    //  Color Themes will be saved to the database
 
     public void writeToPrefs() {
         PreferencesProvider.Interface.General.setFolderBackColor(mContext, mFolderBack);

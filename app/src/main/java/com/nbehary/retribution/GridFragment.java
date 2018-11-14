@@ -19,7 +19,8 @@ package com.nbehary.retribution;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.Fragment;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -100,15 +101,15 @@ public class GridFragment extends Fragment {
         mChanging = "Desktop";
         landscapeChanged = false;
         mDisplayMetrics = getActivity().getResources().getDisplayMetrics();
-        mRootView = inflater.inflate(R.layout.fragment_grid_editor, container, false);
-        LinearLayout ui = (LinearLayout) mRootView.findViewById(R.id.grid_editor_ui);
+        mRootView = inflater.inflate(R.layout.grid_editor_2, container, false);
+        ConstraintLayout ui = (ConstraintLayout) mRootView.findViewById(R.id.grid_editor_ui2);
         //ui.setBackgroundColor(Color.argb(177, 0, 0, 0));
-        mHotseatNotice = (TextView) mRootView.findViewById(R.id.grid_auto_hotseat_notice);
-        mLandscapeNotice = (TextView) mRootView.findViewById(R.id.grid_landscape_notice);
-        if (!mTempProfile.isTablet() && mTempProfile.allowLandscape) {
-            mLandscapeNotice.setVisibility(View.VISIBLE);
-        }
-        mSearchNotice = (TextView) mRootView.findViewById(R.id.grid_search_notice);
+//        mHotseatNotice = (TextView) mRootView.findViewById(R.id.grid_auto_hotseat_notice);
+//        mLandscapeNotice = (TextView) mRootView.findViewById(R.id.grid_landscape_notice);
+//        if (!mTempProfile.isTablet() && mTempProfile.allowLandscape) {
+//            mLandscapeNotice.setVisibility(View.VISIBLE);
+//        }
+//        mSearchNotice = (TextView) mRootView.findViewById(R.id.grid_search_notice);
 
         mColsPicker = (NumberPicker) mRootView.findViewById(R.id.grid_cols_picker);
         mColsPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
@@ -126,12 +127,12 @@ public class GridFragment extends Fragment {
                     //hotseat was hidden.
                     mHideHotseat.setChecked(true);
                     mHideHotseat.setVisibility(View.GONE);
-                    mHotseatNotice.setVisibility(View.VISIBLE);
+//                    mHotseatNotice.setVisibility(View.VISIBLE);
                 } else if (hotseatChange) {
                     //hotseat unhidden.
                     mHideHotseat.setVisibility(View.VISIBLE);
                     mHideHotseat.setChecked(false);
-                    mHotseatNotice.setVisibility(View.GONE);
+//                    mHotseatNotice.setVisibility(View.GONE);
                 }
                 //mFontSize.setText(df.format(mTempProfile.iconTextSize));
                 //mIconSize.setText(df.format(mTempProfile.iconSize));
@@ -157,12 +158,12 @@ public class GridFragment extends Fragment {
                     //hotseat was hidden.
                     mHideHotseat.setChecked(true);
                     mHideHotseat.setVisibility(View.GONE);
-                    mHotseatNotice.setVisibility(View.VISIBLE);
+//                    mHotseatNotice.setVisibility(View.VISIBLE);
                 } else if (hotseatChange) {
                     //hotseat unhidden.
                     mHideHotseat.setVisibility(View.VISIBLE);
                     mHideHotseat.setChecked(false);
-                    mHotseatNotice.setVisibility(View.GONE);
+//                    mHotseatNotice.setVisibility(View.GONE);
                 }
 
 
@@ -200,7 +201,7 @@ public class GridFragment extends Fragment {
                 if (mHideHotseat.getVisibility() == View.GONE) {
                     mHideHotseat.setChecked(false);
                     mHideHotseat.setVisibility(View.VISIBLE);
-                    mHotseatNotice.setVisibility(View.GONE);
+//                    mHotseatNotice.setVisibility(View.GONE);
                 }
 
             }
@@ -217,7 +218,7 @@ public class GridFragment extends Fragment {
         });
 
         if (mTempProfile.autoHotseat) {
-            mHotseatNotice.setVisibility(View.VISIBLE);
+//            mHotseatNotice.setVisibility(View.VISIBLE);
             mHideHotseat.setVisibility(View.GONE);
         }
 
@@ -248,9 +249,9 @@ public class GridFragment extends Fragment {
 
                 if (isChecked) {
                     mTempProfile.allowLandscape = true;
-                    if (!mTempProfile.isTablet()) {
-                        mLandscapeNotice.setVisibility(View.VISIBLE);
-                    }
+//                    if (!mTempProfile.isTablet()) {
+//                        mLandscapeNotice.setVisibility(View.VISIBLE);
+//                    }
                     //  mHideQSB.setVisibility(View.GONE);
                     //  mSearchNotice.setVisibility(View.VISIBLE);
                     //  mHideQSB.setChecked(false);
@@ -260,9 +261,9 @@ public class GridFragment extends Fragment {
 
                 } else {
                     mTempProfile.allowLandscape = false;
-                    if (!mTempProfile.isTablet()) {
-                        mLandscapeNotice.setVisibility(View.GONE);
-                    }
+//                    if (!mTempProfile.isTablet()) {
+//                        mLandscapeNotice.setVisibility(View.GONE);
+//                    }
                     //  mHideQSB.setVisibility(View.VISIBLE);
                     //  mSearchNotice.setVisibility(View.GONE);
 

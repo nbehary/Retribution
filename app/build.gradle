@@ -21,49 +21,55 @@ import java.util.regex.Pattern
 
 
 
-plugins {
-    id "me.tatarka.retrolambda" version "3.2.0"
-}
+
 
 apply plugin: 'com.android.application'
-
-
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-android'
 
 
 repositories {
     maven { url 'http://repo1.maven.org/maven2' }
+    mavenCentral()
 }
 
-final SUPPORT_LIB_VERSION ="23.0.1"
+final SUPPORT_LIB_VERSION = '1.0.0'
+final BUTTERKNIFE_VERSION = '9.0.0-rc1'
+
 
 dependencies {
-    compile fileTree(dir: 'libs', include: '*.jar')
-    compile files('libs/protobuf-java-2.2.0.jar')
-    compile files('libs/androidmarketapi-0.6.jar')
-    compile files('libs/AndroidMarketApi.jar')
-    compile "com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-2"
-    compile "com.android.support:support-v4:${SUPPORT_LIB_VERSION}"
-    compile "com.android.support:appcompat-v7:${SUPPORT_LIB_VERSION}"
-    compile "com.android.support:palette-v7:${SUPPORT_LIB_VERSION}"
-    compile "com.android.support:support-annotations:${SUPPORT_LIB_VERSION}"
-    compile "com.android.support:recyclerview-v7:${SUPPORT_LIB_VERSION}"
-    compile "com.android.support:cardview-v7:${SUPPORT_LIB_VERSION}"
-    compile 'io.reactivex:rxandroid:0.25.0'
-    compile 'com.jakewharton:butterknife:7.0.1'
+    implementation fileTree(dir: 'libs', include: '*.jar')
+
+    implementation "com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-2"
+    implementation "androidx.legacy:legacy-support-v4:${SUPPORT_LIB_VERSION}"
+    implementation "androidx.appcompat:appcompat:${SUPPORT_LIB_VERSION}"
+    implementation "androidx.palette:palette:${SUPPORT_LIB_VERSION}"
+    implementation "androidx.annotation:annotation:${SUPPORT_LIB_VERSION}"
+    implementation "androidx.recyclerview:recyclerview:${SUPPORT_LIB_VERSION}"
+    implementation "androidx.cardview:cardview:${SUPPORT_LIB_VERSION}"
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'io.reactivex:rxandroid:1.1.0'
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    def room_version = "2.1.0-alpha02"
+
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version" // use kapt for Kotlin
+
+    // Test helpers
+    testImplementation "androidx.room:room-testing:$room_version"
+
 }
 
 
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion '23.0.2'
-
+    compileSdkVersion 28
     defaultConfig {
-        minSdkVersion 15
-        targetSdkVersion 23
+        minSdkVersion 16
+        targetSdkVersion 28
 
     }
-
     lintOptions {
         abortOnError false
         ignoreWarnings true
@@ -85,41 +91,41 @@ android {
         }
     }
 
-    task('increaseVersionCode') << {
-        def manifestFile = file("src/main/AndroidManifest.xml")
-        def pattern = Pattern.compile("versionCode=\"(\\d+)\"")
-        def manifestText = manifestFile.getText()
-        def matcher = pattern.matcher(manifestText)
-        matcher.find()
-        def versionCode = Integer.parseInt(matcher.group(1))
-        def manifestContent = matcher.replaceAll("versionCode=\"" + ++versionCode + "\"")
-        manifestFile.write(manifestContent)
-    }
+//    task('increaseVersionCode') << {
+//        def manifestFile = file("src/main/AndroidManifest.xml")
+//        def pattern = Pattern.implementation("versionCode=\"(\\d+)\"")
+//        def manifestText = manifestFile.getText()
+//        def matcher = pattern.matcher(manifestText)
+//        matcher.find()
+//        def versionCode = Integer.parseInt(matcher.group(1))
+//        def manifestContent = matcher.replaceAll("versionCode=\"" + ++versionCode + "\"")
+//        manifestFile.write(manifestContent)
+//    }
+//
+//    task('tagDebugBuilds') << {
+//        def manifestFile = file("src/main/AndroidManifest.xml")
+//        def pattern = Pattern.implementation("versionName=\".*\"")
+//        def manifestText = manifestFile.getText()
+//        def matcher = pattern.matcher(manifestText)
+//        matcher.find()
+//        def manifestContent = matcher.replaceAll("versionName=\"" + "-debug" + "\"")
+//        manifestFile.write(manifestContent)
+//
+//    }
 
-    task('tagDebugBuilds') << {
-        def manifestFile = file("src/main/AndroidManifest.xml")
-        def pattern = java.util.regex.Pattern.compile("versionName=\".*\"")
-        def manifestText = manifestFile.getText()
-        def matcher = pattern.matcher(manifestText)
-        matcher.find()
-        def manifestContent = matcher.replaceAll("versionName=\"" + "-debug" + "\"")
-        manifestFile.write(manifestContent)
-
-    }
-
-    tasks.whenTaskAdded { task ->
-        if ((task.name == 'generateReleaseBuildConfig')) {
-            task.dependsOn 'increaseVersionCode'
-        }
+//    tasks.whenTaskAdded { task ->
+//        if ((task.name == 'generateReleaseBuildConfig')) {
+//            task.dependsOn 'increaseVersionCode'
+//        }
 
 
-    }
+//    }
 
     buildTypes {
         release {
             signingConfig signingConfigs.release
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+//            minifyEnabled true
+//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
 
 	debug {
@@ -133,11 +139,7 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-    retrolambda {
-        jdk System.getenv("JAVA8_HOME")
-        oldJdk System.getenv("JAVA7_HOME")
-        javaVersion JavaVersion.VERSION_1_7
-    }
+
 }
 
 

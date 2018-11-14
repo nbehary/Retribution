@@ -18,10 +18,10 @@
 package com.nbehary.retribution;
 
 import android.app.Activity;
-import android.support.v4.app.FragmentTransaction;
+import androidx.fragment.app.FragmentTransaction;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,7 +36,7 @@ import java.text.DecimalFormat;
 
 
 /**
- * A simple {@link android.support.v4.app.Fragment} subclass.
+ * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
  * {@link com.nbehary.retribution.GridIconFragment.OnCalculatedChangeListener} interface
  * to handle interaction events.

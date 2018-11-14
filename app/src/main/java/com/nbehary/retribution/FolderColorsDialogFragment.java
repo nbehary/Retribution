@@ -18,8 +18,8 @@
 package com.nbehary.retribution;
 
 
-import android.support.v4.graphics.drawable.DrawableCompat;
-import android.support.v7.app.AlertDialog;
+import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.appcompat.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
