@@ -24,7 +24,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
-import android.util.Log;
+
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -37,7 +37,7 @@ import com.nbehary.retribution.preference.PreferencesProvider;
 public class ColorThemeActivity extends AppCompatActivity {
 
     private Context mContext;
-    ColorTheme mColorTheme;
+    ColorThemeRepo mColorThemeRepo;
 
 
     @Override
@@ -47,18 +47,18 @@ public class ColorThemeActivity extends AppCompatActivity {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
 
-        mColorTheme = LauncherAppState.getInstance().getColorTheme();
+        mColorThemeRepo = LauncherAppState.getInstance().getColorTheme();
 
-        mColorTheme.readFromFolderColors();
+        mColorThemeRepo.readFromFolderColors();
 
         mContext = this;
         //No colors set.  Default to black text on white.  (sort of, but not the default)
-        if (mColorTheme.mFolderBack == 0 && mColorTheme.mFolderLabels == 0 && mColorTheme.mFolderName == 0) {
-            mColorTheme.mFolderBack = -109145601;
-            mColorTheme.mFolderLabels = -4038656;
-            mColorTheme.mFolderName = -847872;
-            //TODO: Write to ColorTheme.  Once it is being saved.  (if this still exists)
-            mColorTheme.writeToPrefs();
+        if (mColorThemeRepo.mFolderBack == 0 && mColorThemeRepo.mFolderLabels == 0 && mColorThemeRepo.mFolderName == 0) {
+            mColorThemeRepo.mFolderBack = -109145601;
+            mColorThemeRepo.mFolderLabels = -4038656;
+            mColorThemeRepo.mFolderName = -847872;
+            //TODO: Write to ColorThemeRepo.  Once it is being saved.  (if this still exists)
+            mColorThemeRepo.writeToPrefs();
             PreferencesProvider.Interface.General.setDefaultFolderBG(mContext, true);
         }
         setContentView(R.layout.activity_folder_colors);
@@ -74,7 +74,7 @@ public class ColorThemeActivity extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mColorTheme.writeToPrefs();
+                        mColorThemeRepo.writeToPrefs();
                         PreferencesProvider.Interface.General.setDefaultFolderBG(mContext, false);//TODO: Fixme
                         LauncherAppState.getInstance().getModel().startLoader(true, -1);
                         finish();
@@ -93,28 +93,28 @@ public class ColorThemeActivity extends AppCompatActivity {
 
 
     void setmNameColor(int mNameColor) {
-        this.mColorTheme.mFolderName = mNameColor;
+        this.mColorThemeRepo.mFolderName = mNameColor;
     }
 
     void setmIconColor(int mIconColor) {
-        this.mColorTheme.mFolderLabels = mIconColor;
+        this.mColorThemeRepo.mFolderLabels = mIconColor;
     }
 
     void setmBgColor(int color) {
-        this.mColorTheme.mFolderBack = color;
+        this.mColorThemeRepo.mFolderBack = color;
     }
 
 
     void setmTintIcon(boolean mTintIcon) {
-        this.mColorTheme.mFolderIconTint = mTintIcon;
+        this.mColorThemeRepo.mFolderIconTint = mTintIcon;
     }
 
     void setmFolderType(int mFolderType) {
-        this.mColorTheme.mFolderType = mFolderType;
+        this.mColorThemeRepo.mFolderType = mFolderType;
     }
 
     void setmWallTint(boolean wall) {
-        this.mColorTheme.mWallTint = wall;
+        this.mColorThemeRepo.mWallTint = wall;
     }
 
 

@@ -31,7 +31,7 @@ import android.view.View;
 
 import com.nbehary.retribution.preference.PreferencesProvider;
 
-public class ColorTheme {
+public class ColorThemeRepo {
 
     //This class is a work in progress.  It is in no way guaranteed to look or function like this in the future.
 
@@ -60,18 +60,18 @@ public class ColorTheme {
     boolean mWallTint; //TODO: I'm temporary.  Tint from wallpaper will be a named theme.'
     private Context mContext; //TODO: Not sure we need this. Only keep if used more than just readFromFolderColors.
 
-    public ColorTheme(Context ctx){
+    public ColorThemeRepo(Context ctx){
         mContext = ctx;
         readFromFolderColors();
     }
 
 
 
-    /* This is called by the constructor the first time a ColorTheme is ever created. (TODO:eventually, always now)
+    /* This is called by the constructor the first time a ColorThemeRepo is ever created. (TODO:eventually, always now)
        It reads the Values set to FolderColors items and builds a theme based on it.
 
        When done, it removes the FolderColors items from SharedPrefs and sets "pref_folder_colors_import" to true.
-       (TODO: again, eventually.  Once there are no reads of those items left, and ColorTheme is savable.)
+       (TODO: again, eventually.  Once there are no reads of those items left, and ColorThemeRepo is savable.)
        TODO too: This gets to be public until we don't rely on Prefs anymore....make it private.
      */
     public void readFromFolderColors() {
@@ -104,7 +104,7 @@ public class ColorTheme {
 
     }
 
-    //TODO: This is VERY temporary for the conversion from Folder Colors to Color Theme. DO NOT ADD others.
+    //TODO: This is VERY temporary for the conversion from Folder ColorTheme to Color Theme. DO NOT ADD others.
     //  Color Themes will be saved to the database
 
     public void writeToPrefs() {

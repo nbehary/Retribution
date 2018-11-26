@@ -122,7 +122,7 @@ public class LauncherModel extends BroadcastReceiver {
     private final AllAppsList mAll;
     private final AppCategories mCategories;
 
-    //private final ArrayList<ColorTheme> mColorThemes;
+    //private final ArrayList<ColorThemeRepo> mColorThemes;
 
     private String mAuthToken;
     private Launcher mLauncher;
@@ -593,7 +593,7 @@ public class LauncherModel extends BroadcastReceiver {
         cursor.close();
     }
 
-    public void updateColorThemeInDatabase(Context context, ColorTheme theme){
+    public void updateColorThemeInDatabase(Context context, ColorThemeRepo theme){
         final Uri uri = LauncherSettings.ColorThemes.CONTENT_URI;
         final ContentResolver cr = context.getContentResolver();
         final ContentValues values = new ContentValues();
@@ -621,7 +621,7 @@ public class LauncherModel extends BroadcastReceiver {
         runOnWorkerThread(r);
     }
 
-    public void deleteColorThemeFromDatabase(Context context,ColorTheme theme ){
+    public void deleteColorThemeFromDatabase(Context context, ColorThemeRepo theme ){
         final Uri uri = LauncherSettings.ColorThemes.CONTENT_URI;
         final ContentResolver cr = context.getContentResolver();
         final ContentValues values = new ContentValues();

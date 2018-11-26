@@ -152,7 +152,7 @@ public class Hotseat extends FrameLayout {
             TextView allAppsButton = (TextView)
                     inflater.inflate(R.layout.all_apps_button, mContent, false);
             Drawable d = ResourcesCompat.getDrawable(context.getResources(), R.drawable.apps_button, null);
-            d = ColorTheme.tintedAppsButtonDrawable(context, LauncherAppState.getInstance().getColorTheme().getmFolderBack(),
+            d = ColorThemeRepo.tintedAppsButtonDrawable(context, LauncherAppState.getInstance().getColorTheme().getmFolderBack(),
                     LauncherAppState.getInstance().getColorTheme().getmFolderLabel());
             DrawableCompat.setTint(d, LauncherAppState.getInstance().getColorTheme().getmFolderBack());
             Utilities.resizeHotseatIconDrawable(d);

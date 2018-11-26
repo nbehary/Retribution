@@ -3101,7 +3101,7 @@ public class Launcher extends AppCompatActivity
         if (v instanceof Workspace) {
 
             if (!mWorkspace.isInOverviewMode()) {
-                //Get a bitmap of the Workspace to use in Colors.
+                //Get a bitmap of the Workspace to use in ColorTheme.
                 Bitmap bmp = mLauncherView.getDrawingCache();
                 LauncherAppState.getInstance().setmLauncherBitmap(bmp);
 
@@ -4101,7 +4101,7 @@ public class Launcher extends AppCompatActivity
             if (PreferencesProvider.Interface.General.getHideQSB()) {
                 mQsbBar.setVisibility(View.GONE);
             } else {
-//            mQsbBar.setBackgroundColor(LauncherAppState.getInstance().getColorTheme().getmSearchBarBack());
+//            mQsbBar.setBackgroundColor(LauncherAppState.getInstance().getColorThemeRepo().getmSearchBarBack());
                 mQsbBar.setVisibility(View.VISIBLE);
                 mSearchDropTargetBar.addView(mQsbBar);
             }
@@ -4567,7 +4567,7 @@ public class Launcher extends AppCompatActivity
                 if (PreferencesProvider.Interface.General.getWallpaperTint()) {
 
                     Context ctx = getApplicationContext();
-                    Palette.Swatch swatch = ColorTheme.swatchFromWallpaper(ctx);
+                    Palette.Swatch swatch = ColorThemeRepo.swatchFromWallpaper(ctx);
                     int color = swatch.getRgb();
                     int oldColor = PreferencesProvider.Interface.General.getFolderBackColor();
                     if (oldColor != color) {

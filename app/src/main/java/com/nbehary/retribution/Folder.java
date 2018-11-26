@@ -227,7 +227,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         mFolderBackground = getBackground();
 
         if (!PreferencesProvider.Interface.General.getDefaultFolderBG()) {
-            ColorTheme theme = new ColorTheme(getContext());
+            ColorThemeRepo theme = new ColorThemeRepo(getContext());
             DrawableCompat.setTint(DrawableCompat.wrap(mFolderBackground), theme.mFolderBack);
             mFolderName.setHintTextColor(theme.mFolderName);
             mFolderName.setTextColor(theme.mFolderName);
@@ -448,7 +448,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         } else {
             mFolderName.setText("");
         }
-        ColorTheme theme = LauncherAppState.getInstance().getColorTheme();
+        ColorThemeRepo theme = LauncherAppState.getInstance().getColorTheme();
         if (mInfo.customColors == 1) {
             int color = mInfo.backColor;
             DrawableCompat.setTint(DrawableCompat.wrap(mFolderBackground), color);

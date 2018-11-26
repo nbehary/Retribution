@@ -415,7 +415,7 @@ public final class Utilities {
 
 
     public static Palette.Swatch swatchFromWallpaper(Context ctx) {
-        //TODO: Switch all calls to the ColorTheme one.
+        //TODO: Switch all calls to the ColorThemeRepo one.
         Drawable wallpaperDrawable;
         PackageManager pm = ctx.getPackageManager();
         //Check for live wallpaper.
@@ -428,7 +428,7 @@ public final class Utilities {
         }
         Bitmap bmp = Utilities.drawableToBitmap(wallpaperDrawable);
         Palette pal = Palette.from(bmp).generate();
-        //Todo: Return ALL the Swatches!!!! (actually a new ColorTheme, which will contain those.)
+        //Todo: Return ALL the Swatches!!!! (actually a new ColorThemeRepo, which will contain those.)
         if (pal.getVibrantSwatch()!=null) {
             return pal.getVibrantSwatch();
         }

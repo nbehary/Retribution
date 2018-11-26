@@ -40,7 +40,7 @@ class FolderInfo extends ItemInfo {
     final ArrayList<CharSequence> titles = new ArrayList<CharSequence>();
 
     /**
-     * Colors and sorting
+     * ColorTheme and sorting
      */
 
     int customColors;

@@ -43,7 +43,7 @@ public class LauncherAppState {
     private IconPackPreviewLoader.CacheDb mIconPackPreviewCacheDb;
     private boolean mIsScreenLarge;
     private float mScreenDensity;
-    private ColorTheme mColorTheme;
+    private ColorThemeRepo mColorThemeRepo;
     private final int mLongPressTimeout = 300;
     private View mLauncherView;
     private Bitmap mLauncherBitmap;
@@ -137,7 +137,7 @@ public class LauncherAppState {
         }
         mVersionName = pInfo.versionName;
         mVersionCode = pInfo.versionCode;
-        mColorTheme = new ColorTheme(sContext);
+        mColorThemeRepo = new ColorThemeRepo(sContext);
     }
 
     /**
@@ -248,12 +248,12 @@ public class LauncherAppState {
         return mDynamicGrid;
     }
 
-    public ColorTheme getColorTheme() {
-        return mColorTheme;
+    public ColorThemeRepo getColorTheme() {
+        return mColorThemeRepo;
     }
 
-    public void setColorTheme(ColorTheme mColorTheme) {
-        this.mColorTheme = mColorTheme;
+    public void setColorTheme(ColorThemeRepo mColorThemeRepo) {
+        this.mColorThemeRepo = mColorThemeRepo;
     }
 
     public boolean isScreenLarge() {

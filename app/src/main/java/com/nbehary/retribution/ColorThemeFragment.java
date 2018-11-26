@@ -20,8 +20,6 @@
 package com.nbehary.retribution;
 
 import android.app.Fragment;
-import android.app.WallpaperManager;
-import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -37,7 +35,7 @@ import android.os.Bundle;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.palette.graphics.Palette;
-import android.util.Log;
+
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,15 +43,11 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-
-import com.nbehary.retribution.preference.PreferencesProvider;
 
 
 public class ColorThemeFragment extends Fragment {
@@ -61,7 +55,7 @@ public class ColorThemeFragment extends Fragment {
     ImageView mPreviewImage;
 
     ColorPickerView mPicker;
-    ColorTheme mColorTheme;
+    ColorThemeRepo mColorThemeRepo;
     View rootView;
     LinearLayout preview;
     TextView labelText;
@@ -79,7 +73,7 @@ public class ColorThemeFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         mParent = (ColorThemeActivity) getActivity();
-        mColorTheme = mParent.mColorTheme;
+        mColorThemeRepo = mParent.mColorThemeRepo;
 
 
 
@@ -89,10 +83,10 @@ public class ColorThemeFragment extends Fragment {
 
         mChanging = "Backgrounds";
         //No colors set.  Default to black text on white.  (sort of, but not the default)
-        if (mColorTheme.mFolderBack == 0 && mColorTheme.mFolderLabels == 0 && mColorTheme.mFolderName == 0) {
-            mColorTheme.mFolderBack = -109145601;
-            mColorTheme.mFolderLabels = -4038656;
-            mColorTheme.mFolderName = -847872;
+        if (mColorThemeRepo.mFolderBack == 0 && mColorThemeRepo.mFolderLabels == 0 && mColorThemeRepo.mFolderName == 0) {
+            mColorThemeRepo.mFolderBack = -109145601;
+            mColorThemeRepo.mFolderLabels = -4038656;
+            mColorThemeRepo.mFolderName = -847872;
         }
 
 
@@ -115,16 +109,16 @@ public class ColorThemeFragment extends Fragment {
                 mChanging = (String) parent.getItemAtPosition(position);
                 switch (mChanging) {
                     case "Backgrounds":
-                        mPicker.setColor(mColorTheme.mFolderBack);
+                        mPicker.setColor(mColorThemeRepo.mFolderBack);
                         break;
                     case "Titles (ie. Folder Names)":
-                        if (mColorTheme.mFolderName != 0) {
-                            mPicker.setColor(mColorTheme.mFolderName);
+                        if (mColorThemeRepo.mFolderName != 0) {
+                            mPicker.setColor(mColorThemeRepo.mFolderName);
                         }
                         break;
                     default:
-                        if (mColorTheme.mFolderLabels != 0) {
-                            mPicker.setColor(mColorTheme.mFolderLabels);
+                        if (mColorThemeRepo.mFolderLabels != 0) {
+                            mPicker.setColor(mColorThemeRepo.mFolderLabels);
                         }
 
                         break;
@@ -141,9 +135,9 @@ public class ColorThemeFragment extends Fragment {
         Button reset = (Button) rootView.findViewById(R.id.folder_color_reset);
         reset.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                //TODO: this sets mDefaultBG.  Should ColorTheme replace that?
+                //TODO: this sets mDefaultBG.  Should ColorThemeRepo replace that?
                 if (rootView.getTag().equals("big")) {
-                    mPreviewImage.setImageBitmap(generateFolderPreview(getResources(), mColorTheme.mFolderBack, mColorTheme.mFolderLabels, mColorTheme.mFolderName));
+                    mPreviewImage.setImageBitmap(generateFolderPreview(getResources(), mColorThemeRepo.mFolderBack, mColorThemeRepo.mFolderLabels, mColorThemeRepo.mFolderName));
                 }else {
                     setColorsMini();
                 }
@@ -157,7 +151,7 @@ public class ColorThemeFragment extends Fragment {
         wallBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                mColorTheme.mWallTint = isChecked;
+//                mColorThemeRepo.mWallTint = isChecked;
                 ColorThemeActivity parent = (ColorThemeActivity) getActivity();
 
 //                if (isChecked) {
@@ -168,11 +162,11 @@ public class ColorThemeFragment extends Fragment {
                     mChanging = "Backgrounds";
                     adapter.notifyDataSetChanged();
                     mPicker.setColor(back);
-                    mColorTheme.mFolderBack = back;
-                    mColorTheme.mFolderLabels = icon;
-                    mColorTheme.mFolderName = title;
+                    mColorThemeRepo.mFolderBack = back;
+                    mColorThemeRepo.mFolderLabels = icon;
+                    mColorThemeRepo.mFolderName = title;
                     if (rootView.getTag().equals("big")) {
-                        mPreviewImage.setImageBitmap(generateFolderPreview(getResources(), mColorTheme.mFolderBack, mColorTheme.mFolderLabels, mColorTheme.mFolderName));
+                        mPreviewImage.setImageBitmap(generateFolderPreview(getResources(), mColorThemeRepo.mFolderBack, mColorThemeRepo.mFolderLabels, mColorThemeRepo.mFolderName));
                     }else {
                         setColorsMini();
                     }
@@ -180,7 +174,7 @@ public class ColorThemeFragment extends Fragment {
                    // parent.setmIconColor(icon);
                    // parent.setmNameColor(title);
 //                }
-               // parent.setmWallTint(mColorTheme.mWallTint);
+               // parent.setmWallTint(mColorThemeRepo.mWallTint);
             }
         });
         //Only setup the full size Preview on larger screens (or landscape...)
@@ -188,16 +182,16 @@ public class ColorThemeFragment extends Fragment {
             mPreviewImage = (ImageView) rootView.findViewById(R.id.folder_color_preview_image);
             FrameLayout preview_pane = (FrameLayout) rootView.findViewById(R.id.folder_color_preview);
             preview_pane.setBackgroundColor(Color.argb(0, 0, 0, 0));
-            mPreviewImage.setImageBitmap(generateFolderPreview(getResources(), mColorTheme.mFolderBack, mColorTheme.mFolderLabels, mColorTheme.mFolderName));
+            mPreviewImage.setImageBitmap(generateFolderPreview(getResources(), mColorThemeRepo.mFolderBack, mColorThemeRepo.mFolderLabels, mColorThemeRepo.mFolderName));
 
         }else {//Mini-Preview
             preview = (LinearLayout) rootView.findViewById(R.id.folder_color_preview);
             labelText = (TextView) rootView.findViewById(R.id.folder_colors_icon_text);
             nameText = (TextView) rootView.findViewById(R.id.folder_colors_label_text);
             previewBackground = preview.getBackground();
-            DrawableCompat.setTint(DrawableCompat.wrap(previewBackground),mColorTheme.mFolderBack);
-            labelText.setTextColor(mColorTheme.mFolderLabels);
-            nameText.setTextColor(mColorTheme.mFolderName);
+            DrawableCompat.setTint(DrawableCompat.wrap(previewBackground), mColorThemeRepo.mFolderBack);
+            labelText.setTextColor(mColorThemeRepo.mFolderLabels);
+            nameText.setTextColor(mColorThemeRepo.mFolderName);
         }
 
         mPicker = (ColorPickerView) rootView.findViewById(R.id.picker);
@@ -209,29 +203,29 @@ public class ColorThemeFragment extends Fragment {
                 ColorThemeActivity parent = (ColorThemeActivity) getActivity();
                 switch (mChanging) {
                     case "Backgrounds":
-                        mColorTheme.mFolderBack = i;
+                        mColorThemeRepo.mFolderBack = i;
                         //parent.setmBgColor(i);
                         break;
                     case "Titles (ie. Folder Names)":
-                        mColorTheme.mFolderName = i;
+                        mColorThemeRepo.mFolderName = i;
                         //parent.setmNameColor(i);
                         break;
                     case "Body Text (ie. Icon Labels)":
 
-                        mColorTheme.mFolderLabels = i;
+                        mColorThemeRepo.mFolderLabels = i;
                         //parent.setmIconColor(i);
                         break;
                 }
                 if (rootView.getTag().equals("big")) {
                     Resources res = getResources();
-                    mPreviewImage.setImageBitmap(generateFolderPreview(res, mColorTheme.mFolderBack, mColorTheme.mFolderLabels, mColorTheme.mFolderName));
+                    mPreviewImage.setImageBitmap(generateFolderPreview(res, mColorThemeRepo.mFolderBack, mColorThemeRepo.mFolderLabels, mColorThemeRepo.mFolderName));
                 }else {
                     setColorsMini();
                 }
 
             }
         });
-        mPicker.setColor(mColorTheme.mFolderBack);
+        mPicker.setColor(mColorThemeRepo.mFolderBack);
 
 
         Spinner iconSpinner = (Spinner) rootView.findViewById(R.id.folder_colors_icon_spinner);
@@ -239,9 +233,9 @@ public class ColorThemeFragment extends Fragment {
                 R.array.folder_icons_array_pro, android.R.layout.simple_spinner_item);
         iconAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         iconSpinner.setAdapter(iconAdapter);
-        if (!mColorTheme.mFolderIconTint && (mColorTheme.mFolderType != 2)) {
+        if (!mColorThemeRepo.mFolderIconTint && (mColorThemeRepo.mFolderType != 2)) {
             iconSpinner.setSelection(0);
-        } else if (mColorTheme.mFolderIconTint) {
+        } else if (mColorThemeRepo.mFolderIconTint) {
             iconSpinner.setSelection(1);
         } else {
             iconSpinner.setSelection(2);
@@ -253,21 +247,21 @@ public class ColorThemeFragment extends Fragment {
                 ColorThemeActivity activity = (ColorThemeActivity) getActivity();
                 switch (iconType) {
                     case "Default (White)":
-                        mColorTheme.mFolderIconTint = false;
+                        mColorThemeRepo.mFolderIconTint = false;
                         //activity.setmTintIcon(false);
-                        mColorTheme.mFolderType = 0;
+                        mColorThemeRepo.mFolderType = 0;
                         //activity.setmFolderType(0);
                         break;
                     case "Tint with Background":
-                        mColorTheme.mFolderIconTint = true;
+                        mColorThemeRepo.mFolderIconTint = true;
                         //activity.setmTintIcon(true);
-                        mColorTheme.mFolderType = 0;
+                        mColorThemeRepo.mFolderType = 0;
                         //activity.setmFolderType(0);
                         break;
                     default:
-                        mColorTheme.mFolderIconTint = false;
+                        mColorThemeRepo.mFolderIconTint = false;
                         //activity.setmTintIcon(false);
-                        mColorTheme.mFolderType = 2;
+                        mColorThemeRepo.mFolderType = 2;
                         //activity.setmFolderType(2);
                         break;
                 }
@@ -285,10 +279,10 @@ public class ColorThemeFragment extends Fragment {
 
     private void setColorsMini() {
         previewBackground = preview.getBackground();
-        DrawableCompat.setTint(DrawableCompat.wrap(previewBackground), mColorTheme.mFolderBack);
+        DrawableCompat.setTint(DrawableCompat.wrap(previewBackground), mColorThemeRepo.mFolderBack);
         preview.invalidate();
-        labelText.setTextColor(mColorTheme.mFolderLabels);
-        nameText.setTextColor(mColorTheme.mFolderName);
+        labelText.setTextColor(mColorThemeRepo.mFolderLabels);
+        nameText.setTextColor(mColorThemeRepo.mFolderName);
     }
 
     private static Bitmap generateFolderPreview(Resources resources, int back, int iconText, int nameText) {

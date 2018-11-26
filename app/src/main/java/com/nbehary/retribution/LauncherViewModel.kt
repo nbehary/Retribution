@@ -4,11 +4,12 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 
+
 class LauncherViewModel (application: Application) : AndroidViewModel(application) {
 
-    var colorTheme: LiveData<ColorTheme>
+    var colorThemeRepo: ColorThemeRepo
 
     init {
-        colorTheme = ColorTheme(application)
+        colorThemeRepo = ColorThemeRepo(application)
     }
 }

@@ -234,7 +234,7 @@ public class FolderIcon extends LinearLayout implements FolderListener {
             // We need to reload the static values when configuration changes in case they are
             // different in another configuration
             //TODO: Not a todo, but you set this to always true for some reason.  If FolderIcon breaks, look here...
-            //It was probably just to force re-loading for Folder Colors.  It seems to not need it.
+            //It was probably just to force re-loading for Folder ColorTheme.  It seems to not need it.
             if (sStaticValuesDirty) {
                 if (Looper.myLooper() != Looper.getMainLooper()) {
                     throw new RuntimeException("FolderRingAnimator loading drawables on non-UI thread "

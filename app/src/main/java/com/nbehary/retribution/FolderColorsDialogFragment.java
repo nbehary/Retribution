@@ -112,7 +112,7 @@ public class FolderColorsDialogFragment extends DialogFragment implements ColorP
         resetButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 mCustomColors = 0;
-                ColorTheme theme = LauncherAppState.getInstance().getColorTheme();
+                ColorThemeRepo theme = LauncherAppState.getInstance().getColorTheme();
                 mBgColor = theme.getmFolderBack();
                 mLabelColor = theme.getmFolderLabel();
                 mNameColor = theme.getmFolderName();
@@ -163,7 +163,7 @@ public class FolderColorsDialogFragment extends DialogFragment implements ColorP
             mNameColor = info.nameColor;
             mIconColor = info.iconColor;
         } else if (!mDefaultBG) {
-            ColorTheme theme = LauncherAppState.getInstance().getColorTheme();
+            ColorThemeRepo theme = LauncherAppState.getInstance().getColorTheme();
             mBgColor = theme.getmFolderBack();
             mLabelColor = theme.getmFolderLabel();
             mNameColor = theme.getmFolderName();
